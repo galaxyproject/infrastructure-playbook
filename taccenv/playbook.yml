@@ -65,7 +65,8 @@
 
 - name: Tasks for Galaxy nodes
   hosts: galaxynodes
-  remote_user: root
+  become: yes
+  become_user: root
   roles:
     - role: cvmfs
       tags: cvmfs
