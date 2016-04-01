@@ -5,9 +5,24 @@
     name: cvmfs
   when: ansible_os_family == "RedHat"
 
-- name: Install CernVM-FS client (apt)
-  apt:
-    name: cvmfs
+- name: Download cvmfs
+  get_url:
+    url="{{ cvmfs_deb_url }}"
+    dest="/tmp/cvmfs.deb"
+  when: ansible_os_family == "Debian"
+
+- name: Download cvmfs-config
+  get_url:
+    url="{{ cvmfs_deb_config_url }}"
+    dest="/tmp/cvmfs-config.deb"
+  when: ansible_os_family == "Debian"
+
+- name: Install cvmfs-config
+  apt: deb="/tmp/cvmfs-config.deb"
+  when: ansible_os_family == "Debian"
+
+- name: Install cvmfs
+  apt: deb="/tmp/cvmfs.deb"
   when: ansible_os_family == "Debian"
 
 - name: Install CernVM-FS keys

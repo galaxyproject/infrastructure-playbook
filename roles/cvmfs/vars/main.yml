@@ -41,3 +41,6 @@ cvmfs_stratum1_servers:
   - "cvmfs1-tacc0.galaxyproject.org"
   - "cvmfs1-iu0.galaxyproject.org"
   - "cvmfs1-psu0.galaxyproject.org"
+
+cvmfs_deb_url: "https://ecsft.cern.ch/dist/cvmfs/cvmfs-2.1.20/cvmfs_2.1.20_amd64.deb"
+cvmfs_deb_config_url: "https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/cvmfs-config-default_latest_all.deb"
