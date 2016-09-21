@@ -40,7 +40,7 @@
 
 - name: Install slurm.conf
   template:
-    src: "{{ slurm_conf_src | default( 'templates/slurm/slurm.conf.j2' ) }}"
+    src: "{{ slurm_conf_src | default( 'templates/slurm/slurm.conf.elastic.j2' ) }}"
     dest: "{{ slurm_conf_dir }}/slurm.conf"
     owner: root
     group: root
@@ -88,7 +88,7 @@
     group: slurm
     mode: 0755
     state: directory
-  when: "'slurmservers' in group_names"
+  when: "'slurmservers' in group_names or 'slurmexechosts' in group_names"
 
 - name: Check munge dir
   file:

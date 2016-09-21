@@ -9,6 +9,58 @@
   pip:
     name: "{{ item }}"
     virtualenv: "/opt/slurm_cloud_provision"
+    state: latest
   with_items:
+    - pip  # If not latest, shade does not install
     - shade
     - ansible
+
+- name: Copy elasticity scripts
+  copy:
+    src: "{{ item }}"
+    dest: /opt/slurm_cloud_provision/bin/
+    mode: "0755"
+    owner: slurm
+    group: slurm
+  with_items:
+    - slurm/launch
+    - slurm/terminate
+  notify:
+    - restart slurmctld
+
+- name: Copy this playbook
+  synchronize:  # sync is much faster than copy but requires chown task below
+    src: "{{ playbook_dir }}/../"
+    dest: /opt/slurm_cloud_provision/infrastructure-playbook/
+
+- name: Place decrypted clouds.yaml
+  copy:
+    src: clouds.yaml
+    dest: /opt/slurm_cloud_provision/infrastructure-playbook/clouds.yaml
+    mode: "0600"
+
+- name: Set slurm user as the owner of the playbook
+  file:
+    path: /opt/slurm_cloud_provision/infrastructure-playbook/
+    owner: slurm
+    group: slurm
+    recurse: yes
+
+- name: Place vault pass
+  copy:
+    content: "{{ vault_pass }}"
+    dest: /var/lib/slurm/.vault-pass
+    owner: slurm
+    group: slurm
+    mode: "0600"
+
+- name: Ensure slurm's .ssh dir exists
+  file: path=/var/lib/slurm/.ssh state=directory
+
+- name: Place PK
+  copy:
+    src: elasticity_kp
+    dest: /var/lib/slurm/.ssh/id_rsa
+    owner: slurm
+    group: slurm
+    mode: "0600"
