@@ -70,7 +70,7 @@ sudo chown centos:centos /jetstream/scratch0/jobs
 ```
 As `centos` user, submit the job script with
 ```
-sbatch /opt/slurm_cloud_provision/infrastructure-playbook/jetstreamiuenv/test_slurm.sh
+sbatch /opt/slurm_cloud_provision/infrastructure-playbook/jetstream_common/test_slurm.sh
 ```
 In a couple of minutes, job output should be available in `/jetstream/scratch0/jobs`.
 

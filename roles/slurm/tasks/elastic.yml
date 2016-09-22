@@ -35,7 +35,7 @@
 
 - name: Place decrypted clouds.yaml
   copy:
-    src: clouds.yaml
+    src: secret_group_vars/clouds.yaml
     dest: /opt/slurm_cloud_provision/infrastructure-playbook/clouds.yaml
     mode: "0600"
 
@@ -48,7 +48,7 @@
 
 - name: Place vault pass
   copy:
-    content: "{{ vault_pass }}"
+    src: "../jetstream_common/files/elasticity/vp"
     dest: /var/lib/slurm/.vault-pass
     owner: slurm
     group: slurm
@@ -59,7 +59,7 @@
 
 - name: Place PK
   copy:
-    src: files/elastic/elasticity_kp
+    src: "../jetstream_common/files/elasticity/elasticity_kp"
     dest: /var/lib/slurm/.ssh/id_rsa
     owner: slurm
     group: slurm
