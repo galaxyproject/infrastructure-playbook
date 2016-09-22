@@ -29,23 +29,26 @@ AccountingStoragePort=30001
 JobAcctGatherType=jobacct_gather/linux
 JobAcctGatherFrequency=task=15
 ProctrackType=proctrack/linuxproc
-ClusterName=jetstream-tacc
+ClusterName={{ slurm_cluster_name }}
 ReturnToService=1
+# Elastic config
+ResumeProgram=/opt/slurm_cloud_provision/bin/launch
+SuspendProgram=/opt/slurm_cloud_provision/bin/terminate
+ResumeTimeout=900
+SuspendTime=180
+TreeWidth=256
+BatchStartTimeout=780
 #
 # Node Configurations
 #
-# CPUs = Sockets * CoresPerSocket * ThreadsPerCore
-{% for node_type in slurm_nodes %}
-{% for node in node_type.nodes %}
-NodeName={{ node_type.name_prefix }}{{ loop.index0 }} NodeAddr={{ node.addr }} RealMemory={{ node_type.real_memory }} Sockets={{ node_type.sockets }} CoresPerSocket=1 ThreadsPerCore=1 State=UNKNOWN
-{% endfor %}
-{% endfor %}
+NodeName=jetstream-iu-elastic[1-64] State=CLOUD
 #
 # Partition Configurations
 #
-{% for node_type in slurm_nodes %}
-PartitionName=multi State=UP MaxTime=48:20:00 MaxNodes=1 Nodes={{ node_type.name_prefix }}[0-{{ (node_type.nodes | length) - 1 }}]
-{% endfor %}
+# PartitionName=normal Default=YES State=UP MaxTime=48:20:00 MaxNodes=1 Nodes=jetstream-iu-elastic[1-64] LLN=YES
+PartitionName=multi State=UP MaxTime=48:20:00 MaxNodes=1 Nodes=jetstream-iu-elastic[1-64] LLN=YES
 
-SlurmctldDebug=7
-SlurmdDebug=6
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmctldDebug=9
+SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmdDebug=debug5

@@ -13,14 +13,14 @@ been tailored for use with Galaxy Main server and Jetstream IU region.
 
 ### Setup the cloud account
 Before the playbook can be run, is is necessary to create a suitable cloud
-environment for it. Start by importing the public portion of a key pair `elasticity_kp.pub` from this repo into
-your account. Next, create a security group called
-`gxy-workers-sg` with a rule to allow all communication amongst instances
-belonging to the same security group. Also create a public network called
-`gxy-slurm-net`. Add a subnet and attach it to a public network via a router.
-Finally, create an empty volume that will be used as a NFS-shared cluster
-file system. Names of all these resources can be found and changed in
-`launch.yml`.
+environment for it. Start by importing the public portion of a key pair
+`files/elasticity/elasticity_kp.pub` from this repo into your account. Next,
+create a security group called `gxy-workers-sg` with a rule to allow all
+communication amongst instances belonging to the same security group. Also
+create a public network called `gxy-slurm-net`. Add a subnet and attach it to a
+public network via a router.  Finally, create an empty volume that will be used
+as a NFS-shared cluster file system. Names of all these resources can be found
+and changed in `launch.yml`.
 
 ### Launch a controller instance
 We'll next launch an instance that will serve as the controller for this cluster. This instance needs to belong to `gxy-workers-sg` security group. You probably

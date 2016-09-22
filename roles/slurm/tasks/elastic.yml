@@ -59,7 +59,7 @@
 
 - name: Place PK
   copy:
-    src: elasticity_kp
+    src: files/elastic/elasticity_kp
     dest: /var/lib/slurm/.ssh/id_rsa
     owner: slurm
     group: slurm
