@@ -33,10 +33,19 @@
     src: "{{ playbook_dir }}/../"
     dest: /opt/slurm_cloud_provision/infrastructure-playbook/
 
+- name: Ensure slurm's .config/openstack dir exists
+  file:
+    path: /var/lib/slurm/.config/openstack
+    state: directory
+    owner: slurm
+    group: slurm
+
 - name: Place decrypted clouds.yaml
   copy:
     src: secret_group_vars/clouds.yaml
-    dest: /opt/slurm_cloud_provision/infrastructure-playbook/clouds.yaml
+    dest: /var/lib/slurm/.config/openstack/clouds.yaml
+    owner: slurm
+    group: slurm
     mode: "0600"
 
 - name: Set slurm user as the owner of the playbook
@@ -55,7 +64,9 @@
     mode: "0600"
 
 - name: Ensure slurm's .ssh dir exists
-  file: path=/var/lib/slurm/.ssh state=directory
+  file:
+    path: /var/lib/slurm/.ssh
+    state: directory
 
 - name: Place PK
   copy:
