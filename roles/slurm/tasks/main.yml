@@ -40,8 +40,9 @@
 
 - name: Acquire hostlist
   command: scontrol show hostlist {{ groups[item.inventory_group] | join(",") }}
-  with_items: slurm_nodes
+  with_items: "{{ slurm_nodes }}"
   register: slurm_hostlists
+  when: num_nodes.0 is defined
 
 - name: Install slurm.conf
   template:
