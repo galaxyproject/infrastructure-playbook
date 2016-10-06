@@ -5,8 +5,56 @@ cluster composed of multiple sub-clusters. Each sub-cluster runs a Slurm control
 process and any number of workers to run the jobs. Sub-cluster controllers
 also run Pulsar that is used for data staging.
 
-Manually scaling cluster setup
-==============================
+
+Semi-automatic scalable cluster setup
+===============================
+This playbook can be used to build and semi-automatically scale Slurm cluster.
+The playbook has been tailored for use with Galaxy Main server and Jetstream
+IU region. All the path references are relative to
+*[playbook root]/jetstreamiuenv*.
+
+### Create the controller instance
+ 1. *Launch a controller instance by hand*
+    - Create a security group (SG) that allows open communication between
+    instances in the same group
+    - The name of the instance needs to match *controller_name* variable in
+    *group_vars/all.yml* (default is *jetstream-iu-slurm-controller*)
+    - Create a new volume and attach it to the instance (defaults to device
+    */dev/sdb*)
+ 2. Make playbook updates
+    - Update *inventory* to include the controller public IP
+    - Update *controller_ip* in *group_vars/all.yml* variable to include the
+    instance private IP
+    - Update *jetstream_nfs_filesystems* variable in
+    *group_vars/galaxynodes.yml* to point to the controller’s private IP
+    - Make sure *slurm-drmaa* is commented out in *group_vars/controllers.yml*
+    - Make sure your public key is added to *secret_group_vars/controllers.yml*
+    (otherwise, you’ll be locked out of the instance after the play runs)
+ 3. Run the playbook:
+    - `ansible-playbook -i jetstreamiuenv/inventory jetstreamiuenv/playbook.yml --ask-vault --limit=controllers`
+
+### Launch worker instance(s)
+Worker instances get manually launched and the configured by running this playbook from the controller instance.
+
+ 1. Manually launch the workers
+     - Make sure they are in same SG and network as the controller;
+     - Use *elastic_kp* key pair
+     - Instance names need to have *jetstream-iu-large* prefix (defined in
+     *group_vars/slurmclients.yml*) and be numbered consecutively starting at 0
+
+### Configure the new worker(s) and reconfigure the cluster
+These steps are to be performed on the controller instance.
+
+ 1. Update the playbook's inventory to include the worker(s) info
+    - Update *galaxynodes* to include worker nodes' private IP addresses
+    - Set `jetstream-iu0.galaxyproject.org ansible_connection=local`
+ 2. Run the playbook (as user *root*)
+    - Activate virtualenv from `/opt/slurm_cloud_provision/bin`
+    - Run the playbook with `ansible-playbook -i jetstreamiuenv/inventory jetstreamiuenv/playbook.yml`
+
+After this runs, the cluster should be showing all the worker nodes and be
+configured to run jobs in `multi` partition. See section *Verify it works*
+below for a sample job script.
 
 
 Elastic scaling cluster setup
