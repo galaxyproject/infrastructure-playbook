@@ -5,6 +5,10 @@ cluster composed of multiple sub-clusters. Each sub-cluster runs a Slurm control
 process and any number of workers to run the jobs. Sub-cluster controllers
 also run Pulsar that is used for data staging.
 
+Manually scaling cluster setup
+==============================
+
+
 Elastic scaling cluster setup
 =============================
 This playbook can be used to build an elastic Slurm cluster that, based on the
@@ -79,6 +83,22 @@ Log file for the Slurm controller process is available in `/var/log/slurm/slurmc
 ### Elasticity config options
 There are some configuration options that can be changed for the cluster elasticity parameters. Instance type to be launched is supplied in `group_vars/all.yml` as `worker_instance_type`. `worker_image_id` can also be updated there. The amount of time Slurm will keep an idle instance around can be defined in `templates/slurm/slurm.conf.elastic.j2` under `SuspendTime` (value is in seconds). For other `slurm.conf` options, see [*slurm.conf* docs](http://slurm.schedmd.com/slurm.conf.html).
 
-Static cluster setup
-====================
-*TODO*
+### Issues
+Although on the surface this setup appears to work fine, in practice there are three of issues that have not been resolved:
+
+**1. Zombie processes**: at the end of a cluster scaling operation, 6 ansible
+threads will remain active on the controller. These will seemingly never exit as
+they await some pid file. Running the scaling script by hand or via *systemd*
+did not exhibit this issue. However, w e were never able to figure out what was
+causing this or how to resolve it.
+
+**2. Lingering instances**: when an instance crashes or is terminated by means
+other than via Slurm's *SuspendProgram*, it is impossible to remove it from
+Slurm's internal instance table. A [post on the Slurm mailing
+list](https://groups.google.com/forum/#!topic/slurm-devel/QrVL4_Qc3uA) did not
+get any replies.
+
+**3. Instance acquiring rate**: despite setting Slurm's *ResumeRate* to 1
+[worker node per minute], the number of instance startup requests would exceed
+Slurm's ability to manage the requests resulting in *power_save programs getting
+backlogged* error messages.
