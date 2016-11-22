@@ -8,7 +8,7 @@ also run Pulsar that is used for data staging.
 
 Semi-automatic scalable cluster setup
 ===============================
-This playbook can be used to build and semi-automatically scale Slurm cluster.
+This playbook can be used to build and semi-automatically scale a Slurm cluster.
 The playbook has been tailored for use with Galaxy Main server and Jetstream
 IU region. All the path references are relative to
 *[playbook root]/jetstreamiuenv*.
@@ -32,23 +32,26 @@ IU region. All the path references are relative to
     (otherwise, you’ll be locked out of the instance after the play runs)
  3. Run the playbook:
     - `ansible-playbook -i jetstreamiuenv/inventory jetstreamiuenv/playbook.yml --ask-vault --limit=controllers`
+    - The playbook will automatically copy itself onto the controller (to
+    `/opt/slurm_cloud_provision/`) in preparation for configuring worker nodes
 
 ### Launch worker instance(s)
-Worker instances get manually launched and the configured by running this playbook from the controller instance.
+Worker instances get manually launched and then configured by running this
+playbook from the controller instance.
 
  1. Manually launch the workers
      - Make sure they are in same SG and network as the controller;
-     - Use *elastic_kp* key pair
+     - Use key pair named *elastic_kp* (it's contained in the playbook vault)
      - Instance names need to have *jetstream-iu-large* prefix (defined in
      *group_vars/slurmclients.yml*) and be numbered consecutively starting at 0
 
 ### Configure the new worker(s) and reconfigure the cluster
-These steps are to be performed on the controller instance.
+These steps are to be performed on the controller instance, all as user *root*.
 
  1. Update the playbook's inventory to include the worker(s) info
     - Update *galaxynodes* to include worker nodes' private IP addresses
     - Set `jetstream-iu0.galaxyproject.org ansible_connection=local`
- 2. Run the playbook (as user *root*)
+ 2. Run the playbook
     - Activate virtualenv from `/opt/slurm_cloud_provision/bin`
     - Run the playbook with `ansible-playbook -i jetstreamiuenv/inventory jetstreamiuenv/playbook.yml`
 
