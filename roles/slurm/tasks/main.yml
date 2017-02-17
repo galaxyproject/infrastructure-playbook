@@ -38,10 +38,17 @@
     #- slurm-torque
   when: ansible_os_family == "RedHat"
 
-- name: Acquire hostlist
+- name: Check if any workers are defined locally
+  debug:
+    msg: '{{ groups[item.inventory_group] | length > 0 }}'
+  with_items: "{{ slurm_nodes }}"
+  register: local_workers
+
+- name: Acquire remote hostlist
   command: scontrol show hostlist {{ groups[item.inventory_group] | join(",") }}
-  with_items: slurm_nodes
+  with_items: "{{ slurm_nodes }}"
   register: slurm_hostlists
+  when: local_workers.results[0].msg == True
 
 - name: Install slurm.conf
   template:
