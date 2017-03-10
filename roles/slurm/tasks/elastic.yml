@@ -11,8 +11,24 @@
     virtualenv: "/opt/slurm_cloud_provision"
     state: latest
   with_items:
+    - pip
     - setuptools
     - ansible
+    - cython
+
+- name: Download Pyslurm
+  git:
+    repo: https://github.com/PySlurm/pyslurm
+    version: 16.05.5
+    dest: /opt/pyslurm
+
+- name: Install Pyslurm
+  shell: "{{ item }}"
+  args:
+    chdir: /opt/pyslurm
+  with_items:
+    - /opt/slurm_cloud_provision/bin/python setup.py build
+    - /opt/slurm_cloud_provision/bin/python setup.py install
 
 - name: Copy this playbook
   synchronize:  # sync is much faster than copy but requires chown task below
@@ -22,7 +38,13 @@
 - name: Place vault pass
   copy:
     src: "../jetstream_common/files/elasticity/vp"
-    dest: /root/.vault-pass
+    dest: /root/.vault_pass
+    mode: "0600"
+
+- name: Place CloudBridge config
+  copy:
+    src: "../jetstream_common/files/elasticity/cloudbridge"
+    dest: /root/.cloudbridge
     mode: "0600"
 
 - name: Ensure root's .ssh dir exists
