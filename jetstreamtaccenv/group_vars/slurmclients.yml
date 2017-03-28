@@ -21,7 +21,7 @@ slurmctld_state_dir: /var/lib/slurm/slurmctld/slurm.state
 slurm_cluster_name: jetstream-tacc
 
 slurm_nodes:
-  - real_memory: 29997
+  - real_memory: 29996
     sockets: 10
     partition: large
     inventory_group: jetstream-tacc-large

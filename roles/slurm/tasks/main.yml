@@ -38,13 +38,17 @@
     #- slurm-torque
   when: ansible_os_family == "RedHat"
 
-# FIXME: this task will fail if slurmservers[0] has not already completed the slurm.conf task that follows it
+- name: Check if any workers are defined locally
+  debug:
+    msg: '{{ groups[item.inventory_group] | length > 0 }}'
+  with_items: "{{ slurm_nodes }}"
+  register: local_workers
+
 - name: Acquire hostlist
   command: scontrol show hostlist {{ groups[item.inventory_group] | join(",") }}
-  with_items: slurm_nodes
-  delegate_to: "{{ groups['slurmservers'][0] }}"
-  run_once: true
+  with_items: "{{slurm_nodes}}"
   register: slurm_hostlists
+  when: local_workers.results[0].msg == True and 'slurmexechosts' not in group_names
 
 - name: Install slurm.conf
   template:
@@ -96,7 +100,7 @@
     group: slurm
     mode: 0755
     state: directory
-  when: "'slurmservers' in group_names"
+  when: "'slurmservers' in group_names or 'slurmexechosts' in group_names"
 
 - name: Check munge dir
   file:

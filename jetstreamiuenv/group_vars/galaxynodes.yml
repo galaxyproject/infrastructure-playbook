@@ -31,7 +31,10 @@ links:
     src: /cvmfs/data.galaxyproject.org/byhand/location
     force: yes
 
-jetstream_nfs_filesystems:
-  - device: "10.0.0.10:/scratch0"
-    dir: scratch0
-    mountpoint: /jetstream/iu-scratch0
+# Not being read by Ansible v2.2+ saying variable undefined when calling
+# 'Remove static mounts' although the host group `jetstreamnfsclients` is a
+# parent of `galaxynodes` server group in the inventory? Moved to all.yml.
+# jetstream_nfs_filesystems:
+#   - device: "10.0.0.11:/scratch0"
+#     dir: scratch0
+#     mountpoint: /jetstream/iu-scratch0

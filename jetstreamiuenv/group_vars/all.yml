@@ -1,5 +1,9 @@
 ---
 
+worker_instance_type: m1.large
+# CentOS-7-x86_64-GenericCloud-1607
+worker_image_id: 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
+
 all_groups:
   - name: G-803372
     gid: 803372
@@ -22,5 +26,10 @@ all_users:
     home: /home/g2main
     shell: /bin/bash
 
-controller_name: jetstream-iu0
-controller_ip: 10.0.0.10
+controller_name: jetstream-iu-slurm-controller
+controller_ip: 10.0.0.11
+
+jetstream_nfs_filesystems:
+  - device: "10.0.0.11:/scratch0"
+    dir: scratch0
+    mountpoint: /jetstream/iu-scratch0
