@@ -28,3 +28,8 @@ all_users:
 
 controller_name: jetstream-iu-slurm-controller
 controller_ip: 10.0.0.11
+
+jetstream_nfs_filesystems:
+  - device: "10.0.0.11:/scratch0"
+    dir: scratch0
+    mountpoint: /jetstream/iu-scratch0
