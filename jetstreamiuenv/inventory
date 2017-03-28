@@ -1,5 +1,5 @@
 # looking for cvmfs1-iu0? It's in the galaxyenv
-jetstream-iu0.galaxyproject.org ansible_host="149.165.171.184" ansible_user="centos" ansible_ssh_private_key_file="~/.ssh/enis_afgan_galaxy_rsa" ansible_ssh_common_args='-o StrictHostKeyChecking=no -o CheckHostIP=no -o "UserKnownHostsFile /dev/null"'
+jetstream-iu0.galaxyproject.org ansible_host="149.165.172.156" ansible_user="centos" ansible_ssh_private_key_file="~/.ssh/enis_afgan_galaxy_rsa" ansible_ssh_common_args='-o StrictHostKeyChecking=no -o CheckHostIP=no -o "UserKnownHostsFile /dev/null"'
 # jetstream-iu0.galaxyproject.org ansible_connection=local  # Uncomment on the controller
 
 [baseenv]
@@ -8,7 +8,7 @@ jetstream-iu0.galaxyproject.org
 [baseenv:children]
 galaxynodes
 
-# "contoller" node(s) for this cloud (not necessarily a slurm controller)
+# "controller" node(s) for this cloud (not necessarily a slurm controller)
 [controllers]
 jetstream-iu0.galaxyproject.org
 

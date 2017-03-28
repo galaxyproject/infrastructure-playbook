@@ -15,12 +15,18 @@ IU region. All the path references are relative to
 
 ### Create the controller instance
  1. *Launch a controller instance by hand*
-    - Create a security group (SG) that allows open communication between
-    instances in the same group
+    - Create and use a security group (SG) that allows open communication
+    between instances in the same group (default is *gxy-workers-sg*)
+    - Create another security group that will allow the master instance to be
+    accessed from the outside (default is *gxy-sg*)
     - The name of the instance needs to match *controller_name* variable in
     *group_vars/all.yml* (default is *jetstream-iu-slurm-controller*)
+    - Image to use is a CentOS 7 (e.g., *736e206d-9c2c-4369-88db-8c3293bd2ad7*)
+    - Use a public key that is included in *secret_group_vars/controllers.yml*
+    (otherwise, you’ll be locked out of the instance after the play runs)
     - Create a new volume and attach it to the instance (defaults to device
     */dev/sdb*)
+    - (there is a `launch_slurm_controller.py` script to use for the launch)
  2. Make playbook updates
     - Update *inventory* to include the controller public IP
     - Update *controller_ip* in *group_vars/all.yml* variable to include the
@@ -28,12 +34,13 @@ IU region. All the path references are relative to
     - Update *jetstream_nfs_filesystems* variable in
     *group_vars/galaxynodes.yml* to point to the controller’s private IP
     - Make sure *slurm-drmaa* is commented out in *group_vars/controllers.yml*
-    - Make sure your public key is added to *secret_group_vars/controllers.yml*
-    (otherwise, you’ll be locked out of the instance after the play runs)
  3. Run the playbook:
     - `ansible-playbook -i jetstreamiuenv/inventory jetstreamiuenv/playbook.yml --ask-vault --limit=controllers`
     - The playbook will automatically copy itself onto the controller (to
     `/opt/slurm_cloud_provision/`) in preparation for configuring worker nodes
+
+If integrating with SlurmScale library, you should be all set now; the playbook
+installed the library as well. If not using SlurmScale, keep going.
 
 ### Launch worker instance(s)
 Worker instances get manually launched and then configured by running this

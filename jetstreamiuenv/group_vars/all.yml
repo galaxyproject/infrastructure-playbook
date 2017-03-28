@@ -1,6 +1,6 @@
 ---
 
-worker_instance_type: m1.tiny
+worker_instance_type: m1.large
 # CentOS-7-x86_64-GenericCloud-1607
 worker_image_id: 1790e5c8-315a-4b9b-8b1f-46e47330d3cc
 
@@ -27,4 +27,4 @@ all_users:
     shell: /bin/bash
 
 controller_name: jetstream-iu-slurm-controller
-controller_ip: 10.0.0.13
+controller_ip: 10.0.0.11

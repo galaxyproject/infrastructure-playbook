@@ -2,8 +2,11 @@
 
 - name: Install virtualenv (yum)
   yum:
-    pkg: python-virtualenv
+    pkg: "{{ item }}"
   when: ansible_os_family == "RedHat"
+  with_items:
+    - python-virtualenv
+    - ipython
 
 - name: Create virtualenv for elastic components
   pip:
@@ -13,8 +16,13 @@
   with_items:
     - pip
     - setuptools
-    - ansible
     - cython
+
+- name: Install specific Ansible version in the venv
+  pip:
+    name: ansible
+    virtualenv: "/opt/slurm_cloud_provision"
+    version: 2.1.5.0
 
 - name: Download Pyslurm
   git:
@@ -29,6 +37,23 @@
   with_items:
     - /opt/slurm_cloud_provision/bin/python setup.py build
     - /opt/slurm_cloud_provision/bin/python setup.py install
+
+- name: Download SlurmScale
+  git:
+    repo: https://github.com/afgane/slurmscale
+    dest: /opt/slurm_cloud_provision/slurmscale
+  ignore_errors: yes
+
+- name: Install SlurmScale
+  shell: /opt/slurm_cloud_provision/bin/python setup.py install
+  args:
+    chdir: /opt/slurm_cloud_provision/slurmscale
+
+- name: Copy SlurmScale config file
+  copy:
+    remote_src: True
+    src: /opt/slurm_cloud_provision/slurmscale/slurmscale.ini.sample
+    dest: /opt/slurm_cloud_provision/slurmscale/slurmscale.ini
 
 - name: Copy this playbook
   synchronize:  # sync is much faster than copy but requires chown task below
