@@ -44,9 +44,9 @@
   with_items: "{{ slurm_nodes }}"
   register: local_workers
 
-- name: Acquire remote hostlist
+- name: Acquire hostlist
   command: scontrol show hostlist {{ groups[item.inventory_group] | join(",") }}
-  with_items: "{{ slurm_nodes }}"
+  with_items: "{{slurm_nodes}}"
   register: slurm_hostlists
   when: local_workers.results[0].msg == True and 'slurmexechosts' not in group_names
 

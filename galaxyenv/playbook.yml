@@ -14,6 +14,22 @@
   vars_files:
     - "secret_group_vars/all.yml"
     - [ "secret_host_vars/{{ inventory_hostname }}.yml", "secret_host_vars/default.yml" ]
+  pre_tasks:
+    - name: Locate secret group variable files
+      local_action:
+        module: stat
+        path: "{{ inventory_dir }}/secret_group_vars/{{ item }}.yml"
+      become: no
+      with_items: "{{ group_names }}"
+      register: secret_group_vars
+      tags: always
+    - name: Include secret group variables
+      local_action:
+        module: "include_vars {{ item.stat.path }}"
+      become: no
+      with_items: "{{ secret_group_vars.results }}"
+      when: item.stat.exists
+      tags: always
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: initial,requiretty
@@ -35,6 +51,8 @@
       tags: system,copy
     - role: cron              # Create cron jobs
       tags: system,cron
+    - role: firewall          # Configure host firewall
+      tags: system,firewall
     - role: services          # Manage services
       tags: system,services
     # Most baseenv hosts will want mail config
@@ -132,8 +150,13 @@
     # need epel for the jq package
     - role: geerlingguy.repo-epel
       tags: cvmfs
-    # This is actually only used to install docker on stratum0s
-    - role: packages
-      tags: system,packages
     - role: cvmfs
       tags: cvmfs
+
+- name: Tasks for Docker Swarm managers
+  hosts: dockerswarmmanagers
+  vars_files:
+    - "secret_group_vars/dockersslservers.yml"
+  roles:
+    - role: docker_swarm
+      tags: docker
