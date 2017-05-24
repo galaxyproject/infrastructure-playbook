@@ -9,6 +9,69 @@
   pip:
     name: "{{ item }}"
     virtualenv: "/opt/slurm_cloud_provision"
+    state: latest
   with_items:
+    - pip  # If not latest, shade does not install
     - shade
     - ansible
+
+- name: Copy elasticity scripts
+  copy:
+    src: "{{ item }}"
+    dest: /opt/slurm_cloud_provision/bin/
+    mode: "0755"
+    owner: slurm
+    group: slurm
+  with_items:
+    - slurm/launch
+    - slurm/terminate
+  notify:
+    - restart slurmctld
+
+- name: Copy this playbook
+  synchronize:  # sync is much faster than copy but requires chown task below
+    src: "{{ playbook_dir }}/../"
+    dest: /opt/slurm_cloud_provision/infrastructure-playbook/
+
+- name: Ensure slurm's .config/openstack dir exists
+  file:
+    path: /var/lib/slurm/.config/openstack
+    state: directory
+    owner: slurm
+    group: slurm
+
+- name: Place decrypted clouds.yaml
+  copy:
+    src: secret_group_vars/clouds.yaml
+    dest: /var/lib/slurm/.config/openstack/clouds.yaml
+    owner: slurm
+    group: slurm
+    mode: "0600"
+
+- name: Set slurm user as the owner of the playbook
+  file:
+    path: /opt/slurm_cloud_provision/infrastructure-playbook/
+    owner: slurm
+    group: slurm
+    recurse: yes
+
+- name: Place vault pass
+  copy:
+    src: "../jetstream_common/files/elasticity/vp"
+    dest: /var/lib/slurm/.vault-pass
+    owner: slurm
+    group: slurm
+    mode: "0600"
+
+- name: Ensure slurm's .ssh dir exists
+  file:
+    path: /var/lib/slurm/.ssh
+    state: directory
+
+- name: Place PK
+  copy:
+    src: "../jetstream_common/files/elasticity/elasticity_kp"
+    dest: /var/lib/slurm/.ssh/id_rsa
+    owner: slurm
+    group: slurm
+    mode: "0600"

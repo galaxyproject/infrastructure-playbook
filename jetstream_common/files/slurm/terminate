@@ -9,7 +9,7 @@ LOG_DIR=/var/log/slurm/launch
 set -xv
 
 VENV=/opt/slurm_cloud_provision
-PLAYBOOK=/home/centos/infrastructure-playbook
+PLAYBOOK=/opt/slurm_cloud_provision/infrastructure-playbook
 
 : ${HOME:=/var/lib/slurm}
 export HOME
@@ -17,6 +17,6 @@ export HOME
 . $VENV/bin/activate
 cd $PLAYBOOK
 instances=`scontrol show hostnames "$1" | tr '\n' ',' | sed 's/,$//'`
-ansible-playbook -i jetstreamenv/instance_inventory jetstreamenv/terminate.yml --vault=/var/lib/slurm/.vault-pass --extra-vars="jetstream_instances_to_terminate=$instances"
+ansible-playbook -i jetstreamiuenv/instance_inventory jetstreamiuenv/terminate.yml --vault=/var/lib/slurm/.vault-pass --extra-vars="jetstream_instances_to_terminate=$instances"
 ) 2>&1 | tee "$LOG_DIR/terminate`date +%s`.${1}.log"
 true

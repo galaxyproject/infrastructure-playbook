@@ -8,14 +8,14 @@
   tasks:
     - name: Launch new instance(s)
       os_server:
-        cloud: jetstream_iu
+        cloud: jetstream_iu  # Details defined in clouds.yaml, including auth
         name: "{{ item }}"
-        image: "CentOS 7 Stock 1601"
-        flavor: "m1.large"
-        key_name: "slurm_jetstream0"
-        security_groups: "default,usegalaxy-control"
+        image: "{{ worker_image_id }}"
+        flavor: "{{ worker_instance_type }}"
+        key_name: "elasticity_kp"
+        security_groups: "gxy-workers-sg"
         nics:
-          - net-name: "usegalaxy"
+          - net-name: "gxy-slurm-net"
         auto_ip: no
       with_items: "{{ jetstream_instances_to_launch.split(',') }}"
       register: jetstream_instances_launched
@@ -29,7 +29,8 @@
       add_host:
         name: "{{ item.server.name }}"
         ansible_host: "{{ item.server.private_v4 }}"
-        groups: "baseenv,galaxynodes,slurmclients,slurmexechosts"
+        groups:
+          "baseenv,galaxynodes,slurmclients,slurmexechosts,jetstreamnfsclients"
       with_items: "{{ jetstream_instances_launched.results }}"
 
     - name: Spin waiting for instance(s) to become accessible

@@ -5,6 +5,7 @@
   remote_user: centos
   become: yes
   become_method: sudo
+  connection: paramiko
   pre_tasks:
     - name: Locate secret group variable files
       local_action:
@@ -65,7 +66,7 @@
         dest: /etc/hosts
 
 - name: Install supervisor
-  hosts: all
+  hosts: controllers
   remote_user: centos
   become: yes
   become_method: sudo

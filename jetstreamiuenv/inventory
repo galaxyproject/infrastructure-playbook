@@ -1,5 +1,4 @@
 # looking for cvmfs1-iu0? It's in the galaxyenv
-
 jetstream-iu0.galaxyproject.org
 
 [baseenv]
@@ -21,8 +20,8 @@ jetstream-iu0.galaxyproject.org
 [slurmclients:children]
 galaxynodes
 
-;[slurmelasticservers]
-;jetstream-iu0.galaxyproject.org
+[slurmelasticservers]
+jetstream-iu0.galaxyproject.org
 
 [cvmfsclients]
 [cvmfsclients:children]
@@ -33,7 +32,7 @@ controllers
 [jetstreamnfsclients:children]
 galaxynodes
 
-[surmexechosts]
+[slurmexechosts]
 [slurmexechosts:children]
 galaxynodes
 
@@ -42,11 +41,11 @@ galaxynodes
 jetstream-iu-large
 
 [jetstream-iu-large]
-jetstream-iu-large0 ansible_host=10.0.0.20
-jetstream-iu-large1 ansible_host=10.0.0.21
-jetstream-iu-large2 ansible_host=10.0.0.22
-jetstream-iu-large3 ansible_host=10.0.0.23
-jetstream-iu-large4 ansible_host=10.0.0.66
-jetstream-iu-large5 ansible_host=10.0.0.67
-jetstream-iu-large6 ansible_host=10.0.0.68
-jetstream-iu-large7 ansible_host=10.0.0.69
+#jetstream-iu-large0 ansible_host=10.0.0.20
+#jetstream-iu-large1 ansible_host=10.0.0.21
+#jetstream-iu-large2 ansible_host=10.0.0.22
+#jetstream-iu-large3 ansible_host=10.0.0.23
+#jetstream-iu-large4 ansible_host=10.0.0.66
+#jetstream-iu-large5 ansible_host=10.0.0.67
+#jetstream-iu-large6 ansible_host=10.0.0.68
+#jetstream-iu-large7 ansible_host=10.0.0.69
