@@ -15,6 +15,9 @@ group_packages:
   # starforge downloading packages with pip will run egg_info, which on at
   # least one package (mercurial) will fail if Python.h cannot be found
   - python-dev
+  # for starforge/wheels/image/update-for-jenkins.sh
+  - jq
+  - uuid-runtime
 
 group_files:
   - content: "# This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.\nw /sys/module/kvm/parameters/ignore_msrs - - - - 1\n"
