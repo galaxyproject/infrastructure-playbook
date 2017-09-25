@@ -1,5 +1,5 @@
 ##
-## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+## Maps URLs from the old Moin-based wiki to the new metalsmith Galaxy Hub.
 ##
 
 #http {
@@ -171,42 +171,42 @@
         rewrite ^/Community/GalaxyAdmins/Surveys/?$ https://galaxyproject.org/community/galaxy-admins/surveys;
         rewrite ^/Community/GalaxyAdmins/Surveys/2012/?$ https://galaxyproject.org/community/galaxy-admins/surveys/2012;
         rewrite ^/Community/GalaxyAdmins/Surveys/2014/?$ https://galaxyproject.org/community/galaxy-admins/surveys/2014;
-        rewrite ^/Community/Log/?$ https://galaxyproject.org/community/log;
-        rewrite ^/Community/Log/2013/?$ https://galaxyproject.org/community/log/2013;
-        rewrite ^/Community/Log/2013/CloudBioLinuxCloudManQuickStart/?$ https://galaxyproject.org/community/log/2013/cloud-bio-linux-cloudman-quick-start;
-        rewrite ^/Community/Log/2013/Example/?$ https://galaxyproject.org/community/log/2013/example;
-        rewrite ^/Community/Log/2013/GenomeDownloadIndexingWithGalaxyRsyncServers/?$ https://galaxyproject.org/community/log/2013/genome-download-indexing-with-galaxy-rsync-servers;
-        rewrite ^/Community/Log/2013/IFBToolIntegrationShortTutorial/?$ https://galaxyproject.org/community/log/2013/ifb-tool-integration-short-tutorial;
-        rewrite ^/Community/Log/2013/IGVIntegration/?$ https://galaxyproject.org/community/log/2013/igv-integration;
-        rewrite ^/Community/Log/2013/LaunchCustomizedmodENCODEGalaxyOnAWS/?$ https://galaxyproject.org/community/log/2013/launch-customizedmod-encode-galaxy-on-aws;
-        rewrite ^/Community/Log/2013/RScriptTool/?$ https://galaxyproject.org/community/log/2013/rscript-tool;
-        rewrite ^/Community/Log/2013/SharingWorkflowsBetweenLabsPractices/?$ https://galaxyproject.org/community/log/2013/sharing-workflows-between-labs-practices;
-        rewrite ^/Community/Log/2013/URGIVirtualisation/?$ https://galaxyproject.org/community/log/2013/urgi-virtualisation;
-        rewrite ^/Community/Log/2013/UsingBioServicesWithGalaxy/?$ https://galaxyproject.org/community/log/2013/using-bio-services-with-galaxy;
-        rewrite ^/Community/Log/2013/workflow-to-galaxyTaverna2myExperimentWorkflowToGalaxyTool/?$ https://galaxyproject.org/community/log/2013/workflow-to-galaxy-taverna2myexperiment-workflow-to-galaxy-tool;
-        rewrite ^/Community/Log/2014/?$ https://galaxyproject.org/community/log/2014;
-        rewrite ^/Community/Log/2014/BasicGalaxyPuppetModule/?$ https://galaxyproject.org/community/log/2014/basic-galaxy-puppet-module;
-        rewrite ^/Community/Log/2014/GalaxyOnBioLinux8/?$ https://galaxyproject.org/community/log/2014/galaxy-on-bio-linux8;
-        rewrite ^/Community/Log/2014/LDAPRemoteUserLogout/?$ https://galaxyproject.org/community/log/2014/ldap-remote-user-logout;
-        rewrite ^/Community/Log/2014/ToolShedWithHttpsAndLDAP/?$ https://galaxyproject.org/community/log/2014/toolshed-with-https-and-ldap;
-        rewrite ^/Community/Log/2015/?$ https://galaxyproject.org/community/log/2015;
-        rewrite ^/Community/Log/2015/BioJS2Galaxy/?$ https://galaxyproject.org/community/log/2015/biojs2galaxy;
-        rewrite ^/Community/Log/2015/GalaxyIrodsConnection/?$ https://galaxyproject.org/community/log/2015/galaxy-irods-connection;
-        rewrite ^/Community/Log/2015/GalaxySlots/?$ https://galaxyproject.org/community/log/2015/galaxy-slots;
-        rewrite ^/Community/Log/2015/HowGalaxyResolveDependenciesOrNot/?$ https://galaxyproject.org/community/log/2015/how-galaxy-resolve-dependencies-or-not;
-        rewrite ^/Community/Log/2015/InstalandoServidorGalaxy/?$ https://galaxyproject.org/community/log/2015/instalando-servidor-galaxy;
-        rewrite ^/Community/Log/2015/InstallingANNOVAR/?$ https://galaxyproject.org/community/log/2015/installing-annovar;
-        rewrite ^/Community/Log/2015/IntegratingJavaWithGalaxy/?$ https://galaxyproject.org/community/log/2015/integrating-java-with-galaxy;
-        rewrite ^/Community/Log/2015/MySQL2PostgreSQL/?$ https://galaxyproject.org/community/log/2015/mysql2postgresql;
-        rewrite ^/Community/Log/2015/ProFTPdAndPBKDF2/?$ https://galaxyproject.org/community/log/2015/proftpd-and-pbkdf2;
-        rewrite ^/Community/Log/2015/ReportsViaNginx/?$ https://galaxyproject.org/community/log/2015/reports-via-nginx;
-        rewrite ^/Community/Log/2015/ToolGeneratingDatasets/?$ https://galaxyproject.org/community/log/2015/tool-generating-datasets;
-        rewrite ^/Community/Log/2016/?$ https://galaxyproject.org/community/log/2016;
-        rewrite ^/Community/Log/2016/MovingDataBetweenGalaxies/?$ https://galaxyproject.org/community/log/2016/moving-data-between-galaxies;
-        rewrite ^/Community/Log/2016/RunningJobsOutsideContainer/?$ https://galaxyproject.org/community/log/2016/running-jobs-outside-container;
-        rewrite ^/Community/Log/2016/TorqueOnAWS/?$ https://galaxyproject.org/community/log/2016/torque-on-aws;
-        rewrite ^/Community/Logs/?$ https://galaxyproject.org/community/logs;
-        rewrite ^/Community/Logs/LogWikiHelp/?$ https://galaxyproject.org/community/logs/log-wiki-help;
+        rewrite ^/Community/Log/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2013/?$ https://galaxyproject.org/blog/;
+        rewrite ^/Community/Log/2013/CloudBioLinuxCloudManQuickStart/?$ https://galaxyproject.org/blog/2013-07-cloud-bio-linux-cloudman-quick-start;
+        rewrite ^/Community/Log/2013/Example/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2013/GenomeDownloadIndexingWithGalaxyRsyncServers/?$ https://galaxyproject.org/blog/2013-02-genome-download-indexing-with-galaxy-rsync-servers;
+        rewrite ^/Community/Log/2013/IFBToolIntegrationShortTutorial/?$ https://galaxyproject.org/blog/2013-12-tool-integration-short-tutorial;
+        rewrite ^/Community/Log/2013/IGVIntegration/?$ https://galaxyproject.org/blog/2013-10-igv-integration;
+        rewrite ^/Community/Log/2013/LaunchCustomizedmodENCODEGalaxyOnAWS/?$ https://galaxyproject.org/blog/2013-01-launch-customizedmod-encode-galaxy-on-aws;
+        rewrite ^/Community/Log/2013/RScriptTool/?$ https://galaxyproject.org/blog/2013-05-rscript-tool;
+        rewrite ^/Community/Log/2013/SharingWorkflowsBetweenLabsPractices/?$ https://galaxyproject.org/blog/2013-10-sharing-workflows-between-servers;
+        rewrite ^/Community/Log/2013/URGIVirtualisation/?$ https://galaxyproject.org/blog/2013-04-urgi-virtualisation;
+        rewrite ^/Community/Log/2013/UsingBioServicesWithGalaxy/?$ https://galaxyproject.org/blog/2013-10-using-bio-services-with-galaxy;
+        rewrite ^/Community/Log/2013/workflow-to-galaxyTaverna2myExperimentWorkflowToGalaxyTool/?$ https://galaxyproject.org/blog/2013-01-taverna-2-workflow;
+        rewrite ^/Community/Log/2014/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2014/BasicGalaxyPuppetModule/?$ https://galaxyproject.org/blog/2014-03-basic-galaxy-puppet-module;
+        rewrite ^/Community/Log/2014/GalaxyOnBioLinux8/?$ https://galaxyproject.org/blog/2014-09-overview-of-galaxy-on-bio-linux-8;
+        rewrite ^/Community/Log/2014/LDAPRemoteUserLogout/?$ https://galaxyproject.org/blog/2014-01-ldap-remote-user-logout;
+        rewrite ^/Community/Log/2014/ToolShedWithHttpsAndLDAP/?$ https://galaxyproject.org/blog/2014-06-toolshed-with-https-and-ldap;
+        rewrite ^/Community/Log/2015/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2015/BioJS2Galaxy/?$ https://galaxyproject.org/blog/2015-07-biojs2galaxy;
+        rewrite ^/Community/Log/2015/GalaxyIrodsConnection/?$ https://galaxyproject.org/blog/2015-12-galaxy-irods-connection;
+        rewrite ^/Community/Log/2015/GalaxySlots/?$ https://galaxyproject.org/blog/2015-04-galaxy-slots;
+        rewrite ^/Community/Log/2015/HowGalaxyResolveDependenciesOrNot/?$ https://galaxyproject.org/blog/2015-10-how-galaxy-resolves-dependencies-or-not;
+        rewrite ^/Community/Log/2015/InstalandoServidorGalaxy/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2015/InstallingANNOVAR/?$ https://galaxyproject.org/blog/2015-03-installing-annovar;
+        rewrite ^/Community/Log/2015/IntegratingJavaWithGalaxy/?$ https://galaxyproject.org/blog/2015-02-integrate-java-programs;
+        rewrite ^/Community/Log/2015/MySQL2PostgreSQL/?$ https://galaxyproject.org/blog/2015-07-mysql-2-postgresql;
+        rewrite ^/Community/Log/2015/ProFTPdAndPBKDF2/?$ https://galaxyproject.org/blog/2015-02-proftpd-and-pbkdf2;
+        rewrite ^/Community/Log/2015/ReportsViaNginx/?$ https://galaxyproject.org/blog/2015-06-reports-via-nginx;
+        rewrite ^/Community/Log/2015/ToolGeneratingDatasets/?$ https://galaxyproject.org/blog/2015-10-tool-generating-datasets;
+        rewrite ^/Community/Log/2016/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Log/2016/MovingDataBetweenGalaxies/?$ https://galaxyproject.org/blog/2016-07-moving-data-between-galaxy-instances;
+        rewrite ^/Community/Log/2016/RunningJobsOutsideContainer/?$ https://galaxyproject.org/blog/2016-06-running-jobs-outside-container;
+        rewrite ^/Community/Log/2016/TorqueOnAWS/?$ https://galaxyproject.org/blog/2016-03-torque-on-aws;
+        rewrite ^/Community/Logs/?$ https://galaxyproject.org/blog;
+        rewrite ^/Community/Logs/LogWikiHelp/?$ https://galaxyproject.org/blog;
         rewrite ^/Community/Members/?$ https://galaxyproject.org/community/members;
         rewrite ^/Community/NBIC/?$ https://galaxyproject.org/community/nbic;
         rewrite ^/Community/Penn\ State/?$ https://galaxyproject.org/community/penn-state;
