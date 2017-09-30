@@ -23,6 +23,8 @@ westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
 n4.galaxyproject.org
 n6.galaxyproject.org
+n7.galaxyproject.org
+n8.galaxyproject.org
 mjolnir0.galaxyproject.org
 duvel.galaxyproject.org
 
@@ -148,6 +150,8 @@ leeroy.galaxyproject.org
 [jenkinsslaves]
 n4.galaxyproject.org
 n6.galaxyproject.org
+n7.galaxyproject.org
+n8.galaxyproject.org
 
 [biostarservers]
 biostar.usegalaxy.org
