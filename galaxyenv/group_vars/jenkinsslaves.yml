@@ -26,7 +26,7 @@ directories:
     owner: jenkins
     group: jenkins
 
-group_files:
+jenkinsslaves_group_files:
   - src: files/jenkins/jenkins_slave_user_ssh_config
     dest: ~jenkins/.ssh/config
     owner: jenkins
