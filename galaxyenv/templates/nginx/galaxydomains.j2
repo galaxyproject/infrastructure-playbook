@@ -13,8 +13,8 @@ server {
     listen       *:80;
     server_name  galaxy.psu.edu;
 
-    rewrite (?i)^/dev2010/?$ https://galaxyproject.org/events/gdc2010/;
-    rewrite (?i)^/gcc2011/?$ https://galaxyproject.org/events/gcc2011/;
+    rewrite (?i)^/dev2010/?$ https://galaxyproject.org/dev2010/;
+    rewrite (?i)^/gcc2011/?$ https://galaxyproject.org/gcc2011/;
     return 302 http://galaxyproject.org;
 }
 

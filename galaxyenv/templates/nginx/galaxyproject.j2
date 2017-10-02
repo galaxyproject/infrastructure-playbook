@@ -23,24 +23,30 @@ server {
     error_page  404      /page-not-found/;
     error_page  403 =404 /page-not-found/;
 
+    # old static conference pages
+    rewrite (?i)^/(dev2010|gcc2011)$ /$1/;
+    location ~ (?i)^/(dev2010|gcc2011)/(.*) {
+        alias /srv/nginx/galaxyproject.org/alias/$1/$2;
+    }
+
     # former wiki redirects
-    rewrite     ^/wiki(.*)          https://moin.galaxyproject.org$1;
-    rewrite     (?i)^/GCC2012.*     /events/gcc2012;
-    rewrite     (?i)^/GCC2013.*     /events/gcc2013;
-    rewrite     (?i)^/GCC2014.*     /events/gcc2014;
-    rewrite     (?i)^/gat2016.*     /events/admin-training2016;
+    rewrite ^/wiki(.*)          https://moin.galaxyproject.org$1;
+    rewrite (?i)^/GCC2012.*     /events/gcc2012;
+    rewrite (?i)^/GCC2013.*     /events/gcc2013;
+    rewrite (?i)^/GCC2014.*     /events/gcc2014;
+    rewrite (?i)^/gat2016.*     /events/admin-training2016;
 
     # combined search redirects
-    rewrite     (?i)^/search/getgalaxy.*        /search;
-    rewrite     (?i)^/search/mailinglists.*     /search;
-    rewrite     (?i)^/search/usegalaxy.*        /search;
-    rewrite     (?i)^/search/web.*              /search;
+    rewrite (?i)^/search/getgalaxy.*        /search;
+    rewrite (?i)^/search/mailinglists.*     /search;
+    rewrite (?i)^/search/usegalaxy.*        /search;
+    rewrite (?i)^/search/web.*              /search;
 
     # external redirects
-    rewrite     ^/bushman.*         https://usegalaxy.org/bushman;
-    rewrite     (?i)^/GCC2015.*     http://gcc2015.tsl.ac.uk/;
-    rewrite     (?i)^/GCC2016.*     https://gcc2016.iu.edu/;
-    rewrite     (?i)^/trello.*      https://github.com/galaxyproject/galaxy/issues/;
+    rewrite ^/bushman.*         https://usegalaxy.org/bushman;
+    rewrite (?i)^/GCC2015.*     http://gcc2015.tsl.ac.uk/;
+    rewrite (?i)^/GCC2016.*     https://gcc2016.iu.edu/;
+    rewrite (?i)^/trello.*      https://github.com/galaxyproject/galaxy/issues/;
 
     # internal redirects
     rewrite ^/learn/api/?$ /develop/api;
