@@ -1,0 +1,13 @@
+---
+
+swarm_ssh_key: "{{ vault_swarm_ssh_key }}"
+
+ansible_user: centos
+ansible_ssh_private_key_file: swarm_kp.pem
+base_name: galaxy-docker-20171003
+volume_size: 16
+flavor: m1.tiny
+key_name: swarm_kp
+nics: net-name=usegalaxy
+security_groups: default
+auto_ip: no

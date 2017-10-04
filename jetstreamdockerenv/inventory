@@ -4,8 +4,9 @@ baseinstances
 
 [baseinstances]
 iu-docker-base cloud_id=jetstream_iu
-tacc-docker-base cloud_id=jetstream_tacc
+#tacc-docker-base cloud_id=jetstream_tacc
 
 [imageinstances]
+#[instances]
 iu-galaxy-docker-image cloud_id=jetstream_iu
-tacc-galaxy-docker-image cloud_id=jetstream_tacc
+#tacc-galaxy-docker-image cloud_id=jetstream_tacc

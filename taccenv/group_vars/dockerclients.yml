@@ -1,0 +1,11 @@
+---
+
+docker_ssl_certs:
+  - name: client
+    ca: docker_test
+    paths:
+      - cert: .docker/cert.pem
+        key: .docker/key.pem
+        ca_cert: .docker/ca.pem
+    users:
+      - "{{ galaxy_user }}"

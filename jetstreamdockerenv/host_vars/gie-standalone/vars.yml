@@ -1,0 +1,28 @@
+---
+
+docker_ssl_ca_passphrase: "{{ vault_docker_ssl_ca_passphrase }}"
+
+docker_ssl_certs:
+  - name: server
+    ca: docker_test
+    per_host: yes
+    owner: root
+    group: root
+    paths:
+      - cert: /etc/docker/server-cert.pem
+        key: /etc/docker/server-key.pem
+        ca_cert: /etc/docker/ca.pem
+  - name: client
+    ca: docker_test
+    paths:
+      - cert: .docker/cert.pem
+        key: .docker/key.pem
+        ca_cert: .docker/ca.pem
+    users:
+      - centos
+
+auto_ip: yes
+security_groups: default,docker,usegalaxy-control
+
+docker_ssl_users:
+  - centos

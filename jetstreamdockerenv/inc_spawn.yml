@@ -40,12 +40,20 @@
         volume_dev: "{{ spawned_out.server.volumes[0].device }}"
         floating_ip: "{{ spawned_out.server.public_v4 }}"
       delegate_to: localhost
+    - name: Print spawned instance IPs
+      debug:
+        var: "{{ item }}"
+      with_items:
+        - ansible_host
+        - floating_ip
     - name: Spin waiting for instance to become accessible
       command: >
         ssh -o BatchMode=yes -o UserKnownHostsFile=/dev/null
         -o StrictHostKeyChecking=no -o ConnectTimeout=10
         {{ ansible_ssh_common_args }}
         {{ ansible_user }}@{{ ansible_host }} /bin/true
+      args:
+        chdir: "{{ inventory_dir }}/.."
       register: alive
       until: alive | success
       retries: 60

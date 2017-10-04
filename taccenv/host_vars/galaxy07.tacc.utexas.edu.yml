@@ -8,6 +8,3 @@ mounts:
   - src: /dev/sdb
     path: /var/lib/pgsql
     fstype: xfs
-
-docker_ssl_client_users:
-  - g2test

@@ -1,11 +1,12 @@
 Host 10.*
     UserKnownHostsFile /dev/null
     StrictHostKeyChecking no
-    ProxyCommand ssh -W %h:%p -l centos jetstream-iu0.galaxyproject.org
+    ProxyCommand ssh -W %h:%p -F jetstreamdockerenv/ssh_config.jetstream_iu jetstream-iu0.galaxyproject.org
 
 # FIXME: User docker
 Host jetstream-iu0.galaxyproject.org
-    User centos
+    User swarm
+    IdentityFile jetstreamdockerenv/swarm_kp.pem
     ControlMaster auto
     ControlPath ~/.ssh/ansible-%r@%h:%p
     ControlPersist 5m

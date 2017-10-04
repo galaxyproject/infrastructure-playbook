@@ -50,10 +50,6 @@ galaxy06.tacc.utexas.edu
 galaxynodes
 galaxyservers
 
-[dockersslclients]
-[dockersslclients:children]
-dockerclients
-
 [dockerclients]
 galaxy07.tacc.utexas.edu
 galaxy-web-05.tacc.utexas.edu

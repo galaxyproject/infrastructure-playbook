@@ -10,13 +10,20 @@
   include: install_debian.yml
   when: docker_install and ansible_os_family == "Debian"
 
-- name: Include SSL server configuration tasks
-  include: ssl-server.yml
-  when: "'dockersslservers' in group_names"
+- name: Include SSL role to create/distribute SSL certs
+  include_role:
+    name: ssl
+  vars:
+    ssl_role_certs: "{{ docker_ssl_certs }}"
+  when: docker_ssl_certs is defined
+  notify:
+    - restart docker
 
-- name: Include SSL client configuration tasks
-  include: ssl-client.yml
-  when: docker_ssl_client_users is defined
+- name: Set docker daemon options for SSL
+  set_fact:
+    docker_daemon_option_list: "{{ docker_daemon_option_list }} + [ '--tlsverify --tlscacert=/etc/docker/ca.pem --tlscert=/etc/docker/server-cert.pem --tlskey=/etc/docker/server-key.pem' ]"
+    docker_daemon_listen_network: "{{ docker_daemon_listen_network | default('tcp://0.0.0.0:2376') }}"
+  when: "'dockersslservers' in group_names"
 
 - name: Set docker daemon startup options for network listening
   set_fact:

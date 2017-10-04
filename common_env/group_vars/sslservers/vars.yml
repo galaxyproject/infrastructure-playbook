@@ -27,6 +27,23 @@ ssl_cas:
           common_name: "{{ inventory_hostname }}"
         ext:
           extendedKeyUsage: clientAuth
+  docker_test:
+    dn:
+      <<: *dn_defaults
+      common_name: Test Galaxy Docker CA Root
+    certs:
+      server:
+        dn:
+          <<: *dn_defaults
+          common_name: "{{ inventory_hostname }}"
+        ext:
+          subjectAltName: "DNS:{{ inventory_hostname }},IP:{{ ansible_default_ipv4.address }}{{ ',IP:' + floating_ip | default('') if floating_ip is defined else '' }}"
+      client:
+        dn:
+          <<: *dn_defaults
+          common_name: "{{ inventory_hostname }}"
+        ext:
+          extendedKeyUsage: clientAuth
   rabbitmq:
     dn:
       <<: *dn_defaults
