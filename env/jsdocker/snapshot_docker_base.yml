@@ -9,12 +9,12 @@
         key: instances
 
 - name: Include clouds.yaml play
-  include: inc_clouds_yaml.yml
+  include: _inc_clouds_yaml.yml
 
 - block:
 
     - name: Include spawn play
-      include: inc_spawn.yml
+      include: _inc_spawn.yml
 
     - name: Configure instance(s)
       hosts: baseinstances
@@ -98,7 +98,7 @@
             state: touch
 
     - name: Include delete play
-      include: inc_delete.yml
+      include: _inc_delete.yml
 
   always:
 
