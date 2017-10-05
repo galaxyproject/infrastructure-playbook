@@ -2,7 +2,7 @@
 
 docker_ssl_certs:
   - name: client
-    ca: docker_test
+    ca: docker
     paths:
       - cert: .docker/cert.pem
         key: .docker/key.pem
