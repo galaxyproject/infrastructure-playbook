@@ -2,7 +2,7 @@
 
 image: "{{ base_name }}"
 
-volume_name: galaxy-gie-all-20171003
+volume_name: galaxy-gie-all-20171005
 image_names:
-  - quay.io/bgruening/docker-jupyter-notebook:b17.09
+  - quay.io/bgruening/docker-jupyter-notebook:17.09
   - shiltemann/ethercalc-galaxy-ie

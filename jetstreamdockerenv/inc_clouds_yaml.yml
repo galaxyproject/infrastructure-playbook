@@ -6,8 +6,6 @@
   hosts: instances
   connection: local
   become: false
-  vars_files:
-    - secret_group_vars/instances.yml
   tasks:
     - name: Write clouds.yaml
       copy:

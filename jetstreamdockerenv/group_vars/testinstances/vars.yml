@@ -23,6 +23,3 @@ docker_ssl_certs:
 
 auto_ip: yes
 security_groups: default,docker,usegalaxy-control
-
-docker_ssl_users:
-  - centos
