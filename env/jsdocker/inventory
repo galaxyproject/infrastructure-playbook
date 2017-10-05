@@ -12,5 +12,13 @@ iu-galaxy-docker-image cloud_id=jetstream_iu
 
 [testinstances]
 # the playbook will also place these in imageinstances and instances
-iu-gie-test cloud=jetstream_iu
-#tacc-gie-test cloud=jetstream_tacc
+iu-gie-test cloud_id=jetstream_iu
+#tacc-gie-test cloud_id=jetstream_tacc
+
+[sslservers]
+[sslservers:children]
+dockersslservers
+
+[dockersslservers]
+[dockersslservers:children]
+testinstances

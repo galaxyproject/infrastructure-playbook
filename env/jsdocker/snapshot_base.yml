@@ -11,18 +11,17 @@
 - name: Include clouds.yaml play
   include: _inc_clouds_yaml.yml
 
-- block:
+- name: Include spawn play
+  include: _inc_spawn.yml
 
-    - name: Include spawn play
-      include: _inc_spawn.yml
-
-    - name: Configure instance(s)
-      hosts: baseinstances
-      connection: ssh
-      become: yes
-      environment:
-        HISTFILE: null
-      pre_tasks:
+- name: Configure instance(s)
+  hosts: baseinstances
+  connection: ssh
+  become: yes
+  environment:
+    HISTFILE: null
+  pre_tasks:
+    - block:
         - name: Make filesystem for /var/lib/docker
           filesystem:
             dev: "{{ volume_dev }}"
@@ -33,9 +32,12 @@
             name: "/var/lib/docker"
             fstype: xfs
             state: mounted
-      roles:
-        - docker
-      post_tasks:
+      rescue:
+        - include: _inc_clean.yml
+  roles:
+    - docker
+  post_tasks:
+    - block:
         - name: Install qemu-guest-agent
           yum:
             name: qemu-guest-agent
@@ -96,16 +98,9 @@
           file:
             path: /.autorelabel
             state: touch
+      rescue:
+        - include: _inc_clean.yml
 
-    - name: Include delete play
-      include: _inc_delete.yml
-
-  always:
-
-    - name: Remove clouds.yaml and swarm_kp.pem
-      file:
-        path: "{{ inventory_dir }}/{{ item }}"
-        state: absent
-      with_items:
-        - "clouds.yaml"
-        - "swarm_kp.pem"
+# always cleans secrets
+- name: Include delete play
+  include: _inc_delete.yml
