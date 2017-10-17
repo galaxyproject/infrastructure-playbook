@@ -1,0 +1,34 @@
+---
+
+- name: Register systemd facts
+  set_fact:
+    systemd_resource_controls: >
+      {{ systemd_all_resource_controls | default([]) }}
+      + [{% for group_name in group_names %}{{ vars['systemd_' ~ group_name ~ '_group_resource_controls'] ~ ', ' if 'systemd_' ~ group_name ~ '_group_resource_controls' in vars else None }}{% endfor %}]
+      + {{ systemd_host_resource_controls | default([]) }}
+
+- name: "Create unit directory for services"
+  file:
+    path: "/etc/systemd/system/{{ item.name }}.{{ item.unit_type | default('service') | lower }}.d"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  with_flattened:
+    # we'd potentially have more lists here in the future
+    - "{{ systemd_resource_controls }}"
+  notify:
+    - reload systemd
+
+- name: "Create unit files for resource controlled units"
+  template:
+    src: resource_controls.conf.j2
+    dest: "/etc/systemd/system/{{ item.name }}.{{ item.unit_type | default('service') | lower }}.d/resource_controls.conf"
+    owner: root
+    group: root
+    mode: "0444"
+  with_items: "{{ systemd_resource_controls }}"
+  register: systemd_service_changes
+  notify:
+    - reload systemd
+    - restart changed systemd services
