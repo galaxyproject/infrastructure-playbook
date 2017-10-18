@@ -44,6 +44,21 @@ directories:
     owner: "{{ galaxy_user }}"
     group: G-803372
 
+group_files:
+  - src: files/monitoring/mailoom.py
+    dest: /root/mailoom.py
+    owner: root
+    group: root
+
+group_crontabs:
+  - id: mail_oom_killer
+    name: Mail OOM Killer log messages
+    user: root
+    minute: "0"
+    hour: "8-16"
+    weekday: "1-6"
+    job: "/usr/bin/python /root/mailoom.py --oom --mail galaxy-lab@lists.galaxyproject.org --mail naganate@gmail.com"
+
 # node, npm for GIE proxy
 group_packages:
   - nodejs
