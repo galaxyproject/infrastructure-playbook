@@ -92,4 +92,4 @@ crontabs:
     name: Biostar Backup
     user: zfsdump-biostar
     minute: 40
-    job: rsync -av --delete www@biostar.usegalaxy.org:/home/www/data/ /zones/westvleteren/backup/biostar/data && /usr/sbin/zfs snapshot zones/westvleteren/backup/biostar/data@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+    job: rsync -a --delete www@biostar.usegalaxy.org:/home/www/data/ /zones/westvleteren/backup/biostar/data && /usr/sbin/zfs snapshot zones/westvleteren/backup/biostar/data@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
