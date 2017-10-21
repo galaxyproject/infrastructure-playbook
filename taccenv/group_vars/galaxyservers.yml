@@ -55,7 +55,7 @@ group_crontabs:
     name: Mail OOM Killer log messages
     user: root
     minute: "0"
-    hour: "8-16"
+    hour: "8,12,16"
     weekday: "1-5"
     job: "/usr/bin/python /root/mailoom.py --oom --mail galaxy-lab@lists.galaxyproject.org --mail naganate@gmail.com"
 
