@@ -26,10 +26,7 @@ server {
 
     location /patch {
         autoindex   off;
-    }
-
-    location ~ /patch/.*/ {
-        autoindex   on;
+        try_files   $uri =403;
     }
 
     location ~ /(.*\.ova) {
