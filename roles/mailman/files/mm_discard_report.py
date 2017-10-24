@@ -14,7 +14,7 @@ md = '%s ' % yesterday.strftime('%b %d')
 recmp = re.compile(' ([\w-]+) post from (.*) discarded: SpamAssassin score was ([[\d\.]+) ')
 
 out = {}
-for f in ( open('/var/log/mailman/vette.1'), open('/var/log/mailman/vette') ):
+for f in (open('/var/log/mailman/vette.1'), open('/var/log/mailman/vette')):
     for line in f:
         if not line.startswith(md):
             continue
@@ -26,9 +26,9 @@ for f in ( open('/var/log/mailman/vette.1'), open('/var/log/mailman/vette') ):
             if mlist not in out:
                 out[mlist] = {}
             if sender not in out[mlist]:
-                out[mlist][sender] = [ score ]
+                out[mlist][sender] = [score]
             else:
-                out[mlist][sender].append( [ score ] )
+                out[mlist][sender].append(score)
 
 if out:
     body = 'Auto-discard report\n'
