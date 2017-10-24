@@ -15,6 +15,7 @@ group_packages:
   - ntpdate
   - build-essential
   - curl
+  - pandoc
 
 group_users:
   - name: jenkins
