@@ -31,6 +31,23 @@ duvel.galaxyproject.org
 [baseenv:children]
 baseenv-nomail
 
+# For things that need access to common_sshkeys and env-specific sshkeys
+[sshservers]
+[sshservers:children]
+baseenv
+
+# For things that need access to env-specific sshprivatekeys
+[sshclients]
+orval.galaxyproject.org
+radegast.galaxyproject.org
+
+[sshclients:children]
+dockerswarmmanagers
+biostarservers
+jenkinsservers
+jenkinsslaves
+# FIXME: there should be a toolshedservers group
+
 [baseenv-nomail]
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-tacc0.galaxyproject.org

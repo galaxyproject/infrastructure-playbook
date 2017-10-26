@@ -1,0 +1,3 @@
+---
+
+sshkeys: "{{ common_sshkeys | combine(vault_sshkeys) }}"

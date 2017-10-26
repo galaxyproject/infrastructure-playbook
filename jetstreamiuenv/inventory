@@ -8,6 +8,10 @@ jetstream-iu0.galaxyproject.org
 [baseenv:children]
 galaxynodes
 
+[sshservers]
+[sshservers:children]
+baseenv
+
 # "contoller" node(s) for this cloud (not necessarily a slurm controller)
 [controllers]
 jetstream-iu0.galaxyproject.org

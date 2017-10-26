@@ -37,6 +37,11 @@ galaxy-web-06.tacc.utexas.edu
 galaxyservers
 galaxynodes
 
+# things that need access to common_sshkeys and env-specific sshkeys
+[sshservers]
+[sshservers:children]
+baseenv
+
 [webservers]
 # note: Galaxy webservers are managed in usegalaxy-playbook
 galaxy04.tacc.utexas.edu
