@@ -1,0 +1,3 @@
+---
+
+docker_ssl_ca_passphrase: "{{ vault_docker_ssl_ca_passphrase }}"

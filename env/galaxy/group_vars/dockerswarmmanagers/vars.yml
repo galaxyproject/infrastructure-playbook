@@ -1,0 +1,5 @@
+---
+
+dockerswarmmanagers_group_users: "{{ vault_dockerswarmmanagers_group_users }}"
+dockerswarmmanagers_group_authorized_key_users: "{{ vault_dockerswarmmanagers_group_authorized_key_users }}"
+dockerswarmmanagers_group_private_key_users: "{{ vault_dockerswarmmanagers_group_private_key_users }}"
