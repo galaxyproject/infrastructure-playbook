@@ -1,7 +1,5 @@
 ---
 
-deploy_env: galaxyenv
-
 # for the resolv role
 resolv_nameservers:
   - 128.118.250.8
