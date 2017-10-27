@@ -48,6 +48,11 @@ jenkinsservers
 jenkinsslaves
 # FIXME: there should be a toolshedservers group
 
+# For things that need access to sslkeys
+[sslservers]
+[sslservers:children]
+webservers
+
 [baseenv-nomail]
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-tacc0.galaxyproject.org

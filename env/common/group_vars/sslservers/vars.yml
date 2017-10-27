@@ -1,6 +1,7 @@
 ---
 
 ssl_vault_pass: "{{ vault_ssl_vault_pass }}"
+sslkeys: "{{ vault_sslkeys }}"
 
 ssl_dn_defaults: &dn_defaults
   country: US
