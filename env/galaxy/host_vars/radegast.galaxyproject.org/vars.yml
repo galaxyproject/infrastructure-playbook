@@ -1,0 +1,3 @@
+---
+
+host_private_key_users: "{{ vault_host_private_key_users }}"

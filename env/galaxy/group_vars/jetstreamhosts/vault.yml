@@ -1,0 +1,9 @@
+---
+
+vault_jetstreamhosts_group_authorized_key_users:
+  - name: centos
+    authorized:
+      - cathy_riemer
+      - dannon_baker
+      - nate_coraor
+      - richard_burhans

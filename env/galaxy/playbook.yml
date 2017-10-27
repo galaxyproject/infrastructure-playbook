@@ -46,6 +46,13 @@
       when: "'listservers' in group_names"
   tags: initial,baseenv
 
+- name: Set up authentication keys for non-baseenv hosts
+  hosts: authkeyhosts
+  remote_user: root
+  roles:
+    - users
+  tags: users
+
 # This is sort of ugly - we don't want to use the galaxyenv basenv for
 # jetstream controllers because they are controlled in the jetstream envs. All
 # this is used for currently is setting up the `swarm` system user.
