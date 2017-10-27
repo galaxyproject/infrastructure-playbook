@@ -11,25 +11,6 @@
 - name: Tasks for "base environment" hosts
   hosts: baseenv
   remote_user: root
-  vars_files:
-    - "secret_group_vars/all.yml"
-    - [ "secret_host_vars/{{ inventory_hostname }}.yml", "secret_host_vars/default.yml" ]
-  pre_tasks:
-    - name: Locate secret group variable files
-      local_action:
-        module: stat
-        path: "{{ inventory_dir }}/secret_group_vars/{{ item }}.yml"
-      become: no
-      with_items: "{{ group_names }}"
-      register: secret_group_vars
-      tags: always
-    - name: Include secret group variables
-      local_action:
-        module: "include_vars {{ item.stat.path }}"
-      become: no
-      with_items: "{{ secret_group_vars.results }}"
-      when: item.stat.exists
-      tags: always
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: initial,requiretty
@@ -71,9 +52,6 @@
 - name: Initial setup for docker swarm managers
   hosts: dockerswarmmanagers
   remote_user: root
-  vars_files:
-    - secret_group_vars/all.yml
-    - secret_group_vars/dockerswarmmanagers.yml
   roles:
     - role: users
       tags: users
@@ -83,9 +61,6 @@
 - name: Tasks for "lite environment" hosts (Kerberos/LDAP/NFS, no AFS)
   hosts: liteenv
   remote_user: root
-  vars_files:
-    - "secret_group_vars/all.yml"
-    - [ "secret_host_vars/{{ inventory_hostname }}.yml", "secret_host_vars/default.yml" ]
   roles:
     - role: kerberos
       tags: kerberos
@@ -102,8 +77,6 @@
 - name: Tasks for webservers
   hosts: webservers
   remote_user: root
-  vars_files:
-    - "secret_group_vars/sslwebservers.yml"
   roles:
     - role: galaxyprojectdotorg.nginx
       tags: nginx
@@ -126,9 +99,6 @@
 
 - name: Tasks for biostar hosts
   hosts: biostarservers
-  vars_files:
-    - "secret_group_vars/all.yml"
-    - [ "secret_host_vars/{{ inventory_hostname }}.yml", "secret_host_vars/default.yml" ]
   roles:
     - role: users
       tags: system,users
@@ -155,8 +125,6 @@
 
 - name: Tasks for CVMFS Servers
   hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies
-  vars_files:
-    - [ "secret_host_vars/{{ inventory_hostname }}.yml", "secret_host_vars/default.yml" ]
   roles:
     # mounts /srv
     - role: paths
