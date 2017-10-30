@@ -1,0 +1,52 @@
+---
+# Assumes a preexisting Kerberos infrastructure that you are adding a KDC to
+# Get a kadmin/admin ticket before running if adding a new KDC (e.g. `kinit -S kadmin/admin`)
+
+# in case we want to implement EL support
+- name: Include OS vars
+  include_vars:
+    file: "{{ ansible_os_family | lower }}.yml"
+
+# in case we want to implement MIT KDC support
+- name: Include Kerberos implementation vars
+  include_vars:
+    file: "{{ kerberos_kdc_implementation | lower }}.yml"
+
+- name: Include OS tasks
+  include: "{{ ansible_os_family | lower }}.yml"
+
+- name: Install kdc.conf
+  template:
+    src: kdc.conf.j2
+    dest: "{{ kerberos_kdc_config_dir }}/kdc.conf"
+    mode: "0444"
+    backup: yes
+  notify:
+    - restart kdc
+
+# TODO: what's the replacement?
+#- name: Install heimdal-kdc defaults
+#  template:
+#    src: default-heimdal-kdc.j2
+#    dest: /etc/default/heimdal-kdc
+#    backup: yes
+#  notify:
+#    - restart heimdal-kdc
+
+# MIT and Heimdal appear to use the same format
+- name: Install kadmind ACL file
+  template:
+    src: kadmind.acl.j2
+    dest: "{{ kerberos_kdc_kadmind_acl_file }}"
+    mode: "0444"
+    backup: yes
+  when: "'kerberosmasterservers' in group_names and kerberos_kdc_admin_principals is defined"
+
+- name: Include Kerberos implementation tasks
+  include: "{{ kerberos_kdc_implementation | lower }}.yml"
+
+- name: Ensure KDC is enabled and running
+  service:
+    name: "{{ kerberos_kdc_service_name }}"
+    state: started
+    enabled: yes

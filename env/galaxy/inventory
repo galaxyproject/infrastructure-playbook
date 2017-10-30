@@ -106,6 +106,17 @@ jetstream-tacc0.galaxyproject.org
 jetstreamhosts
 
 ##
+## Core infrastructure service groupings
+##
+
+[kerberosservers]
+[kerberosservers:children]
+infrastructure
+
+[kerberosmasterservers]
+duvel.galaxyproject.org
+
+##
 ## Application groupings
 ##
 

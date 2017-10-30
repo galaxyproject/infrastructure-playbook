@@ -1,0 +1,25 @@
+##
+## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+##
+
+[libdefaults]
+    default_realm = {{ kerberos_realm }}
+    ticket_lifetime = 14d
+    renew_lifetime = 30d
+
+[domain_realm]
+    .{{ kerberos_domain }} = {{ kerberos_realm }}
+    {{ kerberos_domain }} = {{ kerberos_realm }}
+
+[kdc]
+    database = {
+        realm = {{ kerberos_realm }}
+        dbname = "{{ kerberos_kdc_dbname }}"
+        acl_file = {{ kerberos_kdc_kadmind_acl_file }}
+    }
+
+[kadmin]
+    default_keys = aes256-cts-hmac-sha1-96:pw-salt arcfour-hmac-md5:pw-salt des3-cbc-sha1:pw-salt
+
+[logging]
+    kdc = "{{ kerberos_kdc_log }}"

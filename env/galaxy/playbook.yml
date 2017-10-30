@@ -98,6 +98,14 @@
       tags: nfs
   tags: liteenv
 
+- name: Tasks for infrastructure servers
+  hosts: kerberosservers
+  remote_user: root
+  roles:
+    - name: kerberos_kdc
+      tags: kerberos_kdc,kerberos
+  tags: infrastructure
+
 - name: Tasks for webservers
   hosts: webservers
   remote_user: root

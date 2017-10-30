@@ -1,0 +1,6 @@
+---
+
+- name: restart kdc
+  service:
+    name: "{{ kerberos_kdc_service_name }}"
+    state: "restarted"

@@ -1,0 +1,4 @@
+---
+
+kerberos_kdc_implementation: "heimdal"
+kerberos_kdc_krb5_conf_dest: "/etc/krb5.conf"

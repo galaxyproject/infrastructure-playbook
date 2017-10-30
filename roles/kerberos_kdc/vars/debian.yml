@@ -1,0 +1,26 @@
+---
+
+## Heimdal definitions
+
+# heimdal-kdc lists either openbsd-inetd or inet-superserver as a dependency, we need to know which we're getting so we can start/enable the service
+kerberos_kdc_heimdal_packages:
+  - "heimdal-kdc"
+  - "{{ kerberos_kdc_heimdal_inetd_service_name }}"
+
+kerberos_kdc_heimdal_debconf_options:
+  - name: "heimdal-kdc"
+    question: "heimdal/realm"
+    value: "{{ kerberos_realm }}"
+    vtype: "string"
+
+kerberos_kdc_heimdal_service_name: "heimdal-kdc"
+kerberos_kdc_heimdal_inetd_service_name: "openbsd-inetd"
+
+kerberos_kdc_heimdal_config_dir: "/etc/heimdal-kdc"
+kerberos_kdc_heimdal_state_dir: "/var/lib/heimdal-kdc"
+kerberos_kdc_heimdal_kadmind_acl_file: "{{ kerberos_kdc_heimdal_config_dir }}/kadmind.acl"
+kerberos_kdc_heimdal_slaves_file: "{{ kerberos_kdc_heimdal_state_dir }}/slaves"
+kerberos_kdc_heimdal_dbname: "{{ kerberos_kdc_heimdal_state_dir }}/heimdal"
+kerberos_kdc_heimdal_log: "FILE:/var/log/heimdal-kdc.log"
+
+## MIT would go down here

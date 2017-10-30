@@ -1,0 +1,21 @@
+---
+
+- name: Create/extract iprop keytab
+  command: ktutil -k {{ kerberos_kdc_config_dir }}/iprop.keytab get iprop/{{ ansible_fqdn }}
+  args:
+    creates: "{{ kerberos_kdc_config_dir }}/iprop.keytab"
+
+- name: Install iprop slaves file
+  template:
+    src: slaves.j2
+    dest: "{{ kerberos_kdc_slaves_file }}"
+    mode: "0444"
+    backup: yes
+  when: "'kerberosmasterservers' in group_names"
+
+- name: Ensure inetd is running (for kadmind)
+  service:
+    name: "{{ kerberos_kdc_inetd_service_name }}"
+    state: "started"
+    enabled: yes
+  when: "'kerberosmasterservers' in group_names"

@@ -1,0 +1,16 @@
+---
+
+- name: Set debconf options
+  debconf:
+    name: "{{ item.name }}"
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.vtype }}"
+  with_items: "{{ kerberos_kdc_debconf_options | default([]) }}"
+
+# ktutil -k /etc/heimdal-kdc/iprop.keytab get iprop/`hostname -f`
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+  with_items: "{{ kerberos_kdc_packages }}"

@@ -1,0 +1,5 @@
+---
+
+dependencies:
+  - role: kerberos
+    kerberos_implementation: "{{ kerberos_kdc_implementation }}"
