@@ -65,6 +65,23 @@
   tags: initial
 
 # This play is currently Debuntu-only
+- name: Tasks for "full environment" hosts (Kerberos/LDAP/NFS/AFS)
+  hosts: fullenv
+  remote_user: root
+  roles:
+    - role: kerberos
+      tags: kerberos
+    # Run the ssh role again here because doing so with the liteenv group will
+    # enable GSSAPIAuthentication
+    - role: ssh
+      tags: ssh
+    - role: ldap
+      tags: ldap
+    - role: nfs
+      tags: nfs
+  tags: baseenv
+
+# This play is currently Debuntu-only
 - name: Tasks for "lite environment" hosts (Kerberos/LDAP/NFS, no AFS)
   hosts: liteenv
   remote_user: root

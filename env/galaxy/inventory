@@ -69,6 +69,11 @@ cvmfs1-psu0.galaxyproject.org
 mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
 
+# These get everything in liteenv + AFS
+[fullenv]
+[fullenv:children]
+infrastructure
+
 ##
 ## Host groupings
 ##
