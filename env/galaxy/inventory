@@ -1,8 +1,12 @@
+##
 ## Variables
+##
+
+# TODO: now that so many features are enabled/disabled just based on group inclusion, it should be documented in the inventory exactly what each group membership enables
 
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
-biostar.usegalaxy.org ansible_ssh_user=www
+biostar.usegalaxy.org ansible_user=www
 jetstream-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 jetstream-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-tacc0.galaxyproject.org ansible_user=root
@@ -11,8 +15,8 @@ cvmfs1-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 
-## These get all the common roles
-
+# These get all the common roles. Additionally:
+# - common authorized_keys for root
 [baseenv]
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
@@ -65,7 +69,9 @@ cvmfs1-psu0.galaxyproject.org
 mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
 
+##
 ## Host groupings
+##
 
 [infrastructure]
 delirium.galaxyproject.org
@@ -83,9 +89,22 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 athena.galaxyproject.org
 
-## Application groupings
+# - authorized keys for non-root admin user
+[jetstreamhosts]
+cvmfs1-iu0.galaxyproject.org
+cvmfs1-tacc0.galaxyproject.org
+jetstream-iu0.galaxyproject.org
+jetstream-tacc0.galaxyproject.org
 
-# Mail
+[authkeyhosts]
+[authkeyhosts:children]
+jetstreamhosts
+
+##
+## Application groupings
+##
+
+## Mail
 
 [mailservers]
 [mailservers:children]
@@ -101,7 +120,7 @@ delirium.galaxyproject.org
 [listservers]
 delirium.galaxyproject.org
 
-# Web
+## Web
 
 [webservers]
 orval.galaxyproject.org
@@ -110,28 +129,35 @@ chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 
-# Kerberos
+## Kerberos
 
 [kerberosauthclients]
 
 [kerberosauthclients:children]
 liteenv
 
-# LDAP
+## LDAP
 
 [ldapnssclients]
 
 [ldapnssclients:children]
 liteenv
 
-# NFS
+## NFS
 
 [nfsldapclients]
 
 [nfsldapclients:children]
 liteenv
 
-# CVMFS
+## CVMFS
+
+# - authorized keys for CVMFS repo owners
+[cvmfsservers]
+[cvmfsservers:children]
+cvmfsstratum0servers
+cvmfsstratum1servers
+
 [cvmfsstratum0servers]
 cvmfs0-tacc0.galaxyproject.org
 # FIXME: add to baseenv?
