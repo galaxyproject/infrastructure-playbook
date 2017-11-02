@@ -1,0 +1,26 @@
+//
+// This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+//
+
+{% for view in dns_bind_views %}
+/* "{{ view.name }}" view */
+view "{{ view.name }}" {
+    {% if 'match_clients' in view %}
+    match_clients { "{{ view.match_clients | join('"; "') }}"; };
+    {% endif %}
+    {{ 'recursion yes;' if view.recursion is defined and view.recursion else '' }}
+
+    /* includes */
+    {% for include in view.includes | default([]) %}
+    include "{{ include }}";
+    {% endfor %}
+
+    /* zones */
+    {% for zone in view.zones | default([]) %}
+    zone "{{ zone.name | default(zone.file | basename | splitext | first) }}" {{ zone.class | default("IN") }} {
+        type "{{ zone.type | default("master") }}";
+        file "{{ bind_zones_dir }}/{{ zone.file }}";
+    };
+    {% endfor %}
+};
+{% endfor %}

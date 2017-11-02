@@ -1,0 +1,15 @@
+---
+
+dns_bind_config_dir: "/etc/localbind"
+dns_bind_zones_dir: "{{ dns_bind_config_dir }}/zones"
+dns_bind_directory: "/var/cache/bind"
+dns_bind_packages:
+  - bind9
+dns_bind_user: "bind"
+dns_bind_group: "bind"
+dns_bind_config_templates:
+  - src: named_views.conf
+    dest: named.conf.local
+  - src: named_options.conf
+    dest: named.conf.options
+dns_bind_service_name: "bind9"

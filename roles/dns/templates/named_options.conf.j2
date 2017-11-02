@@ -1,0 +1,57 @@
+//
+// This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+//
+
+/* ACLs */
+{% for acl in dns_bind_acls | default([]) %}
+acl "{{ acl.name }}" {
+    {% for addr in acl.addresses %}
+    {{ addr }};
+    {% endfor %}
+};
+{% endfor %}
+
+/* Options */
+options {
+    directory "{{ dns_bind_directory }}";
+    {% for pair in dns_bind_options %}
+    {% for key in pair %}
+    {{ key }} {% if pair[key] is not sequence %}{{ pair[key] }};{% else %} { 
+        {% for i in pair[key] %}
+        {{ i }};
+    }; 
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+};
+
+{% if dns_bind_control_inet_specs is defined %}
+/* Controls */
+controls {
+    {% for inet_spec in dns_bind_control_inet_specs %}
+    inet {{ inet_spec }};
+    {% endfor %}
+};
+{% endif %}
+
+{% if dns_bind_logging_channels is defined %}
+/* Logging */
+logging {
+    {% for channel in dns_bind_logging_channels %}
+    channel {{ channel.name }} {
+        {% for pair in channel.options %}
+        {% for key in pair %}
+        {{ key }} {{ pair[key] }};
+        {% endfor %}
+        {% endfor %}
+    };
+    {% endfor %}
+    {% for category in dns_bind_logging_categories | default([]) %}
+    category {{ category.name }} {
+        {% for channel in category.channels %}
+        {{ channel }};
+        {% endfor %}
+    };
+    {% endfor %}
+};
+{% endif %}

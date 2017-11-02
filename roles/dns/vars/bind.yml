@@ -1,0 +1,10 @@
+---
+
+dns_config_dir: "{{ dns_bind_config_dir }}"
+dns_zones_dir: "{{ dns_bind_zones_dir }}"
+dns_log_dir: "{{ dns_bind_log_dir }}"
+dns_user: "{{ dns_bind_user }}"
+dns_group: "{{ dns_bind_group }}"
+dns_packages: "{{ dns_bind_packages }}"
+dns_config_templates: "{{ dns_bind_config_templates }}"
+dns_service_name: "{{ dns_bind_service_name }}"

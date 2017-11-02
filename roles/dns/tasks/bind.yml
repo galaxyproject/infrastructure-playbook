@@ -1,0 +1,16 @@
+---
+
+- name: Create zones directory
+  file:
+    state: directory
+    dest: "{{ dns_zones_dir }}"
+    mode: "0755"
+
+- name: Disable inclusion of named.conf.default-zones
+  replace:
+    dest: "{{ dns_config_dir }}/named.conf"
+    regexp: '^(include "/etc/bind/named.conf.default-zones";)'
+    replace: '#\1'
+    backup: yes
+  notify:
+    - restart dns
