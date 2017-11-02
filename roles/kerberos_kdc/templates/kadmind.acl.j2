@@ -3,6 +3,6 @@
 ##
 
 #principal       [priv1,priv2,...]       [glob-pattern]
-{% for principal in kerberos_kdc_admin_principals %}
-{{ principal }} all
+{% for d in kerberos_kdc_admin_principals %}
+{{ d.principal }} {{ d.rights | default(["all"]) | join(",") }} {{ d.restrict | default("") }}
 {% endfor %}

@@ -1,0 +1,3 @@
+{% for hostname in groups.kerberosservers %}
+iprop/{{ hostname }}@{{ kerberos_kdc_realm }}
+{% endfor %}

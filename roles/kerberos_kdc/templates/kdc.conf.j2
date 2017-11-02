@@ -3,17 +3,17 @@
 ##
 
 [libdefaults]
-    default_realm = {{ kerberos_realm }}
+    default_realm = {{ kerberos_kdc_realm }}
     ticket_lifetime = 14d
     renew_lifetime = 30d
 
 [domain_realm]
-    .{{ kerberos_domain }} = {{ kerberos_realm }}
-    {{ kerberos_domain }} = {{ kerberos_realm }}
+    .{{ kerberos_kdc_domain }} = {{ kerberos_kdc_realm }}
+    {{ kerberos_kdc_domain }} = {{ kerberos_kdc_realm }}
 
 [kdc]
     database = {
-        realm = {{ kerberos_realm }}
+        realm = {{ kerberos_kdc_realm }}
         dbname = "{{ kerberos_kdc_dbname }}"
         acl_file = {{ kerberos_kdc_kadmind_acl_file }}
     }

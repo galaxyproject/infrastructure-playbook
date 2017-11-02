@@ -2,4 +2,8 @@
 
 dependencies:
   - role: kerberos
+    kerberos_realm: "{{ kerberos_kdc_realm }}"
+    kerberos_domain: "{{ kerberos_kdc_domain }}"
+    kerberos_admin_server: "{{ kerberos_kdc_admin_server }}"
     kerberos_implementation: "{{ kerberos_kdc_implementation }}"
+    kerberos_krb5_conf_dest: "{{ kerberos_kdc_krb5_conf_dest }}"

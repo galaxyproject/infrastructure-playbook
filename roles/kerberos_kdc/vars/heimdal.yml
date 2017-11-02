@@ -9,3 +9,5 @@ kerberos_kdc_slaves_file: "{{ kerberos_kdc_heimdal_slaves_file }}"
 kerberos_kdc_inetd_service_name: "{{ kerberos_kdc_heimdal_inetd_service_name }}"
 kerberos_kdc_dbname: "{{ kerberos_kdc_heimdal_dbname }}"  # what does MIT use for this?
 kerberos_kdc_log: "{{ kerberos_kdc_heimdal_log }}"
+
+kerberos_kdc_iprop_keytab: "{{ kerberos_kdc_config_dir }}/iprop.keytab"

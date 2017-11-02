@@ -1,9 +1,13 @@
 ---
 
-- name: Create/extract iprop keytab
-  command: ktutil -k {{ kerberos_kdc_config_dir }}/iprop.keytab get iprop/{{ ansible_fqdn }}
-  args:
-    creates: "{{ kerberos_kdc_config_dir }}/iprop.keytab"
+- name: Check for iprop keytab
+  stat:
+    path: "{{ kerberos_kdc_iprop_keytab }}"
+  register: _ret_iprop_keytab_stat
+
+- name: Include heimdal keytab tasks
+  include: heimdal_keytab.yml
+  when: not _ret_iprop_keytab_stat.stat.exists
 
 - name: Install iprop slaves file
   template:

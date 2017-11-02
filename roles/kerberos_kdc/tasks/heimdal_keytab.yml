@@ -1,0 +1,44 @@
+---
+
+- name: Create temporary file for keytab
+  command: mktemp -p {{ kerberos_kdc_admin_temp_dir }} ansible_kerberos_kdc_XXXXXXXXXX
+  register: _ret_keytab_mktemp
+
+- block:
+
+    - name: Set facts for kadmin
+      set_fact:
+        kerberos_kdc_kadmin_command: "kadmin --principal={{ kerberos_kdc_admin_principal }} --keytab={{ _ret_keytab_mktemp.stdout }} --realm={{ kerberos_kdc_realm }}"
+        kerberos_kdc_iprop_principal: "iprop/{{ ansible_fqdn }}@{{ kerberos_kdc_realm }}"
+
+    - name: Write admin keytab
+      action:
+        module: decode
+      args:
+        content: "{{ kerberos_kdc_admin_principal_keytab }}"
+        dest: "{{ _ret_keytab_mktemp.stdout }}"
+        filter: base64
+        mode: "0600"
+
+    # these steps could be collapsed to one if there was a way to run `ktutil get` promptless
+    # without -s or -l, `list` doesn't even appear to hit kadmind and just prints whatever principal you pass in, and returns 0 =/
+    - name: Check for iprop principal
+      command: "{{ kerberos_kdc_kadmin_command }} list -s -o principal= {{ kerberos_kdc_iprop_principal }}"
+      ignore_errors: true
+      register: _ret_kadmin_list_iprop_principal
+
+    - name: Create iprop principal
+      command: "{{ kerberos_kdc_kadmin_command }} add --random-key --use-defaults {{ kerberos_kdc_iprop_principal }}"
+      when: _ret_kadmin_list_iprop_principal | failed
+
+    - name: Extract iprop keytab
+      command: "{{ kerberos_kdc_kadmin_command }} ext_keytab --keytab={{ kerberos_kdc_iprop_keytab }} {{ kerberos_kdc_iprop_principal }}"
+      args:
+        creates: "{{ kerberos_kdc_iprop_keytab }}"
+
+  always:
+
+    - name: Remove keytab temporary file
+      file:
+        path: "{{ _ret_keytab_mktemp.stdout }}"
+        state: absent

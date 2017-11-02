@@ -1,0 +1,5 @@
+---
+
+kerberos_kdc_realm: GALAXYPROJECT.ORG
+kerberos_kdc_admin_principal_keytab: "{{ vault_kerberos_kdc_admin_principal_keytab }}"
+kerberos_kdc_admin_principals: "{{ vault_kerberos_kdc_admin_principals }}"

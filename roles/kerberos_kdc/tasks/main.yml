@@ -1,6 +1,6 @@
 ---
 # Assumes a preexisting Kerberos infrastructure that you are adding a KDC to
-# Get a kadmin/admin ticket before running if adding a new KDC (e.g. `kinit -S kadmin/admin`)
+# Uses principal `ansible/admin` to create keytabs (so this should be in your kadmind.acl)
 
 # in case we want to implement EL support
 - name: Include OS vars
