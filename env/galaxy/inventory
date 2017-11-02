@@ -83,8 +83,10 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 
+# - sets the hostname to the inventory_hostname
 [virtual]
 radegast.galaxyproject.org
+duvel.galaxyproject.org
 
 [virtual:children]
 ec2hosts
