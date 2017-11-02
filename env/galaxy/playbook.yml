@@ -74,6 +74,9 @@
   hosts: kerberosservers
   remote_user: root
   roles:
+    - name: required_vars
+      required_vars_roles: kerberos_kdc
+      tags: always
     - name: kerberos_kdc
       tags: kerberos_kdc,kerberos
   tags: infrastructure
