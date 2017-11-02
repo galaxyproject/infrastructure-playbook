@@ -1,0 +1,37 @@
+---
+
+- name: Get EC2 Facts
+  hosts: ec2hosts
+  remote_user: root
+  tasks:
+    - name: Get EC2 Facts
+      action: ec2_facts
+  tags: always
+
+- name: Tasks for virtualized hosts
+  hosts: virtual
+  remote_user: root
+  roles:
+    - virtual
+  tags: initial,system
+
+- name: Include baseenv plays
+  include: _inc_baseenv.yml
+
+- name: Set up authentication keys for non-baseenv hosts
+  hosts: authkeyhosts
+  remote_user: root
+  roles:
+    - users
+  tags: users
+
+- name: Tasks for infrastructure servers
+  hosts: kerberosservers
+  remote_user: root
+  roles:
+    - name: required_vars
+      required_vars_roles: kerberos_kdc
+      tags: always
+    - name: kerberos_kdc
+      tags: kerberos_kdc,kerberos
+  tags: infrastructure
