@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: True
 //
 // This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
 //
@@ -14,14 +15,16 @@ acl "{{ acl.name }}" {
 /* Options */
 options {
     directory "{{ dns_bind_directory }}";
-    {% for pair in dns_bind_options %}
-    {% for key in pair %}
-    {{ key }} {% if pair[key] is not sequence %}{{ pair[key] }};{% else %} { 
-        {% for i in pair[key] %}
+    {% for key, val in dns_bind_options_merged %}
+    {% if val is not none %}
+    {{ key }} {% if val is string or val is number %}{{ val }};
+        {% else %} { 
+        {% for i in val %}
         {{ i }};
+        {% endfor %}
     }; 
     {% endif %}
-    {% endfor %}
+    {% endif %}
     {% endfor %}
 };
 

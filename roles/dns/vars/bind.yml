@@ -8,3 +8,5 @@ dns_group: "{{ dns_bind_group }}"
 dns_packages: "{{ dns_bind_packages }}"
 dns_config_templates: "{{ dns_bind_config_templates }}"
 dns_service_name: "{{ dns_bind_service_name }}"
+
+dns_bind_options_merged: "{{ dns_bind_options_default | ordered(dns_bind_options | default([])) }}"

@@ -1,14 +1,20 @@
+#jinja2: lstrip_blocks: True
 //
 // This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
 //
 
-{% for view in dns_bind_views %}
+{% for view in dns_bind_views | default([]) %}
 /* "{{ view.name }}" view */
 view "{{ view.name }}" {
     {% if 'match_clients' in view %}
-    match_clients { "{{ view.match_clients | join('"; "') }}"; };
+    match-clients {
+    {% for match_client in view.match_clients %}
+        {{ match_client }};
+    {% endfor %}
+    };
     {% endif %}
-    {{ 'recursion yes;' if view.recursion is defined and view.recursion else '' }}
+    recursion {{ 'yes' if view.recursion is defined and view.recursion else 'no' }};
+    allow-recursion { {{ 'any' if view.recursion is defined and view.recursion else 'none' }}; };
 
     /* includes */
     {% for include in view.includes | default([]) %}
@@ -18,8 +24,8 @@ view "{{ view.name }}" {
     /* zones */
     {% for zone in view.zones | default([]) %}
     zone "{{ zone.name | default(zone.file | basename | splitext | first) }}" {{ zone.class | default("IN") }} {
-        type "{{ zone.type | default("master") }}";
-        file "{{ bind_zones_dir }}/{{ zone.file }}";
+        type {{ zone.type | default("master") }};
+        file "{{ dns_bind_zones_dir }}/{{ zone.file }}";
     };
     {% endfor %}
 };

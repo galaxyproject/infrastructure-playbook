@@ -13,6 +13,9 @@
 - name: Include OS tasks
   include: "{{ ansible_os_family | lower }}.yml"
 
+- name: Include DNS implementation tasks
+  include: "{{ dns_implementation | lower }}.yml"
+
 - name: Create DNS log directory
   file:
     state: directory
@@ -23,8 +26,8 @@
 
 - name: Install config files
   template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: "{{ item.src }}.j2"
+    dest: "{{ dns_config_dir }}/{{ item.dest }}"
     # this owner/mode scheme matches what debian does, even though it doesn't really make sense
     group: "{{ dns_group }}"
     mode: "0444"
@@ -32,9 +35,6 @@
   with_items: "{{ dns_config_templates }}"
   notify:
     - restart dns
-
-- name: Include DNS implementation tasks
-  include: "{{ dns_implementation | lower }}.yml"
 
 - name: Ensure DNS server is enabled and running
   service:

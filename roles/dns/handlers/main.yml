@@ -1,0 +1,6 @@
+---
+
+- name: restart dns
+  service:
+    name: "{{ dns_service_name }}"
+    state: restarted

@@ -1,0 +1,92 @@
+---
+
+dns_bind_options:
+  - listen-on: [ 'any' ]
+  - notify: 'no'
+  - recursion: 'no'
+  - allow-recursion: [ 'none' ]
+  - allow-transfer: [ 'none' ]
+  - allow-query: [ 'any' ]
+  - query-source: 'address * port *'
+  # negative cache ttl
+  - max-ncache-ttl: 3600        # 1 hour
+  # how long to remember that a given ns isn't authoritative for a domain
+  - lame-ttl: 86400             # 24 hours
+  # how long to clean the cache
+  - cleaning-interval: 120      # 2 hours
+
+dns_bind_acls:
+  - name: 'galaxy'
+    addresses:
+      - '54.172.110.33/32'      # delirium
+      - '54.172.173.123/32'     # chouffe
+      - '52.6.100.165/32'       # athena
+      - '128.118.250.0/27'
+      - '172.18.0.0/20'
+      - '10.0.0.0/8'
+      - '127.0.0.1/32'
+      - '::1/128'
+  - name: 'bx'
+    addresses:
+      - '128.118.200.0/23'
+      - '128.118.202.0/24'
+
+dns_bind_control_inet_specs:
+  - '127.0.0.1 allow { localhost; }'
+
+dns_bind_logging_channels:
+  - name: 'bind'
+    options:
+      - file: '"{{ dns_bind_log_dir }}/named.log" versions 3 size 5m'
+      - severity: 'debug 1'
+      - print-severity: 'yes'
+      - print-time: 'yes'
+
+dns_bind_logging_categories:
+  - name: 'default'
+    channels:
+      - 'bind'
+
+dns_bind_views:
+  - name: 'galaxy'
+    match_clients:
+      - 'galaxy'
+      - 'bx'
+    recursion: yes
+    includes:
+      - '{{ dns_config_dir }}/named.conf.default-zones'
+    zones:
+      - name: 'galaxyproject.org'
+        file: 'galaxyproject.org.private.zone'
+      - file: 'usegalaxy.org.zone'
+      - file: 'getgalaxy.org.zone'
+      - file: 'galaxycast.org.zone'
+      - file: 'repeatme.org.zone'
+      - file: 'galaxy2.org.zone'
+      - file: 'galaxyworkbench.org.zone'
+      - file: 'galaxy.tools.zone'
+      - file: 'toolshed.tools.zone'
+      - file: 'gxy.io.zone'
+      #- file: '0-27.250.118.128.in-addr.arpa.zone'
+      - file: '0.18.172.in-addr.arpa.zone'
+      - file: '2.18.172.in-addr.arpa.zone'
+      - file: '3.18.172.in-addr.arpa.zone'
+      - file: '68.28.172.in-addr.arpa.zone'
+      - file: '255.128.10.in-addr.arpa.zone'
+  - name: 'global'
+    match_clients:
+      - '!galaxy'
+      - '!bx'
+      - 'any'
+    zones:
+      - file: 'galaxyproject.org.zone'
+      - file: 'usegalaxy.org.zone'
+      - file: 'getgalaxy.org.zone'
+      - file: 'galaxycast.org.zone'
+      - file: 'repeatme.org.zone'
+      - file: 'galaxy2.org.zone'
+      - file: 'galaxyworkbench.org.zone'
+      - file: 'galaxy.tools.zone'
+      - file: 'toolshed.tools.zone'
+      - file: 'gxy.io.zone'
+      #- file: '0-27.250.118.128.in-addr.arpa.zone'

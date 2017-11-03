@@ -118,6 +118,10 @@ infrastructure
 [kerberosmasterservers]
 duvel.galaxyproject.org
 
+[dnsservers]
+[dnsservers:children]
+infrastructure
+
 ##
 ## Application groupings
 ##

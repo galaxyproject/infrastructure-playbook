@@ -26,7 +26,7 @@
   tags: users
 
 - name: Tasks for infrastructure servers
-  hosts: kerberosservers
+  hosts: infrastructure
   remote_user: root
   roles:
     - name: required_vars
@@ -34,4 +34,6 @@
       tags: always
     - name: kerberos_kdc
       tags: kerberos_kdc,kerberos
+    - name: dns
+      tags: dns
   tags: infrastructure
