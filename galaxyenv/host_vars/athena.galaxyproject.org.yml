@@ -41,3 +41,4 @@ nginx_srv: /srv/nginx
 nginx_configs:
   - galaxyproject
   - cloudlaunch
+  - gxy.io

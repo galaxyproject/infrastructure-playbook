@@ -1,0 +1,16 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:80;
+    server_name gxy.io;
+
+    access_log  /var/log/nginx/gxy.io_access.log;
+    error_log   /var/log/nginx/gxy.io_error.log;
+
+    return 302 https://galaxyproject.org;
+
+}
+
+# vim: set filetype=nginx
