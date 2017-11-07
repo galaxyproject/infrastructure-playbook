@@ -1,0 +1,35 @@
+# AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
+# CRC32 5586cb24
+dn: cn={6}postfix
+objectClass: olcSchemaConfig
+cn: {6}postfix
+olcAttributeTypes: {0}( 1.3.6.1.4.1.15347.2.102 NAME 'transport' SUP name )
+olcAttributeTypes: {1}( 1.3.6.1.4.1.15347.2.101 NAME 'mailRoutingAddress' SUP 
+ mail )
+olcAttributeTypes: {2}( 1.3.6.1.4.1.15347.2.110 NAME 'maildest' DESC 'Restrict
+ ed to send only to local network' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreS
+ ubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{32768} )
+olcAttributeTypes: {3}( 1.3.6.1.4.1.15347.2.111 NAME 'mailaccess' DESC 'Can be
+  mailed to restricted groups' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubst
+ ringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{32768} )
+olcAttributeTypes: {4}( 1.3.6.1.4.1.15347.2.100 NAME 'maildrop' DESC 'RFC1274:
+  RFC822 Mailbox' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5SubstringsMa
+ tch SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+olcAttributeTypes: {5}( 1.3.6.1.4.1.10018.1.1.1 NAME 'mailbox' DESC 'The absol
+ ute path to the mailbox for a mail account in a non-default location' EQUALIT
+ Y caseExactIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+olcObjectClasses: {0}( 1.3.6.1.4.1.15347.2.1 NAME 'mailUser' DESC 'E-Mail User
+ ' SUP top AUXILIARY MUST ( uid $ mail $ maildrop ) MAY ( cn $ mailbox $ maild
+ est $ mailaccess ) )
+olcObjectClasses: {1}( 1.3.6.1.4.1.15347.2.2 NAME 'mailGroup' DESC 'E-Mail Gro
+ up' SUP top STRUCTURAL MUST ( cn $ mail ) MAY ( mailRoutingAddress $ member $
+  description ) )
+olcObjectClasses: {2}( 1.3.6.1.4.1.15347.2.3 NAME 'transportTable' DESC 'MTA T
+ ransport Table' SUP top STRUCTURAL MUST ( cn $ transport ) )
+structuralObjectClass: olcSchemaConfig
+entryUUID: 7f86e3e6-a5c1-1031-88f0-cff6356bcec0
+creatorsName: uid=nate/admin,ou=people,dc=galaxyproject,dc=org
+createTimestamp: 20121008182702Z
+entryCSN: 20121008182702.063980Z#000000#000#000000
+modifiersName: uid=nate/admin,ou=people,dc=galaxyproject,dc=org
+modifyTimestamp: 20121008182702Z

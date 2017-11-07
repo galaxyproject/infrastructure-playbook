@@ -122,6 +122,10 @@ duvel.galaxyproject.org
 [dnsservers:children]
 infrastructure
 
+[ldapservers]
+[ldapservers:children]
+infrastructure
+
 ##
 ## Application groupings
 ##

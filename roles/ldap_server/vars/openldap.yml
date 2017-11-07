@@ -1,0 +1,5 @@
+---
+
+ldap_server_config_dir: "{{ ldap_server_openldap_config_dir }}"
+ldap_server_packages: "{{ ldap_server_openldap_packages }}"
+ldap_server_service_name: "{{ ldap_server_openldap_service_name }}"

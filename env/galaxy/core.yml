@@ -30,10 +30,14 @@
   remote_user: root
   roles:
     - name: required_vars
-      required_vars_roles: kerberos_kdc
+      required_vars_roles:
+        - kerberos_kdc
+        - ldap_server
       tags: always
     - name: kerberos_kdc
       tags: kerberos_kdc,kerberos
     - name: dns
       tags: dns
+    - name: ldap_server
+      tags: ldap
   tags: infrastructure

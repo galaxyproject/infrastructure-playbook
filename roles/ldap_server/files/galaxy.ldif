@@ -1,0 +1,32 @@
+dn: cn={5}galaxy
+objectClass: olcSchemaConfig
+cn: {5}galaxy
+olcAttributeTypes: {0}( 1.3.6.1.4.1.6806.1.4.1.1.1 NAME 'altHomeDirectory' DES
+ C 'Alternate home directory' EQUALITY caseExactIA5Match SYNTAX 1.3.6.1.4.1.14
+ 66.115.121.1.26 SINGLE-VALUE )
+olcAttributeTypes: {1}( 1.3.6.1.4.1.6806.1.4.1.1.2 NAME 'galaxyAFSGroupId' DES
+ C 'Galaxy AFS PTS Group ID' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115
+ .121.1.27 SINGLE-VALUE )
+olcAttributeTypes: {2}( 1.3.6.1.4.1.6806.1.4.1.1.3 NAME 'galaxyAlternateEmail'
+  DESC 'Galaxy alternate contact email address' EQUALITY caseIgnoreIA5Match SY
+ NTAX 1.3.6.1.4.1.1466.115.121.1.26{256} SINGLE-VALUE )
+olcAttributeTypes: {3}( 1.3.6.1.4.1.6806.1.4.1.1.4 NAME 'galaxyAccountCreated'
+  DESC 'GMT time at which the account was created' EQUALITY generalizedTimeMat
+ ch ORDERING generalizedTimeOrderingMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+  SINGLE-VALUE )
+olcAttributeTypes: {4}( 1.3.6.1.4.1.6806.1.4.1.1.5 NAME 'galaxyAFSPTSName' DES
+ C 'Galaxy AFS PTS Name' EQUALITY caseExactIA5Match SYNTAX 1.3.6.1.4.1.1466.11
+ 5.121.1.26 SINGLE-VALUE )
+olcObjectClasses: {0}( 1.3.6.1.4.1.6806.1.4.1.2.1 NAME 'galaxyAccount' DESC 'G
+ alaxy Account optional attributes' SUP top AUXILIARY MUST uid MAY ( altHomeDi
+ rectory $ galaxyAlternateEmail $ galaxyAccountCreated $ galaxyAFSPTSName ) )
+olcObjectClasses: {1}( 1.3.6.1.4.1.6806.1.4.1.2.2 NAME 'galaxyAFSGroup' DESC '
+ Galaxy AFS PTS Group' SUP top AUXILIARY MUST ( cn $ galaxyAFSGroupId ) MAY (m
+ ember $ galaxyAFSPTSName ) )
+structuralObjectClass: olcSchemaConfig
+entryUUID: 81291194-979b-1031-8327-a3861f02abf5
+creatorsName: uid=nate/admin,ou=people,dc=galaxyproject,dc=org
+createTimestamp: 20120920181947Z
+entryCSN: 20120920181947.649944Z#000000#000#000000
+modifiersName: uid=nate/admin,ou=people,dc=galaxyproject,dc=org
+modifyTimestamp: 20120920181947Z

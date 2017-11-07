@@ -1,0 +1,23 @@
+---
+
+# in case we want to implement EL support
+- name: Include OS vars
+  include_vars:
+    file: "{{ ansible_os_family | lower }}.yml"
+
+# in case we want to implement support for another LDAP server
+- name: Include LDAP implementation vars
+  include_vars:
+    file: "{{ ldap_server_implementation | lower }}.yml"
+
+- name: Include OS tasks
+  include: "{{ ansible_os_family | lower }}.yml"
+
+- name: Include LDAP implementation tasks
+  include: "{{ ldap_server_implementation | lower }}.yml"
+
+- name: Ensure LDAP server is enabled and running
+  service:
+    name: "{{ ldap_server_service_name }}"
+    state: started
+    enabled: yes

@@ -1,0 +1,20 @@
+---
+
+ldap_server_base_dn: dc=galaxyproject,dc=org
+
+# this order is significant, it controls the order of schema loading
+ldap_server_openldap_schemas:
+  - core
+  - cosine
+  - rfc2307bis
+  - inetorgperson
+  - sudo
+  - galaxy
+  - postfix
+  - dhcp
+  - autofs
+
+ldap_server_openldap_access: "{{ vault_ldap_server_openldap_access }}"
+
+ldap_server_openldap_syncrepl_config:
+  provider: delirium.galaxyproject.org

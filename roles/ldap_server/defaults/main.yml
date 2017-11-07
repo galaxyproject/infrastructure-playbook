@@ -1,0 +1,13 @@
+---
+
+ldap_server_implementation: "openldap"
+ldap_server_users_ou: "people"
+
+# openldap defaults
+ldap_server_openldap_schemas:
+  - core
+  - cosine
+  - rfc2307bis
+  - inetorgperson
+# this is a debian default, it doesn't belong here but it should be overrideable
+ldap_server_openldap_primary_db_dn: "olcDatabase={1}mdb,cn=config"
