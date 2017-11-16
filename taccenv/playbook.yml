@@ -50,6 +50,8 @@
       with_items:
         - g2test
         - g2main
+        - postgres
+        - stats
       notify: run newaliases
     - name: Forward root mail to root@galaxyproject.org
       lineinfile:
@@ -60,7 +62,7 @@
   handlers:
     - name: run newaliases
       command: /usr/bin/newaliases
-  tags: system
+  tags: system,mail
 
 - name: Tasks for RabbitMQ servers
   hosts: rabbitmqservers
