@@ -105,7 +105,7 @@
   vars_files:
     - "secret_group_vars/sslwebservers.yml"
   roles:
-    - role: galaxyprojectdotorg.nginx
+    - role: galaxyproject.nginx
       tags: nginx
 
 - name: Install supervisor

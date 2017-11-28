@@ -78,7 +78,7 @@
     - secret_group_vars/sslwebservers.yml
   roles:
     - role: geerlingguy.repo-epel
-    - role: galaxyprojectdotorg.nginx
+    - role: galaxyproject.nginx
   tags: nginx
 
 - name: Tasks for stats servers
