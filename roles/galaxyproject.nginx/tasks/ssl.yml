@@ -4,7 +4,7 @@
 # other entires.
 - name: Disable ssl_prefer_server_ciphers in nginx.conf if set
   lineinfile:
-    name: "{{ nginx_conf_dir }}/nginx.conf"
+    name: "{{ nginx_conf_file }}"
     regexp: '^(\s*ssl_prefer_server_ciphers\s.*)'
     backrefs: yes
     line: '#\1 # commented by Ansible'

@@ -23,7 +23,7 @@
 - name: Template nginx config file
   template:
     src: pkgin-nginx.conf.j2
-    dest: "/opt/local/etc/nginx/nginx.conf"
+    dest: "{{ nginx_conf_file }}"
     backup: yes
   notify:
     - restart nginx

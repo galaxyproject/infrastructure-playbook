@@ -1,3 +1,4 @@
 ---
 
 nginx_conf_dir: /etc/opt/local/nginx
+nginx_conf_file: /opt/local/etc/nginx/nginx.conf
