@@ -9,7 +9,7 @@ server {
     access_log  /var/log/nginx/training.galaxyproject.org_access.log;
     error_log   /var/log/nginx/training.galaxyproject.org_error.log;
 
-    return 302 https://galaxyproject.github.io/training-material/;
+    return 302 https://galaxyproject.github.io/training-material$request_uri;
 }
 
 server {
@@ -19,7 +19,7 @@ server {
     access_log  /var/log/nginx/training.galaxyproject.org_access.log;
     error_log   /var/log/nginx/training.galaxyproject.org_error.log;
 
-    return 302 https://galaxyproject.github.io/training-material/;
+    return 302 https://galaxyproject.github.io/training-material$request_uri;
 }
 
 # vim: set filetype=nginx

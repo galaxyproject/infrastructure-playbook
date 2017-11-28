@@ -10,7 +10,7 @@ from influxdb import InfluxDBClient
 TOP_USAGE_LIMIT = 30
 PGCONNS = {
     'test': 'host=galaxy07.tacc.utexas.edu user=grafana password={{ galaxy_test_grafana_db_password }} dbname=galaxy_test',
-    'main': 'host=galaxy-db-01.tacc.utexas.edu user=grafana password={{ galaxy_main_grafana_db_password }} dbname=galaxy_main',
+    'main': 'host=galaxy-db-02.tacc.utexas.edu user=grafana password={{ galaxy_main_grafana_db_password }} dbname=galaxy_main',
 }
 time = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 

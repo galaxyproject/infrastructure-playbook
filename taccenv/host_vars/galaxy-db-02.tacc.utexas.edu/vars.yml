@@ -19,5 +19,5 @@ host_crontabs:
     user: g2main
     minute: "0"
     hour: "11"
-    weekday: "1-6"
-    job: "/home/g2main/bin/cancelled.sh '1 week ago' | mail -s 'usegalaxy.org jobs cancelled due to memory limit in the past week' galaxy-lab@lists.galaxyproject.org"
+    weekday: "1-5"
+    job: "/home/g2main/bin/cancelled.sh '1 week ago' | mail -s 'usegalaxy.org jobs cancelled due to memory limit in the past week' galaxy-system@lists.galaxyproject.org"
