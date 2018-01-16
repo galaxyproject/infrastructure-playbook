@@ -68,6 +68,7 @@ cvmfs1-psu0.galaxyproject.org
 [liteenv]
 mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
+nn14.galaxyproject.org
 
 # These get everything in liteenv + AFS
 [fullenv]
