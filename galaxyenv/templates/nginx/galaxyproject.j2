@@ -53,6 +53,7 @@ server {
     rewrite ^/admin/api/?$ /develop/api;
     rewrite ^/develop/resources-api/?$ /develop/api;
     rewrite ^/learn/api/examples/?$ /develop/api;
+    rewrite ^/admin/config/nginxProxy/?$ /admin/config/nginx-proxy/;
     rewrite ^/admin/data-libraries/?$ /data-libraries;
     rewrite ^/admin/data-libraries/new-libraries/?$ /data-libraries;
     rewrite ^/admin/data-libraries/libraries/?$ /data-libraries;
