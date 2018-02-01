@@ -84,7 +84,7 @@ zfs_filesystems:
     owner: zfsdump-gxmain
     group: zfsdump-gxmain
 
-zfs_permissions:
+zfs_admin_permissions:
   - name: zones/westvleteren/backup/orval
     users: zfsdump-orval
     permissions: compression,create,mount,receive
