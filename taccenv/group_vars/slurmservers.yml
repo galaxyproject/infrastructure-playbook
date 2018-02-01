@@ -1,0 +1,13 @@
+---
+
+slurmservers_group_files:
+  - src: files/slurm/spartbalance
+    dest: /usr/local/sbin/spartbalance
+    mode: '0755'
+
+group_crontabs:
+  - id: slurm_partition_balance
+    name: Slurm Partition Balance
+    user: root
+    minute: '*/15'
+    job: "{ date; /usr/local/sbin/spartbalance; } >> /var/log/spartbalance.log"
