@@ -9,6 +9,8 @@ server {
     access_log  /var/log/nginx/gxy.io_access.log;
     error_log   /var/log/nginx/gxy.io_error.log;
 
+    rewrite ^/toolshed/?$ https://toolshed.g2.bx.psu.edu/;
+
     return 302 https://galaxyproject.org;
 
 }
