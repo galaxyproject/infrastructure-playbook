@@ -44,6 +44,7 @@ baseenv
 [sshclients]
 orval.galaxyproject.org
 radegast.galaxyproject.org
+westvleteren.galaxyproject.org
 
 [sshclients:children]
 dockerswarmmanagers

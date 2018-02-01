@@ -1,0 +1,9 @@
+---
+# temporary playbook until this env is moved to env/
+
+- name: Set up library backups
+  hosts: galaxy-web-05.tacc.utexas.edu
+  remote_user: root
+  roles:
+    - users
+    - cron

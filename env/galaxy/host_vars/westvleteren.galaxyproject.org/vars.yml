@@ -6,7 +6,7 @@ host_private_key_users: "{{ vault_host_private_key_users }}"
 host_packages:
   - rsync   # need >=3.1.0 for --info
 
-local_users:
+host_users:
   - name: zfsdump-orval
     group: zfsdump-orval
     comment: 'ZFS receive orval'
@@ -25,6 +25,10 @@ local_users:
   - name: zfsdump-biostar
     group: zfsdump-biostar
     home: /home/zfsdump-biostar
+    shell: /bin/bash
+  - name: zfsdump-gxmain
+    group: zfsdump-gxmain
+    comment: 'ZFS receive Galaxy Main'
     shell: /bin/bash
   - name: nate
     uid: 2048
@@ -70,6 +74,15 @@ zfs_filesystems:
   - name: zones/westvleteren/backup/biostar/data
     owner: zfsdump-biostar
     group: zfsdump-biostar
+  - name: zones/westvleteren/backup/galaxy
+    owner: root
+    group: root
+  - name: zones/westvleteren/backup/galaxy/main
+    owner: zfsdump-gxmain
+    group: zfsdump-gxmain
+  - name: zones/westvleteren/backup/galaxy/main/publibs
+    owner: zfsdump-gxmain
+    group: zfsdump-gxmain
 
 zfs_permissions:
   - name: zones/westvleteren/backup/orval
@@ -83,6 +96,9 @@ zfs_permissions:
     permissions: snapshot
   - name: zones/westvleteren/backup/biostar
     users: zfsdump-biostar
+    permissions: snapshot
+  - name: zones/westvleteren/backup/galaxy/main
+    users: zfsdump-gxmain
     permissions: snapshot
 
 directories:
