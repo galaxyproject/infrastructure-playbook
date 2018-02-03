@@ -24,7 +24,7 @@ function normal_pd_job_count() {
 }
 
 function normal_pd_wait() {
-    submittime=$(squeue -p normal -t PD -h -o "%V" -S "t,-p")
+    submittime=$(squeue -p normal -t PD -h -o "%V" -S "t,-p" | head -1)
     if [ -n "$submittime" ]; then
         submitted=$(date --date="$submittime" +%s)
         now=$(date +%s)
@@ -54,21 +54,23 @@ function balance() {
         fi
     elif [ $need -gt 0 -a $waittime -ge 0 ]; then
         echo "$need nodes needed but oldest job has been waiting $waittime seconds (max wait is $maxwait seconds)"
-        exit 0
+        return 0
     elif [ $need -eq 0 -a $nct -le $minnodes -o $pdct -gt 0 ]; then
         echo "No nodes needed, waiting job count: $pdct"
         [ $pdct -gt 0 ] && echo "Oldest job waiting $waittime seconds"
-        exit 0
+        rm -f $mutex
+        return 0
     elif [ $need -eq 0 ]; then
         echo "Have $(($nct - $minnodes)) extra nodes, will decrease by 1"
         need=-1
     elif [ $need -lt 0 ]; then
         echo "need is $need, this is an error"
         echo "pdct: $pdct, pdmin: $pdmin, pdstep: $pdstep"
-        exit 1
+        rm -f $mutex
+        return 1
     fi
 
-    [ $need -eq 0 ] && exit 0
+    [ $need -eq 0 ] && return 0
 
     local nnodes=$((64 + 1 - $nct - $need))
     local mnodes=$(($nnodes - 1))
@@ -76,6 +78,7 @@ function balance() {
     set -x
     scontrol update PartitionName=multi "Nodes=roundup[49-$mnodes]"
     scontrol update PartitionName=normal "Nodes=roundup[$nnodes-64]"
+    { set +x; } 2>/dev/null
 }
 
 if [ -f $mutex ]; then
@@ -87,4 +90,6 @@ echo $$ > $mutex
 
 balance
 
+r=$?
 rm -f $mutex
+exit $r
