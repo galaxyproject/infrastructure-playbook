@@ -1,4 +1,5 @@
 #!/bin/bash
+# run with cron e.g.: */15 * * * * { date; spartbalance; } >> /var/log/spartbalance.log
 set -e
 
 pdmin=5
@@ -23,6 +24,7 @@ function normal_pd_job_count() {
     squeue -p normal -t PD -h -o "%i" | wc -l
 }
 
+
 function normal_pd_wait() {
     submittime=$(squeue -p normal -t PD -h -o "%V" -S "t,-p" | head -1)
     if [ -n "$submittime" ]; then
@@ -32,6 +34,27 @@ function normal_pd_wait() {
     else
         echo -1
     fi
+}
+
+
+function run() {
+    # run a command and write its invocation to stderr
+    cmd=$1 ; shift
+    set -x
+    $cmd "$@"
+    { set +x; } 2>/dev/null
+}
+
+
+function run_stdout() {
+    # run a command and write its invocation and combined stdout/stderr to stdout
+    run "$@" 2>&1
+}
+
+
+function run_dup() {
+    # run a command and write its invocation and combined stdut/stderr to both stdout and stderr
+    run_stdout "$@" | tee /dev/stderr
 }
 
 
@@ -75,10 +98,11 @@ function balance() {
     local nnodes=$((64 + 1 - $nct - $need))
     local mnodes=$(($nnodes - 1))
 
-    set -x
-    scontrol update PartitionName=multi "Nodes=roundup[49-$mnodes]"
-    scontrol update PartitionName=normal "Nodes=roundup[$nnodes-64]"
-    { set +x; } 2>/dev/null
+    # stdout goes to the log file, stderr goes to email
+    [ $need -gt 0 ] && run_dup echo "Allocating $need nodes"
+    [ $need -lt 0 ] && run_dup echo "Deallocating $((0 - $need)) nodes"
+    run_dup scontrol update PartitionName=multi "Nodes=roundup[49-$mnodes]"
+    run_dup scontrol update PartitionName=normal "Nodes=roundup[$nnodes-64]"
 }
 
 if [ -f $mutex ]; then
