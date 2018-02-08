@@ -175,13 +175,13 @@
     group: stats
     mode: 0700
 
-- name: Create sentry var directory
+- name: Create stats var directory
   file:
     path: "{{ stats_var_dir }}"
     state: directory
     owner: stats
-    group: stats
-    mode: 0700
+    group: nginx
+    mode: 0750
 
 - name: Copy stats configs
   template:
@@ -201,7 +201,7 @@
     - pip
     - setuptools
     - influxdb
-    - psycopg2
+    - psycopg2-binary
 
 - name: Copy stats slurp scripts
   template:

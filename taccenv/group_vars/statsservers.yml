@@ -30,6 +30,10 @@ supervisord_group_configs:
   - sentry
   - stats
 
+sentry_conf_email_host: 'localhost'
+stats_conf_email_host: 'localhost:25'
+stats_conf_email_from: 'stats@stats.galaxyproject.org'
+
 # used in the nginx template, which is run in a play that does not include the
 # sentry role
 sentry_sock_dir: /var/opt/sentry/run
