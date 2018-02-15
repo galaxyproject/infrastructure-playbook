@@ -139,5 +139,10 @@ cvmfs_stratum1_apache_port: 8008
 # in MB
 cvmfs_stratum1_cache_mem: 128
 
-# Install a setuid binary allowing unprivileged users to call `cvmfs_config wipecache`?
+# Whether the client or server should be upgraded or just installed if missing
+cvmfs_upgrade_client: false
+cvmfs_upgrade_server: false
+
+# Install a setuid binary allowing unprivileged users to call `cvmfs_config wipecache` or `cvmfs_talk remount sync`?
 cvmfs_install_setuid_cvmfs_wipecache: no
+cvmfs_install_setuid_cvmfs_remount_sync: no
