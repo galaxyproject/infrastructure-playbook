@@ -83,5 +83,5 @@ cvmfs_server_urls:
 cvmfs_http_proxies:
   - "DIRECT"
 
-cvmfs_install_setuid_cvmfs_wipecache: yes
+cvmfs_install_setuid_cvmfs_wipecache: no
 cvmfs_install_setuid_cvmfs_remount_sync: yes
