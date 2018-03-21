@@ -1,3 +1,14 @@
 ---
 
 docker_ssl_ca_passphrase: "{{ vault_docker_ssl_ca_passphrase }}"
+
+docker_ssl_certs:
+  - name: server
+    ca: docker
+    per_host: yes
+    owner: root
+    group: root
+    paths:
+      - cert: /etc/docker/server-cert.pem
+        key: /etc/docker/server-key.pem
+        ca_cert: /etc/docker/ca.pem

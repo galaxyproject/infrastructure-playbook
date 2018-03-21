@@ -53,10 +53,11 @@ jenkinsservers
 jenkinsslaves
 # FIXME: there should be a toolshedservers group
 
-# For things that need access to sslkeys
+# For things that need access to sslkeys and the "PKI"
 [sslservers]
 [sslservers:children]
 webservers
+dockersslservers
 
 [baseenv-nomail]
 cvmfs0-psu0.galaxyproject.org
