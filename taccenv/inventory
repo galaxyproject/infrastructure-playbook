@@ -76,6 +76,7 @@ galaxynodes
 [sslservers]
 [sslservers:children]
 rabbitmqservers
+dockerclients
 
 [rabbitmqservers]
 galaxy08.tacc.utexas.edu

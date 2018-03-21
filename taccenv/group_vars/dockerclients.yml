@@ -1,5 +1,7 @@
 ---
 
+docker_upgrade: no
+
 docker_ssl_certs:
   - name: client
     ca: docker

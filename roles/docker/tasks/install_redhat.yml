@@ -48,6 +48,7 @@
 - name: Install Docker CE
   yum:
     pkg: docker-ce
+    state: "{{ 'latest' if docker_upgrade else 'installed' }}"
 
 - name: Start/enable or stop/disable docker as desired
   service:
