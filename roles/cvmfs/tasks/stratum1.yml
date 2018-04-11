@@ -61,7 +61,7 @@
 
 - name: Configure squid for stratum 1 proxy
   template:
-    src: stratum1_squid.conf.j2
+    src: "{{ cvmfs_stratum1_squid_conf_src | default('stratum1_squid.conf.j2') }}"
     dest: /etc/squid/squid.conf
     backup: yes
   notify:

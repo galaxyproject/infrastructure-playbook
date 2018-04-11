@@ -157,6 +157,7 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org  # for datacache
 
 ## Kerberos
 

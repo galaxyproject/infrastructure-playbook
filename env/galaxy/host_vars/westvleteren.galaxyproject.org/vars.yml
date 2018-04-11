@@ -101,7 +101,7 @@ zfs_admin_permissions:
     users: zfsdump-gxmain
     permissions: snapshot
 
-directories:
+host_directories:
   - path: /zones/westvleteren/backup/radegast/postgres/active
     owner: zfsdump-radegast
     group: zfsdump-radegast
