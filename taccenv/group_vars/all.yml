@@ -1,6 +1,6 @@
 ---
 
-links:
+all_links:
   - path: /galaxy
     src: /galaxy-repl
     force: yes

@@ -1,6 +1,6 @@
 ---
 
-group_packages:
+controllers_group_packages:
   - git
   - tmpwatch
   # Pulsar deps
@@ -12,7 +12,7 @@ group_packages:
   - openssl-devel
   - slurm-drmaa
 
-group_files:
+controllers_group_files:
   - src: files/etc/dhclient.conf
     dest: /etc/dhcp/dhclient.conf
     backup: yes
@@ -28,7 +28,7 @@ group_files:
 
 jetstream_scratch0_device: /dev/sdb
 
-directories:
+controllers_group_directories:
   - path: /jetstream
   - path: /var/lib/slurm
     mode: "0755"
@@ -48,7 +48,7 @@ directories:
   - path: /galaxy-repl
   - path: /galaxy-repl/main
 
-links:
+controllers_group_links:
   - path: /jetstream/scratch0
     src: /scratch0
     force: yes
