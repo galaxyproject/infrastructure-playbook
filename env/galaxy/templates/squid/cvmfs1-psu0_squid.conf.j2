@@ -5,16 +5,22 @@
 http_port 80 accel defaultsite=cvmfs1-psu0.galaxyproject.org
 http_port 3128 accel defaultsite=cvmfs1-psu0.galaxyproject.org
 
-cache_peer 127.0.0.1 parent 8080 0 no-query originserver name=datacache
 cache_peer 127.0.0.1 parent {{ cvmfs_stratum1_apache_port }} 0 no-query originserver name=cvmfs
-
-acl datacache_acl dstdomain datacache.galaxyproject.org
-http_access allow datacache_acl
-cache_peer_access datacache allow datacache_acl
+cache_peer 127.0.0.1 parent {{ cvmfs_stratum1_apache_port }} 0 no-query originserver name=localhost
+cache_peer 127.0.0.1 parent 8080 0 no-query originserver name=datacache
 
 acl cvmfs_acl dstdomain cvmfs1-psu0.galaxyproject.org
 http_access allow cvmfs_acl
 cache_peer_access cvmfs allow cvmfs_acl
+
+# for cvmfs_server
+acl local_acl dstdomain localhost
+http_access allow local_acl
+cache_peer_access localhost allow local_acl
+
+acl datacache_acl dstdomain datacache.galaxyproject.org
+http_access allow datacache_acl
+cache_peer_access datacache allow datacache_acl
 
 #cache_dir ufs /var/spool/squid <DISK_CACHE_SIZE in MB> 16 256
 #maximum_object_size 1024 MB
