@@ -1,3 +1,0 @@
-#!/bin/sh
-
-ansible-playbook -i galaxyenv/inventory galaxyenv/playbook.yml "$@"

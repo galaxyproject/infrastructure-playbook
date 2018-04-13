@@ -1,10 +1,13 @@
 # infrastructure-playbook
-Ansible playbook for managing Galaxy infrastructure. For the playbook managing Galaxy itself, see https://github.com/galaxyproject/usegalaxy-playbook/
+
+Ansible playbook for managing Galaxy infrastructure. For the playbook managing Galaxy itself, see
+[galaxyproject/usegalaxy-playbook](https://github.com/galaxyproject/usegalaxy-playbook/).
 
 ## To run
 
-```shell
-% ansible-playbook -i galaxyenv/inventory [--limit=inventoryhost] --vault=/path/to/pass/wrapper playbook.yml
-```
+Set up `pass` and get the `ansible-env` function as documented on the [usegalaxy-playbook
+wiki](https://github.com/galaxyproject/usegalaxy-playbook/wiki/Getting-Set-Up-At-TACC), then:
 
-My `/path/to/pass/wrapper` is just a shell script that calls `pass path/to/vault/pass`.
+```shell
+% ansible-env <env> <playbook>
+```
