@@ -2,3 +2,4 @@
 
 common_sshkeys: "{{ vault_common_sshkeys }}"
 galaxy_team_users: "{{ vault_galaxy_team_users }}"
+galaxy_admin_users: "{{ vault_galaxy_admin_users }}"

@@ -5,22 +5,6 @@
   remote_user: centos
   become: yes
   become_method: sudo
-  pre_tasks:
-    - name: Locate secret group variable files
-      local_action:
-        module: stat
-        path: "{{ inventory_dir }}/secret_group_vars/{{ item }}.yml"
-      become: no
-      with_items: "{{ group_names }}"
-      register: secret_group_vars
-      tags: always
-    - name: Include secret group variables
-      local_action:
-        module: "include_vars {{ item.stat.path }}"
-      become: no
-      with_items: "{{ secret_group_vars.results }}"
-      when: item.stat.exists
-      tags: always
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: initial,requiretty
@@ -80,8 +64,6 @@
   remote_user: centos
   become: yes
   become_method: sudo
-  vars_files:
-    - secret_group_vars/slurmclients.yml
   roles:
     - role: slurm
       tags: slurm

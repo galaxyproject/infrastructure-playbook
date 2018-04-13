@@ -1,0 +1,3 @@
+---
+
+munge_key: "{{ vault_munge_key }}"
