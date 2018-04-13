@@ -1,1 +1,1 @@
-../../common_env/group_vars/sslservers
+../../common/group_vars/sslservers
