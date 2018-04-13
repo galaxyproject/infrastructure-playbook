@@ -1,0 +1,26 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:8080;
+    server_name datacache.galaxyproject.org;
+    port_in_redirect off;
+
+    access_log  /var/log/nginx/datacache.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/datacache.galaxyproject.org_error.log;
+
+    root        /srv/nginx/datacache.galaxyproject.org/root;
+
+    location /managed {
+        alias /cvmfs/data.galaxyproject.org/managed;
+        autoindex on;
+    }
+
+    location /indexes {
+        alias /cvmfs/data.galaxyproject.org/byhand;
+        autoindex on;
+    }
+}
+
+# vim: set filetype=nginx

@@ -44,6 +44,7 @@ baseenv
 [sshclients]
 orval.galaxyproject.org
 radegast.galaxyproject.org
+westvleteren.galaxyproject.org
 
 [sshclients:children]
 dockerswarmmanagers
@@ -52,10 +53,11 @@ jenkinsservers
 jenkinsslaves
 # FIXME: there should be a toolshedservers group
 
-# For things that need access to sslkeys
+# For things that need access to sslkeys and the "PKI"
 [sslservers]
 [sslservers:children]
 webservers
+dockersslservers
 
 [baseenv-nomail]
 cvmfs0-psu0.galaxyproject.org
@@ -68,6 +70,7 @@ cvmfs1-psu0.galaxyproject.org
 [liteenv]
 mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
+nn14.galaxyproject.org
 
 # These get everything in liteenv + AFS
 [fullenv]
@@ -154,6 +157,7 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org  # for datacache
 
 ## Kerberos
 
@@ -195,7 +199,8 @@ cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [cvmfsclients]
-cvmfs1-psu0.galaxyproject.org
+# was there some reason it was a client?
+#cvmfs1-psu0.galaxyproject.org
 
 # Docker Swarm
 

@@ -129,7 +129,7 @@ host_services:
     state: started
     enabled: 'yes'
 
-zfs_permissions:
+zfs_admin_permissions:
   - name: promise-1/orval/vicepa
     users: zfsdump-orval
     permissions: send,snapshot,hold

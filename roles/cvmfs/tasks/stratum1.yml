@@ -61,7 +61,7 @@
 
 - name: Configure squid for stratum 1 proxy
   template:
-    src: stratum1_squid.conf.j2
+    src: "{{ cvmfs_stratum1_squid_conf_src | default('stratum1_squid.conf.j2') }}"
     dest: /etc/squid/squid.conf
     backup: yes
   notify:
@@ -99,14 +99,30 @@
     - "{{ cvmfs_repositories }}"
     - server_options
 
-- name: Schedule stratum1 snapshots
+- name: Create CVMFS stratum1 logrotate configuration
+  copy:
+    content: |
+      /var/log/cvmfs/*.log {
+          weekly
+          missingok
+          notifempty
+      }
+    dest: /etc/logrotate.d/cvmfs
+
+- name: Remove per-repository snapshot cron jobs
   cron:
     name: cvmfs_snapshot_{{ item.repository }}
     cron_file: ansible_cvmfs_stratum1_snapshot
-    user: root
-    job: output=$(/usr/bin/cvmfs_server snapshot {{ item.repository }} 2>&1) || echo "$output"
-    minute: 0,15,30,45
+    state: absent
   with_items: "{{ cvmfs_repositories }}"
+
+- name: Schedule stratum1 snapshots
+  cron:
+    name: cvmfs_snapshot_all
+    cron_file: ansible_cvmfs_stratum1_snapshot
+    user: root
+    job: output=$(/usr/bin/cvmfs_server snapshot -a -i 2>&1) || echo "$output"
+    minute: "*/5"
 
 - name: Schedule stratum1 garbage collection
   cron:

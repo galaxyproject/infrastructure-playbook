@@ -10,7 +10,11 @@ cvmfs_repositories:
       - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
       - CVMFS_AUTO_GC=false
-      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=true
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_VIRTUAL_DIR=true
+    client_options:
+      - CVMFS_NFILES=4096
   - repository: main.galaxyproject.org
     stratum0: cvmfs0-tacc0.galaxyproject.org
     owner: g2main
@@ -18,7 +22,12 @@ cvmfs_repositories:
       - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
       - CVMFS_AUTO_GC=false
-      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=true
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_VIRTUAL_DIR=true
+    client_options:
+      - CVMFS_NFILES=4096
+
 
 # old docker repo, docker now installed by the `docker` role
 host_yum_repositories:

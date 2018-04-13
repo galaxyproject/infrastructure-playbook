@@ -1,0 +1,13 @@
+---
+
+host_private_key_users: "{{ vault_host_private_key_users }}"
+
+host_crontabs:
+  - id: publibs_backup
+    name: Public Library Contents Backup
+    user: g2main
+    hour: 10
+    minute: 0
+    weekday: 4
+    # TODO: when Main is on 18.05+ the script can be run from /cvmfs/main.galaxyproject.org/galaxy/scripts
+    job: PYTHONPATH=/cvmfs/test.galaxyproject.org/galaxy/lib /cvmfs/main.galaxyproject.org/venv/bin/python /home/ndc/dump_library_paths.py --public -c /srv/galaxy/main/config/galaxy.ini --relative /galaxy-repl/main --exists | rsync -arv -e "ssh -i $HOME/.ssh/id_rsa_zfsdump_gxmain" --delete --relative --files-from=- /galaxy-repl/main zfsdump-gxmain@westvleteren.galaxyproject.org:/zones/westvleteren/backup/galaxy/main/publibs && ssh -i $HOME/.ssh/id_rsa_zfsdump_gxmain -T zfsdump-gxmain@westvleteren.galaxyproject.org -- /usr/sbin/zfs snapshot zones/westvleteren/backup/galaxy/main/publibs@`date -u +\%Y\%m\%dT\%H\%M\%SZ`

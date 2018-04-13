@@ -1,3 +1,7 @@
+## FIXME: ensure this is copied to the new env/-ized env
+[sshclients]
+galaxy-web-05.tacc.utexas.edu
+
 [galaxyservers]
 [galaxyservers:children]
 testgalaxyservers

@@ -13,7 +13,7 @@ host_users:
     system: 'yes'
     shell: '/bin/bash'
 
-directories:
+host_directories:
   - path: /srv/nginx
     owner: sites
     group: sites

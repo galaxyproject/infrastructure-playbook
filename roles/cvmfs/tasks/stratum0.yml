@@ -1,7 +1,5 @@
 ---
 
-# TODO: install kernel-ml-aufs and run grub2-set-default
-
 # TODO: `systemctl unmask tmp.mount` to make /tmp tmpfs (`cvmfs_server import`
 # fails if /tmp is xfs, although for some reason was fine on the PSU stratum 0
 # w/ xfs /tmp).
@@ -84,6 +82,24 @@
   with_subelements:
     - "{{ cvmfs_repositories }}"
     - server_options
+
+- name: Set repository client options
+  lineinfile:
+    dest: "/etc/cvmfs/repositories.d/{{ item.0.repository }}/client.conf"
+    regexp: "^{{ item.1.split('=')[0] }}=.*"
+    line: "{{ item.1 }}"
+  with_subelements:
+    - "{{ cvmfs_repositories }}"
+    - client_options
+
+- name: Increase default max file descriptor limit
+  lineinfile:
+    dest: "/etc/security/limits.conf"
+    regexp: '^\*\s+{{ item }}\s+nofile\s+\d+$'
+    line: "*               {{ item }}    nofile          4096"
+  with_items:
+    - soft
+    - hard
 
 - name: Allow users to manage services
   template:

@@ -20,12 +20,12 @@ group_packages:
   - curl
   - pandoc
 
-group_users:
+jenkinsslaves_group_users:
   - name: jenkins
     groups: docker
     system: true
 
-directories:
+jenkinsslaves_group_directories:
   - path: /var/jenkins
     owner: jenkins
     group: jenkins

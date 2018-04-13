@@ -1,0 +1,3 @@
+---
+
+sshprivatekeys: "{{ vault_sshprivatekeys }}"

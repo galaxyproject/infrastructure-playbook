@@ -18,7 +18,7 @@ host_users:
     system: 'yes'
     shell: '/bin/bash'
 
-directories:
+host_directories:
   - path: /srv/cloudlaunch
     owner: launch
     group: launch
