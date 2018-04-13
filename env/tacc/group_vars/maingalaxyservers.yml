@@ -1,10 +1,14 @@
 ---
 
-authorized_key_users: "{{ vault_authorized_key_users }}"
-
 galaxy_user: g2main
 galaxy_instance_codename: main
 galaxy_instance_hostname: usegalaxy.org
+
+maingalaxyservers_group_authorized_key_users:
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
+  - name: gxsrc
+    authorized: "{{ galaxy_team_users }}"
 
 docker_ssl_client_users:
   - g2main

@@ -3,6 +3,12 @@
 # 500 GB why not
 cvmfs_quota_limit: 512000
 
-group_packages:
+galaxynodes_group_authorized_key_users:
+  - name: g2test
+    authorized: "{{ galaxy_team_users }}"
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
+
+galaxynodes_group_packages:
   - collectl
   - lzo

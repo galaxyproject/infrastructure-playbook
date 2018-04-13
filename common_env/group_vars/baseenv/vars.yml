@@ -1,3 +1,4 @@
 ---
 
 sshkeys: "{{ vault_sshkeys }}"
+galaxy_team_users: "{{ vault_galaxy_team_users }}"
