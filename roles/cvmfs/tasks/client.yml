@@ -3,6 +3,7 @@
 - name: Install CernVM-FS client (yum)
   yum:
     name: cvmfs
+    state: "{{ 'latest' if cvmfs_upgrade_client else 'present' }}"
   when: ansible_os_family == "RedHat"
 
 - name: Install CernVM-FS client (apt)
@@ -60,3 +61,24 @@
     group: root
     mode: 06755
   when: cvmfs_install_setuid_cvmfs_wipecache
+
+- name: Remove cvmfs_wipecache setuid binary
+  file:
+    path: /usr/local/bin/cvmfs_wipecache
+    state: absent
+  when: not cvmfs_install_setuid_cvmfs_wipecache
+
+- name: Install cvmfs_remount_sync setuid binary
+  copy:
+    src: cvmfs_remount_sync.{{ ansible_distribution | lower }}_{{ ansible_distribution_major_version }}
+    dest: /usr/local/bin/cvmfs_remount_sync
+    owner: root
+    group: root
+    mode: 06755
+  when: cvmfs_install_setuid_cvmfs_remount_sync
+
+- name: Remove cvmfs_remount_sync setuid binary
+  file:
+    path: /usr/local/bin/cvmfs_remount_sync
+    state: absent
+  when: not cvmfs_install_setuid_cvmfs_remount_sync

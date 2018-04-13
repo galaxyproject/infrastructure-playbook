@@ -157,7 +157,11 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
+<<<<<<< HEAD:env/galaxy/inventory
 cvmfs1-psu0.galaxyproject.org  # for datacache
+=======
+status.galaxyproject.org
+>>>>>>> origin/master:galaxyenv/inventory
 
 ## Kerberos
 

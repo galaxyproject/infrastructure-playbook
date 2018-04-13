@@ -7,20 +7,22 @@
 - name: Install CernVM-FS server and dependencies (yum)
   yum:
     name: "{{ item }}"
+    state: "{{ 'latest' if cvmfs_upgrade_server else 'present' }}"
   with_items:
     - httpd
     - cvmfs-server
-    - cvmfs-config
+    - cvmfs-config-default
     - cvmfs
   when: ansible_os_family == "RedHat"
 
 - name: Install CernVM-FS server and dependencies (apt)
   apt:
     name: "{{ item }}"
+    state: "{{ 'latest' if cvmfs_upgrade_server else 'present' }}"
   with_items:
     - apache2
     - cvmfs-server
-    - cvmfs-config
+    - cvmfs-config-default
     - cvmfs
   when: ansible_os_family == "Debian"
 

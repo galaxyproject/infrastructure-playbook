@@ -23,8 +23,8 @@
     path: "{{ sentry_var_dir }}"
     state: directory
     owner: sentry
-    group: sentry
-    mode: 0700
+    group: nginx
+    mode: 0750
 
 - name: Create sentry socket directory
   file:

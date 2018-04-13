@@ -1,0 +1,30 @@
+---
+
+authorized_key_users: "{{ vault_authorized_key_users }}"
+
+# for use as a virtualenv/ansible management host
+host_packages:
+  - '@development tools'
+  - git
+  - python-devel
+  - libffi-devel
+  - openssl-devel
+  - pass
+
+host_users:
+  - name: g2test
+    groups: docker
+  - name: g2main
+    groups: docker
+
+nginx_conf_ssl_certificate: wildcard_cert.pem
+nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+nginx_conf_ssl_trusted_certificate: incommon_chain.pem
+
+nginx_conf_http:
+  proxy_read_timeout: 300
+
+nginx_configs:
+  - galaxy-installers
+
+nginx_enable_default_server: false

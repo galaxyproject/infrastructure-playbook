@@ -10,6 +10,7 @@ nginx_flavor: full
 
 # where to install nginx configs
 nginx_conf_dir: /etc/nginx
+nginx_conf_file: "{{ nginx_conf_dir }}/nginx.conf"
 nginx_ssl_conf_dir: "{{ nginx_conf_dir }}/ssl"
 
 # SSL defaults (version dependent ones such as ssl_protocols can be found in the template)

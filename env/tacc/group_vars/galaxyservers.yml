@@ -1,0 +1,87 @@
+---
+
+galaxyservers_group_groups:
+  - name: gxsrc
+    gid: 493
+
+galaxyservers_group_users:
+  - name: gxsrc
+    group: gxsrc
+    groups: G-803372
+    uid: 493
+    home: /home/gxsrc
+    shell: /bin/bash
+
+galaxyservers_group_directories:
+  - path: /srv/nginx/{{ galaxy_instance_hostname }}/root
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/bin
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/config
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/nagios
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/interactive_environments
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/plugins
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/proxy
+    owner: gxsrc
+    group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/log
+    owner: "{{ galaxy_user }}"
+    group: G-803372
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/var
+    owner: "{{ galaxy_user }}"
+    group: G-803372
+
+galaxyservers_group_files:
+  - src: files/monitoring/mailoom.py
+    dest: /root/mailoom.py
+    owner: root
+    group: root
+
+galaxyservers_group_crontabs:
+  - id: mail_oom_killer
+    name: Mail OOM Killer log messages
+    user: root
+    minute: "0"
+    hour: "8,12,16"
+    weekday: "1-5"
+    job: "/usr/bin/python /root/mailoom.py --oom --mail galaxy-system@lists.galaxyproject.org"
+
+# node, npm for GIE proxy
+galaxyservers_group_packages:
+  - nodejs
+  - npm
+  - '@development tools' # for npm modules
+  - collectl
+  - slurm-drmaa
+
+galaxyservers_group_yum_repositories:
+  - name: docker
+    state: absent
+
+docker_service_enabled: no
+
+cvmfs_server_urls:
+  - domain: galaxyproject.org
+    urls:
+      - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+cvmfs_http_proxies:
+  - "DIRECT"
+
+cvmfs_install_setuid_cvmfs_wipecache: no
+cvmfs_install_setuid_cvmfs_remount_sync: yes
