@@ -32,6 +32,11 @@ ProctrackType=proctrack/linuxproc
 ClusterName={{ slurm_cluster_name }}
 ReturnToService=1
 #
+SlurmctldLogFile=/var/log/slurm/slurmctld.log
+SlurmctldDebug=7
+SlurmdLogFile=/var/log/slurm/slurmd.log
+SlurmdDebug=6
+#
 # Node Configurations
 #
 # CPUs = Sockets * CoresPerSocket * ThreadsPerCore
@@ -47,6 +52,3 @@ NodeName={{ hostvars[host]['inventory_hostname_short'] }} NodeAddr={{ hostvars[h
 {% for node_type in slurm_nodes %}
 PartitionName=multi State=UP DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 Nodes={{ slurm_hostlists.results[0].stdout }}
 {% endfor %}
-
-SlurmctldDebug=7
-SlurmdDebug=6
