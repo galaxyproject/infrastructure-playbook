@@ -1,0 +1,9 @@
+---
+
+slurm_cluster_name: jetstream-iu
+
+slurm_nodes:
+  - real_memory: 29997
+    sockets: 10
+    partition: large
+    inventory_group: jetstream-iu-large
