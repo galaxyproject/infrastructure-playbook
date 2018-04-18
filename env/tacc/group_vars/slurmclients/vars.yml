@@ -3,11 +3,11 @@
 munge_key: "{{ vault_munge_key }}"
 
 slurm_user:
-  - uid: 40302
-    gid: 40302
-    comment: 'Slurm Workload Manager'
-    home: /var/lib/slurm
-    shell: /bin/bash
+  uid: 40302
+  gid: 40302
+  comment: 'Slurm Workload Manager'
+  home: /var/lib/slurm
+  shell: /bin/bash
 
 slurm_controller_name: galaxy08
 slurm_controller_ip: 129.114.60.125
