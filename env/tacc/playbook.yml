@@ -18,6 +18,8 @@
       tags: cron
     - role: services          # Manage services
       tags: services
+    - role: dj-wasabi.telegraf
+      tags: stats,telegraf
   tags: initial,system
 
 - name: Forward mail for local accounts

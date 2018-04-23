@@ -12,6 +12,7 @@
   environment:
     # FIXME: ditry hack
     PATH: "/usr/pgsql-9.5/bin:{{ ansible_env.PATH }}"
+  register: sentry_installed
 
 - name: Create sentry config directory
   file:
@@ -43,11 +44,13 @@
     - uwsgi.ini
   # FIXME: HUP uwsgi
 
+# This is safe to run at all times but is very slow, so we only do so when there's been an upgrade
 - name: Initialize/upgrade sentry database
   become: yes
   become_user: sentry
   become_method: su
   command: "{{ sentry_prefix }}/bin/sentry --config={{ sentry_conf_dir }}/sentry.conf.py upgrade"
+  when: sentry_installed.changed
 
 # Need to detect first run and do a `sentry createuser here`
 # Actually when running `sentry upgrade` interactively, it prompted me to create a new user

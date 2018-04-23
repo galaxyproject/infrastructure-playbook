@@ -143,12 +143,7 @@
     update_cache: yes
   when: ansible_os_family == "RedHat"
 
-- name: Install Telegraf
-  yum:
-    name: telegraf
-    state: "{{ 'latest' if stats_upgrade else 'installed' }}"
-    update_cache: yes
-  when: ansible_os_family == "RedHat"
+# Telegraf is managed by dj-wasabi.telegraf
 
 - name: Download Grafana
   get_url:
@@ -191,7 +186,6 @@
     dest: "{{ stats_conf_dir }}/{{ item }}"
   with_items:
     - influxdb.conf
-    - telegraf.conf
     - grafana.conf
 
 - name: Create stats slurp virtualenv

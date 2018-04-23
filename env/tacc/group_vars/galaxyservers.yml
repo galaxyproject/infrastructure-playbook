@@ -85,3 +85,51 @@ cvmfs_http_proxies:
 
 cvmfs_install_setuid_cvmfs_wipecache: no
 cvmfs_install_setuid_cvmfs_remount_sync: yes
+
+# log stats to telegraf locally
+#
+# separate db filtering for statsd (Galaxy timing) and system stuff using
+#   https://github.com/influxdata/telegraf/issues/1778
+telegraf_agent_output:
+  - type: influxdb
+    config:
+      - urls = ["http://stats.galaxyproject.org:8086"]
+      - database = "system"
+      - '[outputs.influxdb.tagdrop]'
+      - '  influxdb_database = ["*"]'
+  - type: influxdb
+    config:
+      - urls = ["http://stats.galaxyproject.org:8086"]
+      - database = "telegraf"
+      - 'tagexclude = ["influxdb_database"]'
+      - '[outputs.influxdb.tagpass]'
+      - '  influxdb_database = ["telegraf"]'
+
+telegraf_plugins_default:
+  - plugin: statsd
+    config:
+      - service_address = "127.0.0.1:8125"
+      - delete_gauges = false
+      - delete_counters = false
+      - delete_sets = false
+      - delete_timings = true
+      - percentiles = [90]
+      - metric_separator = "_"
+      - parse_data_dog_tags = false
+      - allowed_pending_messages = 10000
+      - percentile_limit = 1000
+      - udp_packet_size = 1500
+      - '[inputs.statsd.tags]'
+      - '  influxdb_database = "telegraf"'
+  - plugin: cpu
+    config:
+      - percpu = true
+  - plugin: disk
+  - plugin: kernel
+  - plugin: processes
+  - plugin: io
+  - plugin: mem
+  - plugin: system
+  - plugin: swap
+  - plugin: net
+  - plugin: netstat

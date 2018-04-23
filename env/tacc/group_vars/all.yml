@@ -27,3 +27,24 @@ all_packages:
 #    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.34
 #    owner: ndc
 #    group: G-803372
+
+# run telegraf on everything
+telegraf_agent_output:
+  - type: influxdb
+    config:
+    - urls = ["http://stats.galaxyproject.org:8086"]
+    - database = "system"
+
+telegraf_plugins_default:
+  - plugin: cpu
+    config:
+      - percpu = true
+  - plugin: disk
+  - plugin: kernel
+  - plugin: processes
+  - plugin: io
+  - plugin: mem
+  - plugin: system
+  - plugin: swap
+  - plugin: net
+  - plugin: netstat
