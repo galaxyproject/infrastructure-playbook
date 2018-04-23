@@ -139,18 +139,20 @@
 - name: Install InfluxDB (yum)
   yum:
     name: influxdb
+    state: "{{ 'latest' if stats_upgrade else 'installed' }}"
     update_cache: yes
   when: ansible_os_family == "RedHat"
 
 - name: Install Telegraf
   yum:
     name: telegraf
+    state: "{{ 'latest' if stats_upgrade else 'installed' }}"
     update_cache: yes
   when: ansible_os_family == "RedHat"
 
 - name: Download Grafana
   get_url:
-    url: "https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-4.6.3-1.x86_64.rpm"
+    url: "https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana-5.0.4-1.x86_64.rpm"
     dest: "/tmp/grafana.rpm"
   when: ansible_os_family == "RedHat"
 

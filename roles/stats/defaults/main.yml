@@ -5,3 +5,5 @@ stats_conf_dir: /etc/opt/stats
 stats_sock_dir: /var/run/stats
 stats_var_dir: /var/opt/stats
 statslurp_venv_dir: /srv/statslurp
+
+stats_upgrade: false

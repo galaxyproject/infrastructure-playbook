@@ -1,8 +1,0 @@
----
-
-grafana_admin_user: "{{ vault_grafana_admin_user }}"
-grafana_admin_pass: "{{ vault_grafana_admin_pass }}"
-grafana_secret_key: "{{ vault_grafana_secret_key }}"
-
-galaxy_test_grafana_db_password: "{{ vault_galaxy_test_grafana_db_password }}"
-galaxy_main_grafana_db_password: "{{ vault_galaxy_main_grafana_db_password }}"

@@ -1,6 +1,13 @@
 ---
 
-group_packages:
+grafana_admin_user: "{{ vault_grafana_admin_user }}"
+grafana_admin_pass: "{{ vault_grafana_admin_pass }}"
+grafana_secret_key: "{{ vault_grafana_secret_key }}"
+
+galaxy_test_grafana_db_password: "{{ vault_galaxy_test_grafana_db_password }}"
+galaxy_main_grafana_db_password: "{{ vault_galaxy_main_grafana_db_password }}"
+
+statsservers_group_packages:
   - '@development'
   - python-virtualenv
   - python-psycopg2
@@ -14,7 +21,7 @@ group_packages:
 
 postgresql_version: '9.5'
 
-postgresql_objects_users: 
+postgresql_objects_users:
   - name: sentry
   - name: graphite
 
@@ -38,7 +45,7 @@ stats_conf_email_from: 'stats@stats.galaxyproject.org'
 # sentry role
 sentry_sock_dir: /var/opt/sentry/run
 
-crontabs:
+group_crontabs:
   - id: slurp_galaxy_stats_test
     name: Slurp Galaxy Test Stats
     user: stats
