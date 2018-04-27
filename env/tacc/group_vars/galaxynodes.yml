@@ -12,3 +12,4 @@ galaxynodes_group_authorized_key_users:
 galaxynodes_group_packages:
   - collectl
   - lzo
+  - libcgroup-tools
