@@ -64,7 +64,7 @@ supervisord_install: package
 supervisord_group_configs:
   - pulsar
 
-crontabs:
+controllers_group_crontabs:
   - id: clean_scratch
     name: Clean Test Scratch
     user: g2test

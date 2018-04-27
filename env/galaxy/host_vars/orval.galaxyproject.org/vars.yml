@@ -155,7 +155,7 @@ zfs_admin_permissions:
     users: zfsdump-orval
     permissions: send,snapshot,hold
 
-crontabs:
+host_crontabs:
   - name: "Backup OpenAFS /vicepa"
     id: backup_vicepa
     user: zfsdump-orval

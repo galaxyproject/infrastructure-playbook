@@ -5,7 +5,7 @@ slurmservers_group_files:
     dest: /usr/local/sbin/spartbalance
     mode: '0755'
 
-group_crontabs:
+slurmservers_group_crontabs:
   - id: slurm_partition_balance
     name: Slurm Partition Balance
     user: root

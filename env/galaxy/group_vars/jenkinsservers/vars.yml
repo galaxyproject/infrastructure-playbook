@@ -50,7 +50,7 @@ jenkinsservers_group_users:
   - name: jenkins
     groups: docker
 
-group_crontabs:
+jenkinsservers_group_crontabs:
   - id: jenkins_backup
     name: Jenkins Backup
     user: jenkins

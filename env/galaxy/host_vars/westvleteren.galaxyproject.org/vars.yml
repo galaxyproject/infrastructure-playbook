@@ -106,7 +106,7 @@ host_directories:
     owner: zfsdump-radegast
     group: zfsdump-radegast
 
-crontabs:
+host_crontabs:
   - id: biostar_backup
     name: Biostar Backup
     user: zfsdump-biostar

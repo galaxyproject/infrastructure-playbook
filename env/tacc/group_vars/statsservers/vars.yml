@@ -45,7 +45,7 @@ stats_conf_email_from: 'stats@stats.galaxyproject.org'
 # sentry role
 sentry_sock_dir: /var/opt/sentry/run
 
-group_crontabs:
+statsservers_group_crontabs:
   - id: slurp_galaxy_stats_test
     name: Slurp Galaxy Test Stats
     user: stats

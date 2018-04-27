@@ -49,6 +49,7 @@ galaxyservers_group_files:
     dest: /root/mailoom.py
     owner: root
     group: root
+    state: absent
 
 galaxyservers_group_crontabs:
   - id: mail_oom_killer
@@ -58,6 +59,7 @@ galaxyservers_group_crontabs:
     hour: "8,12,16"
     weekday: "1-5"
     job: "/usr/bin/python /root/mailoom.py --oom --mail galaxy-system@lists.galaxyproject.org"
+    state: absent
 
 # node, npm for GIE proxy
 galaxyservers_group_packages:
