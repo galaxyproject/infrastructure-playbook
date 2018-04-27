@@ -48,6 +48,22 @@
       command: /usr/bin/newaliases
   tags: system,mail
 
+# keeps /boot from filling up
+- name: Ensure at most 2 kernels will be installed
+  hosts: all
+  remote_user: root
+  tasks:
+    - name: Set installonly_limit=2 in yum.conf
+      ini_file:
+        path: /etc/yum.conf
+        section: main
+        option: installonly_limit
+        value: 2
+        no_extra_spaces: yes
+        backup: yes
+      when: ansible_os_family == "RedHat"  # this is everything, but just to be safe...
+  tags: initial,system
+
 - name: Tasks for RabbitMQ servers
   hosts: rabbitmqservers
   remote_user: root
