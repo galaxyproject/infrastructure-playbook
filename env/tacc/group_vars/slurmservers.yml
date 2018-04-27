@@ -10,4 +10,4 @@ group_crontabs:
     name: Slurm Partition Balance
     user: root
     minute: '*/15'
-    job: "{ date; /usr/local/sbin/spartbalance; } >> /var/log/spartbalance.log"
+    job: "{ date; /usr/local/sbin/spartbalance; } >> /var/log/spartbalance.log 2>&1"
