@@ -4,7 +4,7 @@ set -e
 
 pdmin=5
 pdstep=10
-minnodes=6
+minnodes=4
 maxnodes=10
 maxwait=30
 mutex='/run/spartbalance.lock'
