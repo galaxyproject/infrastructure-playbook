@@ -13,3 +13,5 @@ galaxynodes_group_packages:
   - collectl
   - lzo
   - libcgroup-tools
+  # packages for older tools
+  - perl-Data-Dumper
