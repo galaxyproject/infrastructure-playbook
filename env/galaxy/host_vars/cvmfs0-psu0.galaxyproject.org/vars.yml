@@ -32,6 +32,7 @@ host_users:
     home: /home/sandbox
     shell: /bin/bash
     system: true
+    groups: docker
 
 host_groups:
   - name: G-803372
