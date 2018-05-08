@@ -14,7 +14,7 @@ cvmfs_repositories:
       - CVMFS_IGNORE_XDIR_HARDLINKS=false
     client_options: []
 
-group_users:
+host_users:
   - name: g2test
     uid: 819456
     group: G-803372
@@ -27,7 +27,12 @@ group_users:
     comment: "Galaxy Main"
     home: /home/g2main
     shell: /bin/bash
+  - name: sandbox
+    comment: "CVMFS Sandbox"
+    home: /home/sandbox
+    shell: /bin/bash
+    system: true
 
-group_groups:
+host_groups:
   - name: G-803372
     gid: 803372

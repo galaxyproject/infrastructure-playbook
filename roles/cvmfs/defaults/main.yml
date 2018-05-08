@@ -100,6 +100,39 @@ cvmfs_keys:
       bAGzbVAm14suDOEoallf/MXSRkeU6J3hEGdWbAS/0HfyTpPzdlytyihvz5R0UDZp
       3LfKBSCPAcZI4A1CecNIBgCvV3YT4qow68xovCmI9x7YXbdXwAA3Zw==
       -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/sandbox.galaxyproject.org.pub
+    owner: root
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1jHnrwsxMUkMZDAj9GMt
+      WNCFFrNVejTTbyklk+52yyXgVgRWo1qN+5lh6W2UL/b2v9pOEzRVPZBQvNNwKo6P
+      e+5p2JBVJ5yv7tpegEnHaRYw6yoHlWLzeSfiu8/yNp2s3jzK52zdLE9rZu7KlXH3
+      EiY2LbU8wa0oah8BlvqWoHlWm78IQbbgK3Q0KmsXpvpjjhYkRWh/TL7KRmwT0b+C
+      WDNbviUi62sBl1SWQ95kcsfqfviU94DKGWRWDYngnYRV5PZVLuUw8Egix6lW2Sj0
+      l5LILRbaIyXiTsFqXfK1dtjAOmZMkX4wuBch13y9FhMCIRvBDWYQuyxugSC101Ur
+      YwIDAQAB
+      -----END PUBLIC KEY-----
+  - path: /etc/cvmfs/keys/sandbox.galaxyproject.org.crt
+    owner: root
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIC+jCCAeICCQCM+ld6uTJAGjANBgkqhkiG9w0BAQsFADA/MT0wOwYDVQQDDDRz
+      YW5kYm94LmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxlYXNlIE1hbmFn
+      ZXJzMB4XDTE4MDUwODA3NDEwN1oXDTE5MDUwODA3NDEwN1owPzE9MDsGA1UEAww0
+      c2FuZGJveC5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBNYW5h
+      Z2VyczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOZ/1mSV1X2X5NPi
+      B2b0v4Wep7+dwxLJR9ElKIx4ShzxY2fIT0XBjOGzBuaLRxOD52jA+mOFHa5Y2X65
+      BawRQWCsewK6Qxk3ihYoQdXEd78ahydhOOsY9UDrpxLlsVtHokK2t2Zme5a6AmS8
+      Rj4rwfBXErbCUiLK+BRSDWoIy2wvK3lErmFoXlr4cr7Yji9rAySytKWiTd49lneA
+      05v/KFy8iuef2Y3g33atPUnZMw4l6IHkuCj3YSaLjwmWIC4X7cuG9R7SMSm4HMoY
+      FKAVrDr+MxsGPIYZOWIbKlAcRXZHr2toOk/jZXBaezRP13W0zXL88ojdRXVv/U8L
+      UW4fmMUCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAlzl6mshHyJ3H47RMDATRQkNN
+      qDpIwaWftygAIJdnZWtiS0gut/NyN4l2lOz5mZ8cFzg2Y9JUGW+dtIwSW0QUvO4k
+      q5+0qWTeD9dixj/ERIpMOake/Z2Gzzro3gHe+P3NHZ0slsnKzVDIZFZo6x/Lc701
+      KENOt0oSF8kZTSxQoi0o0OBs5H3bA+afkNHxiXRwGG0nJ3sP2/MVrqrclYbLbRtA
+      uFjvHWE2X2fDmvvmxaKEdTq5Ip0TK41f0H2cyTROn0ofRjx3wp8KjX0D2JJqZIau
+      s6bKTTm3lyDf0+etkpE8J3TPbbSB/Ut+PCl8Efbzup1hmFpGZz/B89L9xi7+/w==
+      -----END CERTIFICATE-----
 
 cvmfs_private_keys: []
 
@@ -129,6 +162,12 @@ cvmfs_repositories:
     server_options:
       - CVMFS_AUTO_GC=false
     client_options: []
+  - repository: sandbox.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: sandbox
+    server_options: []
+    client_options: []
+
 
 cvmfs_http_proxies:
   - DIRECT
