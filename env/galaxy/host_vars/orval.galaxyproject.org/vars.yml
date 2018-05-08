@@ -59,6 +59,12 @@ local_users:
     group: singularity
     home: /home/singularity
     shell: /bin/bash
+  - name: training
+    uid: 2055
+    gid: 2055
+    group: training
+    home: /home/training
+    shell: /bin/bash
 
 zfs_filesystems:
   - name: promise-1/orval/vicepa
@@ -106,6 +112,11 @@ zfs_filesystems:
     setuid: "off"
     owner: depot
     group: depot
+
+host_directories:
+  - path: /srv/nginx/depot.galaxyproject.org/root/training
+    owner: training
+    group: training
 
 host_templates:
   - dest: /etc/rsyncd.conf

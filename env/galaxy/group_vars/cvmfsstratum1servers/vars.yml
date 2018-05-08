@@ -1,9 +1,11 @@
 ---
 
+cvmfsstratum1servers_group_authorized_key_users: "{{ vault_cvmfsstratum1servers_group_authorized_key_users }}"
+
 # in MB
 cvmfs_stratum1_cache_mem: 2560
 
-group_users:
+cvmfsstratum1servers_group_users:
   - name: g2test
     uid: 819456
     group: G-803372
@@ -16,8 +18,13 @@ group_users:
     comment: "Galaxy Main"
     home: /home/g2main
     shell: /bin/bash
+  - name: sandbox
+    comment: "CVMFS Sandbox"
+    home: /home/sandbox
+    shell: /bin/bash
+    system: yes
 
-group_groups:
+cvmfsstratum1servers_group_groups:
   - name: G-803372
     gid: 803372
 
