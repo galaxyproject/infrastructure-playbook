@@ -13,6 +13,20 @@ cvmfs_repositories:
       - CVMFS_AUTO_GC=false
       - CVMFS_IGNORE_XDIR_HARDLINKS=false
     client_options: []
+  - repository: sandbox.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: sandbox
+    server_options:
+      - CVMFS_GARBAGE_COLLECTION=true
+    client_options: []
+  - repository: singularity.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: singularity
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+    client_options: []
 
 host_users:
   - name: g2test
@@ -33,6 +47,11 @@ host_users:
     shell: /bin/bash
     system: true
     groups: docker
+  - name: singularity
+    comment: "Singularity Images"
+    home: /home/singularity
+    shell: /bin/bash
+    system: yes
 
 host_groups:
   - name: G-803372

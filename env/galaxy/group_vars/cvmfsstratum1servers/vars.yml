@@ -23,6 +23,11 @@ cvmfsstratum1servers_group_users:
     home: /home/sandbox
     shell: /bin/bash
     system: yes
+  - name: singularity
+    comment: "Singularity Images"
+    home: /home/singularity
+    shell: /bin/bash
+    system: yes
 
 cvmfsstratum1servers_group_groups:
   - name: G-803372
