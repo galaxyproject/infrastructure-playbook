@@ -1,0 +1,9 @@
+---
+
+stats_influxdb_user: influxdb
+stats_influxdb_group: influxdb
+stats_grafana_user: grafana
+stats_grafana_group: grafana
+
+influxdb_service_name: influxdb
+grafana_service_name: grafana-server

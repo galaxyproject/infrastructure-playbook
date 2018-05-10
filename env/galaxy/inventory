@@ -31,6 +31,7 @@ n7.galaxyproject.org
 n8.galaxyproject.org
 mjolnir0.galaxyproject.org
 duvel.galaxyproject.org
+infrastats.galaxyproject.org
 
 [baseenv:children]
 baseenv-nomail
@@ -58,6 +59,7 @@ jenkinsslaves
 [sslservers:children]
 webservers
 dockersslservers
+statsservers
 
 [baseenv-nomail]
 cvmfs0-psu0.galaxyproject.org
@@ -160,6 +162,9 @@ athena.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org  # for datacache
 status.galaxyproject.org
 
+[webservers:children]
+statsservers
+
 ## Kerberos
 
 [kerberosauthclients]
@@ -239,3 +244,6 @@ biostar.usegalaxy.org
 
 [starforgebuilders]
 mjolnir0.galaxyproject.org
+
+[statsservers]
+infrastats.galaxyproject.org

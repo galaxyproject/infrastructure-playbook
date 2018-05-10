@@ -85,8 +85,10 @@
   hosts: webservers
   remote_user: root
   roles:
+    - role: geerlingguy.repo-epel
+      when: ansible_os_family == "RedHat"
     - role: galaxyproject.nginx
-      tags: nginx
+  tags: nginx
 
 - name: Install supervisor
   hosts: all
@@ -129,6 +131,30 @@
         line: "{{ item }}::::type=normal;defaultpriv=basic,sys_fs_import"
         regexp: "^{{ item }}:.*"
       with_items: backupusers
+
+- name: Tasks for stats servers
+  hosts: statsservers
+  remote_user: root
+  roles:
+    # TODO: install on other stuff
+    - role: dj-wasabi.telegraf
+    - role: stats
+  # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
+  # the config
+  #post_tasks:
+  #  # TODO: put this somewhere else
+  #  - name: Install influxdb python module
+  #    pip:
+  #      name: influxdb
+  #  - name: Create InfluxDB users
+  #    influxdb_user:
+  #      admin: "{{ item.admin | default(omit) }}"
+  #      user_name: "{{ item.user_name | default(omit) }}"
+  #      user_password: "{{ item.user_password | default(omit) }}"
+  #    with_items: "{{ stats_influxdb_users | default([]) }}"
+  #    when: stats_influxdb_users is defined
+  tags:
+    - stats
 
 - name: Tasks for CVMFS Servers
   hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies

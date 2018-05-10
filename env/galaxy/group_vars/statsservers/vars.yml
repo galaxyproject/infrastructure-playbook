@@ -1,0 +1,66 @@
+---
+
+stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
+
+stats_ssl_certs:
+  - name: influxdb
+    ca: stats
+    per_host: yes
+    owner: influxdb
+    group: influxdb
+    paths:
+      - cert: "{{ stats_influxdb_conf_dir }}/influxdb.crt"
+        key: "{{ stats_influxdb_conf_dir }}/influxdb.key"
+        ca_cert: "{{ stats_influxdb_conf_dir }}/ca.crt"
+
+stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
+
+statsservers_group_packages:
+  # for influxdb_user module
+    - python2-requests
+    - python2-pip
+
+grafana_admin_user: "{{ vault_grafana_admin_user }}"
+grafana_admin_pass: "{{ vault_grafana_admin_pass }}"
+grafana_secret_key: "{{ vault_grafana_secret_key }}"
+
+#statsservers_group_packages:
+#  - '@development'
+
+nginx_conf_ssl_certificate: wildcard_cert.pem
+nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+nginx_conf_ssl_trusted_certificate: incommon_chain.pem
+
+nginx_configs:
+  - infrastats
+
+nginx_default_redirect_uri: https://infrastats.galaxyproject.org/
+
+stats_conf_email_host: 'localhost:25'
+stats_conf_email_from: 'stats@infrastats.galaxyproject.org'
+
+stats_influxdb_auth_enabled: true
+stats_influxdb_https_enabled: true
+
+# separate db filtering for statsd (Galaxy timing) and system stuff using
+#   https://github.com/influxdata/telegraf/issues/1778
+telegraf_agent_output:
+  - type: influxdb
+    config:
+      - urls = ["https://localhost:8086"]
+      - database = "system"
+      - insecure_skip_verify = true
+
+telegraf_plugins_default:
+  - plugin: cpu
+    config:
+      - percpu = true
+  - plugin: disk
+  - plugin: kernel
+  - plugin: processes
+  - plugin: io
+  - plugin: mem
+  - plugin: system
+  - plugin: swap
+  - plugin: net
+  - plugin: netstat

@@ -13,11 +13,6 @@
     - reload nginx
     - supervisorctl restart nginx
 
-- name: Generate strong Diffie-Hellman group
-  command: openssl dhparam -out {{ nginx_ssl_conf_dir }}/dhparams.pem 2048
-  args:
-    creates: "{{ nginx_ssl_conf_dir }}/dhparams.pem"
-
 - name: Make SSL certificate/key paths absolute
   set_fact:
     nginx_conf_ssl_certificate: "{{ nginx_ssl_conf_dir ~ '/' ~ nginx_conf_ssl_certificate if nginx_conf_ssl_certificate.0 != '/' else nginx_conf_ssl_certificate }}"
@@ -41,6 +36,11 @@
   with_items:
     - "{{ nginx_conf_ssl_certificate }}"
     - "{{ nginx_conf_ssl_certificate_key }}"
+
+- name: Generate strong Diffie-Hellman group
+  command: openssl dhparam -out {{ nginx_ssl_conf_dir }}/dhparams.pem 2048
+  args:
+    creates: "{{ nginx_ssl_conf_dir }}/dhparams.pem"
 
 - name: Install SSL certificate
   copy:

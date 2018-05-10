@@ -1,0 +1,25 @@
+---
+
+# infrastats is a smartos lx-branded zone
+
+zfs_filesystems:
+  - name: zones/{{ ansible_hostname }}/data/influxdb
+    owner: influxdb
+    group: influxdb
+
+host_links:
+  - path: /var/lib/influxdb
+    src: /zones/{{ ansible_hostname }}/data/influxdb
+    owner: influxdb
+    group: influxdb
+    force: yes   # remove dir if it exists
+
+# TODO: need to systemctl daemon-reload
+host_directories:
+  - path: /etc/systemd/system/nginx.service.d
+
+host_files:
+  - dest: /etc/systemd/system/nginx.service.d/disable_private_temp.conf
+    content: |
+      [Service]
+      PrivateTmp=false

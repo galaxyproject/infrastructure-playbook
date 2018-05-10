@@ -1,9 +1,14 @@
 ---
 
-stats_prefix: /opt/stats
-stats_conf_dir: /etc/opt/stats
-stats_sock_dir: /var/run/stats
-stats_var_dir: /var/opt/stats
-statslurp_venv_dir: /srv/statslurp
-
 stats_upgrade: false
+
+stats_use_supervisor: false
+
+stats_influxdb_conf_dir: /etc/influxdb
+stats_grafana_conf_dir: /etc/grafana
+stats_influxdb_var_dir: /var/lib/influxdb
+stats_grafana_data_dir: /var/lib/grafana
+
+stats_grafana_log_dir: /var/log/grafana
+
+statslurp_venv_dir: /srv/statslurp

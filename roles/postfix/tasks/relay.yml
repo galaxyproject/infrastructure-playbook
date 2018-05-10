@@ -1,12 +1,19 @@
 ---
 
-- name: Install postfix relay packages
-  apt: pkg={{ item }}
+- name: Install postfix relay packages (Debian)
+  apt:
+    pkg: "{{ item }}"
   when: ansible_os_family == "Debian"
   with_items:
     - postfix
     - bsd-mailx
 
-- name: Install postfix relay packages
-  pkgin: pkg=postfix
+- name: Install postfix relay packages (RedHat)
+  yum:
+    pkg: postfix
+  when: ansible_os_family == "RedHat"
+
+- name: Install postfix relay packages (SmartOS)
+  pkgin:
+    pkg: postfix
   when: ansible_distribution == "SmartOS"
