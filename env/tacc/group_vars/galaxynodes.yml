@@ -16,3 +16,14 @@ galaxynodes_group_packages:
   - singularity-runtime
   # packages for older tools
   - perl-Data-Dumper
+
+galaxynodes_group_files:
+  - src: system/cleancgroups.py
+    dest: ~root/cleancgroups.py
+
+galaxynodes_group_crontabs:
+  - id: clean_cgroups
+    name: Clean old cgroups
+    user: root
+    minute: "*/5"
+    job: "python /root/cleancgroups.py >> /var/log/cleancgroups.log 2>&1"
