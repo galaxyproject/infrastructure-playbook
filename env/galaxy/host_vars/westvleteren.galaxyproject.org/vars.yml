@@ -105,6 +105,21 @@ host_directories:
   - path: /zones/westvleteren/backup/radegast/postgres/active
     owner: zfsdump-radegast
     group: zfsdump-radegast
+  - path: /etc/prunesnaps
+
+host_files:
+  - src: westvleteren/prunesnaps.conf
+    dest: /etc/prunesnaps/prunesnaps.conf
+  - src: system/prunesnaps
+    dest: /usr/local/sbin/prunesnaps
+    mode: "0755"
+
+host_lines:
+  - path: /opt/local/etc/rsyslog.conf
+    line: "local0.debug	/var/log/prunesnaps.log"
+    backup: yes
+    notify:
+      - "reload syslog"
 
 host_crontabs:
   - id: biostar_backup

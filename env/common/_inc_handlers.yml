@@ -1,0 +1,7 @@
+---
+
+- name: reload syslog
+  service:
+    name: svc:/pkgsrc/rsyslog
+    state: reloaded
+  when: ansible_distribution == 'SmartOS' and ansible_container == 'zone'

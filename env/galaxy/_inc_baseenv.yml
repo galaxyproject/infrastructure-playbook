@@ -37,3 +37,5 @@
       tags: mail,mailman
       when: "'listservers' in group_names"
   tags: initial,baseenv
+  handlers:
+    - include: _inc_handlers.yml
