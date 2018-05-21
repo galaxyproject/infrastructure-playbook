@@ -16,6 +16,9 @@ galaxynodes_group_packages:
   - singularity-runtime
   # packages for older tools
   - perl-Data-Dumper
+  # Conda R does not package up all of its X dependencies
+  # https://github.com/ContinuumIO/anaconda-issues/issues/4656
+  - xorg-x11-apps
 
 galaxynodes_group_files:
   - src: system/cleancgroups.py
