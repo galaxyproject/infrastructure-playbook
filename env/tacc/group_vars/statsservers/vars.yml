@@ -31,25 +31,25 @@ postgresql_objects_databases:
   - name: graphite
     owner: graphite
 
-stats_use_supervisord: true
+#stats_use_supervisord: true
 
+# supervisor is used only for sentry
 supervisord_install: package
-
 supervisord_group_configs:
   - sentry
-  - stats
+  #- stats
 
 sentry_conf_email_host: 'localhost'
 stats_conf_email_host: 'localhost:25'
 stats_conf_email_from: 'stats@stats.galaxyproject.org'
 
-stats_influxdb_conf_dir: /etc/opt/stats
-stats_grafana_conf_dir: /etc/opt/stats
-stats_influxdb_var_dir: /var/opt/stats/.influxdb
-stats_grafana_data_dir: /var/opt/stats/lib/grafana
-stats_grafana_log_dir: /var/opt/stats/log/grafana
+#stats_influxdb_conf_dir: /etc/opt/stats
+#stats_grafana_conf_dir: /etc/opt/stats
+#stats_influxdb_var_dir: /var/opt/stats/.influxdb
+#stats_grafana_data_dir: /var/opt/stats/lib/grafana
+#stats_grafana_log_dir: /var/opt/stats/log/grafana
 
-stats_user: stats
+#stats_user: stats
 stats_slurp: true
 
 # used in the nginx template, which is run in a play that does not include the
