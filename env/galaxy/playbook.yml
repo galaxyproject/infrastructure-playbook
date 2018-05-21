@@ -172,4 +172,6 @@
   hosts: dockerswarmmanagers
   roles:
     - role: docker_swarm
-      tags: docker
+    - role: cron
+      tags: cron
+  tags: docker
