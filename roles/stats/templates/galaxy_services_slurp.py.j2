@@ -1,6 +1,7 @@
 #!{{ statslurp_venv_dir }}/bin/python
 
 import argparse
+import copy
 import datetime
 import subprocess
 from collections import namedtuple
@@ -19,7 +20,7 @@ def _make_pcdict(default=None):
     for partition in SLURM_PARTITIONS:
         rval[partition] = {}
         for cluster in SLURM_CLUSTERS:
-            rval[partition][cluster] = default or {}
+            rval[partition][cluster] = copy.copy(default) or {}
     return rval
 
 def _iter_pcdict(pcdict):
@@ -55,7 +56,12 @@ def squeue(columns=None):
 
 def slurm_jobs_by_state():
     rval = []
-    counts = _make_pcdict()
+    counts = _make_pcdict(
+        default={
+            'PENDING': 0,
+            'RUNNING': 0,
+        }
+    )
     for partition, cluster, data in squeue(columns=['state']):
         states = counts[partition][cluster]
         states[data.state] = states.get(data.state, 0) + 1
