@@ -1,0 +1,118 @@
+#!{{ statslurp_venv_dir }}/bin/python
+
+import argparse
+import datetime
+import subprocess
+from collections import namedtuple
+
+from influxdb import InfluxDBClient
+
+
+INFLUX_DB = 'galaxy_services'
+SLURM_PARTITIONS = ('normal', 'multi', 'reserved')
+SLURM_CLUSTERS = ('roundup', 'jetstream-iu', 'jetstream-tacc')
+time = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def _make_pcdict(default=None):
+    rval = {}
+    for partition in SLURM_PARTITIONS:
+        rval[partition] = {}
+        for cluster in SLURM_CLUSTERS:
+            rval[partition][cluster] = default or {}
+    return rval
+
+def _iter_pcdict(pcdict):
+    for partition, clusters in pcdict.items():
+        for cluster, value in clusters.items():
+            yield partition, cluster, value
+
+def _run_by_partition_and_cluster(cmd, columns=None):
+    if columns:
+        OutColumns = namedtuple('OutColumns', [x.split(':')[0] for x in columns])
+        cmd += ' -O %s' % ','.join(columns)
+    for partition in SLURM_PARTITIONS:
+        for cluster in SLURM_CLUSTERS:
+            for out in subprocess.check_output(
+                    cmd.format(
+                        partition=partition,
+                        cluster=cluster,
+                    ).split()).splitlines():
+                if out.startswith('CLUSTER:'):
+                    continue
+                if columns:
+                    out = OutColumns(*[x.rstrip('*') for x in out.strip().split()])
+                yield partition, cluster, out
+
+
+def sinfo(columns=None):
+    return _run_by_partition_and_cluster('sinfo -Nhe -M {cluster} -p {partition}', columns=columns)
+
+
+def squeue(columns=None):
+    return _run_by_partition_and_cluster('squeue -M {cluster} -p {partition} -h --noconvert', columns=columns)
+
+
+def slurm_jobs_by_state():
+    rval = []
+    counts = _make_pcdict()
+    for partition, cluster, data in squeue(columns=['state']):
+        states = counts[partition][cluster]
+        states[data.state] = states.get(data.state, 0) + 1
+    for partition, cluster, states in _iter_pcdict(counts):
+        for state, count in states.items():
+            rval.append(make_measurement(
+                'slurm_job_state', count, {
+                    'partition': partition,
+                    'cluster': cluster,
+                    'state': state}))
+    return rval
+
+
+def slurm_nodes_by_state():
+    rval = []
+    columns = ['nodehost:64', 'statelong']
+    for partition, cluster, data in sinfo(columns=columns):
+        rval.append(make_measurement(
+            'slurm_node_state', 1, {
+                'partition': partition,
+                'cluster': cluster,
+                'hostname': data.nodehost,
+                'state': data.statelong}))
+    return rval
+
+
+def make_measurement(measurement, value, tags=None):
+    m = {
+        'measurement': measurement,
+        'time': time,
+        'fields': {
+            'value': value
+        }
+    }
+    if tags:
+        m['tags'] = tags
+    return m
+
+
+def collect():
+    measurements = []
+    measurements.extend(slurm_jobs_by_state())
+    measurements.extend(slurm_nodes_by_state())
+    return measurements
+
+
+def dump(points):
+    db = INFLUX_DB
+    client = InfluxDBClient(database=db)
+    client.create_database(db)
+    client.write_points(points)
+
+
+def main():
+    points = collect()
+    dump(points)
+
+
+if __name__ == '__main__':
+    main()

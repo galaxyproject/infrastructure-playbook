@@ -89,6 +89,7 @@
     group: stats
   with_items:
     - galaxy_slurp.py
+    - galaxy_services_slurp.py
   when: stats_slurp is defined and stats_slurp
 
 - name: Include service tasks
