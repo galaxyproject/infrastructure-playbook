@@ -70,7 +70,6 @@ statsservers_group_crontabs:
   - id: slurp_galaxy_services_stats
     name: Slurp Galaxy Service Stats
     user: stats
-    minute: "*/5"
     job: "/srv/statslurp/bin/galaxy_services_slurp.py"
 
 # separate db filtering for statsd (Galaxy timing) and system stuff using
