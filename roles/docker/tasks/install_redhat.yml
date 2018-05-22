@@ -53,5 +53,5 @@
 - name: Start/enable or stop/disable docker as desired
   service:
     name: docker
-    state: "{{ 'running' if docker_service_enabled else 'stopped' }}"
+    state: "{{ 'started' if docker_service_enabled else 'stopped' }}"
     enabled: "{{ docker_service_enabled }}"

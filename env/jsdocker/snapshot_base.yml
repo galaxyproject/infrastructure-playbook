@@ -26,18 +26,24 @@
           filesystem:
             dev: "{{ volume_dev }}"
             fstype: xfs
+          when: volume_name is defined
         - name: Mount /var/lib/docker
           mount:
             src: "{{ volume_dev }}"
             name: "/var/lib/docker"
             fstype: xfs
             state: mounted
+          when: volume_name is defined
       rescue:
         - include: _inc_clean.yml
   roles:
     - docker
   post_tasks:
     - block:
+        - name: Pull docker images
+          command: "docker pull {{ item }}"
+          with_items: "{{ image_names }}"
+          when: volume_name is not defined
         - name: Install qemu-guest-agent
           yum:
             name: qemu-guest-agent
@@ -94,6 +100,7 @@
           mount:
             name: "/var/lib/docker"
             state: unmounted
+          when: volume_name is defined
         - name: Touch /.autorelabel
           file:
             path: /.autorelabel

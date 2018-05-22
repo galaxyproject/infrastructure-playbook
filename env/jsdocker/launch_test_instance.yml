@@ -26,9 +26,11 @@
           command: "openstack volume snapshot list -f value -c ID --volume {{ volume_name }}"
           register: docker_snapshot_id_out
           delegate_to: localhost
+          when: volume_name is defined
         - name: Set volume snapshot id fact
           set_fact:
             volume_snapshot_id: "{{ docker_snapshot_id_out.stdout }}"
+          when: volume_name is defined
       rescue:
         - include: _inc_clean.yml
 

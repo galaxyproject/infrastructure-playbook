@@ -1,4 +1,4 @@
 ---
 
-image: JS-API-Featured-Centos7-Feb-13-2018
-volume_name: "{{ base_name }}"
+image: JS-API-Featured-CentOS7-May-11-2018
+#volume_name: "{{ base_name }}"

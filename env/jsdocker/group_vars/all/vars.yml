@@ -5,10 +5,14 @@ swarm_ssh_key: "{{ vault_swarm_ssh_key }}"
 
 ansible_user: centos
 ansible_ssh_private_key_file: "{{ inventory_dir }}/swarm_kp.pem"
-base_name: galaxy-docker-20180313
-volume_size: 16
-flavor: m1.small
+base_name: galaxy-docker-20180522
+#volume_size: 16
+flavor: m1.medium
 key_name: swarm_kp
 nics: net-name=usegalaxy
 security_groups: default
 auto_ip: no
+
+image_names:
+  - quay.io/bgruening/docker-jupyter-notebook:17.09
+  - shiltemann/ethercalc-galaxy-ie

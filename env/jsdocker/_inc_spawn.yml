@@ -38,9 +38,13 @@
             ansible_host: "{{ spawned_out.server.private_v4 }}"
             ansible_ssh_common_args: "-F {{ inventory_dir }}/ssh_config.{{ spawned_out.server.cloud }}"
             cloud_id: "{{ spawned_out.server.cloud }}"
-            volume_dev: "{{ spawned_out.server.volumes[0].device }}"
             floating_ip: "{{ spawned_out.server.public_v4 }}"
           delegate_to: localhost
+        - name: Set volume device fact
+          set_fact:
+            volume_dev: "{{ spawned_out.server.volumes[0].device }}"
+          delegate_to: localhost
+          when: volume_name is defined
         - name: Print spawned instance IPs
           debug:
             var: "{{ item }}"
