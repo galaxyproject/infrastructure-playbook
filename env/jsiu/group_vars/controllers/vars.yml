@@ -1,5 +1,9 @@
 ---
 
+clouds_yaml: "{{ vault_clouds_yaml }}"
+slurm_ssh_key: "{{ vault_slurm_ssh_key }}"
+slurm_scale_user: slurm
+
 controllers_group_packages:
   - git
   - tmpwatch

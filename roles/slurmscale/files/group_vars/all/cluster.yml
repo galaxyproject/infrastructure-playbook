@@ -1,0 +1,43 @@
+---
+
+cvmfs_role: client
+slurm_role: exec
+
+slurm_user:
+  uid: 40302
+  gid: 40302
+  comment: Slurm Workload Manager
+  home: /var/lib/slurm
+  shell: /bin/bash
+
+slurm_controller_name: "{{ cloud_id | replace('_', '-') }}"
+slurm_controller_ip: 10.0.0.10
+
+jetstream_nfs_filesystems:
+  - device: "10.0.0.10:/scratch0"
+    dir: scratch0
+    mountpoint: /jetstream/iu-scratch0
+
+directories:
+  - path: /galaxy-repl/test
+  - path: /galaxy-repl/main
+  - path: /var/lib/slurm
+    mode: "0755"
+
+# symlinks for deps must exist due to path issues
+links:
+  - path: /galaxy
+    src: /galaxy-repl
+    force: yes
+  - path: /galaxy-repl/test/deps
+    src: /cvmfs/test.galaxyproject.org/deps
+    force: yes
+  - path: /galaxy-repl/test/tool_data
+    src: /cvmfs/data.galaxyproject.org/byhand/location
+    force: yes
+  - path: /galaxy-repl/main/deps
+    src: /cvmfs/main.galaxyproject.org/deps
+    force: yes
+  - path: /galaxy-repl/main/tool_data
+    src: /cvmfs/data.galaxyproject.org/byhand/location
+    force: yes

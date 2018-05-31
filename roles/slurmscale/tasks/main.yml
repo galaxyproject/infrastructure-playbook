@@ -1,0 +1,124 @@
+---
+
+- name: Create slurm scale directory
+  file:
+    path: "{{ slurm_scale_root }}"
+    state: directory
+    owner: "{{ slurm_scale_user }}"
+  # FIXME
+  when: false
+
+- name: Install dependencies
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - python-virtualenv
+    - openssl-devel
+  # FIXME
+  when: false
+
+- name: Create slurm scale virtualenv
+  pip:
+    name: "{{ item }}"
+    virtualenv: "{{ slurm_scale_root }}"
+    state: latest
+  with_items:
+    - pip
+    - setuptools
+  become: yes
+  become_user: "{{ slurm_scale_user }}"
+  # FIXME
+  when: false
+
+# using `latest` with these can be disastrous e.g. if a new major release of Ansible is uploaded or a C extension
+# dependency (e.g. cffi) is updated without wheels.
+- name: Install slurm scale dependencies
+  pip:
+    name: "{{ item }}"
+    virtualenv: "{{ slurm_scale_root }}"
+  with_items:
+    - ansible
+    - shade
+    - python-openstackclient
+  become: yes
+  become_user: "{{ slurm_scale_user }}"
+  # FIXME
+  when: false
+
+- name: Create slurm scale ansible directory structure
+  file:
+    path: "{{ slurm_scale_root }}/{{ item }}"
+    state: directory
+    owner: "{{ slurm_scale_user }}"
+  with_items:
+    - etc/ansible
+    - etc/ansible/group_vars
+    - etc/ansible/group_vars/all
+    - etc/ansible/inventory
+    - etc/ansible/templates/slurm
+
+- name: Copy ansible files
+  copy:
+    src: "{{ item.name }}"
+    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.name }}"
+    owner: "{{ slurm_scale_user }}"
+    mode: "{{ item.mode | default(omit) }}"
+  with_items:
+    #- delete.yml
+    #- instance
+    #- inventory.head
+    - name: ansible.cfg
+      #- name: inventory.spawn
+    #- leave.yml
+    - name: spawn.yml
+    - name: start.yml
+    - name: config.yml
+    - name: group_vars/all/spawn.yml
+    - name: group_vars/all/cluster.yml
+    - name: group_vars/jetstream-small.yml
+    - name: group_vars/jetstream-medium.yml
+    - name: group_vars/jetstream-large.yml
+    - name: inventory/flavors
+    - name: inventory/openstack_inventory.py
+      mode: 755
+    - name: templates/auto.jetstream.j2
+    - name: templates/slurm/slurm.conf.j2
+
+- name: Template ansible files
+  template:
+    src: "{{ item.name }}.j2"
+    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.name }}"
+    owner: "{{ slurm_scale_user }}"
+    mode: "{{ item.mode | default(omit) }}"
+  with_items:
+    - name: group_vars/all/cloud.yml
+    - name: slurm_suspend.sh
+      mode: 755
+    - name: slurm_resume.sh
+      mode: 755
+
+- name: Install private data
+  copy:
+    content: "{{ item.content }}"
+    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.dest }}"
+    owner: "{{ slurm_scale_user }}"
+    mode: "0400"
+  no_log: yes
+  with_items:
+    - content: "{{ slurm_ssh_key }}"
+      dest: "slurm-kp.pem"
+    - content: "{{ clouds_yaml | to_nice_yaml }}"
+      dest: "clouds.yaml"
+    - content: "{{ munge_key }}"
+      dest: "munge.key"
+
+- name: Install Ansible modules from Galaxy
+  command: "{{ slurm_scale_root }}/bin/ansible-galaxy -p {{ slurm_scale_root }}/etc/ansible/roles install {{ item }}"
+  args:
+    creates: "{{ slurm_scale_root }}/etc/ansible/roles/{{ item }}"
+  become: yes
+  become_user: "{{ slurm_scale_user }}"
+  with_items:
+    - geerlingguy.repo-epel
+    #- galaxyproject.cvmfs
+    #- galaxyproject.slurm

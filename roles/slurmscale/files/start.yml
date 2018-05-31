@@ -1,0 +1,31 @@
+---
+
+- name: Start instance(s)
+  hosts: galaxynodes
+  connection: local
+  environment:
+     OS_CLOUD: "{{ cloud_id }}"
+     OS_IDENTITY_API_VERSION: '3'
+  tasks:
+    - name: Start instance
+      os_server_action:
+        cloud: "{{ cloud_id }}"
+        server: "{{ inventory_hostname }}"
+        action: "start"
+      delegate_to: localhost
+
+- name: Spin on instance(s)
+  hosts: galaxynodes
+  tasks:
+    - name: Spin waiting for instance to become accessible
+      action: setup
+      #command: >
+      #  ssh -o BatchMode=yes -o UserKnownHostsFile=/dev/null
+      #  -o StrictHostKeyChecking=no -o ConnectTimeout=10
+      #  {{ ansible_ssh_common_args }}
+      #  {{ ansible_user }}@{{ ansible_host }} /bin/true
+      register: alive
+      until: alive is success
+      retries: 90  # if it's not up in 2 minutes, give up
+      delay: 2
+      #delegate_to: localhost

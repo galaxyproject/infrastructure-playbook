@@ -1,0 +1,15 @@
+---
+
+- name: Stop instance(s)
+  hosts: galaxynodes
+  connection: local
+  environment:
+     OS_CLOUD: "{{ cloud_id }}"
+     OS_IDENTITY_API_VERSION: '3'
+  tasks:
+    - name: Stop instance
+      os_server_action:
+        cloud: "{{ cloud_id }}"
+        server: "{{ inventory_hostname }}"
+        action: "stop"
+      delegate_to: localhost

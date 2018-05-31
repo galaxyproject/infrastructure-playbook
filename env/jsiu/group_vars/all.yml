@@ -1,5 +1,7 @@
 ---
 
+cloud_id: jetstream_iu
+
 all_groups:
   - name: G-803372
     gid: 803372
