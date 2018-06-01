@@ -19,6 +19,7 @@ galaxynodes_group_packages:
   # Conda R does not package up all of its X dependencies
   # https://github.com/ContinuumIO/anaconda-issues/issues/4656
   - xorg-x11-apps
+  - mesa-libGL
 
 galaxynodes_group_files:
   - src: system/cleancgroups.py
