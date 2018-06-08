@@ -3,6 +3,8 @@
 cvmfs_role: client
 slurm_role: exec
 
+galaxy_cvmfs_repos_enabled: true
+
 slurm_user:
   uid: 40302
   gid: 40302
@@ -12,6 +14,12 @@ slurm_user:
 
 slurm_controller_name: "{{ cloud_id | replace('_', '-') }}"
 slurm_controller_ip: 10.0.0.10
+
+slurm_cgroup_conf:
+  - CgroupAutomount: yes
+  - ConstrainCores: yes
+  - ConstrainRAMSpace: yes
+  - ConstrainSwapSpace: yes
 
 jetstream_nfs_filesystems:
   - device: "10.0.0.10:/scratch0"

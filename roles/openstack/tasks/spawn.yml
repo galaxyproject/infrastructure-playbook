@@ -1,0 +1,64 @@
+---
+
+- block:
+
+    - name: Create volume
+      os_volume:
+        cloud: "{{ openstack_cloud_id | default(omit) }}"
+        size: "{{ item.size }}"
+        display_name: "{{ item.name }}"
+        snapshot_id: "{{ item.snapshot_id | default(omit) }}"
+      with_items: "{{ openstack_volumes | default([]) }}"
+      when: openstack_volumes is defined
+      delegate_to: localhost
+
+    - name: Set volume name list fact
+      set_fact:
+        _openstack_volume_names: "{{ _openstack_volume_names | default([]) }} + [{{ item.name }}]"
+      with_items: "{{ openstack_volumes | default([]) }}"
+      when: openstack_volumes is defined
+      delegate_to: localhost
+
+    - name: Spawn new instance
+      os_server:
+        cloud: "{{ openstack_cloud_id | default(omit) }}"
+        name: "{{ openstack_server_name | default(inventory_hostname_short) }}"
+        image: "{{ openstack_image }}"
+        flavor: "{{ openstack_flavor | default(omit) }}"
+        key_name: "{{ openstack_key_name | default(omit) }}"
+        nics: "{{ openstack_nics | default(omit) }}"
+        security_groups: "{{ openstack_security_groups | default(omit) }}"
+        volumes: "{{ _openstack_volume_names | default(omit) }}"
+        auto_ip: "{{ openstack_auto_ip | default(omit) }}"
+        floating_ips: "{{ openstack_floating_ip | default(omit) }}"
+      delegate_to: localhost
+      register: _openstack_spawned_out
+
+    # FIXME: generalize this stuff for dynamic hosts
+    #- name: Update inventory with spawned instance IP
+    #  set_fact:
+    #    ansible_host: "{{ spawned_out.server.private_v4 }}"
+    #    ansible_ssh_common_args: "-F {{ inventory_dir }}/ssh_config.{{ spawned_out.server.cloud }}"
+    #    cloud_id: "{{ spawned_out.server.cloud }}"
+    #    floating_ip: "{{ spawned_out.server.public_v4 }}"
+    #  delegate_to: localhost
+
+    - name: Set volume map fact
+      set_fact:
+        openstack_volume_map: "{{ openstack_volume_map | default({}) | combine({item.name: item.device}) }}"
+      delegate_to: localhost
+      with_items: "{{ _openstack_spawned_out.server.volumes | default([]) }}"
+      loop_control:
+        label: "{{ item.name }} -> {{ item.device }}"
+
+    - name: Wait for instance to become accessible
+      wait_for_connection:
+
+  always:
+
+    - include: clean.yml
+
+  rescue:
+
+    - fail:
+        msg: Exiting due to previous failure

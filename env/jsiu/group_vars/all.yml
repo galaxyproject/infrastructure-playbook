@@ -2,6 +2,13 @@
 
 cloud_id: jetstream_iu
 
+# FIXME stop duplicating this between IU/TACC
+slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
+slurm_controller_name: "{{ slurm_cluster_name }}0"
+slurm_controller_ip: "{{ hostvars[groups.controllers[0]]['ansible_default_ipv4']['address'] }}"
+
+galaxy_cvmfs_repos_enabled: yes
+
 all_groups:
   - name: G-803372
     gid: 803372
@@ -24,5 +31,9 @@ all_users:
     home: /home/g2main
     shell: /bin/bash
 
-controller_name: jetstream-iu0
-controller_ip: 10.0.0.10
+all_yum_repositories:
+  - name: galaxy_gpel
+    description: Galaxy Packages for Enterprise Linux $releasever - $basearch
+    baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
+    enabled: yes
+    gpgcheck: no

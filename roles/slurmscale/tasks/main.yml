@@ -55,6 +55,7 @@
     - etc/ansible/group_vars
     - etc/ansible/group_vars/all
     - etc/ansible/inventory
+    - etc/ansible/library
     - etc/ansible/templates/slurm
 
 - name: Copy ansible files
@@ -81,6 +82,7 @@
     - name: inventory/flavors
     - name: inventory/openstack_inventory.py
       mode: 755
+    - name: library/decode
     - name: templates/auto.jetstream.j2
     - name: templates/slurm/slurm.conf.j2
 

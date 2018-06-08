@@ -1,0 +1,19 @@
+---
+# include as a task, not a play
+
+- name: Remove clouds.yaml
+  file:
+    path: "{{ inventory_dir }}/clouds.yaml"
+    state: absent
+  delegate_to: localhost
+  run_once: true
+  become: false
+
+- name: Remove additional secrets
+  file:
+    path: "{{ inventory_dir }}/{{ item.dest }}"
+    state: absent
+  with_items: "{{ openstack_secrets | default([]) }}"
+  delegate_to: localhost
+  run_once: yes
+  no_log: yes

@@ -1,8 +1,42 @@
 ---
 
 clouds_yaml: "{{ vault_clouds_yaml }}"
-slurm_ssh_key: "{{ vault_slurm_ssh_key }}"
 slurm_scale_user: slurm
+
+# meh?
+openstack_cloud_id: "{{ cloud_id }}"
+openstack_clouds_yaml: "{{ clouds_yaml }}"
+openstack_secrets:
+  - dest: slurm-kp.pem
+    content: "{{ vault_slurm_ssh_key }}"
+
+openstack_image: JS-API-Featured-CentOS7-May-11-2018
+openstack_flavor: m1.medium
+openstack_key_name: slurm-kp
+openstack_nics:
+  -  net-name: usegalaxy
+openstack_security_groups:
+  - default
+  - docker
+  - usegalaxy-control
+openstack_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+openstack_volumes:
+  - name: scratch0
+    size: 10000
+
+cvmfs_quota_limit: 1024
+
+ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+
+filesystems:
+  - dev: "{{ openstack_volume_map.scratch0 }}"  # this is collected by os_server
+    fstype: xfs
+
+mounts:
+  - name: /scratch0
+    src: "{{ openstack_volume_map.scratch0 }}"
+    fstype: xfs
 
 controllers_group_packages:
   - git

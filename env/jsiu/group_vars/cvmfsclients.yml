@@ -1,9 +1,10 @@
 ---
 
 # Prefer the IU stratum 1
-cvmfs_server_urls:
+galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org
     urls:
+      # FIXME: use dns
       - "http://10.0.0.7/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
