@@ -19,7 +19,7 @@ in_list () {
     return 1
 }
 
-cd $(dirname $0)
+cd {{ slurm_scale_root }}/etc/ansible
 
 echo "Node resume invoked: $0 $*" >> $log_loc
 
@@ -45,7 +45,7 @@ start_list=""
 instance_list=($(openstack server list | awk '$4 != "Name" && $4 != "" {print $4}'))
 for host in $(scontrol show hostname $1)
 do
-    if in_list $instance $instance_list; then
+    if in_list $host $instance_list; then
         start_list+="$host,"
     else
         spawn_list+="$host,"
@@ -54,21 +54,12 @@ done
 
 # TODO: error handling here
 if [[ -n $start_list ]]; then
-    ansible-playbook -v -l "${spawn_list::-1}" start.yml >> $log_loc
+    echo "Running ansible start on ${start_list::-1}" >> $log_loc
+    ansible-playbook -v -l "${start_list::-1}" start.yml >> $log_loc
 fi
 
 if [[ -n $spawn_list ]]; then
+    echo "Running ansible spawn/config on ${spawn_list::-1}" >> $log_loc
     ansible-playbook -v -l "${spawn_list::-1}" spawn.yml >> $log_loc
+    ansible-playbook -v -l "${spawn_list::-1}" config.yml >> $log_loc
 fi
-
-  #slurm_sync_result=$(ansible -m copy -a "src=/etc/slurm/slurm.conf dest=/etc/slurm/slurm.conf" $host)
-  #echo "Tried to sync slurm.conf $slurm_sync_result" >> $log_loc
-
-if [[ -n $spawn_list ]]; then
-  echo "Running ansible on ${spawn_list::-1}" >> $log_loc
-  ansible-playbook -v -l "${spawn_list::-1}" config.yml >> $log_loc
-fi
-
-#Now, safe to update slurm w/ node info
-  #scontrol update nodename=$host nodeaddr=$new_ip >> $log_loc
-

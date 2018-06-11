@@ -3,16 +3,22 @@
 ##
 ControlMachine={{ slurm_controller_name }}
 ControlAddr={{ slurm_controller_ip }}
-#
+ClusterName={{ slurm_cluster_name }}
+
+PluginDir=/usr/lib64/slurm
+
 AuthType=auth/munge
 FastSchedule=1
+ReturnToService=1
+
 JobCompLoc=/var/log/slurm/slurm.job.log
 JobCompType=jobcomp/filetxt
-PluginDir=/usr/lib64/slurm
 SchedulerType=sched/backfill
+#
 #SelectType=select/cons_res
 #SelectTypeParameters=CR_CPU_Memory
 SelectType=select/linear
+#
 SlurmUser=slurm
 SlurmctldPort=7002
 SlurmctldTimeout=300
@@ -26,19 +32,31 @@ AccountingStorageType=accounting_storage/slurmdbd
 AccountingStorageHost=galaxy08.tacc.utexas.edu
 #AccountingStoragePort=6819
 AccountingStoragePort=7031
-JobAcctGatherType=jobacct_gather/linux
+
+JobAcctGatherType=jobacct_gather/cgroup
 JobAcctGatherFrequency=task=15
-ProctrackType=proctrack/linuxproc
-ClusterName={{ slurm_cluster_name }}
-ReturnToService=1
-#
+ProctrackType=proctrack/cgroup
+TaskPlugin=task/cgroup
+
+
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
-SlurmctldDebug=7
+SlurmctldDebug=2
 SlurmdLogFile=/var/log/slurm/slurmd.log
-SlurmdDebug=6
+SlurmdDebug=2
 #
 # TODO: redeployed controller, any way to do this dynamically?
 FirstJobId=592574
+#
+# Cloud configuration
+#
+PrivateData=cloud
+ResumeProgram=/opt/slurmscale/sbin/slurm_resume.sh
+SuspendProgram=/opt/slurmscale/sbin/slurm_suspend.sh
+ResumeRate=0        # number of nodes per minute that can be created; 0 means no limit
+ResumeTimeout=1800  # max time in seconds between ResumeProgram running and when the node is ready for use
+SuspendRate=0       # number of nodes per minute that can be suspended/destroyed
+SuspendTime=90      # time in seconds before an idle node is suspended
+SuspendTimeout=60   # time between running SuspendProgram and the node being completely down
 #
 # Node Configurations
 #

@@ -1,0 +1,23 @@
+---
+
+ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+
+openstack_cloud_id: "{{ cloud_id }}"
+openstack_clouds_yaml: "{{ clouds_yaml }}"
+openstack_secrets:
+  - dest: "{{ openstack_key_name }}.pem"
+    content: "{{ openstack_privatekeys.admin }}"
+
+openstack_flavor: m1.medium
+openstack_key_name: admin-kp
+openstack_nics:
+  - net-name: usegalaxy
+openstack_security_groups:
+  - default
+  - cvmfs
+  - usegalaxy-control
+openstack_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+openstack_volumes:
+  - name: cvmfs1-iu0-replica
+    size: 16384

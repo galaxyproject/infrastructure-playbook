@@ -34,7 +34,7 @@
   set_fact:
     docker_swarm_worker_join_token: "{{ docker_swarm_worker_join_token_out.stdout }}"
     docker_swarm_manager_join_token: "{{ docker_swarm_manager_join_token_out.stdout }}"
-    docker_swarm_leader_addr: "{{ hostvars[groups['dockerswarmmanagers'][0]]['docker_info_swarm']['RemoteManagers'][0]['Addr'] }}"
+    docker_swarm_leader_addr: "{{ lookup('dig', groups['dockerswarmmanagers'][0]) }}"
 
 - name: Add manager nodes to swarm
   command: "docker swarm join --token {{ docker_swarm_manager_join_token }} --advertise-addr {{ docker_swarm_addr | default(ansible_default_ipv4.address) }} {{ docker_swarm_leader_addr }}"

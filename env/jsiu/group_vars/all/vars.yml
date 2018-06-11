@@ -1,11 +1,28 @@
 ---
 
 cloud_id: jetstream_iu
+clouds_yaml: "{{ vault_clouds_yaml }}"
+openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
+all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
+
+openstack_image: JS-API-Featured-CentOS7-May-11-2018
+
+# This turns out to be unnecessary
+#openstack_userdata: |
+#  #cloud-config
+#  manage_resolv_conf: true
+#  resolv_conf:
+#    searchdomains:
+#      - jetstreamlocal
+#      - galaxyproject.org
+#    domain: galaxyproject.org
 
 # FIXME stop duplicating this between IU/TACC
+controller_name: "{{ cloud_id | replace('_', '-') }}0"
+controller_ip: "{{ hostvars[groups.controllers[0]]['ansible_default_ipv4']['address'] }}"
 slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
-slurm_controller_name: "{{ slurm_cluster_name }}0"
-slurm_controller_ip: "{{ hostvars[groups.controllers[0]]['ansible_default_ipv4']['address'] }}"
+slurm_controller_name: "{{ controller_name }}"
+slurm_controller_ip: "{{ controller_ip }}"
 
 galaxy_cvmfs_repos_enabled: yes
 

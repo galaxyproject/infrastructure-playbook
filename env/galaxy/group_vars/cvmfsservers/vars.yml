@@ -1,3 +1,5 @@
 ---
 
 cvmfsservers_group_authorized_key_users: "{{ vault_cvmfsservers_group_authorized_key_users }}"
+
+galaxy_cvmfs_repos_enabled: true

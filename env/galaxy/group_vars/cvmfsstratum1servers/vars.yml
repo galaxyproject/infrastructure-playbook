@@ -3,7 +3,7 @@
 cvmfsstratum1servers_group_authorized_key_users: "{{ vault_cvmfsstratum1servers_group_authorized_key_users }}"
 
 # in MB
-cvmfs_stratum1_cache_mem: 2560
+cvmfs_stratum1_cache_mem: 14336
 
 cvmfsstratum1servers_group_users:
   - name: g2test

@@ -40,6 +40,7 @@ baseenv-nomail
 [sshservers]
 [sshservers:children]
 baseenv
+jetstreamhosts
 
 # For things that need access to env-specific sshprivatekeys
 [sshclients]
@@ -95,6 +96,7 @@ duvel.galaxyproject.org
 
 [virtual:children]
 ec2hosts
+jetstreamhosts
 
 [ec2hosts]
 delirium.galaxyproject.org

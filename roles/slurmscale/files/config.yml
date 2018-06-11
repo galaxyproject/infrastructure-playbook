@@ -65,3 +65,12 @@
     #- geerlingguy.repo-epel
     - galaxyproject.cvmfs
     - galaxyproject.slurm
+  post_tasks:
+
+    - name: Log IP address
+      debug:
+        var: ansible_host
+
+    - name: Update slurm controller with instance IP
+      command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
+      delegate_to: localhost

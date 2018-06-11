@@ -159,14 +159,10 @@
 - name: Tasks for CVMFS Servers
   hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies
   roles:
-    # mounts /srv
-    - role: paths
-      tags: cvmfs
     # need epel for the jq package
-    - role: geerlingguy.repo-epel
-      tags: cvmfs
-    - role: cvmfs
-      tags: cvmfs
+    - geerlingguy.repo-epel
+    - galaxyproject.cvmfs
+  tags: cvmfs
 
 - name: Tasks for Docker Swarm managers
   hosts: dockerswarmmanagers

@@ -5,8 +5,6 @@
     path: "{{ slurm_scale_root }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
-  # FIXME
-  when: false
 
 - name: Install dependencies
   yum:
@@ -14,8 +12,6 @@
   with_items:
     - python-virtualenv
     - openssl-devel
-  # FIXME
-  when: false
 
 - name: Create slurm scale virtualenv
   pip:
@@ -27,8 +23,6 @@
     - setuptools
   become: yes
   become_user: "{{ slurm_scale_user }}"
-  # FIXME
-  when: false
 
 # using `latest` with these can be disastrous e.g. if a new major release of Ansible is uploaded or a C extension
 # dependency (e.g. cffi) is updated without wheels.
@@ -42,8 +36,6 @@
     - python-openstackclient
   become: yes
   become_user: "{{ slurm_scale_user }}"
-  # FIXME
-  when: false
 
 - name: Create slurm scale ansible directory structure
   file:
@@ -51,12 +43,23 @@
     state: directory
     owner: "{{ slurm_scale_user }}"
   with_items:
+    - sbin
     - etc/ansible
     - etc/ansible/group_vars
     - etc/ansible/group_vars/all
     - etc/ansible/inventory
     - etc/ansible/library
     - etc/ansible/templates/slurm
+
+- name: Create symlinks
+  file:
+    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
+    src: "{{ item.src }}"
+    state: link
+    force: yes
+  with_items:
+    - path: templates/slurm/slurm.conf.j2
+      src: /etc/slurm/slurm.conf
 
 - name: Copy ansible files
   copy:
@@ -73,6 +76,7 @@
     #- leave.yml
     - name: spawn.yml
     - name: start.yml
+    - name: stop.yml
     - name: config.yml
     - name: group_vars/all/spawn.yml
     - name: group_vars/all/cluster.yml
@@ -84,16 +88,22 @@
       mode: 755
     - name: library/decode
     - name: templates/auto.jetstream.j2
-    - name: templates/slurm/slurm.conf.j2
 
 - name: Template ansible files
   template:
     src: "{{ item.name }}.j2"
     dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.name }}"
     owner: "{{ slurm_scale_user }}"
-    mode: "{{ item.mode | default(omit) }}"
   with_items:
     - name: group_vars/all/cloud.yml
+
+- name: Install slurm suspend/resume scripts
+  template:
+    src: "{{ item.name }}.j2"
+    dest: "{{ slurm_scale_root }}/sbin/{{ item.name }}"
+    owner: "{{ slurm_scale_user }}"
+    mode: "{{ item.mode | default(omit) }}"
+  with_items:
     - name: slurm_suspend.sh
       mode: 755
     - name: slurm_resume.sh

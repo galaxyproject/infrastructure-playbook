@@ -1,20 +1,20 @@
 ---
 
-clouds_yaml: "{{ vault_clouds_yaml }}"
 slurm_scale_user: slurm
+slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
-# meh?
+ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+
 openstack_cloud_id: "{{ cloud_id }}"
 openstack_clouds_yaml: "{{ clouds_yaml }}"
 openstack_secrets:
-  - dest: slurm-kp.pem
-    content: "{{ vault_slurm_ssh_key }}"
+  - dest: "{{ openstack_key_name }}.pem"
+    content: "{{ openstack_privatekeys.admin }}"
 
-openstack_image: JS-API-Featured-CentOS7-May-11-2018
 openstack_flavor: m1.medium
-openstack_key_name: slurm-kp
+openstack_key_name: admin-kp
 openstack_nics:
-  -  net-name: usegalaxy
+  - net-name: usegalaxy
 openstack_security_groups:
   - default
   - docker
@@ -22,23 +22,22 @@ openstack_security_groups:
 openstack_floating_ips:
   - "{{ lookup('dig', inventory_hostname) }}"
 openstack_volumes:
-  - name: scratch0
+  - name: jetstream-iu0-scratch0
     size: 10000
 
 cvmfs_quota_limit: 1024
 
-ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
-
 filesystems:
-  - dev: "{{ openstack_volume_map.scratch0 }}"  # this is collected by os_server
+  - dev: "{{ openstack_volume_map['jetstream-iu0-scratch0'] }}"  # this is collected by os_server
     fstype: xfs
 
 mounts:
-  - name: /scratch0
-    src: "{{ openstack_volume_map.scratch0 }}"
+  - name: /jetstream/scratch0
+    src: "{{ openstack_volume_map['jetstream-iu0-scratch0'] }}"
     fstype: xfs
 
 controllers_group_packages:
+  - vim
   - git
   - tmpwatch
   # Pulsar deps
@@ -64,8 +63,6 @@ controllers_group_files:
     owner: root
     group: root
 
-jetstream_scratch0_device: /dev/sdb
-
 controllers_group_directories:
   - path: /jetstream
   - path: /var/lib/slurm
@@ -83,20 +80,17 @@ controllers_group_directories:
     owner: g2main
     group: G-803372
   # see comment in links
-  - path: /galaxy-repl
-  - path: /galaxy-repl/main
+  #- path: /galaxy-repl
+  #- path: /galaxy-repl/main
 
-controllers_group_links:
-  - path: /jetstream/scratch0
-    src: /scratch0
-    force: yes
-  # if Conda is reinstalled in CVMFS with /cvmfs paths (as was done with Test) these symlinks are unnecessary
-  - path: /galaxy
-    src: /galaxy-repl
-    force: yes
-  - path: /galaxy-repl/main/deps
-    src: /cvmfs/main.galaxyproject.org/deps
-    force: yes
+#controllers_group_links:
+#  # if Conda is reinstalled in CVMFS with /cvmfs paths (as was done with Test) these symlinks are unnecessary
+#  - path: /galaxy
+#    src: /galaxy-repl
+#    force: yes
+#  - path: /galaxy-repl/main/deps
+#    src: /cvmfs/main.galaxyproject.org/deps
+#    force: yes
 
 supervisord_install: package
 supervisord_group_configs:

@@ -1,12 +1,13 @@
-# looking for cvmfs1-iu0? It's in the galaxyenv
-
 jetstream-iu0.galaxyproject.org ansible_user=centos
+cvmfs1-iu0.galaxyproject.org ansible_user=centos
 
 [instances]
 jetstream-iu0.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
 
 [baseenv]
 jetstream-iu0.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
 
 [baseenv:children]
 galaxynodes
@@ -30,6 +31,10 @@ galaxynodes
 
 ;[slurmelasticservers]
 ;jetstream-iu0.galaxyproject.org
+
+# CVMFS isn't installed in this env, it's installed in the galaxy env. But the instance is launched here
+[cvmfsservers]
+cvmfs1-iu0.galaxyproject.org
 
 [cvmfsclients]
 [cvmfsclients:children]

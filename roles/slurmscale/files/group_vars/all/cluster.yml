@@ -5,15 +5,20 @@ slurm_role: exec
 
 galaxy_cvmfs_repos_enabled: true
 
+galaxy_cvmfs_server_urls:
+  - domain: galaxyproject.org
+    urls:
+      - "http://cvmfs1-{{ cloud_id[10:] }}0.jetstreamlocal/cvmfs/@fqrn@"
+      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
 slurm_user:
   uid: 40302
   gid: 40302
   comment: Slurm Workload Manager
   home: /var/lib/slurm
   shell: /bin/bash
-
-slurm_controller_name: "{{ cloud_id | replace('_', '-') }}"
-slurm_controller_ip: 10.0.0.10
 
 slurm_cgroup_conf:
   - CgroupAutomount: yes
@@ -22,9 +27,8 @@ slurm_cgroup_conf:
   - ConstrainSwapSpace: yes
 
 jetstream_nfs_filesystems:
-  - device: "10.0.0.10:/scratch0"
+  - device: "{{ controller_name }}.jetstreamlocal:/jetstream/scratch0"
     dir: scratch0
-    mountpoint: /jetstream/iu-scratch0
 
 directories:
   - path: /galaxy-repl/test

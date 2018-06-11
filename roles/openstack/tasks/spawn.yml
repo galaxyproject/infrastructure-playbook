@@ -14,7 +14,7 @@
 
     - name: Set volume name list fact
       set_fact:
-        _openstack_volume_names: "{{ _openstack_volume_names | default([]) }} + [{{ item.name }}]"
+        _openstack_volume_names: "{{ _openstack_volume_names | default([]) }} + ['{{ item.name }}']"
       with_items: "{{ openstack_volumes | default([]) }}"
       when: openstack_volumes is defined
       delegate_to: localhost
@@ -30,7 +30,8 @@
         security_groups: "{{ openstack_security_groups | default(omit) }}"
         volumes: "{{ _openstack_volume_names | default(omit) }}"
         auto_ip: "{{ openstack_auto_ip | default(omit) }}"
-        floating_ips: "{{ openstack_floating_ip | default(omit) }}"
+        floating_ips: "{{ openstack_floating_ips | default(omit) }}"
+        userdata: "{{ openstack_userdata | default(omit) }}"
       delegate_to: localhost
       register: _openstack_spawned_out
 

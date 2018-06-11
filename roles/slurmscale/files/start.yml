@@ -2,7 +2,7 @@
 
 - name: Start instance(s)
   hosts: galaxynodes
-  connection: local
+  gather_facts: no
   environment:
      OS_CLOUD: "{{ cloud_id }}"
      OS_IDENTITY_API_VERSION: '3'
@@ -13,19 +13,29 @@
         server: "{{ inventory_hostname }}"
         action: "start"
       delegate_to: localhost
+      register: started_out
 
-- name: Spin on instance(s)
-  hosts: galaxynodes
-  tasks:
-    - name: Spin waiting for instance to become accessible
-      action: setup
-      #command: >
-      #  ssh -o BatchMode=yes -o UserKnownHostsFile=/dev/null
-      #  -o StrictHostKeyChecking=no -o ConnectTimeout=10
-      #  {{ ansible_ssh_common_args }}
-      #  {{ ansible_user }}@{{ ansible_host }} /bin/true
-      register: alive
-      until: alive is success
-      retries: 90  # if it's not up in 2 minutes, give up
-      delay: 2
-      #delegate_to: localhost
+    - name: Wait for instance to become accessible
+      wait_for_connection:
+
+    - name: Copy slurm.conf
+      copy:
+        src: /etc/slurm/slurm.conf
+        dest: /etc/slurm/slurm.conf
+      become: yes
+      register: slurm_conf
+
+    - name: Restart slurmd
+      service:
+        name: slurmd
+        state: restarted
+      become: yes
+      when: slurm_conf is changed
+
+    - name: Log IP address
+      debug:
+        var: ansible_host
+
+    - name: Update slurm controller with instance IP
+      command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
+      delegate_to: localhost
