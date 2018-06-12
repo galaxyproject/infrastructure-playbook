@@ -1,0 +1,33 @@
+#!/bin/bash
+
+log_loc=/var/log/slurm/elastic.log
+
+. {{ slurm_scale_root }}/bin/activate
+
+cd {{ slurm_scale_root }}/etc/ansible
+
+case $(basename $0) in
+    slurm_suspend)
+        op='suspend'
+        ;;
+    slurm_resume)
+        op='resume'
+        # this isn't ideal but the names have to exist somehow and it can't be done with -i
+        set -x
+        { echo '[galaxynodes]'; scontrol show hostname "$1"; } > inventory/spawn.$$ 2>> $log_loc
+        { set +x; } 2>/dev/null
+        ;;
+    *)
+        echo "error: unknown program name: $0"
+        exit 1
+        ;;
+esac
+
+echo "Node $op invoked: $0 $*" >> $log_loc
+
+names=$(scontrol show hostname "$1" | xargs echo | tr ' ' ',')
+
+set -x
+{ ansible-playbook -l "$names" ${op}.yml; } >> $log_loc 2>&1
+{ [ -f inventory/spawn.$$ ] && rm -f inventory/spawn.$$; } >> $log_loc 2>&1
+{ set +x; } 2>/dev/null

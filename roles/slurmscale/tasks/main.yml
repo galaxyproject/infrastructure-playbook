@@ -50,16 +50,9 @@
     - etc/ansible/inventory
     - etc/ansible/library
     - etc/ansible/templates/slurm
-
-- name: Create symlinks
-  file:
-    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
-    src: "{{ item.src }}"
-    state: link
-    force: yes
-  with_items:
-    - path: templates/slurm/slurm.conf.j2
-      src: /etc/slurm/slurm.conf
+    - etc/ansible/roles
+    - etc/ansible/roles/galaxynodeconfig
+    - etc/ansible/roles/galaxynodeconfig/tasks
 
 - name: Copy ansible files
   copy:
@@ -68,25 +61,14 @@
     owner: "{{ slurm_scale_user }}"
     mode: "{{ item.mode | default(omit) }}"
   with_items:
-    #- delete.yml
-    #- instance
-    #- inventory.head
     - name: ansible.cfg
-      #- name: inventory.spawn
-    #- leave.yml
-    - name: spawn.yml
-    - name: start.yml
-    - name: stop.yml
-    - name: config.yml
+    - name: resume.yml
+    - name: suspend.yml
     - name: group_vars/all/spawn.yml
     - name: group_vars/all/cluster.yml
-    - name: group_vars/jetstream-small.yml
-    - name: group_vars/jetstream-medium.yml
-    - name: group_vars/jetstream-large.yml
-    - name: inventory/flavors
-    - name: inventory/openstack_inventory.py
-      mode: 755
+    - name: inventory/openstack.yml
     - name: library/decode
+    - name: roles/galaxynodeconfig/tasks/main.yml
     - name: templates/auto.jetstream.j2
 
 - name: Template ansible files
@@ -97,17 +79,28 @@
   with_items:
     - name: group_vars/all/cloud.yml
 
-- name: Install slurm suspend/resume scripts
-  template:
-    src: "{{ item.name }}.j2"
-    dest: "{{ slurm_scale_root }}/sbin/{{ item.name }}"
-    owner: "{{ slurm_scale_user }}"
-    mode: "{{ item.mode | default(omit) }}"
+- name: Create symlinks
+  file:
+    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
+    src: "{{ item.src }}"
+    state: link
   with_items:
-    - name: slurm_suspend.sh
-      mode: 755
-    - name: slurm_resume.sh
-      mode: 755
+    - path: templates/slurm/slurm.conf.j2
+      src: /etc/slurm/slurm.conf
+
+- name: Install slurm suspend/resume script
+  template:
+    src: suspend_resume.sh.j2
+    dest: "{{ slurm_scale_root }}/sbin/slurm_suspend"
+    owner: "{{ slurm_scale_user }}"
+    mode: 0755
+
+- name: Link slurm suspend/resume script
+  file:
+    dest: "{{ slurm_scale_root }}/sbin/slurm_resume"
+    src: "{{ slurm_scale_root }}/sbin/slurm_suspend"
+    state: hard
+    force: yes    # supposed to be fixed in 2.4 but it's not?
 
 - name: Install private data
   copy:

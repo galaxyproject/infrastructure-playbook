@@ -1,0 +1,52 @@
+---
+
+- name: Ensure node hostname is correctly set
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Enable GPEL
+  yum_repository:
+    name: galaxy_gpel
+    description: Galaxy Packages for Enterprise Linux $releasever - $basearch
+    baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
+    enabled: yes
+    gpgcheck: no
+
+- name: Install Packages
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - autofs
+    - lzo
+    - git
+    - libcgroup-tools
+    - singularity-runtime
+
+- name: Get /var/lib size
+  command: df -kl --output=size /var/lib
+  register: df_out
+
+- name: Set CVMFS cache size
+  set_fact:
+    cvmfs_quota_limit: "{{ (df_out.stdout_lines[-1] | int) * 0.7 | int }}"
+
+- name: Load munge key
+  set_fact:
+    munge_key: "{{ lookup('file', 'munge.key') }}"
+
+- name: Create auto.jetstream
+  template:
+    src: auto.jetstream.j2
+    dest: /etc/auto.jetstream
+
+- name: Add Jetstream mounts to auto.master
+  copy:
+    dest: /etc/auto.master.d/auto.ansible_jetstream.autofs
+    content: "/jetstream /etc/auto.jetstream --ghost\n"
+
+- name: Create directories
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode | default(omit) }}"
+    state: directory
+  with_items: "{{ directories }}"

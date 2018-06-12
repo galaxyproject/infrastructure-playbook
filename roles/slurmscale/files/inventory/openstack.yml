@@ -1,0 +1,7 @@
+---
+
+plugin: openstack
+only_clouds:
+  - jetstream_iu
+private: yes
+expand_hostvars: no

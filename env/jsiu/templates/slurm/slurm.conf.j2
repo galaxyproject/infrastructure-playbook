@@ -50,10 +50,10 @@ FirstJobId=592574
 # Cloud configuration
 #
 PrivateData=cloud
-ResumeProgram=/opt/slurmscale/sbin/slurm_resume.sh
-SuspendProgram=/opt/slurmscale/sbin/slurm_suspend.sh
+ResumeProgram=/opt/slurmscale/sbin/slurm_resume
+SuspendProgram=/opt/slurmscale/sbin/slurm_suspend
 ResumeRate=0        # number of nodes per minute that can be created; 0 means no limit
-ResumeTimeout=1800  # max time in seconds between ResumeProgram running and when the node is ready for use
+ResumeTimeout=900   # max time in seconds between ResumeProgram running and when the node is ready for use
 SuspendRate=0       # number of nodes per minute that can be suspended/destroyed
 SuspendTime=90      # time in seconds before an idle node is suspended
 SuspendTimeout=60   # time between running SuspendProgram and the node being completely down

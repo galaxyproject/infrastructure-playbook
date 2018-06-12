@@ -1,0 +1,94 @@
+---
+
+- name: Start/Spawn instance(s)
+  hosts: galaxynodes
+  gather_facts: no
+  environment:
+     OS_CLOUD: "{{ cloud_id }}"
+     OS_IDENTITY_API_VERSION: '3'
+  tasks:
+    - name: Create new nodes group
+      group_by:
+        key: newnodes
+      when: openstack is not defined
+
+    - name: Spawn new instance
+      os_server:
+        cloud: "{{ cloud_id }}"
+        name: "{{ inventory_hostname }}"
+        image: "{{ image }}"
+        flavor: "{{ flavor }}"
+        key_name: "{{ key_name }}"
+        nics: "{{ nics }}"
+        security_groups: "{{ security_groups }}"
+        auto_ip: "{{ auto_ip }}"
+        meta: group=galaxynodes
+        userdata: |
+          #cloud-config
+          package_upgrade: false
+      delegate_to: localhost
+      register: spawned_out
+      when: "'newnodes' in group_names"
+
+    - name: Update inventory with spawned instance IP
+      set_fact:
+        ansible_host: "{{ spawned_out.server.private_v4 }}"
+      delegate_to: localhost
+      when: "'newnodes' in group_names"
+
+    - name: Start instance
+      os_server_action:
+        cloud: "{{ cloud_id }}"
+        server: "{{ inventory_hostname }}"
+        action: "start"
+      delegate_to: localhost
+      when: "'newnodes' not in group_names"
+
+    - name: Wait for instance to become accessible
+      wait_for_connection:
+
+    - name: Copy slurm.conf
+      copy:
+        src: /etc/slurm/slurm.conf
+        dest: /etc/slurm/slurm.conf
+      become: yes
+      register: slurm_conf
+      when: "'newnodes' not in group_names"
+
+    - name: Restart slurmd
+      service:
+        name: slurmd
+        state: restarted
+      become: yes
+      when: "'newnodes' not in group_names and slurm_conf is changed"
+
+    - name: Log IP address
+      debug:
+        var: ansible_host
+      when: "'newnodes' not in group_names"
+
+    # This shouldn't be strictly necessary for started instances, but it can't hurt
+    - name: Update slurm controller with instance IP
+      command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
+      delegate_to: localhost
+      when: "'newnodes' not in group_names"
+
+
+- name: Configure new instance(s)
+  hosts: newnodes
+  become: yes
+  handlers:
+  roles:
+    - galaxynodeconfig
+    - galaxyproject.cvmfs
+    - galaxyproject.slurm
+
+  post_tasks:
+    - name: Log IP address
+      debug:
+        var: ansible_host
+
+    - name: Update slurm controller with instance IP
+      command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
+      delegate_to: localhost
+      become: false

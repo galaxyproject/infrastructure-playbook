@@ -5,4 +5,4 @@ key_name: slurm-kp
 nics: net-name=usegalaxy
 security_groups: default
 auto_ip: no
-
+flavor: m1.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}
