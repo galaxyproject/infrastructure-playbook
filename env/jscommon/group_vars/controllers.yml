@@ -80,13 +80,13 @@ controllers_group_directories:
   - path: /srv/pulsar/test
     owner: g2test
     group: G-803372
-  - path: /srv/pulsar/test/pulsar/log
+  - path: /srv/pulsar/test/log
     owner: g2test
     group: G-803372
   - path: /srv/pulsar/main
     owner: g2main
     group: G-803372
-  - path: /srv/pulsar/main/pulsar/log
+  - path: /srv/pulsar/main/log
     owner: g2main
     group: G-803372
   # see comment in links

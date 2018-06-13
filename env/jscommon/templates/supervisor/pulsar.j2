@@ -1,5 +1,5 @@
 [program:test_pulsar]
-command		= /srv/pulsar/test/pulsar/venv/bin/uwsgi --ini-paste /srv/pulsar/test/pulsar/config/server.ini
+command		= /srv/pulsar/test/venv/bin/uwsgi --ini-paste /srv/pulsar/test/config/server.ini
 user		= g2test
 directory	= /
 umask		= 077
@@ -11,11 +11,11 @@ stopsignal	= INT
 stopasgroup	= true
 killasgroup	= true
 environment	= HOME="/home/g2test",GALAXY_VIRTUAL_ENV="/cvmfs/test.galaxyproject.org/venv"
-stdout_logfile	= /srv/pulsar/test/pulsar/log/stdout.log
-stderr_logfile	= /srv/pulsar/test/pulsar/log/stderr.log
+stdout_logfile	= /srv/pulsar/test/log/pulsar.log
+redirect_stderr	= true
 
 [program:main_pulsar]
-command		= /srv/pulsar/main/pulsar/venv/bin/uwsgi --ini-paste /srv/pulsar/main/pulsar/config/server.ini
+command		= /srv/pulsar/main/venv/bin/uwsgi --ini-paste /srv/pulsar/main/config/server.ini
 user		= g2main
 directory	= /
 umask		= 077
@@ -27,5 +27,5 @@ stopsignal	= INT
 stopasgroup	= true
 killasgroup	= true
 environment	= HOME="/home/g2main",GALAXY_VIRTUAL_ENV="/cvmfs/main.galaxyproject.org/venv"
-stdout_logfile	= /srv/pulsar/main/pulsar/log/stdout.log
-stderr_logfile	= /srv/pulsar/main/pulsar/log/stderr.log
+stdout_logfile	= /srv/pulsar/main/log/pulsar.log
+redirect_stderr	= true
