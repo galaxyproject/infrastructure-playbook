@@ -1,5 +1,43 @@
 ---
 
+slurm_scale_user: slurm
+slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
+
+ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+
+_scratch_vol_name: "{{ inventory_hostname_short }}-scratch0"
+
+openstack_cloud_id: "{{ cloud_id }}"
+openstack_clouds_yaml: "{{ clouds_yaml }}"
+openstack_secrets:
+  - dest: "{{ openstack_key_name }}.pem"
+    content: "{{ openstack_privatekeys.admin }}"
+
+openstack_flavor: m1.medium
+openstack_key_name: admin-kp
+openstack_nics:
+  - net-name: usegalaxy
+openstack_security_groups:
+  - default
+  - docker
+  - usegalaxy-control
+openstack_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+openstack_volumes:
+  - name: "{{ _scratch_vol_name }}"
+    size: 10000
+
+cvmfs_quota_limit: 1024
+
+filesystems:
+  - dev: "{{ openstack_volume_map[_scratch_vol_name] }}"  # this is collected by os_server
+    fstype: xfs
+
+mounts:
+  - name: /jetstream/scratch0
+    src: "{{ openstack_volume_map[_scratch_vol_name] }}"
+    fstype: xfs
+
 controllers_group_authorized_key_users:
   - name: centos
     authorized: "{{ galaxy_admin_users }}"
@@ -7,3 +45,75 @@ controllers_group_authorized_key_users:
     authorized: "{{ galaxy_team_users }}"
   - name: g2main
     authorized: "{{ galaxy_team_users }}"
+
+controllers_group_packages:
+  - vim
+  - git
+  - tmpwatch
+  # Pulsar deps
+  - '@development tools'
+  - python-virtualenv
+  - libffi-devel
+  - libcurl-devel
+  - nss-devel
+  - openssl-devel
+  - slurm-drmaa
+
+controllers_group_files:
+  - src: files/etc/dhclient.conf
+    dest: /etc/dhcp/dhclient.conf
+    backup: yes
+    mode: "0644"
+    owner: root
+    group: root
+  - src: files/etc/ifcfg-eth1
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+    backup: yes
+    mode: "0644"
+    owner: root
+    group: root
+
+controllers_group_directories:
+  - path: /jetstream
+  - path: /var/lib/slurm
+    mode: "0755"
+  - path: /srv/pulsar/test
+    owner: g2test
+    group: G-803372
+  - path: /srv/pulsar/test/pulsar/log
+    owner: g2test
+    group: G-803372
+  - path: /srv/pulsar/main
+    owner: g2main
+    group: G-803372
+  - path: /srv/pulsar/main/pulsar/log
+    owner: g2main
+    group: G-803372
+  # see comment in links
+  #- path: /galaxy-repl
+  #- path: /galaxy-repl/main
+
+#controllers_group_links:
+#  # if Conda is reinstalled in CVMFS with /cvmfs paths (as was done with Test) these symlinks are unnecessary
+#  - path: /galaxy
+#    src: /galaxy-repl
+#    force: yes
+#  - path: /galaxy-repl/main/deps
+#    src: /cvmfs/main.galaxyproject.org/deps
+#    force: yes
+
+supervisord_install: package
+supervisord_group_configs:
+  - pulsar
+
+controllers_group_crontabs:
+  - id: clean_scratch
+    name: Clean Test Scratch
+    user: g2test
+    minute: 05,20,35,50
+    job: /usr/bin/tmpwatch --mtime --dirmtime 4d /scratch0/test/jobs
+  - id: clean_scratch
+    name: Clean Main Scratch
+    user: g2main
+    minute: 00,15,30,45
+    job: /usr/bin/tmpwatch --mtime --dirmtime 4d /scratch0/main/jobs

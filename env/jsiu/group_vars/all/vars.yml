@@ -1,9 +1,8 @@
 ---
 
 cloud_id: jetstream_iu
-clouds_yaml: "{{ vault_clouds_yaml }}"
+
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
-all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
 
 openstack_image: JS-API-Featured-CentOS7-May-11-2018
 
@@ -16,41 +15,3 @@ openstack_image: JS-API-Featured-CentOS7-May-11-2018
 #      - jetstreamlocal
 #      - galaxyproject.org
 #    domain: galaxyproject.org
-
-# FIXME stop duplicating this between IU/TACC
-controller_name: "{{ cloud_id | replace('_', '-') }}0"
-controller_ip: "{{ hostvars[groups.controllers[0]]['ansible_default_ipv4']['address'] }}"
-slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
-slurm_controller_name: "{{ controller_name }}"
-slurm_controller_ip: "{{ controller_ip }}"
-
-galaxy_cvmfs_repos_enabled: yes
-
-all_groups:
-  - name: G-803372
-    gid: 803372
-  - name: TACC-ACS
-    gid: 814239
-
-all_users:
-  - name: g2test
-    group: G-803372
-    groups: TACC-ACS
-    comment: 'Galaxy Test Server'
-    uid: 819456
-    home: /home/g2test
-    shell: /bin/bash
-  - name: g2main
-    group: G-803372
-    groups: TACC-ACS
-    comment: 'Galaxy Main Server'
-    uid: 819800
-    home: /home/g2main
-    shell: /bin/bash
-
-all_yum_repositories:
-  - name: galaxy_gpel
-    description: Galaxy Packages for Enterprise Linux $releasever - $basearch
-    baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
-    enabled: yes
-    gpgcheck: no

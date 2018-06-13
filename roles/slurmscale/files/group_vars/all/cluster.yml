@@ -13,13 +13,6 @@ galaxy_cvmfs_server_urls:
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
 
-slurm_user:
-  uid: 40302
-  gid: 40302
-  comment: Slurm Workload Manager
-  home: /var/lib/slurm
-  shell: /bin/bash
-
 slurm_cgroup_conf:
   - CgroupAutomount: yes
   - ConstrainCores: yes

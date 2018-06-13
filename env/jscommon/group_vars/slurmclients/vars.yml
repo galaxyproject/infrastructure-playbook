@@ -1,21 +1,3 @@
 ---
 
 munge_key: "{{ vault_munge_key }}"
-
-group_groups:
-  - name: slurm
-    gid: 40302
-
-group_users:
-  - name: slurm
-    group: slurm
-    comment: 'Slurm Workload Manager'
-    uid: 40302
-    system: yes
-    home: /var/lib/slurm
-    shell: /bin/bash
-
-slurm_yum_repo_baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch
-
-slurmd_spool_dir: /var/lib/slurm/slurmd/slurmd.spool
-slurmctld_state_dir: /var/lib/slurm/slurmctld/slurm.state
