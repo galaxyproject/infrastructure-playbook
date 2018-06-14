@@ -1,52 +1,73 @@
 ---
 
-- name: Ensure node hostname is correctly set
-  hostname:
-    name: "{{ inventory_hostname }}"
+- name: Node configuration block
+  block:
 
-- name: Enable GPEL
-  yum_repository:
-    name: galaxy_gpel
-    description: Galaxy Packages for Enterprise Linux $releasever - $basearch
-    baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
-    enabled: yes
-    gpgcheck: no
+    - name: Ensure node hostname is correctly set
+      hostname:
+        name: "{{ inventory_hostname }}"
 
-- name: Install Packages
-  yum:
-    name: "{{ item }}"
-  with_items:
-    - autofs
-    - lzo
-    - git
-    - libcgroup-tools
-    - singularity-runtime
+    - name: Enable GPEL
+      yum_repository:
+        name: galaxy_gpel
+        description: Galaxy Packages for Enterprise Linux $releasever - $basearch
+        baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
+        enabled: yes
+        gpgcheck: no
 
-- name: Get /var/lib size
-  command: df -kl --output=size /var/lib
-  register: df_out
+    - name: Install Packages
+      yum:
+        name: "{{ item }}"
+      with_items:
+        - autofs
+        - lzo
+        - git
+        - libcgroup-tools
+        - singularity-runtime
+      # sometimes mirrors are broken
+      register: packages_installed
+      retries: 10
+      delay: 5
+      until: packages_installed is success
 
-- name: Set CVMFS cache size
-  set_fact:
-    cvmfs_quota_limit: "{{ (df_out.stdout_lines[-1] | int) * 0.7 | int }}"
+    - name: Get /var/lib size
+      command: df -kl --output=size /var/lib
+      register: df_out
 
-- name: Load munge key
-  set_fact:
-    munge_key: "{{ lookup('file', 'munge.key') }}"
+    - name: Set CVMFS cache size
+      set_fact:
+        cvmfs_quota_limit: "{{ (df_out.stdout_lines[-1] | int) * 0.7 | int }}"
 
-- name: Create auto.jetstream
-  template:
-    src: auto.jetstream.j2
-    dest: /etc/auto.jetstream
+    - name: Load munge key
+      set_fact:
+        munge_key: "{{ lookup('file', 'munge.key') }}"
 
-- name: Add Jetstream mounts to auto.master
-  copy:
-    dest: /etc/auto.master.d/auto.ansible_jetstream.autofs
-    content: "/jetstream /etc/auto.jetstream --ghost\n"
+    - name: Create auto.jetstream
+      template:
+        src: auto.jetstream.j2
+        dest: /etc/auto.jetstream
 
-- name: Create directories
-  file:
-    path: "{{ item.path }}"
-    mode: "{{ item.mode | default(omit) }}"
-    state: directory
-  with_items: "{{ directories }}"
+    - name: Add Jetstream mounts to auto.master
+      copy:
+        dest: /etc/auto.master.d/auto.ansible_jetstream.autofs
+        content: "/jetstream /etc/auto.jetstream --ghost\n"
+
+    - name: Create directories
+      file:
+        path: "{{ item.path }}"
+        mode: "{{ item.mode | default(omit) }}"
+        state: directory
+      with_items: "{{ directories }}"
+
+  rescue:
+
+    - name: Destroy instance on failure
+      os_server:
+        cloud: "{{ cloud_id }}"
+        name: "{{ inventory_hostname }}"
+        state: absent
+      delegate_to: localhost
+
+    - name: Fail due to previous failure
+      fail:
+        msg: failed
