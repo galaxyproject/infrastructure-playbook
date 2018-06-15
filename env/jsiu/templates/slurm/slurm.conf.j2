@@ -15,9 +15,9 @@ JobCompLoc=/var/log/slurm/slurm.job.log
 JobCompType=jobcomp/filetxt
 SchedulerType=sched/backfill
 #
-#SelectType=select/cons_res
-#SelectTypeParameters=CR_CPU_Memory
-SelectType=select/linear
+SelectType=select/cons_res
+SelectTypeParameters=CR_CPU_Memory
+#SelectType=select/linear
 #
 SlurmUser=slurm
 SlurmctldPort=7002
@@ -66,6 +66,6 @@ NodeName={{ slurm_cluster_name }}-large[0-8] State=CLOUD CPUs=10
 #
 # Partition Configurations
 #
-PartitionName=small Nodes={{ slurm_cluster_name }}-small[0-8] Default=YES DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP
+PartitionName=small Nodes={{ slurm_cluster_name }}-small[0-8] Default=YES DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
 PartitionName=normal Nodes={{ slurm_cluster_name }}-medium[0-8] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP
-PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-8] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP
+PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-8] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
