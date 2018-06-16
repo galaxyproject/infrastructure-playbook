@@ -60,9 +60,9 @@ SuspendTimeout=60   # time between running SuspendProgram and the node being com
 #
 # Node Configurations
 #
-NodeName={{ slurm_cluster_name }}-small[0-8] State=CLOUD CPUs=2
-NodeName={{ slurm_cluster_name }}-medium[0-8] State=CLOUD CPUs=6
-NodeName={{ slurm_cluster_name }}-large[0-8] State=CLOUD CPUs=10
+NodeName={{ slurm_cluster_name }}-small[0-8] State=CLOUD CPUs=2 RealMemory=3789
+NodeName={{ slurm_cluster_name }}-medium[0-8] State=CLOUD CPUs=6 RealMemory=15885
+NodeName={{ slurm_cluster_name }}-large[0-8] State=CLOUD CPUs=10 RealMemory=29995
 #
 # Partition Configurations
 #
