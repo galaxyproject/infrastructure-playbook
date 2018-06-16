@@ -54,6 +54,12 @@
     - etc/ansible/roles/galaxynodeconfig
     - etc/ansible/roles/galaxynodeconfig/tasks
 
+- name: Create slurm scale log directory
+  file:
+    path: "/var/log/slurm/elastic"
+    state: directory
+    owner: "{{ slurm_scale_user }}"
+
 - name: Copy ansible files
   copy:
     src: "{{ item.name }}"

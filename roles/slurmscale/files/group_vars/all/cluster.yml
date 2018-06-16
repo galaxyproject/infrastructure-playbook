@@ -31,25 +31,22 @@ jetstream_nfs_filesystems:
     dir: scratch0
 
 directories:
-  #- path: /galaxy-repl/test
-  #- path: /galaxy-repl/main
+  - path: /galaxy-repl/test
+    mode: "0755"
+  - path: /galaxy-repl/main
+    mode: "0755"
   - path: /var/lib/slurm
     mode: "0755"
 
 # symlinks for deps must exist due to path issues
-#links:
-#  - path: /galaxy
-#    src: /galaxy-repl
-#    force: yes
-#  - path: /galaxy-repl/test/deps
-#    src: /cvmfs/test.galaxyproject.org/deps
-#    force: yes
-#  - path: /galaxy-repl/test/tool_data
-#    src: /cvmfs/data.galaxyproject.org/byhand/location
-#    force: yes
-#  - path: /galaxy-repl/main/deps
-#    src: /cvmfs/main.galaxyproject.org/deps
-#    force: yes
-#  - path: /galaxy-repl/main/tool_data
-#    src: /cvmfs/data.galaxyproject.org/byhand/location
-#    force: yes
+links:
+  - dest: /galaxy
+    src: /galaxy-repl
+  - dest: /galaxy-repl/test/deps
+    src: /cvmfs/test.galaxyproject.org/deps
+  - dest: /galaxy-repl/test/tool_data
+    src: /cvmfs/data.galaxyproject.org/byhand/location
+  - dest: /galaxy-repl/main/deps
+    src: /cvmfs/main.galaxyproject.org/deps
+  - dest: /galaxy-repl/main/tool_data
+    src: /cvmfs/data.galaxyproject.org/byhand/location
