@@ -68,4 +68,5 @@ NodeName={{ slurm_cluster_name }}-large[0-31] State=CLOUD CPUs=10 RealMemory=299
 #
 PartitionName=small Nodes={{ slurm_cluster_name }}-small[0-15] Default=YES DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
 PartitionName=normal Nodes={{ slurm_cluster_name }}-medium[0-7] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP
-PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-31] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
+PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-22,27-31] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
+PartitionName=reserved Nodes={{ slurm_cluster_name }}-large[23-26] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
