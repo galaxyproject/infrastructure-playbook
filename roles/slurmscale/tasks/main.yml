@@ -37,53 +37,45 @@
   become: yes
   become_user: "{{ slurm_scale_user }}"
 
-- name: Create slurm scale ansible directory structure
+- name: Create slurm scale ansible directories
   file:
     path: "{{ slurm_scale_root }}/{{ item }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
   with_items:
-    - sbin
-    - etc/ansible
-    - etc/ansible/group_vars
-    - etc/ansible/group_vars/all
-    - etc/ansible/inventory
-    - etc/ansible/library
-    - etc/ansible/templates/slurm
-    - etc/ansible/roles
-    - etc/ansible/roles/galaxynodeconfig
-    - etc/ansible/roles/galaxynodeconfig/tasks
-
-- name: Create slurm scale log directory
-  file:
-    path: "/var/log/slurm/elastic"
-    state: directory
-    owner: "{{ slurm_scale_user }}"
+    - "{{ slurm_scale_root }}/sbin"
+    - "{{ slurm_scale_root }}/etc"
+    - "/var/log/slurm/elastic"
 
 - name: Copy ansible files
-  copy:
-    src: "{{ item.name }}"
-    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.name }}"
+  synchronize:
+    archive: no
+    recursive: yes
+    links: no
+    times: yes
+    perms: yes
+    copy_links: yes
+    src: files/
+    dest: "{{ slurm_scale_root }}/etc/ansible"
+    rsync_path: "sudo -u {{ slurm_scale_user }} rsync"
+
+# Have to do this post-rsync
+- name: Create ansible directories for templates and symlinks
+  file:
+    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path | dirname }}"
+    state: directory
     owner: "{{ slurm_scale_user }}"
-    mode: "{{ item.mode | default(omit) }}"
   with_items:
-    - name: ansible.cfg
-    - name: resume.yml
-    - name: suspend.yml
-    - name: group_vars/all/spawn.yml
-    - name: group_vars/all/cluster.yml
-    - name: inventory/openstack.yml
-    - name: library/decode
-    - name: roles/galaxynodeconfig/tasks/main.yml
-    - name: templates/auto.jetstream.j2
+    - path: group_vars/all/cloud.yml
+    - path: templates/slurm/slurm.conf.j2
 
 - name: Template ansible files
   template:
-    src: "{{ item.name }}.j2"
-    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.name }}"
+    src: "{{ item.path }}.j2"
+    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
     owner: "{{ slurm_scale_user }}"
   with_items:
-    - name: group_vars/all/cloud.yml
+    - path: group_vars/all/cloud.yml
 
 - name: Create symlinks
   file:

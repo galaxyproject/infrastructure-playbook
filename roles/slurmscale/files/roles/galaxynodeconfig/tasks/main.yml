@@ -36,7 +36,11 @@
 
     - name: Set CVMFS cache size
       set_fact:
-        cvmfs_quota_limit: "{{ (df_out.stdout_lines[-1] | int) * 0.7 | int }}"
+        cvmfs_quota_limit: "{{ (((df_out.stdout_lines[-1] | trim | int) * 0.7) / 1024) | int }}"
+
+    - name: Log CVMFS cache size
+      debug:
+        var: cvmfs_quota_limit
 
     - name: Load munge key
       set_fact:
