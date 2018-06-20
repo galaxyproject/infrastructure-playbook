@@ -60,12 +60,12 @@ SuspendTimeout=60   # time between running SuspendProgram and the node being com
 #
 # Node Configurations
 #
-NodeName={{ slurm_cluster_name }}-small[0-7] State=CLOUD CPUs=2 RealMemory=3789
+NodeName={{ slurm_cluster_name }}-small[0-15] State=CLOUD CPUs=2 RealMemory=3789
 NodeName={{ slurm_cluster_name }}-medium[0-7] State=CLOUD CPUs=6 RealMemory=15885
-NodeName={{ slurm_cluster_name }}-large[0-11] State=CLOUD CPUs=10 RealMemory=29995
+NodeName={{ slurm_cluster_name }}-large[0-31] State=CLOUD CPUs=10 RealMemory=29995
 #
 # Partition Configurations
 #
-PartitionName=small Nodes={{ slurm_cluster_name }}-small[0-7] Default=YES DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
+PartitionName=small Nodes={{ slurm_cluster_name }}-small[0-15] Default=YES DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
 PartitionName=normal Nodes={{ slurm_cluster_name }}-medium[0-7] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP
-PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-11] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
+PartitionName=multi Nodes={{ slurm_cluster_name }}-large[0-31] DefaultTime=48:20:00 MaxTime=96:20:00 MaxNodes=1 State=UP OverSubscribe=EXCLUSIVE
