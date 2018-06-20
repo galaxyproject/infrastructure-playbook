@@ -3,19 +3,21 @@
 log_loc=/var/log/slurm/elastic.log
 log_dir=/var/log/slurm/elastic
 
+{
+
+op=${0##*/slurm_}
+
 . {{ slurm_scale_root }}/bin/activate
 
 cd {{ slurm_scale_root }}/etc/ansible
 
-echo "Node $op invoked: $0 $*" >> $log_loc
-echo "Start: $(date)" >> $log_loc
+echo "Start: $(date)"
+echo "Node $op invoked: $0 $*"
 
-case $(basename $0) in
-    slurm_suspend)
-        op='suspend'
+case $op in
+    suspend)
         ;;
-    slurm_resume)
-        op='resume'
+    resume)
         # this isn't ideal but the names have to exist somehow and it can't be done with -i
         set -x
         { echo '[galaxynodes]'; scontrol show hostname "$1"; } > inventory/spawn.$$ 2>> $log_loc
@@ -29,13 +31,15 @@ esac
 
 names=$(scontrol show hostname "$1" | xargs echo | tr ' ' ',')
 
-echo "Start: $(date)" >> "${log_dir}/${names}.log"
+echo "Start: $(date)" >> "${log_dir}/${1}.log"
 start=$(date +%s)
 set -x
-{ ansible-playbook -l "$names" ${op}.yml; } >> "${log_dir}/${names}.log" 2>&1
-{ [ -f inventory/spawn.$$ ] && rm -f inventory/spawn.$$; } >> $log_loc 2>&1
+{ ansible-playbook -l "$names" ${op}.yml; } >> "${log_dir}/${1}.log" 2>&1
+{ [ -f inventory/spawn.$$ ] && rm -f inventory/spawn.$$; }
 { set +x; } 2>/dev/null
-echo "End: $(date)" >> "${log_dir}/${names}.log"
-echo "Elapsed: $(($(date +%s) - $start))" >> "${log_dir}/${names}.log"
+echo "End: $(date)" >> "${log_dir}/${1}.log"
+echo "Elapsed: $(($(date +%s) - $start))" >> "${log_dir}/${1}.log"
 
-echo "End: $(date)" >> $log_loc
+echo "End: $(date)"
+
+} >> $log_loc 2>&1
