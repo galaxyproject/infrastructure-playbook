@@ -54,6 +54,8 @@ galaxy06.tacc.utexas.edu
 galaxy06.tacc.utexas.edu
 
 [cvmfsclients]
+galaxy-db-02.tacc.utexas.edu
+
 [cvmfsclients:children]
 galaxynodes
 galaxyservers
