@@ -10,6 +10,7 @@ server {
     error_log   /var/log/nginx/gxy.io_error.log;
 
     rewrite ^/toolshed/?$ https://toolshed.g2.bx.psu.edu/;
+    rewrite ^/nate/ccbb2018/?$ https://docs.google.com/presentation/d/18VO-J2Ie-wNSApBN_4JlOaCilWQP6qNOtni9NLENZOE/;
 
     return 302 https://galaxyproject.org;
 
