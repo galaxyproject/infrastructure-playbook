@@ -131,6 +131,15 @@ host_templates:
         read only: 'yes'
         list: 'yes'
         dont compress: '*.tgz *.zip *.gz *.bz2 *.bam *.2bit *.lzo'
+      singularity:
+        path: /srv/nginx/depot.galaxyproject.org/root/singularity
+        comment: BioContainers Singularity Images
+        use chroot: 'yes'
+        uid: 'nobody'
+        gid: 'nogroup'
+        read only: 'yes'
+        list: 'yes'
+        dont compress: '*.tgz *.zip *.gz *.bz2 *.bam *.2bit *.lzo'
 
 host_service_configurations:
   - src: files/orval/rsyncd.xml
