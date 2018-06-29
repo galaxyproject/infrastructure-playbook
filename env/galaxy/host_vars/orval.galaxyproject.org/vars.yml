@@ -9,7 +9,7 @@ host_packages:
 # uids and gids were auto-generated on old orval (except nate's) which is the
 # reason for the uid/gid mess
 
-local_users:
+host_users:
   - name: sites
     uid: 1000
     gid: 2049
@@ -65,6 +65,12 @@ local_users:
     group: training
     home: /home/training
     shell: /bin/bash
+  - name: starforge
+    uid: 2056
+    gid: 2056
+    group: starforge
+    home: /home/starforge
+    shell: /bin/bash
 
 zfs_filesystems:
   - name: promise-1/orval/vicepa
@@ -117,6 +123,12 @@ host_directories:
   - path: /srv/nginx/depot.galaxyproject.org/root/training
     owner: training
     group: training
+  - path: /srv/nginx/depot.galaxyproject.org/root/starforge
+    owner: starforge
+    group: starforge
+  - path: /srv/nginx/depot.galaxyproject.org/root/starforge/travis
+    owner: starforge
+    group: starforge
 
 host_templates:
   - dest: /etc/rsyncd.conf
