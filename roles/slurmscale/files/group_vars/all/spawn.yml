@@ -1,6 +1,6 @@
 ---
 
-image: JS-API-Featured-CentOS7-May-11-2018
+image: JS-API-Featured-CentOS7-Aug-6-2018
 key_name: slurm-kp
 nics: net-name=usegalaxy
 security_groups: default
