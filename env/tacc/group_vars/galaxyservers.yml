@@ -123,6 +123,9 @@ telegraf_plugins_default:
       - udp_packet_size = 1500
       - '[inputs.statsd.tags]'
       - '  influxdb_database = "telegraf"'
+  - plugin: nginx
+    config:
+      - urls = ["http://localhost/_status"]
   - plugin: cpu
     config:
       - percpu = true
