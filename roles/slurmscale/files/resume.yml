@@ -76,6 +76,10 @@
           delegate_to: localhost
           when: "'newnodes' not in group_names"
 
+        - name: Run slurmd -b to signal slurmctld
+          command: slurmd -b
+          when: "'newnodes' not in group_names"
+
       rescue:
 
         - name: Destroy instance on failure
