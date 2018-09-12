@@ -128,7 +128,8 @@ def collect(instance):
                 'min': min_usage,
                 'days': days,
             }
-            measurements.append(make_measurement('disk_usage_mean', float(row[0]), tags=tags))
+            if row[0]:
+                measurements.append(make_measurement('disk_usage_mean', float(row[0]), tags=tags))
     for days in (0, 30, 90, 180, 365):
         for row in pg_execute(pconn_str, sql_top_usage(days=days)):
             tags = {
@@ -136,7 +137,8 @@ def collect(instance):
                 'email': row[1],
                 'days': days,
             }
-            measurements.append(make_measurement('disk_usage_top', float(row[2]), tags=tags))
+            if row[0]:
+                measurements.append(make_measurement('disk_usage_top', float(row[2]), tags=tags))
     measurements.append(
         make_measurement(
             'disk_usage_sum',
