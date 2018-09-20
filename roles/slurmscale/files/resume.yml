@@ -76,8 +76,10 @@
           delegate_to: localhost
           when: "'newnodes' not in group_names"
 
+        # FIXME: should not be doing this most likely
         - name: Run slurmd -b to signal slurmctld
-          command: slurmd -b
+          command: /usr/sbin/slurmd -b
+          become: yes
           when: "'newnodes' not in group_names"
 
       rescue:
