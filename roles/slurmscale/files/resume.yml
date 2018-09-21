@@ -15,6 +15,17 @@
             key: newnodes
           when: openstack is not defined
 
+        - name: Collect image facts
+          os_image_facts:
+          delegate_to: localhost
+          when: "'newnodes' in group_names"
+
+        - name: Find current JS-API-Featured-CentOS7 image
+          set_fact:
+            image: "{{ ( openstack_image | selectattr('name', 'match', '(?i)^JS-API-Featured-CentOS7-[A-Z]{3}-\\d{1,2}-\\d{4}$') | list | last ).id }}"
+          run_once: true
+          when: "'newnodes' in group_names"
+
         - name: Spawn new instance
           os_server:
             cloud: "{{ cloud_id }}"
