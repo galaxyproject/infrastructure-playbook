@@ -50,6 +50,7 @@ controllers_group_packages:
   - vim
   - git
   - tmpwatch
+  - pdsh
   # Pulsar deps
   - '@development tools'
   - python-virtualenv
@@ -70,6 +71,11 @@ controllers_group_files:
     dest: /etc/sysconfig/network-scripts/ifcfg-eth1
     backup: yes
     mode: "0644"
+    owner: root
+    group: root
+  - src: files/admin/pdsh-up
+    dest: /usr/bin/pdsh-up
+    mode: "0755"
     owner: root
     group: root
 
