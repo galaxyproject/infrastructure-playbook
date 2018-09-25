@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pdsh -w $(sinfo -N -t ALLOCATED,COMPLETING,DRAIN,ERROR,FAIL,FUTURE,IDLE -h -O nodehost | xargs echo | tr ' ' ',') "$@"
+pdsh -w $(sinfo -t ALLOCATED,COMPLETING,DRAIN,ERROR,FAIL,FUTURE,IDLE -h -o %N) "$@"
