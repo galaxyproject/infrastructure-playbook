@@ -35,7 +35,7 @@ domain = stats.galaxyproject.org
 ;enforce_domain = false
 
 # The full public facing url
-;root_url = %(protocol)s://%(domain)s:%(http_port)s/
+root_url = "{{ stats_grafana_conf_root_url | default('%(protocol)s://%(domain)s:%(http_port)s/') }}"
 
 # Log web requests
 ;router_logging = false
@@ -150,16 +150,16 @@ allow_sign_up = false
 
 #################################### Github Auth ##########################
 [auth.github]
-;enabled = false
-;allow_sign_up = false
-;client_id = some_id
-;client_secret = some_secret
+enabled = {{ "true" if stats_grafana_conf_auth_github is defined and stats_grafana_conf_auth_github else "false" }}
+allow_sign_up = {{ "true" if stats_grafana_conf_auth_github is defined and stats_grafana_conf_auth_github else "false" }}
+client_id = {{ stats_grafana_conf_auth_github_client_id | default("some_id") }}
+client_secret = {{ stats_grafana_conf_auth_github_client_secret | default("some_secret") }}
 ;scopes = user:email,read:org
 ;auth_url = https://github.com/login/oauth/authorize
 ;token_url = https://github.com/login/oauth/access_token
 ;api_url = https://api.github.com/user
-;team_ids =
-;allowed_organizations =
+team_ids = {{ stats_grafana_conf_auth_github_team_ids | default([]) | join(",") }}
+allowed_organizations = {{ stats_grafana_conf_auth_github_allowed_organizations | default([]) | join(" ") }}
 
 #################################### Google Auth ##########################
 [auth.google]
