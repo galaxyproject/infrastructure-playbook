@@ -96,6 +96,18 @@ def sql_sum_usage():
     """
 
 
+def sql_count_queued_jobs():
+    return """
+        SELECT
+            sum(CASE WHEN job_runner_external_id IS NOT null THEN 1 ELSE 0 END),
+            sum(CASE WHEN job_runner_external_id IS null THEN 1 ELSE 0 END)
+        FROM
+            job
+        WHERE
+            state = 'queued'
+    """
+
+
 def make_measurement(measurement, value, tags=None):
     m = {
         'measurement': measurement,
@@ -145,6 +157,9 @@ def collect(instance):
             int(next(pg_execute(pconn_str, sql_sum_usage()))[0]),
         )
     )
+    queued_external, queued_internal = [int(i) for i in next(pg_execute(pconn_str, sql_count_queued_jobs()))]
+    measurements.append(make_measurement('jobs_queued_external', queued_external))
+    measurements.append(make_measurement('jobs_queued_internal', queued_internal))
     return measurements
 
 
