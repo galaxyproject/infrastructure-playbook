@@ -106,6 +106,13 @@ telegraf_agent_output:
       - 'tagexclude = ["influxdb_database"]'
       - '[outputs.influxdb.tagpass]'
       - '  influxdb_database = ["telegraf"]'
+  - type: influxdb
+    config:
+      - urls = ["http://stats.galaxyproject.org:8086"]
+      - database = "{{ galaxy_instance_codename }}_sql"
+      - 'tagexclude = ["influxdb_database"]'
+      - '[outputs.influxdb.tagpass]'
+      - '  influxdb_database = ["{{ galaxy_instance_codename }}_sql"]'
 
 telegraf_plugins_default:
   - plugin: statsd

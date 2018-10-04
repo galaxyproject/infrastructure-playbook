@@ -1,0 +1,19 @@
+---
+
+dbservers_group_templates:
+  - src: templates/stats/galaxy_db_slurp.sh.j2
+    dest: /usr/local/bin/galaxy_db_slurp.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+telegraf_plugins_extra:
+  galaxy_db_slurp:
+    plugin: "exec"
+    config:
+      - commands = ["/usr/local/bin/galaxy_db_slurp.sh"]
+      - timeout = "120s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'

@@ -1,0 +1,28 @@
+---
+
+galaxy_instance_codename: main
+
+stats_slurp:
+  db_name: galaxy_main
+  galaxy_handlers:
+    - main_w3_handler0
+    - main_w3_handler1
+    - main_w3_handler2
+    - main_w4_handler0
+    - main_w4_handler1
+    - main_w4_handler2
+
+telegraf_agent_output:
+  - type: influxdb
+    config:
+      - urls = ["http://stats.galaxyproject.org:8086"]
+      - database = "system"
+      - '[outputs.influxdb.tagdrop]'
+      - '  influxdb_database = ["*"]'
+  - type: influxdb
+    config:
+      - urls = ["http://stats.galaxyproject.org:8086"]
+      - database = "{{ galaxy_instance_codename }}_sql"
+      - 'tagexclude = ["influxdb_database"]'
+      - '[outputs.influxdb.tagpass]'
+      - '  influxdb_database = ["{{ galaxy_instance_codename }}_sql"]'

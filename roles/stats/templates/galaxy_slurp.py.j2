@@ -12,23 +12,6 @@ PGCONNS = {
     'test': 'host=galaxy07.tacc.utexas.edu user=grafana password={{ galaxy_test_grafana_db_password }} dbname=galaxy_test',
     'main': 'host=galaxy-db-02.tacc.utexas.edu user=grafana password={{ galaxy_main_grafana_db_password }} dbname=galaxy_main',
 }
-HANDLERS = {
-    'test': (
-        'test_handler0',
-        'test_handler1',
-        'test_handler2',
-        'test_handler3',
-        'test_handler4',
-    ),
-    'main': (
-        'main_w3_handler0',
-        'main_w3_handler1',
-        'main_w3_handler2',
-        'main_w4_handler0',
-        'main_w4_handler1',
-        'main_w4_handler2',
-    ),
-}
 time = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
@@ -102,44 +85,6 @@ def sql_avg_usage(min_usage=0, days=0):
     )
 
 
-def sql_sum_usage():
-    return """
-        SELECT
-            sum(total_size)
-        FROM
-            dataset
-        WHERE
-            NOT purged
-    """
-
-
-def sql_count_internally_queued_jobs():
-    return """
-        SELECT
-            handler,
-            count(handler)
-        FROM
-            job
-        WHERE
-            state = 'queued'
-            AND job_runner_external_id IS null
-        GROUP BY
-            handler
-    """
-
-
-def sql_count_total_queued_jobs():
-    return """
-        SELECT
-            sum(CASE WHEN job_runner_external_id IS NOT null THEN 1 ELSE 0 END),
-            sum(CASE WHEN job_runner_external_id IS null THEN 1 ELSE 0 END)
-        FROM
-            job
-        WHERE
-            state = 'queued'
-    """
-
-
 def make_measurement(measurement, value, tags=None):
     m = {
         'measurement': measurement,
@@ -160,19 +105,6 @@ def pg_execute(pconn_str, sql):
     for row in pc:
         yield row
     pconn.close()
-
-
-def get_internally_queued_jobs(instance):
-    measurements = []
-    counts = {}
-    pconn_str = PGCONNS[instance]
-    for handler in HANDLERS[instance]:
-        counts[handler] = 0
-    for handler, count in pg_execute(pconn_str, sql_count_internally_queued_jobs()):
-        counts[handler] = int(count)
-    for handler, count in counts.items():
-        measurements.append(make_measurement('jobs_queued_internal_by_handler', count, tags={'handler': handler}))
-    return measurements
 
 
 def collect(instance):
@@ -196,16 +128,6 @@ def collect(instance):
             }
             if row[0]:
                 measurements.append(make_measurement('disk_usage_top', float(row[2]), tags=tags))
-    measurements.append(
-        make_measurement(
-            'disk_usage_sum',
-            int(next(pg_execute(pconn_str, sql_sum_usage()))[0]),
-        )
-    )
-    queued_external, queued_internal = [int(i) for i in next(pg_execute(pconn_str, sql_count_total_queued_jobs()))]
-    measurements.append(make_measurement('jobs_queued_external', queued_external))
-    measurements.append(make_measurement('jobs_queued_internal', queued_internal))
-    measurements.extend(get_internally_queued_jobs(instance))
     return measurements
 
 
