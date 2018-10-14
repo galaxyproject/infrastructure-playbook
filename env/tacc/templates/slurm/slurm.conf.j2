@@ -48,12 +48,15 @@ SlurmdDebug=debug
 #
 # Node Configurations
 #
-NodeName=roundup[49-56,58-64] RealMemory=122880 CPUS=24 State=UNKNOWN
-NodeName=roundup57 RealMemory=112597 CPUS=24 State=UNKNOWN
+# Weight is set so that nodes exclusive to a partition will be preferred
+NodeName=roundup[49-54] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=0
+NodeName=roundup[55-60] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=10
+NodeName=roundup[61-64] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=0
 
 #
 # Partition Configurations
 #
-PartitionName=multi State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=5120 Nodes=roundup[49-60] LLN=YES
-PartitionName=normal State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[61-64] LLN=YES Default=YES
-PartitionName=reserved State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[49-64]
+# Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
+PartitionName=multi State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=5120 Nodes=roundup[49-60] LLN=YES PriorityTier=0
+PartitionName=normal State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[55-64] LLN=YES Default=YES PriorityTier=10
+PartitionName=reserved State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[49-64] PriorityTier=20

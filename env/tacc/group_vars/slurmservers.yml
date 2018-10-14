@@ -9,5 +9,5 @@ slurmservers_group_crontabs:
   - id: slurm_partition_balance
     name: Slurm Partition Balance
     user: root
-    minute: '*/5'
     job: "{ date; /usr/local/sbin/spartbalance; } >> /var/log/spartbalance.log 2>&1"
+    state: absent
