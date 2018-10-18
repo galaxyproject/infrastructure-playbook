@@ -9,11 +9,12 @@ group_apt_keys:
 
 group_apt_repositories:
   - repo: 'deb https://apt.dockerproject.org/repo debian-jessie main'
+  - repo: 'deb http://mirror.bx.psu.edu/debian jessie-backports main'
 
 group_packages:
   - git
   - docker-engine
-  - openjdk-7-jre-headless
+  - openjdk-8-jre-headless
   - ntp
   - ntpdate
   - build-essential
@@ -27,6 +28,9 @@ jenkinsslaves_group_users:
 
 jenkinsslaves_group_directories:
   - path: /var/jenkins
+    owner: jenkins
+    group: jenkins
+  - path: ~jenkins/bin
     owner: jenkins
     group: jenkins
 
