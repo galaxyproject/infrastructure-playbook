@@ -1,3 +1,4 @@
 ---
 
 cvmfs_srv_device: /dev/sdb
+cvmfs_stratum1_cache_mem: 2560
