@@ -145,3 +145,23 @@ telegraf_plugins_default:
   - plugin: swap
   - plugin: net
   - plugin: netstat
+  - plugin: procstat
+    config:
+      - pattern = "galaxy-main.*handler0"
+      - 'user = "{{ galaxy_user }}"'
+  - plugin: procstat
+    config:
+      - pattern = "galaxy-main.*handler1"
+      - 'user = "{{ galaxy_user }}"'
+  - plugin: procstat
+    config:
+      - pattern = "galaxy-main.*handler2"
+      - 'user = "{{ galaxy_user }}"'
+  - plugin: procstat
+    config:
+      - pattern = "galaxy-main.*handler3"
+      - 'user = "{{ galaxy_user }}"'
+  - plugin: procstat
+    config:
+      - pattern = "galaxy-main.*workflow_scheduler0"
+      - 'user = "{{ galaxy_user }}"'
