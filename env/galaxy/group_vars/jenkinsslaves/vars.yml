@@ -39,3 +39,5 @@ jenkinsslaves_group_files:
     dest: ~jenkins/.ssh/config
     owner: jenkins
     group: jenkins
+  - src: files/jenkins/tmpfiles.d-clean-tmp.conf
+    dest: /etc/tmpfiles.d/clean-tmp.conf
