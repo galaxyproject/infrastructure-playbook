@@ -1,0 +1,51 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:80;
+    server_name biostar.usegalaxy.org biostar.galaxyproject.org;
+
+    return 302 https://$host$request_uri;
+}
+
+proxy_cache_path    /var/lib/nginx/proxy levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m; # 1.7.10 use_temp_path=off;
+
+server {
+    listen      *:443 ssl;
+    server_name biostar.usegalaxy.org biostar.galaxyproject.org;
+
+    access_log  /var/log/nginx/biostar.usegalaxy.org_access.log;
+    error_log   /var/log/nginx/biostar.usegalaxy.org_error.log;
+
+    client_max_body_size 8M;
+
+    root        /srv/nginx/biostar.usegalaxy.org/root;
+
+    error_page  404      /error.html;
+    error_page  403 =404 /error.html;
+
+    location / {
+        proxy_cache            s3_cache;
+        proxy_http_version     1.1;
+        proxy_set_header       Connection "";
+        proxy_set_header       Authorization '';
+        proxy_set_header       Host usegalaxy-biostar.s3-website.us-east-1.amazonaws.com;
+        proxy_hide_header      x-amz-id-2;
+        proxy_hide_header      x-amz-request-id;
+        proxy_hide_header      x-amz-meta-server-side-encryption;
+        proxy_hide_header      x-amz-server-side-encryption;
+        proxy_hide_header      Set-Cookie;
+        proxy_ignore_headers   Set-Cookie;
+        #proxy_cache_revalidate on;  # 1.5.7
+        proxy_intercept_errors on;
+        proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock       on;
+        proxy_cache_valid      200 304 60m;
+        add_header             Cache-Control max-age=31536000;
+        add_header             X-Cache-Status $upstream_cache_status;
+        proxy_pass             http://usegalaxy-biostar.s3-website.us-east-1.amazonaws.com/;
+    }
+}
+
+# vim: set filetype=nginx
