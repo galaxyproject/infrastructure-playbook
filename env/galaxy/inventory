@@ -236,11 +236,7 @@ mjolnir0.galaxyproject.org
 n1.galaxyproject.org
 n2.galaxyproject.org
 # n3 is leeroy
-n4.galaxyproject.org
-n5.galaxyproject.org
-n6.galaxyproject.org
-n7.galaxyproject.org
-n8.galaxyproject.org
+n[4:14].galaxyproject.org
 
 [biostarservers]
 biostar.usegalaxy.org
@@ -250,3 +246,7 @@ mjolnir0.galaxyproject.org
 
 [statsservers]
 infrastats.galaxyproject.org
+
+# for serial console setup
+[x2200s]
+n[0:14].galaxyproject.org

@@ -7,12 +7,12 @@ jenkinsservers_group_apt_keys:
   - url: 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key'
 
 jenkinsservers_group_apt_repositories:
-  - repo: 'deb http://http.debian.net/debian jessie-backports main contrib non-free'
+  - repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
   - repo: 'deb http://pkg.jenkins-ci.org/debian binary/'
 
 jenkinsservers_group_packages:
   - git
-  - postgresql-9.4
+  - postgresql
   - python-virtualenv
   - jenkins
   - npm
@@ -43,8 +43,8 @@ jenkinsservers_group_packages:
   - curl
   - ntp
   - ntpdate
-  # for jenkins, is this right or is it using 8 now?
-  - openjdk-7-jre-headless
+  # for jenkins
+  - openjdk-8-jre-headless
 
 jenkinsservers_group_users:
   - name: jenkins

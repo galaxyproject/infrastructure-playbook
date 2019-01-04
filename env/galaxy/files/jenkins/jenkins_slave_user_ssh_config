@@ -3,6 +3,7 @@
 ##
 
 StrictHostKeyChecking no
+HashKnownHosts no
 
 Match User bioarchive Host orval.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_bioarchive
