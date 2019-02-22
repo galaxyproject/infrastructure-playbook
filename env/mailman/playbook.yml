@@ -1,0 +1,34 @@
+---
+
+- name: Get EC2 Facts
+  hosts: ec2hosts
+  tasks:
+    - name: Get EC2 Facts
+      action: ec2_facts
+  tags:
+    - always
+
+- name: Tasks for virtualized hosts
+  hosts: virtual
+  roles:
+    - virtual
+  tags:
+    - initial
+    - system
+
+- name: Include baseenv plays
+  import_playbook: baseenv.yml
+
+- name: Include mailserver/listserver plays
+  import_playbook: mailservers.yml
+
+- name: Include webserver plays
+  import_playbook: webservers.yml
+
+#- name: Install supervisor
+#  hosts: all
+#  remote_user: root
+#  roles:
+#    - role: supervisor
+#      when: supervisord_group_configs is defined or supervisord_host_configs is defined
+#      tags: supervisor,services

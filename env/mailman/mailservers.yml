@@ -1,0 +1,15 @@
+---
+
+- name: Tasks for mail servers
+  hosts: mailservers
+  pre_tasks:
+    - name: Gathering EC2 Facts
+      action: ec2_metadata_facts
+      tags:
+        - postfix
+  roles:
+    - role: galaxyproject.postfix
+      tags:
+        - postfix
+  tags: 
+    - mail

@@ -1,0 +1,30 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name galaxy-lists-beta.galaxyproject.org;
+
+    return 302 https://galaxy-lists-beta.galaxyproject.org;
+}
+
+server {
+
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name galaxy-lists-beta.galaxyproject.org;
+
+    location /static/ {
+        alias /var/opt/mailman3/web/static/;
+    }
+
+    location / {
+        include uwsgi_params;
+        uwsgi_param Host $host;
+        uwsgi_param X-Real-IP $remote_addr;
+        uwsgi_param X-Forwarded-For $proxy_add_x_forwarded_for;
+        uwsgi_param X-Forwarded-Proto $http_x_forwarded_proto;
+        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_galaxy-lists-beta.galaxyproject.org.sock;
+   }
+
+}

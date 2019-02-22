@@ -1,0 +1,6 @@
+# Don't filter list messages, they'll be run in Mailman
+{% for domain in mailman3_domains %}j
+{{ domain }} OK
+{% endfor %}
+.galaxyproject.org  FILTER smtp-amavis:localhost:10024
+galaxyproject.org   FILTER smtp-amavis:localhost:10024

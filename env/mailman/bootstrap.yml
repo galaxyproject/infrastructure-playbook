@@ -1,0 +1,9 @@
+# FIXME: no facts so you can't check if it's debian
+- name: Bootstrap Python
+  hosts: all
+  gather_facts: false
+  pre_tasks:
+    - name: Bootsrap Python 3 for Ansible
+      raw: bash -c "test -e /usr/bin/python3 || (apt -qqy update && apt install -qqy python3)"
+      register: output
+      changed_when: output.stdout != ""

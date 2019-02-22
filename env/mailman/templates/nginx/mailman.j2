@@ -1,0 +1,38 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name claven.galaxyproject.org;
+
+    return 302 https://claven.galaxyproject.org;
+}
+
+server {
+
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    server_name claven.galaxyproject.org;
+
+}
+
+# For archiving
+server {
+    listen 127.0.0.1:80;
+    listen [::1]:80;
+
+    server_name localhost;
+
+    location /static/ {
+        alias /var/opt/mailman3/web/static/;
+    }
+
+    location / {
+        include uwsgi_params;
+        uwsgi_param Host $host;
+        uwsgi_param X-Real-IP $remote_addr;
+        uwsgi_param X-Forwarded-For $proxy_add_x_forwarded_for;
+        uwsgi_param X-Forwarded-Proto $http_x_forwarded_proto;
+        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_galaxy-lists-beta.galaxyproject.org.sock;
+   }
+}

@@ -1,0 +1,10 @@
+---
+
+- name: Tasks for web servers
+  hosts: webservers
+  roles:
+    - role: geerlingguy.repo-epel
+      when: ansible_os_family == "RedHat"
+    - role: galaxyproject.nginx
+  tags: 
+    - nginx

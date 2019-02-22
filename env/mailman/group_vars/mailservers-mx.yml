@@ -1,0 +1,40 @@
+---
+
+postfix_role: mta
+postfix_mailname: "{{ inventory_hostname }}"
+
+mailman3_distribute_maps_dir: "/var/list"
+postfix_config:
+  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  relay_recipient_maps: hash:{{ mailman3_distribute_maps_dir }}/postfix_lmtp
+  relay_domains: "{{ mailman3_domains | join(', ') }}"
+  content_filter: null
+  smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
+  parent_domain_matches_subdomains: debug_peer_list,fast_flush_domains,mynetworks,permit_mx_backup_networks,qmqpd_authorized_clients,relay_domains
+postfix_master_config:
+  # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
+  # we create a loop
+  localhost:10025-inet:
+    args: |
+      -o content_filter=
+          -o local_recipient_maps=
+          -o relay_recipient_maps=
+          -o smtpd_restriction_classes=
+          -o smtpd_delay_reject=no
+          -o smtpd_client_restrictions=permit_mynetworks,reject
+          -o smtpd_helo_restrictions=
+          -o smtpd_sender_restrictions=
+          -o smtpd_recipient_restrictions=permit_mynetworks,reject
+          -o smtpd_data_restrictions=reject_unauth_pipelining
+          -o smtpd_end_of_data_restrictions=
+          -o mynetworks=127.0.0.0/8
+          -o smtpd_error_sleep_time=0
+          -o smtpd_soft_error_limit=1001
+          -o smtpd_hard_error_limit=1000
+          -o smtpd_client_connection_count_limit=0
+          -o smtpd_client_connection_rate_limit=0
+          -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+          -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,defer_unauth_destination
+
+postfix_maps:
+  - postfix/relay_restrictions

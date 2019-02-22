@@ -1,0 +1,64 @@
+##
+## Variables
+##
+
+claven.galaxyproject.org ansible_user=ubuntu ansible_become=yes #ansible_host=100.26.206.140
+#claven.galaxyproject.org ansible_connection=docker
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+# These get all the common roles. Additionally:
+# - common authorized_keys for root
+[baseenv]
+claven.galaxyproject.org
+
+# For things that need access to common_sshkeys and env-specific sshkeys
+[sshservers]
+[sshservers:children]
+baseenv
+
+# For things that need access to sslkeys and the "PKI"
+[sslservers]
+[sslservers:children]
+webservers
+
+##
+## Host groupings
+##
+
+# - sets the hostname to the inventory_hostname
+[virtual]
+[virtual:children]
+ec2hosts
+
+[ec2hosts]
+claven.galaxyproject.org
+
+# - authorized keys for non-root admin user
+[authkeyhosts]
+[authkeyhosts:children]
+
+##
+## Application groupings
+##
+
+## Mail
+
+[mailservers]
+claven.galaxyproject.org
+
+[mailservers:children]
+mailservers-mx
+
+[mailservers-mx]
+# testing relay restrictions config
+#claven.galaxyproject.org
+
+[listservers]
+claven.galaxyproject.org
+
+## Web
+
+[webservers]
+claven.galaxyproject.org

@@ -1,0 +1,10 @@
+---
+
+- name: Tasks for list servers
+  hosts: listservers
+  roles:
+    - role: galaxyproject.mailman3
+      tags:
+        - mailman
+  tags: 
+    - mail

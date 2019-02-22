@@ -1,0 +1,5 @@
+---
+
+mailman3_domains:
+  - galaxy-lists-beta.galaxyproject.org
+  - anvil-lists-beta.galaxyproject.org

@@ -1,0 +1,17 @@
+TODO
+====
+- MX: enable virus, spam scanning in amavisd
+- claven: enable virus, disable spam scanning in amavisd
+- Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
+- Certbot
+- claven: set list user's homedir to something writable (or create it)
+- set up auth for distribute_maps
+- anvil MX records
+- deploy to real MXs
+
+DONE
+====
+- Implement distribute Mailman recipient maps to MXs (push to LDAP?) and use relay_recipient_maps
+- Use smtpd_relay_restrictions to set the amavis content filter as the default on MXs for non-list domains. list domains
+  should relay w/o content filter
+- Configure MM to deliver to 10025 to bypass amavis
