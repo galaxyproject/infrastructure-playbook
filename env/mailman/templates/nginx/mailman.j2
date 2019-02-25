@@ -2,18 +2,15 @@ server {
     listen 80 default_server;
     listen [::]:80 default_server;
 
-    server_name claven.galaxyproject.org;
+    server_name {{ inventory_hostname }} {{ mailman3_domains | join(' ') }};
 
-    return 302 https://claven.galaxyproject.org;
-}
+    location /.well-known/ {
+        root /srv/nginx/_well-known_root;
+    }
 
-server {
-
-    listen 443 ssl default_server;
-    listen [::]:443 ssl default_server;
-
-    server_name claven.galaxyproject.org;
-
+    location / {
+        return 302 https://$server_name;
+    }
 }
 
 # For archiving
@@ -33,6 +30,6 @@ server {
         uwsgi_param X-Real-IP $remote_addr;
         uwsgi_param X-Forwarded-For $proxy_add_x_forwarded_for;
         uwsgi_param X-Forwarded-Proto $http_x_forwarded_proto;
-        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_galaxy-lists-beta.galaxyproject.org.sock;
+        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_{{ mailman3_domains.0 }}.sock;
    }
 }

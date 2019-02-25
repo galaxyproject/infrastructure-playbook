@@ -1,5 +1,12 @@
 ---
 
+listservers_group_groups:
+  - name: ssl-cert
+    system: true
+listservers_group_users:
+  - name: www-data
+    groups: ssl-cert
+
 postfix_role: mda
 postfix_mailname: "{{ inventory_hostname }}"
 
@@ -48,10 +55,28 @@ mailman3_distribute_maps:
     ansible_python_interpreter: /usr/bin/python3
     mailman3_postmap_command: /usr/sbin/postmap
 
-nginx_configs:
+nginx_servers:
   - mailman
-  - anvil-lists
-  - galaxy-lists
+nginx_ssl_servers:
+  - mailman_ssl
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+#nginx_conf_ssl_certificate: wildcard_cert.pem
+#nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+nginx_ssl_role: usegalaxy-eu.certbot
+nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/ssl/private/privkey-www-data.pem
+
+certbot_auto_renew: false
+certbot_environment: staging
+certbot_auth_method: --webroot
+certbot_domains:
+  - claven.galaxyproject.org
+  - galaxy-lists-beta.galaxyproject.org
+  - anvil-lists-beta.galaxyproject.org
+certbot_admin_email: nate@bx.psu.edu
+certbot_agree_tos: --agree-tos
+certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_share_key_users:
+  - www-data
+certbot_post_renewal: |
+  systemctl restart nginx || true
