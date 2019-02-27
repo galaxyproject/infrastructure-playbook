@@ -1,6 +1,6 @@
 TODO
 ====
-- spf
+- spf (need records on lists.*)
 - deploy to real MXs
 - dkim
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
