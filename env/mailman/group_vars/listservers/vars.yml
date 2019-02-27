@@ -1,0 +1,136 @@
+---
+
+postgresql_version: 10
+postgresql_objects_users:
+  - name: www-data
+postgresql_objects_databases:
+  - name: mailman3
+    owner: www-data
+
+listservers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
+
+listservers_group_groups:
+  - name: ssl-cert
+    system: true
+listservers_group_users:
+  - name: www-data
+    groups: ssl-cert
+
+postfix_role: mda
+postfix_mailname: "{{ inventory_hostname }}"
+
+# Set this or you can't run the postfix role w/o the mailman role
+postfix_mailman3_var_dir: /var/opt/mailman3/core
+postfix_config:
+  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  transport_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
+  local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
+  relay_domains: hash:{{ postfix_mailman3_var_dir }}/data/postfix_domains
+
+postfix_amavisd_new_config:
+  '@local_domains_acl': (".$mydomain", "{{ mailman3_domains | join('", "') }}")
+
+  # don't alter subject
+  $sa_spam_subject_tag: null
+  # always add headers
+  $sa_tag_level_deflt: -9999
+  # add "spam detected" headers at this level
+  $sa_tag2_level_deflt: 6.31
+
+  # only discard viruses, pass the rest (with headers)
+  $final_virus_destiny: D_DISCARD
+  $final_banned_destiny: D_PASS
+  $final_spam_destiny: D_PASS
+  $final_bad_header_destiny: D_PASS
+
+  # FIXME: need spamassassin plugin for mailman
+  # don't check spam bound for Mailman (Mailman does it itself)
+  #'@bypass_spam_checks_acl': @spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})
+  #'@spam_kill_level_maps': ({'lists.galaxyproject.org' => 9999 }, \$sa_kill_level_deflt, )
+
+postfix_aliases:
+  mailer-daemon: postmaster
+  postmaster: root
+  nobody: root
+  hostmaster: root
+  usenet: root
+  news: root
+  webmaster: root
+  www: root
+  ftp: root
+  abuse: root
+  noc: root
+  security: root
+  postorius: root
+  root: root@galaxyproject.org
+
+listservers_group_packages:
+  # not all of mailman3's cext deps have wheels available
+  - build-essential
+  - python3-dev
+  # for natefoo.postgresql_objects
+  - python3-psycopg2
+
+#mailman3_http_socket: :8000
+#mailman3_uwsgi_static: yes
+
+mailman3_config:
+  mta:
+    smtp_port: 10025
+
+mailman3_django_superusers:
+  - name: nate
+    email: nate@bx.psu.edu
+    pass: foo
+
+mailman3_django_config:
+  #allowed_hosts:
+  #  - "{{ inventory_hostname }}"
+  default_from_email: "postorius@{{ inventory_hostname }}"
+  server_email: "root@{{ inventory_hostname }}"
+  use_x_forwarded_host: false
+  databases:
+    default:
+      ENGINE: django.db.backends.postgresql_psycopg2
+      NAME: mailman3
+      HOST: /var/run/postgresql
+
+mailman3_extra_packages:
+  - psycopg2-binary
+
+# moved to all.yml for MXs
+#mailman3_domains:
+#  - galaxy-lists-beta.galaxyproject.org
+#  - anvil-lists-beta.galaxyproject.org
+
+# FIXME:
+#mailman3_distribute_maps:
+#  - host: all
+#    mailman3_distribute_maps_dir: "/tmp"
+#  - host: claven.galaxyproject.org
+#    ansible_connection: local
+#    ansible_python_interpreter: /usr/bin/python3
+#    mailman3_postmap_command: /usr/sbin/postmap
+
+nginx_servers:
+  - mailman
+nginx_ssl_servers:
+  - mailman_ssl
+
+#nginx_conf_ssl_certificate: wildcard_cert.pem
+#nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+nginx_ssl_role: usegalaxy-eu.certbot
+nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
+
+certbot_auto_renew: false
+certbot_environment: staging
+certbot_auth_method: --webroot
+certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"
+certbot_admin_email: nate@bx.psu.edu
+certbot_agree_tos: --agree-tos
+certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_share_key_users:
+  - www-data
+certbot_post_renewal: |
+  systemctl restart nginx || true

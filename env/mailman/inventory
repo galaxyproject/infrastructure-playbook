@@ -2,16 +2,21 @@
 ## Variables
 ##
 
-claven.galaxyproject.org ansible_user=ubuntu ansible_become=yes #ansible_host=100.26.206.140
 #claven.galaxyproject.org ansible_connection=docker
+claven.galaxyproject.org        ansible_user=ubuntu ansible_become=yes #ansible_host=3.88.192.208
+chouffe.galaxyproject.org       ansible_python_interpreter=/usr/bin/python2
+delirium.galaxyproject.org      ansible_python_interpreter=/usr/bin/python2
 
 [all:vars]
-ansible_python_interpreter=/usr/bin/python3
+ansible_user                = root
+ansible_python_interpreter  = /usr/bin/python3
 
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
 claven.galaxyproject.org
+chouffe.galaxyproject.org
+delirium.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
 [sshservers]
@@ -39,6 +44,11 @@ claven.galaxyproject.org
 [authkeyhosts]
 [authkeyhosts:children]
 
+# for distributing maps to MXs
+[sshclients]
+[sshclients:children]
+listservers
+
 ##
 ## Application groupings
 ##
@@ -49,11 +59,12 @@ claven.galaxyproject.org
 claven.galaxyproject.org
 
 [mailservers:children]
-mailservers-mx
+# TODO: still managed via the old role in the galaxy env for now
+#mailservers-mx
 
 [mailservers-mx]
-# testing relay restrictions config
-#claven.galaxyproject.org
+chouffe.galaxyproject.org
+delirium.galaxyproject.org
 
 [listservers]
 claven.galaxyproject.org

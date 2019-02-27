@@ -5,7 +5,7 @@ server {
     server_name {{ inventory_hostname }} {{ mailman3_domains | join(' ') }};
 
     location /.well-known/ {
-        root /srv/nginx/_well-known_root;
+        root {{ certbot_well_known_root }};
     }
 
     location / {

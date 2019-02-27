@@ -1,5 +1,7 @@
 ---
 
+mailservers_mx_group_authorized_key_users: "{{ vault_mailservers_mx_group_authorized_key_users }}"
+
 postfix_role: mta
 postfix_mailname: "{{ inventory_hostname }}"
 

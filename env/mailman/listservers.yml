@@ -2,7 +2,15 @@
 
 - name: Tasks for list servers
   hosts: listservers
+  # If the user role in baseenv didn't precreate /var/list (for ssh private keys), we'd need to precreate it here
   roles:
+    - role: galaxyproject.postgresql
+      tags:
+        - postgres
+    - role: natefoo.postgresql_objects
+      become_user: postgres
+      tags:
+        - postgres
     - role: galaxyproject.mailman3
       tags:
         - mailman

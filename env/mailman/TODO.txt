@@ -1,12 +1,10 @@
 TODO
 ====
-- MX: enable virus, spam scanning in amavisd
-- claven: enable virus, disable spam scanning in amavisd
-- Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
-- claven: set list user's homedir to something writable (or create it)
-- set up auth for distribute_maps
-- anvil MX records
+- spf
 - deploy to real MXs
+- dkim
+- Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
+- Merge this env back to the galaxy env
 
 DONE
 ====
@@ -15,3 +13,9 @@ DONE
   should relay w/o content filter
 - Configure MM to deliver to 10025 to bypass amavis
 - Certbot
+- anvil MX records
+- MX: enable virus, spam scanning in amavisd
+- claven: enable virus, ~~disable spam scanning in amavisd~~ EDIT: enabled for now until we have a mailman3 plugin
+- claven: set list user's homedir to something writable (or create it)
+- set up auth for distribute_maps
+- use PostgreSQL for Mailman Django
