@@ -83,7 +83,7 @@
   hosts: statsservers
   remote_user: root
   roles:
-    - role: galaxyprojectdotorg.postgresql
+    - role: galaxyproject.postgresql
       tags: postgres
     - role: sentry
       tags: sentry
