@@ -1,6 +1,7 @@
 TODO
 ====
 - spf (need records on lists.*)
+- check if you can do site-specific postorious default_from_email (test w/ new user acct creation)
 - deploy to real MXs
 - dkim
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
