@@ -1,0 +1,9 @@
+---
+- name: galaxyproject.nginx
+- name: galaxyproject.mailman3
+  src: https://github.com/galaxyproject/ansible-mailman3
+- name: galaxyproject.postfix
+  src: https://github.com/galaxyproject/ansible-postfix
+- name: galaxyproject.postgresql
+- name: usegalaxy-eu.cerbot
+  src: https://github.com/usegalaxy-eu/ansible-certbot
