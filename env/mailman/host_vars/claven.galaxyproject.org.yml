@@ -1,0 +1,10 @@
+---
+
+filesystems:
+  - dev: /dev/xvdb
+    fstype: xfs
+
+mounts:
+  - name: /var/opt/mailman3
+    src: /dev/xvdb
+    fstype: xfs
