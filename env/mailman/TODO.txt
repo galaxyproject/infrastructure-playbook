@@ -1,7 +1,7 @@
 TODO
 ====
-- spf (need records on lists.*)
-- check if you can do site-specific postorious default_from_email (test w/ new user acct creation)
+- spf anvil
+- move DB to EBS
 - deploy to real MXs
 - dkim
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
@@ -20,3 +20,5 @@ DONE
 - claven: set list user's homedir to something writable (or create it)
 - set up auth for distribute_maps
 - use PostgreSQL for Mailman Django
+- check if you can do site-specific postorious default_from_email (test w/ new user acct creation)
+- spf galaxy
