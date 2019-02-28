@@ -9,7 +9,7 @@ server {
     }
 
     location / {
-        return 302 https://$server_name;
+        return 302 https://$host$request_uri;
     }
 }
 
