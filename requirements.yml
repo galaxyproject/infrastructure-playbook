@@ -5,5 +5,6 @@
 - name: galaxyproject.postfix
   src: https://github.com/galaxyproject/ansible-postfix
 - name: galaxyproject.postgresql
-- name: usegalaxy-eu.cerbot
+- name: usegalaxy-eu.certbot
   src: https://github.com/usegalaxy-eu/ansible-certbot
+  version: private-dir-perms

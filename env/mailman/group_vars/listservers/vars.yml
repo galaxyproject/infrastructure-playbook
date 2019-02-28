@@ -12,12 +12,12 @@ mailman3_pgdata: /var/opt/mailman3/postgresql
 
 listservers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
 
-listservers_group_groups:
-  - name: ssl-cert
-    system: true
-listservers_group_users:
-  - name: www-data
-    groups: ssl-cert
+#listservers_group_groups:
+#  - name: ssl-cert
+#    system: true
+#listservers_group_users:
+#  - name: www-data
+#    groups: ssl-cert
 
 postfix_role: mda
 postfix_mailname: "{{ inventory_hostname }}"
@@ -81,6 +81,7 @@ mailman3_config:
   mta:
     smtp_port: 10025
 
+# FIXME:
 mailman3_django_superusers:
   - name: nate
     email: nate@bx.psu.edu
@@ -89,9 +90,10 @@ mailman3_django_superusers:
 mailman3_django_config:
   #allowed_hosts:
   #  - "{{ inventory_hostname }}"
-  default_from_email: "postorius@{{ inventory_hostname }}"
-  server_email: "root@{{ inventory_hostname }}"
+  #default_from_email: "postorius@{{ inventory_hostname }}"
+  #server_email: "root@{{ inventory_hostname }}"
   use_x_forwarded_host: false
+  hyperkitty_attachment_folder: "{{ mailman3_django_var_dir }}/attachments"
   databases:
     default:
       ENGINE: django.db.backends.postgresql_psycopg2
@@ -127,7 +129,7 @@ nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
 nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
 
 certbot_auto_renew: false
-certbot_environment: staging
+#certbot_environment: staging
 certbot_auth_method: --webroot
 certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"
 certbot_admin_email: nate@bx.psu.edu
@@ -137,3 +139,5 @@ certbot_share_key_users:
   - www-data
 certbot_post_renewal: |
   systemctl restart nginx || true
+# FIXME: fix the role so it doesn't change these perms or ownership if group is unset
+#certbot_ssl_private_dir_mode: '0755'
