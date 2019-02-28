@@ -7,6 +7,9 @@ postgresql_objects_databases:
   - name: mailman3
     owner: www-data
 
+# only used by the listservers.yml playbook itself
+mailman3_pgdata: /var/opt/mailman3/postgresql
+
 listservers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
 
 listservers_group_groups:

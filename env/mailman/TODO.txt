@@ -1,7 +1,6 @@
 TODO
 ====
 - spf anvil
-- move DB to EBS
 - deploy to real MXs
 - dkim
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
@@ -22,3 +21,5 @@ DONE
 - use PostgreSQL for Mailman Django
 - check if you can do site-specific postorious default_from_email (test w/ new user acct creation)
 - spf galaxy
+- move DB to EBS - ~~pg_createcluster seems a good option here~~ too much hassle/not worth it when you wouldn't be using
+  the non-mailman cluster anyway

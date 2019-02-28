@@ -3,15 +3,35 @@
 - name: Tasks for list servers
   hosts: listservers
   # If the user role in baseenv didn't precreate /var/list (for ssh private keys), we'd need to precreate it here
-  roles:
-    - role: galaxyproject.postgresql
+  tasks:
+
+    - name: galaxyproject.postgresql role
+      include_role:
+        name: galaxyproject.postgresql
       tags:
         - postgres
-    - role: natefoo.postgresql_objects
-      become_user: postgres
+
+    - name: Check for mailman3 pgdata dir
+      stat:
+        path: "{{ mailman3_pgdata }}"
+        follow: yes
+      register: __mailman3_pgdata_stat_result
+
+    - name: Include pgdata tasks
+      include_tasks: _inc_pgdata.yml
+      when: not __mailman3_pgdata_stat_result.stat.exists
+
+    - name: natefoo.postgresql_objects role
+      include_role:
+        name: natefoo.postgresql_objects
+        apply:
+          become_user: postgres
       tags:
         - postgres
-    - role: galaxyproject.mailman3
+
+    - name: galaxyproject.mailman3 role
+      include_role:
+        name: galaxyproject.mailman3
       tags:
         - mailman
   tags: 

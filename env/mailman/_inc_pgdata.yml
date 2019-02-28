@@ -1,0 +1,50 @@
+---
+
+# Very host-specific, non-generalizable. If Mailman were to run on a host where another service also needed PostgreSQL,
+# this would not be appropriate. But for Mailman, we want to keep everything contained on one volume that can be easily
+# attached to another instance.
+#
+# Warning:
+#
+#  Once {{ mailman3_pgdata }} exists, this will never run again, so if you attached the volume to another instance you
+#  need to install 75ansible_pgdata.conf yourself.
+#
+# Note to future self:
+#
+#  I played around a bit with making a new cluster but to be safe you'd have to slurp the assigned port out of the new
+#  cluster's postgresql.conf and set it as a fact for use in the django settings template and natefoo.postgresql_objects
+#  and that just seemed like overkill for a special case like this.
+
+- name: Stop main cluster
+  service:
+    name: postgresql@{{ postgresql_version }}/main
+    state: stopped
+
+- name: Create Mailman pgdata dir
+  file:
+    path: "{{ mailman3_pgdata }}"
+    state: directory
+    owner: postgres
+    group: postgres
+
+- name: Copy existing cluster to Mailman pgdata dir
+  synchronize:
+    src: /var/lib/postgresql/{{ postgresql_version }}/main/
+    dest: "{{ mailman3_pgdata }}"
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Set main cluster data_directory
+  copy:
+    content: |
+      data_directory = '{{ mailman3_pgdata }}'
+    dest: /etc/postgresql/{{ postgresql_version }}/main/conf.d/75ansible_pgdata.conf
+
+- name: Start main cluster
+  service:
+    name: postgresql@{{ postgresql_version }}/main
+    state: started
+
+- name: Delete old pgdata dir
+  file:
+    path: /var/lib/postgresql/{{ postgresql_version }}/main
+    state: absent
