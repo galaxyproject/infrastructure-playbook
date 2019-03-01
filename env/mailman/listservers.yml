@@ -6,7 +6,7 @@
   tasks:
 
     - name: galaxyproject.postgresql role
-      include_role:
+      import_role:
         name: galaxyproject.postgresql
       tags:
         - postgres
@@ -22,17 +22,30 @@
       when: not __mailman3_pgdata_stat_result.stat.exists
 
     - name: natefoo.postgresql_objects role
-      include_role:
+      import_role:
         name: natefoo.postgresql_objects
-        apply:
-          become_user: postgres
+      become_user: postgres
       tags:
         - postgres
 
     - name: galaxyproject.mailman3 role
-      include_role:
+      import_role:
         name: galaxyproject.mailman3
       tags:
         - mailman
+
+    - name: Configure list user environment
+      lineinfile:
+        line: "{{ item }}"
+        path: /var/list/.profile
+        # should already be created due to createhome
+        create: yes
+        owner: "{{ __mailman3_user_name }}"
+        group: "{{ __mailman3_group_name }}"
+        mode: "0644"
+      loop:
+        - export PATH="{{ mailman3_install_dir }}/bin:$PATH"
+        - export MAILMAN_CONFIG_FILE='{{ mailman3_etc_dir }}/mailman.cfg'
+
   tags: 
     - mail

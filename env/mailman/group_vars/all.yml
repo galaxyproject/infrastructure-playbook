@@ -1,5 +1,10 @@
 ---
 
+#
+# galaxyproject.mailman3
+#
+
+mailman3_distribute_maps_dir: /var/list
 mailman3_domains:
-  - lists-beta.galaxyproject.org
+  - lists.galaxyproject.org
   - lists.anvilproject.org

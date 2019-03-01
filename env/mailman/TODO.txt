@@ -1,9 +1,49 @@
+MIGRATE
+=======
+
+root@claven:
+
+mkdir /var/opt/mailman3/import21 && chown ubuntu:list /var/opt/mailman3/import21 && chmod g+s list /var/opt/mailman3/import21
+
+root@delirium:
+
+cd /var/opt/mailman/lists && \
+ssh ubuntu@claven "cd /var/opt/mailman3/import21 && mkdir $(echo * | xargs echo)" && \
+for list in *; do scp $list/config.pck /var/lib/mailman/archives/private/$list.mbox/$list.mbox ubuntu@claven:/var/opt/mailman3/import21/$list; done
+
+list@claven:
+
+cd /var/opt/mailman3/import21 && \
+for list in *; do echo "[$list]"; mailman create $list@lists.galaxyproject.org ; done
+for list in *; do echo "[$list]"; mailman import21 $list@lists.galaxyproject.org $list/config.pck; done
+
+www-data@claven:
+
+cd /var/opt/mailman3/import21 && \
+for list in *; do
+    echo "[$list]"
+    (cd /var/opt/mailman3/web/project; python3 manage.py hyperkitty_import $list@lists.galaxyproject.org /var/opt/mailman3/import21/$list/$list.mbox)
+done
+
+for list in *; do
+    echo "[$list]"
+    (cd /var/opt/mailman3/web/project; python3 manage.py update_index_one_list $list@lists.galaxyproject.org)
+done
+
+
 TODO
 ====
 - spf anvil
 - deploy to real MXs
-- dkim
+- stop old mailman
+- transfer lists
+- dkim (via amavisd-new rather than postfix directly?)
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
+  do you really need this though? maybe just don't pass all spam through amavisd-new???
+  plugin gets you:
+    - score in the moderation interface: "SpamAssassin identified this message as possible spam (score 1.4)"
+    - can hold mail from list members or others who would otherwise be allowed to post based on the spam score, if it's
+      lower than the kill level
 - Merge this env back to the galaxy env
 
 DONE

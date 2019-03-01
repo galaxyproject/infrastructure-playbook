@@ -7,4 +7,3 @@
 - name: galaxyproject.postgresql
 - name: usegalaxy-eu.certbot
   src: https://github.com/usegalaxy-eu/ansible-certbot
-  version: private-dir-perms
