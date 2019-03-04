@@ -121,9 +121,9 @@ host_lines:
     notify:
       - "reload syslog"
 
-host_crontabs:
-  - id: biostar_backup
-    name: Biostar Backup
-    user: zfsdump-biostar
-    minute: 40
-    job: rsync -a --delete www@biostar.usegalaxy.org:/home/www/data/ /zones/westvleteren/backup/biostar/data && /usr/sbin/zfs snapshot zones/westvleteren/backup/biostar/data@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+#host_crontabs:
+#  - id: biostar_backup
+#    name: Biostar Backup
+#    user: zfsdump-biostar
+#    minute: 40
+#    job: rsync -a --delete www@biostar.usegalaxy.org:/home/www/data/ /zones/westvleteren/backup/biostar/data && /usr/sbin/zfs snapshot zones/westvleteren/backup/biostar/data@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
