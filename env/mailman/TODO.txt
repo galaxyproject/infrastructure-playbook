@@ -19,15 +19,16 @@ for list in *; do echo "[$list]"; mailman import21 $list@lists.galaxyproject.org
 
 www-data@claven:
 
+. /opt/mailman3/bin/activate && \
 cd /var/opt/mailman3/import21 && \
 for list in *; do
     echo "[$list]"
-    (cd /var/opt/mailman3/web/project; python3 manage.py hyperkitty_import $list@lists.galaxyproject.org /var/opt/mailman3/import21/$list/$list.mbox)
+    (cd /var/opt/mailman3/web/project; python3 manage.py hyperkitty_import -l $list@lists.galaxyproject.org /var/opt/mailman3/import21/$list/$list.mbox)
 done
 
 for list in *; do
     echo "[$list]"
-    (cd /var/opt/mailman3/web/project; python3 manage.py update_index_one_list $list@lists.galaxyproject.org)
+    (cd /var/opt/mailman3/web/project; python3 manage.py update_index_one_list -v3 $list@lists.galaxyproject.org)
 done
 
 
