@@ -11,6 +11,8 @@ listservers_group_packages:
   # not all of mailman3's cext deps have wheels available
   - build-essential
   - python3-dev
+  # for xapian-haystack
+  - libxapian30
   # for natefoo.postgresql_objects
   - python3-psycopg2
 
@@ -115,8 +117,11 @@ mailman3_django_config:
       NAME: mailman3
       HOST: /var/run/postgresql
 
+mailman3_django_haystack_engine: xapian_backend.XapianEngine
+
 mailman3_extra_packages:
   - psycopg2-binary
+  - xapian-haystack
 
 # These are set in the distribute maps playbook's inventory file in [vars:all] and on the host
 mailman3_distribute_maps:
