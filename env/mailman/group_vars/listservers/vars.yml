@@ -98,6 +98,9 @@ mailman3_config:
     # bypass the content filter (amavisd-new) for Mailman messages since they were scanned on the way in
     smtp_port: 10025
 
+mailman3_postorius_root: ''
+mailman3_hyperkitty_root: 'archives/'
+
 mailman3_django_config:
   secret_key: "{{ mailman3_django_secret_key }}"
   # use django sites instead
