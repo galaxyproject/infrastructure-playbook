@@ -105,8 +105,8 @@ mailman3_hyperkitty_root: 'archives/'
 
 mailman3_django_config:
   secret_key: "{{ mailman3_django_secret_key }}"
-  # use django sites instead
-  use_x_forwarded_host: false
+  # mostly using django sites instead but FILTER_VHOST uses this
+  use_x_forwarded_host: true
   # store on the filesystem instead of the database
   hyperkitty_attachment_folder: "{{ mailman3_django_var_dir }}/attachments"
   # FIXME: remove allowed_hosts completely when non-beta, default is mailman3_domains
