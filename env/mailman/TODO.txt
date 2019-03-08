@@ -42,6 +42,7 @@ TODO
 ====
 - spf anvil
 - deploy to real MXs (ansible mailman env)
+- deploy claven:/etc/aliases to MXs (i.e. for listmaster@lists.galaxyproject.org)?
 - stop old mailman
 - dkim (via amavisd-new rather than postfix directly?)
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?

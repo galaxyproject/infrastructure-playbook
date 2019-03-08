@@ -78,6 +78,7 @@ postfix_aliases:
   noc: root
   security: root
   postorius: root
+  listmaster: root
   root: root@galaxyproject.org
 
 #
@@ -96,6 +97,8 @@ mailman3_archiver_key: "{{ vault_mailman3_archiver_key }}"
 mailman3_django_secret_key: "{{ vault_mailman3_django_secret_key }}"
 
 mailman3_config:
+  mailman:
+    site_owner: listmaster@lists.galaxyproject.org
   mta:
     # bypass the content filter (amavisd-new) for Mailman messages since they were scanned on the way in
     smtp_port: 10025
