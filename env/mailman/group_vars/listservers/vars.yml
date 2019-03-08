@@ -54,10 +54,10 @@ postfix_amavisd_new_config:
   $sa_tag_level_deflt: -9999
   # add "spam detected" headers at this level
   $sa_tag2_level_deflt: 6.31
-  # only discard viruses, pass the rest (with headers)
+  # discard viruses, spam, and messages containing banned files
   $final_virus_destiny: D_DISCARD
-  $final_banned_destiny: D_PASS
-  $final_spam_destiny: D_PASS
+  $final_banned_destiny: D_DISCARD
+  $final_spam_destiny: D_DISCARD
   $final_bad_header_destiny: D_PASS
   # FIXME: need spamassassin plugin for mailman
   # don't check spam bound for Mailman (Mailman does it itself)
@@ -110,7 +110,7 @@ mailman3_django_config:
   # store on the filesystem instead of the database
   hyperkitty_attachment_folder: "{{ mailman3_django_var_dir }}/attachments"
   # FIXME: remove allowed_hosts completely when non-beta, default is mailman3_domains
-  allowed_hosts: "{{ mailman3_domains + ['lists-beta.galaxyproject.org'] }}"
+  #allowed_hosts: "{{ mailman3_domains + ['lists-beta.galaxyproject.org'] }}"
   databases:
     default:
       ENGINE: django.db.backends.postgresql_psycopg2
@@ -131,11 +131,6 @@ mailman3_distribute_maps:
   - host: chouffe.galaxyproject.org
   - host: delirium.galaxyproject.org
 
-# FIXME: temp until non-beta, also fix nginx templates to just use mailman_domains?
-mailman3_web_domains:
-  - lists-beta.galaxyproject.org
-  - lists.anvilproject.org
-
 #
 # galaxyproject.nginx + usegalaxy-eu.certbot
 #
@@ -150,6 +145,8 @@ nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
 nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
 
 certbot_auto_renew: true
+certbot_auto_renew_cron_file: ansible_certbot_auto_renew
+certbot_auto_renew_user: root
 #certbot_environment: staging
 certbot_auth_method: --webroot
 certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"

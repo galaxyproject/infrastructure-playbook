@@ -28,9 +28,13 @@
       tags:
         - postgres
 
-    - name: Install python3-xapian
+    - name: Install python3-xapian and python3-venv
       apt:
-        name: python3-xapian
+        name:
+          - python3
+          - python3-xapian
+          - python3-setuptools
+          - python3-venv
 
     - name: Precreate Mailman 3 virtualenv
       pip:

@@ -4,20 +4,37 @@
 
 server {
     listen      *:80;
-    server_name lists.galaxyproject.org;
+    server_name mailman2.galaxyproject.org;
 
-    return 301 https://lists.galaxyproject.org$request_uri;
+    return 301 https://mailman2.galaxyproject.org$request_uri;
 }
 
 server {
     listen      *:443 ssl;
-    server_name lists.galaxyproject.org;
+    server_name mailman2.galaxyproject.org;
 
-    access_log  /var/log/nginx/lists.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/lists.galaxyproject.org_error.log;
+    access_log  /var/log/nginx/mailman2.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/mailman2.galaxyproject.org_error.log;
 
     location / {
-        include uwsgi_params;
+        uwsgi_param	QUERY_STRING		$query_string;
+        uwsgi_param	REQUEST_METHOD		$request_method;
+        uwsgi_param	CONTENT_TYPE		$content_type;
+        uwsgi_param	CONTENT_LENGTH		$content_length;
+
+        uwsgi_param	REQUEST_URI		$request_uri;
+        uwsgi_param	PATH_INFO		$document_uri;
+        uwsgi_param	DOCUMENT_ROOT		$document_root;
+        uwsgi_param	SERVER_PROTOCOL		$server_protocol;
+        uwsgi_param	UWSGI_SCHEME		$scheme;
+
+        uwsgi_param	REMOTE_ADDR		$remote_addr;
+        uwsgi_param	REMOTE_PORT		$remote_port;
+        uwsgi_param	SERVER_PORT		$server_port;
+        #uwsgi_param	SERVER_NAME		$server_name;
+        uwsgi_param	SERVER_NAME		lists.galaxyproject.org;
+        uwsgi_param	HTTP_HOST		lists.galaxyproject.org;
+        #include uwsgi_params;
         uwsgi_modifier1 9;
         uwsgi_pass {{ mailman_uwsgi_sock }};
     }

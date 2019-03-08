@@ -3,13 +3,19 @@ MIGRATE
 
 root@claven:
 
-mkdir /var/opt/mailman3/import21 && chown ubuntu:list /var/opt/mailman3/import21 && chmod g+s list /var/opt/mailman3/import21
+mkdir /var/opt/mailman3/import21 && chown ubuntu:list /var/opt/mailman3/import21 && chmod g+s /var/opt/mailman3/import21
 
 root@delirium:
 
-cd /var/opt/mailman/lists && \
-ssh ubuntu@claven "cd /var/opt/mailman3/import21 && mkdir $(echo * | xargs echo)" && \
-for list in *; do scp $list/config.pck /var/lib/mailman/archives/private/$list.mbox/$list.mbox ubuntu@claven:/var/opt/mailman3/import21/$list; done
+awk -F'\t' '$4 != "Delete" {print $1}' Mailing\ Lists\ to\ Keep_Drop\ in\ MM3\ migration\ -\ Sheet1.tsv | awk '{print $1}' | tr 'A-Z' 'a-z' > ~/importlists.txt
+
+#cd /var/opt/mailman/lists && \
+#ssh ubuntu@claven "cd /var/opt/mailman3/import21 && mkdir $(echo * | xargs echo)" && \
+#for list in *; do scp $list/config.pck /var/lib/mailman/archives/private/$list.mbox/$list.mbox ubuntu@claven:/var/opt/mailman3/import21/$list; done
+
+cd /var/lib/mailman/lists && \
+ssh ubuntu@claven "cd /var/opt/mailman3/import21 && mkdir $(cat ~/importlists.txt | xargs echo)" && \
+for list in $(cat ~/importlists.txt); do scp $list/config.pck /var/lib/mailman/archives/private/$list.mbox/$list.mbox ubuntu@claven:/var/opt/mailman3/import21/$list; done
 
 list@claven:
 
@@ -35,9 +41,8 @@ done
 TODO
 ====
 - spf anvil
-- deploy to real MXs
+- deploy to real MXs (ansible mailman env)
 - stop old mailman
-- transfer lists
 - dkim (via amavisd-new rather than postfix directly?)
 - Hook the SpamAssassin plugin in MM3 and run spamd on claven - mailmancontrib.spamassassin?
   do you really need this though? maybe just don't pass all spam through amavisd-new???
@@ -64,3 +69,6 @@ DONE
 - spf galaxy
 - move DB to EBS - ~~pg_createcluster seems a good option here~~ too much hassle/not worth it when you wouldn't be using
   the non-mailman cluster anyway
+- transfer lists
+- deploy to real MXs (by hand)
+- deploy to real MXs (ansible galaxy env)

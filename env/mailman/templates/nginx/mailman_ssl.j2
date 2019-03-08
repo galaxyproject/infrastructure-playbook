@@ -5,7 +5,7 @@ server {
 
     server_name {{ inventory_hostname }};
 }
-{% for domain in mailman3_web_domains %}
+{% for domain in mailman3_web_domains | default(mailman3_domains) %}
 
 server {
 
@@ -24,8 +24,7 @@ server {
         uwsgi_param X-Real-IP $remote_addr;
         uwsgi_param X-Forwarded-For $proxy_add_x_forwarded_for;
         uwsgi_param X-Forwarded-Proto $http_x_forwarded_proto;
-        {# FIXME: temp until non-beta uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_{{ domain }}.sock; #}
-        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_{{ domain | replace('-beta', '') }}.sock;
+        uwsgi_pass unix:///var/opt/mailman3/web/run/uwsgi_{{ domain }}.sock;
    }
 
 }

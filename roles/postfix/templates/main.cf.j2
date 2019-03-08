@@ -53,8 +53,8 @@ local_recipient_maps = $alias_maps
 # Relay @lists.domain mail, but make sure 1 of 2 things is true:
 #  1. The Mailman server is the primary MX (in DNS) for lists.domain
 #  2. Use transport to deliver directly to lists.domain (skips MX lookup)
-relay_recipient_maps = ldap:/etc/postfix/ldap-lists.cf
-relay_domains = {{ mailman_default_email_host }}
+relay_recipient_maps = hash:/var/list/postfix_lmtp
+relay_domains = {{ mailman_default_email_host }}, lists.anvilproject.org
 
 # Relay mail originating from the VPC
 mynetworks = 127.0.0.0/8 172.30.0.0/16 [::1]/128 [fe80::]/64

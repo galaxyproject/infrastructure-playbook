@@ -143,12 +143,13 @@ mailservers-secondarymx
 
 [mailservers-primarymx]
 chouffe.galaxyproject.org
+delirium.galaxyproject.org
 
 [mailservers-secondarymx]
-delirium.galaxyproject.org
+#delirium.galaxyproject.org
 
 [listservers]
-delirium.galaxyproject.org
+#delirium.galaxyproject.org
 
 ## Web
 
