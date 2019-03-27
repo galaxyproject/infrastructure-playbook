@@ -17,13 +17,12 @@
 
     - name: Install Packages
       yum:
-        name: "{{ item }}"
-      with_items:
-        - autofs
-        - lzo
-        - git
-        - libcgroup-tools
-        - singularity-runtime
+        name:
+          - autofs
+          - lzo
+          - git
+          - libcgroup-tools
+          - singularity-runtime
       # sometimes mirrors are broken
       register: packages_installed
       retries: 10
@@ -42,10 +41,6 @@
       debug:
         var: cvmfs_quota_limit
 
-    - name: Load munge key
-      set_fact:
-        munge_key: "{{ lookup('file', 'munge.key') }}"
-
     - name: Create auto.jetstream
       template:
         src: auto.jetstream.j2
@@ -61,7 +56,7 @@
         path: "{{ item.path }}"
         mode: "{{ item.mode | default(omit) }}"
         state: directory
-      with_items: "{{ directories }}"
+      loop: "{{ directories }}"
 
     - name: Create links
       file:
@@ -69,7 +64,7 @@
         dest: "{{ item.dest }}"
         state: link
         force: yes
-      with_items: "{{ links }}"
+      loop: "{{ links }}"
 
   rescue:
 

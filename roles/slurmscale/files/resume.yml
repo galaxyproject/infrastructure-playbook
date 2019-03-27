@@ -58,6 +58,8 @@
           delegate_to: localhost
           when: "'newnodes' not in group_names"
 
+        # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
+        # task alone will wait up to 600 seconds.
         - name: Wait for instance to become accessible
           wait_for_connection:
 
@@ -95,7 +97,7 @@
 
       rescue:
 
-        - name: Destroy instance on failure
+        - name: Destroy new instance on failure
           os_server:
             cloud: "{{ cloud_id }}"
             name: "{{ inventory_hostname }}"
@@ -103,6 +105,15 @@
           delegate_to: localhost
           become: no
           when: "'newnodes' in group_names"
+
+        - name: Stop existing instance on failure
+          os_server_action:
+            cloud: "{{ cloud_id }}"
+            server: "{{ inventory_hostname }}"
+            action: "stop"
+          delegate_to: localhost
+          become: no
+          when: "'newnodes' not in group_names"
 
         - name: Fail due to previous failure
           fail:

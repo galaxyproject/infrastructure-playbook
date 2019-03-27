@@ -8,19 +8,17 @@
 
 - name: Install dependencies
   yum:
-    name: "{{ item }}"
-  with_items:
-    - python-virtualenv
-    - openssl-devel
+    name:
+      - python-virtualenv
+      - openssl-devel
 
 - name: Create slurm scale virtualenv
   pip:
-    name: "{{ item }}"
+    name:
+      - pip
+      - setuptools
     virtualenv: "{{ slurm_scale_root }}"
     state: latest
-  with_items:
-    - pip
-    - setuptools
   become: yes
   become_user: "{{ slurm_scale_user }}"
 
@@ -28,13 +26,12 @@
 # dependency (e.g. cffi) is updated without wheels.
 - name: Install slurm scale dependencies
   pip:
-    name: "{{ item }}"
+    name:
+      - ansible>2.7.5
+      - shade
+      - python-openstackclient
+      - openstacksdk
     virtualenv: "{{ slurm_scale_root }}"
-  with_items:
-    - ansible
-    - shade
-    - python-openstackclient
-    - openstacksdk
   become: yes
   become_user: "{{ slurm_scale_user }}"
 
@@ -43,7 +40,7 @@
     path: "{{ slurm_scale_root }}/{{ item }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
-  with_items:
+  loop:
     - "{{ slurm_scale_root }}/sbin"
     - "{{ slurm_scale_root }}/etc"
     - "/var/log/slurm/elastic"
@@ -66,26 +63,29 @@
     path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path | dirname }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
-  with_items:
+  loop:
     - path: group_vars/all/cloud.yml
-    - path: templates/slurm/slurm.conf.j2
+    - path: files/slurm/munge.key
+    #- path: templates/slurm/slurm.conf.j2
+    #- path: templates/slurm.conf.j2
 
 - name: Template ansible files
   template:
     src: "{{ item.path }}.j2"
     dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
     owner: "{{ slurm_scale_user }}"
-  with_items:
+  loop:
     - path: group_vars/all/cloud.yml
+    - path: group_vars/all/slurm.yml
 
-- name: Create symlinks
-  file:
-    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
-    src: "{{ item.src }}"
-    state: link
-  with_items:
-    - path: templates/slurm/slurm.conf.j2
-      src: /etc/slurm/slurm.conf
+#- name: Create symlinks
+#  file:
+#    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
+#    src: "{{ item.src }}"
+#    state: link
+#  loop:
+#    - path: templates/slurm/slurm.conf.j2
+#      src: /etc/slurm/slurm.conf
 
 - name: Install slurm suspend/resume script
   template:
@@ -108,21 +108,28 @@
     owner: "{{ slurm_scale_user }}"
     mode: "0400"
   no_log: yes
-  with_items:
+  loop:
     - content: "{{ slurm_ssh_key }}"
       dest: "slurm-kp.pem"
     - content: "{{ clouds_yaml | to_nice_yaml }}"
       dest: "clouds.yaml"
-    - content: "{{ munge_key }}"
-      dest: "munge.key"
 
+# this decrypts the key
+- name: Install munge key
+  copy:
+    src: "{{ slurm_munge_key }}"
+    dest: "{{ slurm_scale_root }}/etc/ansible/files/slurm/munge.key"
+    owner: "{{ slurm_scale_user }}"
+    mode: "0400"
+
+# TODO: versions from requirements.yml but w/o changed if no upgrade
 - name: Install Ansible modules from Galaxy
   command: "{{ slurm_scale_root }}/bin/ansible-galaxy -p {{ slurm_scale_root }}/etc/ansible/roles install {{ item }}"
   args:
     creates: "{{ slurm_scale_root }}/etc/ansible/roles/{{ item }}"
   become: yes
   become_user: "{{ slurm_scale_user }}"
-  with_items:
+  loop:
     - geerlingguy.repo-epel
-    #- galaxyproject.cvmfs
-    #- galaxyproject.slurm
+    - galaxyproject.cvmfs
+    - galaxyproject.slurm

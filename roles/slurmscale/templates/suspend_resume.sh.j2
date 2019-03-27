@@ -1,24 +1,25 @@
 #!/bin/bash
 
+# TODO: configurable
 log_loc=/var/log/slurm/elastic.log
 log_dir=/var/log/slurm/elastic
 
 {
 
-op=${0##*/slurm_}
+. {{ slurm_scale_root | quote }}/bin/activate
 
-. {{ slurm_scale_root }}/bin/activate
-
-cd {{ slurm_scale_root }}/etc/ansible
+cd {{ slurm_scale_root | quote }}/etc/ansible
 
 echo "Start: $(date)"
-echo "Node $op invoked: $0 $*"
 
-case $op in
-    suspend)
+# suspend/resume operation comes from the name this program is called as (e.g. slurm_suspend, slurm_resume)
+case $0 in
+    *suspend)
+        op='suspend'
         ;;
-    resume)
+    *resume)
         # this isn't ideal but the names have to exist somehow and it can't be done with -i
+        op='resume'
         set -x
         { echo '[galaxynodes]'; scontrol show hostname "$1"; } > inventory/spawn.$$ 2>> $log_loc
         { set +x; } 2>/dev/null
@@ -28,6 +29,8 @@ case $op in
         exit 1
         ;;
 esac
+
+echo "Node $op invoked: $0 $*"
 
 names=$(scontrol show hostname "$1" | xargs echo | tr ' ' ',')
 

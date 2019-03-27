@@ -7,3 +7,8 @@
 - name: galaxyproject.postgresql
 - name: usegalaxy-eu.certbot
   src: https://github.com/usegalaxy-eu/ansible-certbot
+- name: galaxyproject.slurm
+  version: 0.1.1
+- name: galaxyproject.cvmfs
+  version: 0.1.2
+- name: geerlingguy.repo-epel

@@ -1,0 +1,10 @@
+---
+
+slurm_config:
+  {{ slurm_config | to_nice_yaml | indent(2) }}
+slurm_nodes:
+  {{ slurm_nodes | to_nice_yaml | indent(2) }}
+slurm_partitions:
+  {{ slurm_partitions | to_nice_yaml | indent(2) }}
+slurm_cgroup_config:
+  {{ slurm_cgroup_config | to_nice_yaml | indent(2) }}

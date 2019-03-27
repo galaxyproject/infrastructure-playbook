@@ -1,7 +1,10 @@
 ---
 
 cvmfs_role: client
-slurm_role: exec
+slurm_roles:
+  - exec
+
+slurm_munge_key: files/slurm/munge.key
 
 galaxy_cvmfs_repos_enabled: true
 
@@ -19,12 +22,6 @@ slurm_user:
   comment: 'Slurm Workload Manager'
   home: /var/lib/slurm
   shell: /bin/bash
-
-slurm_cgroup_conf:
-  - CgroupAutomount: yes
-  - ConstrainCores: yes
-  - ConstrainRAMSpace: yes
-  - ConstrainSwapSpace: yes
 
 jetstream_nfs_filesystems:
   - device: "{{ controller_name }}.jetstreamlocal:/jetstream/scratch0"
