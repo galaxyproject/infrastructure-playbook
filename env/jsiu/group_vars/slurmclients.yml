@@ -40,9 +40,9 @@ slurm_config:
   TaskPlugin: task/cgroup
 
   SlurmctldLogFile: /var/log/slurm/slurmctld.log
-  SlurmctldDebug: 2
+  SlurmctldDebug: 4
   SlurmdLogFile: /var/log/slurm/slurmd.log
-  SlurmdDebug: 2
+  SlurmdDebug: 4
 
   # TODO: redeployed controller, any way to do this dynamically?
   FirstJobId: 592574
