@@ -125,11 +125,11 @@
 # TODO: versions from requirements.yml but w/o changed if no upgrade
 - name: Install Ansible modules from Galaxy
   command: "{{ slurm_scale_root }}/bin/ansible-galaxy -p {{ slurm_scale_root }}/etc/ansible/roles install {{ item }}"
-  args:
-    creates: "{{ slurm_scale_root }}/etc/ansible/roles/{{ item }}"
+  #args:
+  #  creates: "{{ slurm_scale_root }}/etc/ansible/roles/{{ item }}"
   become: yes
   become_user: "{{ slurm_scale_user }}"
   loop:
-    - geerlingguy.repo-epel
-    - galaxyproject.cvmfs
-    - galaxyproject.slurm
+    - geerlingguy.repo-epel,1.2.3
+    - galaxyproject.cvmfs,0.1.2
+    - galaxyproject.slurm,0.1.1
