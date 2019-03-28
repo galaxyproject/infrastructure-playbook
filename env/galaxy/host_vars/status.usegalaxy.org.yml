@@ -12,7 +12,7 @@ directories:
     owner: sites
     group: sites
 
-nginx_flavor: full
+nginx_flavor: light
 
 nginx_conf_ssl_certificate: status.galaxyproject.org_cert.pem
 nginx_conf_ssl_certificate_key: status.galaxyproject.org_privatekey.pem

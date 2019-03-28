@@ -4,6 +4,7 @@
 
 # TODO: now that so many features are enabled/disabled just based on group inclusion, it should be documented in the inventory exactly what each group membership enables
 
+status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 biostar.usegalaxy.org ansible_user=www
@@ -160,7 +161,7 @@ chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org  # for datacache
-status.galaxyproject.org
+status.usegalaxy.org
 
 [webservers:children]
 statsservers
