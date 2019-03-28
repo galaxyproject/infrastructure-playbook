@@ -87,7 +87,7 @@
         - name: Update slurm controller with instance IP
           command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
           delegate_to: localhost
-          when: "'newnodes' not in group_names"
+          #when: "'newnodes' not in group_names"
 
         # FIXME: should not be doing this most likely
         - name: Run slurmd -b to signal slurmctld
@@ -133,6 +133,12 @@
     - name: Log IP address
       debug:
         var: ansible_host
+
+    # on restarts we want to wait until the playbook copies slurm.conf and starts slurmd itself
+    - name: Disable slurmd autostart
+      service:
+        name: slurmd
+        enabled: no
 
     - name: Update slurm controller with instance IP
       command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
