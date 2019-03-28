@@ -45,6 +45,7 @@
     - "{{ slurm_scale_root }}/etc"
     - "/var/log/slurm/elastic"
 
+# FIXME: this is always changed
 - name: Copy ansible files
   synchronize:
     archive: no
@@ -122,7 +123,8 @@
     owner: "{{ slurm_scale_user }}"
     mode: "0400"
 
-# TODO: versions from requirements.yml but w/o changed if no upgrade
+# FIXME: this is always changed
+# TODO: versions from requirements.yml
 - name: Install Ansible modules from Galaxy
   command: "{{ slurm_scale_root }}/bin/ansible-galaxy -p {{ slurm_scale_root }}/etc/ansible/roles install {{ item }}"
   #args:
