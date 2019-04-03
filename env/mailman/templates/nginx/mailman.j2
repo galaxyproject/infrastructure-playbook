@@ -20,6 +20,8 @@ server {
 
     server_name localhost;
 
+    client_max_body_size 16M;
+
     location /static/ {
         alias /var/opt/mailman3/web/static/;
     }
