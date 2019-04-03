@@ -17,15 +17,18 @@ listservers_group_packages:
   - python3-psycopg2
 
 #
-# galaxyproject.postgresql (for Mailman's Django components)
+# galaxyproject.postgresql + natefoo.postgresql_objects
 #
 
 postgresql_version: 10
 postgresql_objects_users:
   - name: www-data
+  - name: list
 postgresql_objects_databases:
-  - name: mailman3
+  - name: mailman3_web
     owner: www-data
+  - name: mailman3_core
+    owner: list
 
 # This is only used by the listservers.yml playbook itself to relocate the pgdata dir into the Mailman EBS volume
 mailman3_pgdata: /var/opt/mailman3/postgresql
@@ -102,6 +105,9 @@ mailman3_config:
   mta:
     # bypass the content filter (amavisd-new) for Mailman messages since they were scanned on the way in
     smtp_port: 10025
+  database:
+    class: mailman.database.postgresql.PostgreSQLDatabase
+    url: postgres:///mailman3_core?host=/var/run/postgresql
 
 mailman3_postorius_root: ''
 mailman3_hyperkitty_root: 'archives/'
@@ -112,12 +118,10 @@ mailman3_django_config:
   use_x_forwarded_host: true
   # store on the filesystem instead of the database
   hyperkitty_attachment_folder: "{{ mailman3_django_var_dir }}/attachments"
-  # FIXME: remove allowed_hosts completely when non-beta, default is mailman3_domains
-  #allowed_hosts: "{{ mailman3_domains + ['lists-beta.galaxyproject.org'] }}"
   databases:
     default:
       ENGINE: django.db.backends.postgresql_psycopg2
-      NAME: mailman3
+      NAME: mailman3_web
       HOST: /var/run/postgresql
 
 mailman3_django_haystack_engine: xapian_backend.XapianEngine
