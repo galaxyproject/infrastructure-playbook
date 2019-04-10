@@ -4,6 +4,8 @@
 # common
 #
 
+listservers_group_authorized_key_users: "{{ vault_listservers_group_authorized_key_users }}"
+
 # for galaxyproject.mailman3's distribute_maps feature
 listservers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
 

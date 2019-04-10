@@ -69,5 +69,18 @@
         - export PATH="{{ mailman3_install_dir }}/bin:$PATH"
         - export MAILMAN_CONFIG_FILE='{{ mailman3_etc_dir }}/mailman.cfg'
 
+    - name: Configure www-data user environment
+      lineinfile:
+        line: "{{ item }}"
+        path: /var/www/.profile
+        # should already be created due to createhome
+        create: yes
+        owner: "{{ __mailman3_user_name }}"
+        group: "{{ __mailman3_group_name }}"
+        mode: "0644"
+      loop:
+        - export PATH="{{ mailman3_install_dir }}/bin:$PATH"
+        - export MAILMAN_CONFIG_FILE='{{ mailman3_etc_dir }}/mailman.cfg'
+
   tags: 
     - mail
