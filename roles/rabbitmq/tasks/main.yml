@@ -46,14 +46,15 @@
   yum:
     name: https://www.rabbitmq.com/releases/rabbitmq-server/v3.6.9/rabbitmq-server-3.6.9-1.el7.noarch.rpm
 
-- name: Include SSL role to create/distribute SSL certs
-  include_role:
-    name: ssl
-  vars:
-    ssl_role_certs: "{{ rabbitmq_ssl_certs }}"
-  when: rabbitmq_ssl_certs is defined
-  notify:
-    - restart rabbitmq
+# FIXME: not Ansible 2.7-compatible
+#- name: Include SSL role to create/distribute SSL certs
+#  include_role:
+#    name: ssl
+#  vars:
+#    ssl_role_certs: "{{ rabbitmq_ssl_certs }}"
+#  when: rabbitmq_ssl_certs is defined
+#  notify:
+#    - restart rabbitmq
 
 - name: Copy RabbitMQ config
   template:
@@ -86,4 +87,5 @@
     read_priv: "{{ item.read_priv | default(omit) }}"
     write_priv: "{{ item.write_priv | default(omit) }}"
     tags: "{{ item.tags | default(omit) }}"
+    permissions: "{{ item.permissions | default(omit) }}"
   with_items: "{{ rabbitmq_users | default([]) }}"
