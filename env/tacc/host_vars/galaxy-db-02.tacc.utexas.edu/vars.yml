@@ -1,6 +1,6 @@
 ---
 
-authorized_key_users: "{{ vault_authorized_key_users }}"
+host_authorized_key_users: "{{ vault_authorized_key_users }}"
 
 host_directories:
   - path: /home/g2main/bin
