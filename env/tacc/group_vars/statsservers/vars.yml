@@ -44,7 +44,7 @@ postgresql_objects_databases:
 
 # supervisor is used only for sentry
 supervisord_install: package
-supervisord_group_configs:
+statsservers_group_supervisor_configs:
   - sentry
   #- stats
 

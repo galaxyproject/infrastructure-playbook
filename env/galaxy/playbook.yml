@@ -90,12 +90,12 @@
     - role: galaxyproject.nginx
   tags: nginx
 
-- name: Install supervisor
+- name: Install and configure supervisor
   hosts: all
   remote_user: root
   roles:
     - role: supervisor
-      when: supervisord_group_configs is defined or supervisord_host_configs is defined
+      when: "{{ lookup('inheritance_chain', 'supervisor_configs') | bool }}"
       tags: supervisor,services
 
 - name: Tasks for jenkins hosts

@@ -55,7 +55,7 @@
   become_method: sudo
   roles:
     - role: supervisor
-      when: supervisord_group_configs is defined or supervisord_host_configs is defined
+      when: "{{ lookup('inheritance_chain', 'supervisor_configs') | bool }}"
       tags: supervisor,services
 
 # This has to be last for slurm elastic (everything must be configured/done when slurmd starts)

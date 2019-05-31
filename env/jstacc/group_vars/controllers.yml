@@ -63,7 +63,7 @@ controllers_group_links:
     force: yes
 
 supervisord_install: package
-supervisord_group_configs:
+controllers_group_supervisor_configs:
   - pulsar
 
 controllers_group_crontabs:
