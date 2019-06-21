@@ -32,7 +32,7 @@
   with_items:
     - name: grafana
       description: "Grafana Packages"
-      baseurl: "https://packagecloud.io/grafana/stable/el/7/$basearch"
+      baseurl: "https://packages.grafana.com/oss/rpm"
 
 - name: Install InfluxDB yum key
   copy:
