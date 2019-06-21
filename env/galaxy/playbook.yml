@@ -157,7 +157,7 @@
     - stats
 
 - name: Tasks for CVMFS Servers
-  hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies
+  hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies:cvmfsclients
   roles:
     # need epel for the jq package
     - geerlingguy.repo-epel

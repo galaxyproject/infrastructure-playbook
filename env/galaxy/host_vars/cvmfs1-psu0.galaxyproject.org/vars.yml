@@ -2,7 +2,7 @@
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
-cvmfs_stratum1_squid_conf_src: templates/squid/cvmfs1-psu0_squid.conf.j2
+cvmfs_squid_conf_src: templates/squid/cvmfs1-psu0_squid.conf.j2
 cvmfs_stratum1_cache_mem: 1024
 
 cvmfs_srv_device: /dev/vdb

@@ -206,8 +206,9 @@ cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [cvmfsclients]
-# was there some reason it was a client?
-#cvmfs1-psu0.galaxyproject.org
+# cvmfs1-psu0 is a client due to its role as the datacache server
+cvmfs1-psu0.galaxyproject.org
+jetstream-iu0.galaxyproject.org
 
 # Docker Swarm
 

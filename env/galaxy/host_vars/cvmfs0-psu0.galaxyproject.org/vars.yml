@@ -3,6 +3,7 @@
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
+galaxy_cvmfs_repos_enabled: false
 cvmfs_repositories:
   - repository: data.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
@@ -27,6 +28,20 @@ cvmfs_repositories:
       - CVMFS_GARBAGE_COLLECTION=true
       - CVMFS_AUTO_GC=false
     client_options: []
+  - repository: usegalaxy.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: usegalaxy
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+    client_options: []
+  - repository: cvmfs-config.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: root
+    server_options:
+      - CVMFS_GARBAGE_COLLECTION=true
+    client_options: []
 
 host_users:
   - name: g2test
@@ -50,6 +65,11 @@ host_users:
   - name: singularity
     comment: "Singularity Images"
     home: /home/singularity
+    shell: /bin/bash
+    system: yes
+  - name: usegalaxy
+    comment: "UseGalaxy Common Data"
+    home: /home/usegalaxy
     shell: /bin/bash
     system: yes
 
