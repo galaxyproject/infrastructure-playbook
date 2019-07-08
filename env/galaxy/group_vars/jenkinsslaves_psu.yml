@@ -1,0 +1,12 @@
+---
+
+jenkinsslaves_psu_group_apt_repositories:
+  - repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
+
+jenkinsslaves_psu_group_directories:
+  - path: /var/jenkins
+    owner: jenkins
+    group: jenkins
+  - path: /var/jenkins/tmp
+    owner: jenkins
+    group: jenkins

@@ -19,6 +19,13 @@ cvmfs1-psu0.galaxyproject.org ansible_user=root
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
+[baseenv:children]
+galaxyenv
+baseenv-nomail
+jenkinsslaves
+
+# Adds postfix, resolv.conf config
+[galaxyenv]
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
 athena.galaxyproject.org
@@ -29,10 +36,6 @@ leeroy.galaxyproject.org
 mjolnir0.galaxyproject.org
 duvel.galaxyproject.org
 infrastats.galaxyproject.org
-
-[baseenv:children]
-baseenv-nomail
-jenkinsslaves
 
 # For things that need access to common_sshkeys and env-specific sshkeys
 [sshservers]
@@ -235,11 +238,31 @@ westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
 
 [jenkinsslaves]
+[jenkinsslaves:children]
+jenkinsslaves_psu
+jenkinsslaves_au
+jenkinsslaves_eu
+
+[jenkinsslaves_psu]
 mjolnir0.galaxyproject.org
 n1.galaxyproject.org
 n2.galaxyproject.org
 # n3 is leeroy
 n[4:14].galaxyproject.org
+
+[jenkinsslaves_au]
+jenkins-aust-[1:4].genome.edu.au
+
+[jenkinsslaves_au:vars]
+ansible_user = ubuntu
+ansible_become = yes
+
+[jenkinsslaves_eu]
+n[0:1].galaxyproject.eu
+
+[jenkinsslaves_eu:vars]
+ansible_user = ubuntu
+ansible_become = yes
 
 [biostarservers]
 biostar.usegalaxy.org

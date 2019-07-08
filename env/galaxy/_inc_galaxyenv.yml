@@ -1,0 +1,11 @@
+---
+
+- name: Tasks for "galaxyproject.org environment" hosts
+  hosts: galaxyenv
+  remote_user: root
+  roles:
+    - role: resolv            # Set resolv.conf for static hosts
+      tags: initial,resolv
+    - role: postfix           # MX and null client configuration
+      tags: mail,postfix
+  tags: initial,galaxyenv

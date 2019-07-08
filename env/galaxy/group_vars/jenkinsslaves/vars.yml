@@ -3,17 +3,8 @@
 jenkinsslaves_group_authorized_key_users: "{{ vault_jenkinsslaves_group_authorized_key_users }}"
 jenkinsslaves_group_private_key_users: "{{ vault_jenkinsslaves_group_private_key_users }}"
 
-jenkinsslaves_group_apt_keys:
-  - keyserver: 'hkp://p80.pool.sks-keyservers.net:80'
-    id: '58118E89F3A912897C070ADBF76221572C52609D'
-
-jenkinsslaves_group_apt_repositories:
-  - repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
-  - repo: 'deb https://apt.dockerproject.org/repo debian-{{ ansible_distribution_release }} main'
-
 jenkinsslaves_group_packages:
   - git
-  - docker-engine
   - openjdk-8-jre-headless
   - ntp
   - ntpdate
@@ -21,15 +12,13 @@ jenkinsslaves_group_packages:
   - curl
   - pandoc
 
-jenkinsslaves_group_users:
-  - name: jenkins
-    groups: docker
-    system: true
+# Moved to a post-task
+#jenkinsslaves_group_users:
+#  - name: jenkins
+#    groups: docker
+#    system: true
 
 jenkinsslaves_group_directories:
-  - path: /var/jenkins
-    owner: jenkins
-    group: jenkins
   - path: ~jenkins/bin
     owner: jenkins
     group: jenkins

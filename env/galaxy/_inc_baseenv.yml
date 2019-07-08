@@ -12,8 +12,6 @@
       tags: initial,ssh
     - role: timezone          # Configure system timezone
       tags: initial,timezone
-    - role: resolv            # Set resolv.conf for static hosts
-      tags: initial,resolv
     - role: packages          # Install packages
       tags: system,packages
     - role: users             # Create users and set up authentication keys
@@ -28,14 +26,6 @@
       tags: system,firewall
     - role: services          # Manage services
       tags: system,services
-    # Most baseenv hosts will want mail config
-    - role: postfix           # MX and null client configuration
-      tags: mail,postfix
-      when: "'baseenv-nomail' not in group_names"
-    # This is in the baseenv play for a reason I think, but what's the reason? -nate
-    - role: mailman           # Mailing lists
-      tags: mail,mailman
-      when: "'listservers' in group_names"
   tags: initial,baseenv
   handlers:
     - include: _inc_handlers.yml

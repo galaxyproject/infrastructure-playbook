@@ -56,6 +56,12 @@
       - reload systemd daemon
       - restart docker
     when: docker_daemon_option_list
+
+  - name: Start or stop docker as desired
+    service:
+      name: docker
+      state: "{{ 'started' if docker_service_enabled else 'stopped' }}"
+
   rescue:
     - name: Remove secrets
       file:

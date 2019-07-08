@@ -1,0 +1,18 @@
+---
+
+jenkinsslaves_au_group_directories:
+  - path: /mnt/jenkins
+    owner: jenkins
+    group: jenkins
+  - path: /mnt/jenkins/tmp
+    owner: jenkins
+    group: jenkins
+  - path: /mnt/docker
+
+jenkinsslaves_au_group_links:
+  - src: /mnt/jenkins
+    path: /var/jenkins
+
+docker_daemon_option_list:
+  - -g
+  - /mnt/docker

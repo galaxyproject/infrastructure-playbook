@@ -24,7 +24,7 @@ Match User docs Host delirium.galaxyproject.org
 Match User gxsite Host athena.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_gxsite
 
-Host n? n?? n?.galaxyproject.org n??.galaxyproject.org
+Host n? n?? n?.galaxyproject.org n??.galaxyproject.org jenkins-aust-*.genome.edu.au n?.galaxyproject.eu n??.galaxyproject.eu
     IdentityFile ~/.ssh/id_rsa_slave
 
 Host github.com

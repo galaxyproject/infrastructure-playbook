@@ -1,5 +1,14 @@
 ---
 
+- name: Bootsrap Python2 for Ansible
+  hosts: jenkinsslaves_eu
+  gather_facts: false
+  tasks:
+    - name: Bootsrap Python2 for Ansible
+      raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python2.7 python)"
+      register: output
+      changed_when: output.stdout != ""
+
 - name: Get EC2 Facts
   hosts: ec2hosts
   remote_user: root
@@ -16,7 +25,10 @@
   tags: initial,system
 
 - name: Include baseenv plays
-  include: _inc_baseenv.yml
+  import_playbook: _inc_baseenv.yml
+
+- name: Include baseenv plays
+  import_playbook: _inc_galaxyenv.yml
 
 - name: Set up authentication keys for non-baseenv hosts
   hosts: authkeyhosts
@@ -99,12 +111,17 @@
       tags: supervisor,services
 
 - name: Tasks for jenkins hosts
-  hosts: jenkinsservers
+  hosts: jenkinsslaves
   remote_user: root
   roles:
-    - role: linuxbrew        # Install linuxbrew
-      tags: linuxbrew
-  tags: initial
+    - role: docker
+  post_tasks:
+    - name: Create jenkins user
+      user:
+        name: jenkins
+        groups: docker
+        system: true
+  tags: jenkins
 
 - name: Tasks for biostar hosts
   hosts: biostarservers
