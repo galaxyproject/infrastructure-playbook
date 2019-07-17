@@ -107,7 +107,7 @@
   remote_user: root
   roles:
     - role: geerlingguy.repo-epel
-    - role: cvmfs
+    - role: galaxyproject.cvmfs
   tags: cvmfs
 
 - name: Tasks for slurm hosts

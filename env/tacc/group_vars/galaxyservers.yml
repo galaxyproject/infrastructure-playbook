@@ -75,8 +75,12 @@ galaxyservers_group_yum_repositories:
 
 docker_service_enabled: no
 
+galaxy_cvmfs_repos_enabled: true
+
+# override so that the TACC stratum 1 is always first
 cvmfs_server_urls:
   - domain: galaxyproject.org
+    use_geoapi: no
     urls:
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
