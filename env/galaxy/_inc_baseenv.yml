@@ -5,27 +5,32 @@
   remote_user: root
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
-      tags: initial,requiretty
+      tags: requiretty
     - role: remote_management # Set up IPMI/serial stuff
-      tags: initial,remote_management
+      tags: remote_management
     - role: ssh               # Enable password auth and root logins
-      tags: initial,ssh
+      tags: ssh
     - role: timezone          # Configure system timezone
-      tags: initial,timezone
+      tags: timezone
+    - role: kernel_params     # Set kernel params e.g. with sysctl
+      tags: kernel_params,sysctl
     - role: packages          # Install packages
-      tags: system,packages
+      tags: packages
     - role: users             # Create users and set up authentication keys
-      tags: system,users
+      tags: users
     - role: paths             # Configure path permissions, filesystems
-      tags: system,paths
+      tags: paths
     - role: copy              # Copy arbitrary files/templates
-      tags: system,copy
+      tags: copy
     - role: cron              # Create cron jobs
-      tags: system,cron
+      tags: cron
     - role: firewall          # Configure host firewall
-      tags: system,firewall
+      tags: firewall
     - role: services          # Manage services
-      tags: system,services
-  tags: initial,baseenv
+      tags: services
+  tags:
+    - initial
+    - system
+    - baseenv
   handlers:
     - include: _inc_handlers.yml

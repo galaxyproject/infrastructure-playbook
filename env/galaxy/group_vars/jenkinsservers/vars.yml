@@ -66,6 +66,14 @@ jenkinsservers_group_files:
     owner: jenkins
     group: jenkins
 
+jenkinsservers_group_kernel_params:
+  - name: net.ipv4.tcp_keepalive_time
+    value: 300
+  - name: net.ipv4.tcp_keepalive_intvl
+    value: 30
+  - name: net.ipv4.tcp_keepalive_probes
+    value: 40
+
 linuxbrew_user_name: jenkins
 linuxbrew_user_home: /var/lib/jenkins
 linuxbrew_user_shellrc: "{{ linuxbrew_user_home }}/.bashrc"

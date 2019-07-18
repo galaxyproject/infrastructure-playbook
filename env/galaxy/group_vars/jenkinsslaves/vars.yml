@@ -30,3 +30,11 @@ jenkinsslaves_group_files:
     group: jenkins
   - src: files/jenkins/tmpfiles.d-clean-tmp.conf
     dest: /etc/tmpfiles.d/clean-tmp.conf
+
+jenkinsslaves_group_kernel_params:
+  - name: net.ipv4.tcp_keepalive_time
+    value: 300
+  - name: net.ipv4.tcp_keepalive_intvl
+    value: 30
+  - name: net.ipv4.tcp_keepalive_probes
+    value: 40

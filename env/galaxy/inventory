@@ -229,10 +229,13 @@ cvmfs1-psu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
-# Other stuff
+# Docker
 
-[zfsbackupservers]
-westvleteren.galaxyproject.org
+[dockerservers]
+[dockerservers:children]
+jenkinsslaves
+
+# Jenkins
 
 [jenkinsservers]
 leeroy.galaxyproject.org
@@ -263,6 +266,11 @@ n[0:1].galaxyproject.eu
 [jenkinsslaves_eu:vars]
 ansible_user = ubuntu
 ansible_become = yes
+
+# Other stuff
+
+[zfsbackupservers]
+westvleteren.galaxyproject.org
 
 [biostarservers]
 biostar.usegalaxy.org
