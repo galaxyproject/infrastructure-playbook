@@ -4,11 +4,13 @@ host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
 cvmfs_squid_conf_src: templates/squid/cvmfs1-psu0_squid.conf.j2
 cvmfs_stratum1_cache_mem: 1024
+cvmfs_quota_limit: 1024
 
 cvmfs_srv_device: /dev/vdb
 
 cvmfs_server_urls:
   - domain: galaxyproject.org
+    use_geoapi: no
     urls:
       - "http://localhost/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
