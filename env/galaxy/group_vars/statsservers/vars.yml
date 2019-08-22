@@ -24,6 +24,15 @@ grafana_admin_user: "{{ vault_grafana_admin_user }}"
 grafana_admin_pass: "{{ vault_grafana_admin_pass }}"
 grafana_secret_key: "{{ vault_grafana_secret_key }}"
 
+stats_grafana_conf_auth_github_client_id: "{{ vault_stats_grafana_conf_auth_github_client_id }}"
+stats_grafana_conf_auth_github_client_secret: "{{ vault_stats_grafana_conf_auth_github_client_secret }}"
+stats_grafana_conf_auth_github_team_ids: "{{ vault_stats_grafana_conf_auth_github_team_ids }}"
+
+stats_grafana_conf_root_url: "https://infrastats.galaxyproject.org/"
+stats_grafana_conf_auth_github: true
+stats_grafana_conf_auth_github_allowed_organizations:
+  - galaxyproject
+
 #statsservers_group_packages:
 #  - '@development'
 
