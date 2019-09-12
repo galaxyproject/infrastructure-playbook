@@ -48,6 +48,7 @@ nginx_configs:
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf
+  - training_rewrites
 
 # not implemented
 #nginx_pam_config_src: pam_galaxy

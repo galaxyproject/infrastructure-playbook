@@ -56,6 +56,8 @@ server {
         proxy_pass             https://galaxyproject.github.io/training-material/;
     }
 
+    include {{ nginx_conf_dir }}/training_rewrites.conf;
+
     location / {
         proxy_cache            s3_cache;
         proxy_http_version     1.1;
