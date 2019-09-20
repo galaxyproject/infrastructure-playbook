@@ -94,6 +94,7 @@ duvel.galaxyproject.org
 [virtual]
 radegast.galaxyproject.org
 duvel.galaxyproject.org
+infrastats.galaxyproject.org
 
 [virtual:children]
 ec2hosts

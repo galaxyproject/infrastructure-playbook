@@ -1,17 +1,34 @@
 ---
 
-stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
+#stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
 
-stats_ssl_certs:
-  - name: influxdb
-    ca: stats
-    per_host: yes
-    owner: influxdb
-    group: influxdb
-    paths:
-      - cert: "{{ stats_influxdb_conf_dir }}/influxdb.crt"
-        key: "{{ stats_influxdb_conf_dir }}/influxdb.key"
-        ca_cert: "{{ stats_influxdb_conf_dir }}/ca.crt"
+#stats_ssl_certs:
+#  - name: influxdb
+#    ca: stats
+#    per_host: yes
+#    owner: influxdb
+#    group: influxdb
+#    paths:
+#      - cert: "{{ stats_influxdb_conf_dir }}/influxdb.crt"
+#        key: "{{ stats_influxdb_conf_dir }}/influxdb.key"
+#        ca_cert: "{{ stats_influxdb_conf_dir }}/ca.crt"
+
+certbot_auto_renew_hour: "{{ 23 |random(seed=inventory_hostname)  }}"
+certbot_auto_renew_minute: "{{ 59 |random(seed=inventory_hostname)  }}"
+certbot_auth_method: --webroot
+certbot_install_method: virtualenv
+certbot_auto_renew: yes
+certbot_auto_renew_user: root
+certbot_environment: production
+certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_share_key_users:
+  - nginx
+  #- influxdb
+certbot_post_renewal: |
+    systemctl restart nginx || true
+certbot_domains:
+ - "{{ inventory_hostname }}"
+certbot_agree_tos: --agree-tos
 
 stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
 
@@ -36,9 +53,12 @@ stats_grafana_conf_auth_github_allowed_organizations:
 #statsservers_group_packages:
 #  - '@development'
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
+#nginx_conf_ssl_certificate: wildcard_cert.pem
+#nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
+#nginx_conf_ssl_trusted_certificate: incommon_chain.pem
+nginx_ssl_role: usegalaxy-eu.certbot
+nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-nginx.pem
 
 nginx_configs:
   - infrastats
@@ -48,17 +68,24 @@ nginx_default_redirect_uri: https://infrastats.galaxyproject.org/
 stats_conf_email_host: 'localhost:25'
 stats_conf_email_from: 'stats@infrastats.galaxyproject.org'
 
+stats_influxdb_http_bind_address: "127.0.0.1:8086"
+
 stats_influxdb_auth_enabled: true
-stats_influxdb_https_enabled: true
+#stats_influxdb_https_enabled: true
+
+#stats_influxdb_ssl_certificate: /etc/ssl/certs/fullchain.pem
+#stats_influxdb_ssl_certificate_key: /etc/ssl/user/privkey-influxdb.pem
 
 # separate db filtering for statsd (Galaxy timing) and system stuff using
 #   https://github.com/influxdata/telegraf/issues/1778
 telegraf_agent_output:
   - type: influxdb
     config:
-      - urls = ["https://localhost:8086"]
+      - urls = ["http://localhost:8086"]
       - database = "system"
-      - insecure_skip_verify = true
+      - username = "{{ stats_influxdb_users[1].user_name }}"
+      - password = "{{ stats_influxdb_users[1].user_password }}"
+      #- insecure_skip_verify = true
 
 telegraf_plugins_default:
   - plugin: cpu

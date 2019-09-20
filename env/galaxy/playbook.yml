@@ -158,18 +158,6 @@
     - role: stats
   # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
   # the config
-  #post_tasks:
-  #  # TODO: put this somewhere else
-  #  - name: Install influxdb python module
-  #    pip:
-  #      name: influxdb
-  #  - name: Create InfluxDB users
-  #    influxdb_user:
-  #      admin: "{{ item.admin | default(omit) }}"
-  #      user_name: "{{ item.user_name | default(omit) }}"
-  #      user_password: "{{ item.user_password | default(omit) }}"
-  #    with_items: "{{ stats_influxdb_users | default([]) }}"
-  #    when: stats_influxdb_users is defined
   tags:
     - stats
 

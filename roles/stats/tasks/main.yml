@@ -6,8 +6,7 @@
   include_vars: "{{ ansible_os_family | lower }}.yml"
 
 - name: Include install tasks (RedHat)
-  # TODO 2.4+: include_tasks
-  include: redhat.yml
+  include_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Create stats config directories
@@ -92,7 +91,31 @@
     - galaxy_services_slurp.py
   when: stats_slurp is defined and stats_slurp
 
+# Force a restart in case connection params have changed
+- name: Flush handlers
+  meta: flush_handlers
+
 - name: Include service tasks
-  # TODO 2.4+: include_tasks
-  include: service.yml
+  include_tasks: service.yml
   when: not stats_use_supervisor
+
+- block:
+
+    - name: Install influxdb python module
+      pip:
+        name: influxdb
+
+    - name: Create InfluxDB users
+      influxdb_user:
+        admin: "{{ item.admin | default(omit) }}"
+        user_name: "{{ item.user_name | default(omit) }}"
+        user_password: "{{ item.user_password | default(omit) }}"
+        # FIXME: I think you ran things once w/o auth required to create users, running it again from scratch would
+        # error here since auth would be required but no users would exist.
+        login_username: "{{ stats_influxdb_users[0].user_name }}"
+        login_password: "{{ stats_influxdb_users[0].user_password }}"
+      with_items: "{{ stats_influxdb_users | default([]) }}"
+      loop_control:
+        label: "{{ item.user_name }}"
+
+  when: stats_influxdb_users is defined

@@ -28,6 +28,9 @@
       tags: firewall
     - role: services          # Manage services
       tags: services
+    - role: dj-wasabi.telegraf
+      tags: stats,telegraf
+      when: ansible_os_family in ("Debian", "RedHat")
   tags:
     - initial
     - system
