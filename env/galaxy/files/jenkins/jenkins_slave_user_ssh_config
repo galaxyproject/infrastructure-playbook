@@ -20,5 +20,8 @@ Match User docs Host delirium.galaxyproject.org
 Match User gxsite Host athena.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_gxsite
 
+Host cvmfs0*
+    IdentityFile ~/.ssh/id_rsa_usegalaxy_tools_cvmfs
+
 Host github.com
     IdentityFile ~/.ssh/id_rsa_github
