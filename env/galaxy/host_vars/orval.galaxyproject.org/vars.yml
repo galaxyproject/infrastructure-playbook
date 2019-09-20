@@ -3,6 +3,23 @@
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 host_private_key_users: "{{ vault_host_private_key_users }}"
 
+# legacy mounts are used for these two datasets to ensure proper mounting order
+mounts:
+  - src: promise-1/orval/depot
+    path: /srv/nginx/depot.galaxyproject.org/root
+    fstype: zfs
+    state: mounted
+    backup: yes
+    owner: depot
+    group: depot
+  - src: ift-1/orval/depot/singularity
+    path: /srv/nginx/depot.galaxyproject.org/root/singularity
+    fstype: zfs
+    state: mounted
+    backup: yes
+    owner: singularity
+    group: singularity
+
 host_packages:
   - subversion  # for bioarchive
 
@@ -113,11 +130,17 @@ zfs_filesystems:
     owner: sites
     group: sites
   - name: promise-1/orval/depot
-    mountpoint: /srv/nginx/depot.galaxyproject.org/root
+    mountpoint: legacy
     exec: "off"
     setuid: "off"
     owner: depot
     group: depot
+  - name: ift-1/orval/depot/singularity
+    mountpoint: legacy
+    exec: "off"
+    setuid: "off"
+    owner: singularity
+    group: singularity
 
 host_directories:
   - path: /srv/nginx/depot.galaxyproject.org/root/training
@@ -230,6 +253,12 @@ host_crontabs:
     hour: 2
     minute: 0
     job: dataset='promise-1/orval/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+  - name: "Backup depot/singularity"
+    id: backup_depot_singularity
+    user: zfsdump-orval
+    hour: 2
+    minute: 15
+    job: dataset='ift-1/orval/depot/singularity' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
 
 nginx_conf_ssl_certificate: wildcard_cert.pem
 nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
