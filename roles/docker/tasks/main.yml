@@ -17,8 +17,9 @@
     vars:
       ssl_role_certs: "{{ docker_ssl_certs }}"
     when: docker_ssl_certs is defined
-    notify:
-      - restart docker
+    # FIXME: did this ever work?
+    #notify:
+    #  - restart docker
 
   - name: Set docker daemon options for SSL
     set_fact:
