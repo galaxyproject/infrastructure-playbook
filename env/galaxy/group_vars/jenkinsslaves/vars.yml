@@ -11,6 +11,7 @@ jenkinsslaves_group_packages:
   - build-essential
   - curl
   - pandoc
+  - python3-venv
 
 # Moved to a post-task
 #jenkinsslaves_group_users:
