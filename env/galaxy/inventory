@@ -59,7 +59,7 @@ jenkinsslaves
 # For things that need access to sslkeys and the "PKI"
 [sslservers]
 [sslservers:children]
-webservers
+sslwebservers
 dockersslservers
 statsservers
 
@@ -157,6 +157,15 @@ delirium.galaxyproject.org
 #delirium.galaxyproject.org
 
 ## Web
+
+# For SSL cert expiry monitoring with telegraf/grafana
+[sslwebservers]
+orval.galaxyproject.org
+delirium.galaxyproject.org
+chouffe.galaxyproject.org
+duvel.galaxyproject.org
+athena.galaxyproject.org
+status.usegalaxy.org
 
 [webservers]
 orval.galaxyproject.org
