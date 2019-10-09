@@ -149,6 +149,11 @@ telegraf_plugins_default:
   - plugin: swap
   - plugin: net
   - plugin: netstat
+  - plugin: x509_cert
+    config:
+      # could use the cert file directly, but this way we check the actual cert in use, you just have to filter out the
+      # CA cert in grafana
+      - sources = ["https://{{ inventory_hostname }}:443"]
   - plugin: procstat
     config:
       - pattern = "galaxy-main.*handler0"
