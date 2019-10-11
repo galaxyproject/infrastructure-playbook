@@ -5,16 +5,18 @@ ldap_server_uris:
   - ldap://ldap2.galaxyproject.org/
   - ldap://ldap1.galaxyproject.org/
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
-
 nginx_flavor: full
 
-nginx_configs:
+nginx_servers:
+  - certbot_redirects
+
+nginx_ssl_servers:
   - duvel
   - jenkins
-  - images-proxy
+
+certbot_domains:
+  - "{{ inventory_hostname }}"
+  - jenkins.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
 

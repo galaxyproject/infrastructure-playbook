@@ -7,13 +7,6 @@ upstream jenkins_app {
 }
 
 server {
-    listen      *:80;
-    server_name jenkins.galaxyproject.org;
-
-    return 301 https://jenkins.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name jenkins.galaxyproject.org;
 

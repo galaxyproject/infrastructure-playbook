@@ -34,9 +34,6 @@ host_directories:
 
 nginx_flavor: full
 
-nginx_conf_ssl_certificate: athena.galaxyproject.org_cert.pem
-nginx_conf_ssl_certificate_key: athena.galaxyproject.org_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
 # TODO: disable 1.0, 1.1
 nginx_conf_ssl_protocols:
   - TLSv1
@@ -48,8 +45,10 @@ nginx_conf_http:
   client_max_body_size: 1g
   proxy_read_timeout: 3600
 
-nginx_srv: /srv/nginx
-nginx_configs:
+nginx_servers:
+  - certbot_redirects
+
+nginx_ssl_servers:
   - galaxyproject
   - cloudlaunch
   - gxy.io
