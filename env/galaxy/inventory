@@ -4,7 +4,7 @@
 
 # TODO: now that so many features are enabled/disabled just based on group inclusion, it should be documented in the inventory exactly what each group membership enables
 
-status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
+#status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 biostar.usegalaxy.org ansible_user=www
@@ -61,7 +61,6 @@ radegast.galaxyproject.org
 # For things that need access to sslkeys and the "PKI"
 [sslservers]
 [sslservers:children]
-sslwebservers
 dockersslservers
 statsservers
 
@@ -160,15 +159,6 @@ delirium.galaxyproject.org
 
 ## Web
 
-# For SSL cert expiry monitoring with telegraf/grafana
-[sslwebservers]
-orval.galaxyproject.org
-delirium.galaxyproject.org
-chouffe.galaxyproject.org
-duvel.galaxyproject.org
-athena.galaxyproject.org
-status.usegalaxy.org
-
 [webservers]
 orval.galaxyproject.org
 delirium.galaxyproject.org
@@ -176,10 +166,29 @@ chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org  # for datacache
-status.usegalaxy.org
+#status.usegalaxy.org
 
 [webservers:children]
 statsservers
+certbotservers
+
+# provides:
+#   - certbot setup
+#   - nginx cerbot setup (could split this into a separate group if we have non-nginx certbot servers)
+#   - telegraf x509_cert plugin
+# users must set:
+#   - nginx_servers
+#   - nginx_ssl_servers
+#   - certbot_domains
+[certbotservers]
+#orval.galaxyproject.org
+#delirium.galaxyproject.org
+#chouffe.galaxyproject.org
+#duvel.galaxyproject.org
+#athena.galaxyproject.org
+# TODO: probably need to use DNS-01 for this
+#status.usegalaxy.org
+infrastats.galaxyproject.org
 
 ## Kerberos
 

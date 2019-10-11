@@ -11,17 +11,6 @@ upstream influxdb_app {
 }
 
 server {
-    listen *:80;
-    server_name infrastats.galaxyproject.org;
-
-    location /.well-known/ {
-        root {{ certbot_well_known_root }};
-    }
-
-    return 302 https://$server_name$request_uri;
-}
-
-server {
     listen *:443 ssl;
     server_name infrastats.galaxyproject.org;
 

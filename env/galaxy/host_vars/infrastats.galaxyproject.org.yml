@@ -2,10 +2,11 @@
 
 # infrastats is a smartos lx-branded zone
 
-zfs_filesystems:
-  - name: zones/{{ ansible_hostname }}/data/influxdb
-    owner: influxdb
-    group: influxdb
+# FIXME: how did this work, there's no zfs utils in the CentOS zone
+#zfs_filesystems:
+#  - name: zones/{{ ansible_hostname }}/data/influxdb
+#    owner: influxdb
+#    group: influxdb
 
 host_links:
   - path: /var/lib/influxdb
