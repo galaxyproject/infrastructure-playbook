@@ -260,16 +260,19 @@ host_crontabs:
     minute: 15
     job: dataset='ift-1/orval/depot/singularity' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
+nginx_conf_http:
+  server_names_hash_bucket_size: 64
+
 # TODO: disable 1.0, 1.1
 nginx_conf_ssl_protocols:
   - TLSv1
   - TLSv1.1
   - TLSv1.2
 
-nginx_configs:
+nginx_servers:
+  - certbot_redirects
+
+nginx_ssl_servers:
   - orval
   - snpeff-data
   - screencast
@@ -278,5 +281,20 @@ nginx_configs:
   - bioarchive
   - depot
 
-nginx_conf_http:
-  server_names_hash_bucket_size: 64
+# needs cffi, which needs gcc, which isn't installed
+#certbot_virtualenv_package_name: py37-virtualenv
+certbot_install_method: package
+certbot_package: py37-certbot
+certbot_script: /opt/local/bin/certbot
+certbot_letsencrypt_dir: /opt/local/etc/letsencrypt
+certbot_post_renewal: |
+  svcadm restart nginx || true
+certbot_domains:
+  - "{{ inventory_hostname }}"
+  - snpeff-data.galaxyproject.org
+  - screencast.galaxyproject.org
+  - screencast.g2.bx.psu.edu
+  - images.galaxyproject.org
+  - sample-data.galaxyproject.org
+  - bioarchive.galaxyproject.org
+  - depot.galaxyproject.org

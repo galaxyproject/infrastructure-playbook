@@ -3,13 +3,6 @@
 ##
 
 server {
-    listen      *:80 default_server;
-    server_name orval.galaxyproject.org;
-
-    return 301 https://orval.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl default_server;
     server_name orval.galaxyproject.org;
 

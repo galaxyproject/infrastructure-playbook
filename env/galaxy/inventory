@@ -181,7 +181,7 @@ certbotservers
 #   - nginx_ssl_servers
 #   - certbot_domains
 [certbotservers]
-#orval.galaxyproject.org
+orval.galaxyproject.org
 #delirium.galaxyproject.org
 #chouffe.galaxyproject.org
 #duvel.galaxyproject.org

@@ -3,13 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name sample-data.galaxyproject.org;
-
-    return 302 https://sample-data.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name sample-data.galaxyproject.org;
 

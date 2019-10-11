@@ -3,13 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name depot.galaxyproject.org;
-
-    return 302 https://depot.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name depot.galaxyproject.org;
 

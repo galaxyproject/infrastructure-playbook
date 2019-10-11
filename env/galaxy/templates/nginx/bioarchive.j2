@@ -3,13 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name bioarchive.galaxyproject.org;
-
-    return 302 https://bioarchive.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name bioarchive.galaxyproject.org;
 
