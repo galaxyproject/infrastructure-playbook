@@ -57,6 +57,18 @@ galaxy-web-05.tacc.utexas.edu
 baseenv
 
 [webservers]
+[webservers:children]
+certbotservers
+
+# provides:
+#   - certbot setup
+#   - nginx cerbot setup (could split this into a separate group if we have non-nginx certbot servers)
+#   - telegraf x509_cert plugin
+# users must set:
+#   - nginx_servers
+#   - nginx_ssl_servers
+#   - certbot_domains
+[certbotservers]
 # note: Galaxy webservers are managed in usegalaxy-playbook
 galaxy04.tacc.utexas.edu
 galaxy06.tacc.utexas.edu

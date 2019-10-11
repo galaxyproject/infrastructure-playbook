@@ -1,0 +1,16 @@
+---
+
+# Simple module to install Apache configs, mainly for adding SSL redirect vhosts to CVMFS servers
+#
+# NOTE: This role is EL-specific
+
+- name: Install vhost configs
+  template:
+    src: "{{ apache_server_src_dir }}/{{ item }}.conf.j2"
+    dest: "{{ apache_conf_dir }}/{{ item | basename }}.conf"
+    mode: 0444
+    backup: yes
+  with_items: "{{ apache_servers }}"
+  when: apache_servers is defined
+  notify:
+    - reload apache

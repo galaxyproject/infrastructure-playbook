@@ -1,0 +1,6 @@
+---
+
+apache_server_src_dir: templates/apache
+
+# NOTE: EL-specific
+apache_conf_dir: /etc/httpd/conf.d

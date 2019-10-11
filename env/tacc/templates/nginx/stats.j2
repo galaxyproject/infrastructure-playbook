@@ -7,12 +7,6 @@ upstream stats_app {
 }
 
 server {
-    listen *:80;
-    server_name stats.galaxyproject.org;
-    return 302 https://$server_name$request_uri;
-}
-
-server {
     listen *:443 ssl;
     server_name stats.galaxyproject.org;
 

@@ -1,0 +1,12 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+Alias "/.well-known" "{{ certbot_well_known_root }}/.well-known"
+<Directory "{{ certbot_well_known_root }}">
+    Allow from all
+    Options MultiViews
+    AllowOverride None
+    ForceType text/plain
+    Require method GET
+</Directory>

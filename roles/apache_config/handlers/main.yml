@@ -1,0 +1,7 @@
+---
+
+- name: reload apache
+  service:
+    # NOTE: EL-specific
+    name: httpd
+    state: reloaded

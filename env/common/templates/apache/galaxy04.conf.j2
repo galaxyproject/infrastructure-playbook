@@ -1,0 +1,10 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# CVMFS configs are not in a VirtualHost, so without this, the certbot redirect vhosts will force redirection even for
+# domains not listed in the vhost's ServerName/ServerAlias
+<VirtualHost *:80>
+    ServerName localhost
+    ServerAlias cvmfs0-tacc0.galaxyproject.org galaxy04.tacc.utexas.edu galaxy04
+</VirtualHost>

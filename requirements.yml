@@ -1,5 +1,6 @@
 ---
 - name: galaxyproject.nginx
+  version: 0.6.3
 - name: galaxyproject.mailman3
   src: https://github.com/galaxyproject/ansible-mailman3
 - name: galaxyproject.postfix

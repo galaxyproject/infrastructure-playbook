@@ -1,0 +1,14 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+{% set certbot_redirect_domains = certbot_redirect_domains |default(certbot_domains) -%}
+<VirtualHost *:80>
+    ServerName {{ certbot_redirect_domains[0] }}
+    {% if certbot_redirect_domains |length > 1 -%}
+        ServerAlias {{ certbot_redirect_domains[1:] |join(" ") }}
+    {% endif -%}
+    RewriteEngine on
+    RewriteRule (/\.well-known/.*) "{{ certbot_well_known_root }}$1" [L]
+    RewriteRule .* "https://%{HTTP_HOST}%{REQUEST_URI}"
+</VirtualHost>

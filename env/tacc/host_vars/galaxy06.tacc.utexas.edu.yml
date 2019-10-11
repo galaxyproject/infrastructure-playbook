@@ -12,15 +12,18 @@ mounts:
     owner: influxdb
     group: influxdb
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
-
-nginx_configs:
-  - stats
-  - sentry
-
 nginx_default_redirect_uri: https://sentry.galaxyproject.org/
+
+nginx_servers:
+  - certbot_redirects
+
+nginx_ssl_servers:
+  - sentry
+  - stats
+
+certbot_domains:
+  - sentry.galaxyproject.org
+  - stats.galaxyproject.org
 
 local_users:
   - name: sentry

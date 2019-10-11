@@ -75,6 +75,9 @@
   hosts: webservers
   remote_user: root
   roles:
+      # Sets up vhosts for HTTPS redirect and certbot on CVMFS strata that use Apache+Squid for HTTP and Nginx for HTTPS
+      # NOTE: Initial Apache install/setup is done by CVMFS in the galaxy env, must be run first
+    - role: apache_config
     - role: geerlingguy.repo-epel
     - role: galaxyproject.nginx
   tags: nginx

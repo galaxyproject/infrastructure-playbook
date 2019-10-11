@@ -17,14 +17,28 @@ host_users:
   - name: g2main
     groups: docker
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
-
+nginx_enable_default_server: false
 nginx_conf_http:
   proxy_read_timeout: 300
 
-nginx_configs:
-  - galaxy-installers
+apache_servers:
+  - galaxy04
+  - certbot-redirects
+  - certbot-well-known
 
-nginx_enable_default_server: false
+nginx_ssl_servers:
+  - galaxy-installers
+  - cvmfs0-tacc0
+
+# We want to get certs for CVMFS but  don't want to redirect CVMFS automatically
+certbot_domains:
+  - cvmfs0-tacc0.galaxyproject.org
+  - test-installer.galaxyproject.org
+  - main-installer.galaxyproject.org
+
+certbot_redirect_domains:
+  - test-installer.galaxyproject.org
+  - main-installer.galaxyproject.org
+
+# NOTE: overrides value from certbotservers group_vars
+certbot_well_known_root: /srv/apache/_well-known_root
