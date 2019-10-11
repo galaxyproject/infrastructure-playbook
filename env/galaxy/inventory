@@ -54,7 +54,9 @@ dockerswarmmanagers
 biostarservers
 jenkinsservers
 jenkinsslaves
-# FIXME: there should be a toolshedservers group
+
+[toolshedservers]
+radegast.galaxyproject.org
 
 # For things that need access to sslkeys and the "PKI"
 [sslservers]
