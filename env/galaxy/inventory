@@ -185,10 +185,10 @@ orval.galaxyproject.org
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
-#athena.galaxyproject.org
+athena.galaxyproject.org
+infrastats.galaxyproject.org
 # TODO: probably need to use DNS-01 for this
 #status.usegalaxy.org
-infrastats.galaxyproject.org
 
 ## Kerberos
 

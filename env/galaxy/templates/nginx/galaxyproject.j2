@@ -3,13 +3,6 @@
 ##
 
 server {
-    listen      *:80 default_server;
-    server_name galaxyproject.org www.galaxyproject.org;
-
-    return 302 https://$host$request_uri;
-}
-
-server {
     listen      *:443 ssl default_server;
     server_name galaxyproject.org www.galaxyproject.org;
 
@@ -97,36 +90,6 @@ server {
     rewrite ^/install-and-test-certification/?$ /archive/install-and-test-certification;
     rewrite ^/FTPUpload/?$ /ftp-upload;
 
-}
-
-# vim: set filetype=nginx
-
-
-
-
-
-##
-## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
-##
-
-server {
-    listen      *:80;
-    server_name new.galaxyproject.org;
-
-    access_log  /var/log/nginx/new.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/new.galaxyproject.org_error.log;
-
-    return 301 https://new.galaxyproject.org$request_uri;
-}
-
-server {
-    listen      *:443 ssl;
-    server_name new.galaxyproject.org;
-
-    access_log  /var/log/nginx/new.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/new.galaxyproject.org_error.log;
-
-    root        /srv/nginx/new.galaxyproject.org/root;
 }
 
 # vim: set filetype=nginx

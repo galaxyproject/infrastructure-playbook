@@ -50,6 +50,11 @@ nginx_servers:
 
 nginx_ssl_servers:
   - galaxyproject
-  - cloudlaunch
   - gxy.io
   - biostar
+
+certbot_domains:
+  - galaxyproject.org
+  - gxy.io
+  - biostar.usegalaxy.org
+  - biostar.galaxyproject.org

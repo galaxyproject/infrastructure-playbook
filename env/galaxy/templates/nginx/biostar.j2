@@ -2,13 +2,6 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-server {
-    listen      *:80;
-    server_name biostar.usegalaxy.org biostar.galaxyproject.org;
-
-    return 302 https://$host$request_uri;
-}
-
 proxy_cache_path    /var/lib/nginx/proxy levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m; # 1.7.10 use_temp_path=off;
 
 server {
