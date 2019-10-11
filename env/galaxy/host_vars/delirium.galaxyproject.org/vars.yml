@@ -1,5 +1,10 @@
 ---
 
+# TODO: remove once you turn mailman 2 off
+mailman_default_email_host: lists.galaxyproject.org
+mailman_default_url_host: lists.galaxyproject.org
+mailman_uwsgi_sock: 127.0.0.1:10101
+
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
 host_users:
@@ -26,22 +31,53 @@ ldap_server_uris:
   - ldap://ldap2.galaxyproject.org/
   - ldap://ldap3.galaxyproject.org/
 
-nginx_conf_ssl_certificate: wildcard_cert.pem
-nginx_conf_ssl_certificate_key: wildcard_privatekey.pem
-nginx_conf_ssl_trusted_certificate: incommon_chain.pem
 nginx_conf_ssl_protocols:
   - TLSv1
   - TLSv1.1
   - TLSv1.2
 
-nginx_configs:
+nginx_servers:
+  - certbot_redirects_infra
+  - eggs
+
+nginx_ssl_servers:
   - wheels
   - lists
-  - eggs
+  - eggs-ssl
   - galaxydomains
   - toolshed.tools
   - galaxy.tools
   - docs
+
+certbot_redirect_domains:
+  - "{{ inventory_hostname }}"
+  - wheels.galaxyproject.org
+  - mailman2.galaxyproject.org
+  - galaxy2.org
+  - galaxyworkbench.org
+  - repeatme.org
+  - galaxy.psu.edu
+  - galaxycast.org
+  - getgalaxy.org
+  - toolshed.tools
+  - galaxy.tools
+  - docs.galaxyproject.org
+
+certbot_domains:
+  - "{{ inventory_hostname }}"
+  - wheels.galaxyproject.org
+  - mailman2.galaxyproject.org
+  - eggs.galaxyproject.org
+  - eggs.g2.bx.psu.edu
+  - galaxy2.org
+  - galaxyworkbench.org
+  - repeatme.org
+  - galaxy.psu.edu
+  - galaxycast.org
+  - getgalaxy.org
+  - toolshed.tools
+  - galaxy.tools
+  - docs.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
 

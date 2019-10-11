@@ -3,16 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name new.galaxyproject.org;
-
-    access_log  /var/log/nginx/new.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/new.galaxyproject.org_error.log;
-
-    return 301 https://galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name new.galaxyproject.org;
 

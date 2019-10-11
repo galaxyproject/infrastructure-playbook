@@ -3,7 +3,7 @@
 ##
 
 server {
-    listen      *:80;
+    listen      *:443 ssl;
     server_name eggs.galaxyproject.org eggs.g2.bx.psu.edu;
 
     access_log  /var/log/nginx/eggs.galaxyproject.org_access.log;
@@ -13,16 +13,10 @@ server {
 
     root        /srv/nginx/eggs.galaxyproject.org/root;
 
-    location /.well-known/ {
-        root {{ certbot_well_known_root }};
-    }
-
     location / {
         autoindex   on;
     }
 
-    # Forced redirect could break some vintage Galaxies
-    #return 301 https://eggs.galaxyproject.org$request_uri;
 }
 
 # vim: set filetype=nginx

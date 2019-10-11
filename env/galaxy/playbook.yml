@@ -82,16 +82,17 @@
       tags: nfs
   tags: liteenv
 
-- name: Tasks for infrastructure servers
-  hosts: kerberosservers
-  remote_user: root
-  roles:
-    - name: required_vars
-      required_vars_roles: kerberos_kdc
-      tags: always
-    - name: kerberos_kdc
-      tags: kerberos_kdc,kerberos
-  tags: infrastructure
+# FIXME: why is the always tag being applied to this whole play?
+#- name: Tasks for infrastructure servers
+#  hosts: kerberosservers
+#  remote_user: root
+#  roles:
+#    - name: required_vars
+#      required_vars_roles: kerberos_kdc
+#      tags: always
+#    - name: kerberos_kdc
+#      tags: kerberos_kdc,kerberos
+#  tags: infrastructure
 
 - name: Tasks for webservers
   hosts: webservers

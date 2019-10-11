@@ -182,8 +182,8 @@ certbotservers
 #   - certbot_domains
 [certbotservers]
 orval.galaxyproject.org
-#delirium.galaxyproject.org
-#chouffe.galaxyproject.org
+delirium.galaxyproject.org
+chouffe.galaxyproject.org
 #duvel.galaxyproject.org
 #athena.galaxyproject.org
 # TODO: probably need to use DNS-01 for this

@@ -5,13 +5,6 @@
 upstream pypi       { server localhost:9909; }
 
 server {
-    listen      *:80;
-    server_name wheels.galaxyproject.org;
-
-    return 302 https://wheels.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name wheels.galaxyproject.org;
 

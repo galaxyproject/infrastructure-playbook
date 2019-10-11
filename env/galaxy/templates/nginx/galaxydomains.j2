@@ -3,31 +3,31 @@
 ##
 
 server {
-    listen       *:80;
+    listen       *:443 ssl;
     server_name  galaxy2.org galaxyworkbench.org repeatme.org;
 
-    return 302 http://galaxyproject.org;
+    return 302 https://galaxyproject.org;
 }
 
 server {
-    listen       *:80;
+    listen       *:443 ssl;
     server_name  galaxy.psu.edu;
 
     rewrite (?i)^/dev2010/?$ https://galaxyproject.org/dev2010/;
     rewrite (?i)^/gcc2011/?$ https://galaxyproject.org/gcc2011/;
-    return 302 http://galaxyproject.org;
+    return 302 https://galaxyproject.org;
 }
 
 server {
-    listen       *:80;
+    listen       *:443 ssl;
     server_name  galaxycast.org;
 
-    return 302 https://wiki.galaxyproject.org/Learn/Screencasts;
+    return 302 https://galaxyproject.org/learn/screencasts/;
 }
 
 server {
-    listen       *:80;
+    listen       *:443 ssl;
     server_name  getgalaxy.org;
 
-    return 302 https://new.galaxyproject.org/admin/get-galaxy;
+    return 302 https://galaxyproject.org/admin/get-galaxy;
 }

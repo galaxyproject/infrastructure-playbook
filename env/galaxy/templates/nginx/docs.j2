@@ -3,16 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name docs.galaxyproject.org;
-
-    access_log  /var/log/nginx/docs.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/docs.galaxyproject.org_error.log;
-
-    return 301 https://docs.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name docs.galaxyproject.org;
 

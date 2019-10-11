@@ -3,20 +3,6 @@
 ##
 
 server {
-    listen      *:80;
-    server_name wiki.g2.bx.psu.edu;
-
-    return 301 https://wiki.galaxyproject.org$request_uri;
-}
-
-server {
-    listen      *:80;
-    server_name wiki.galaxyproject.org;
-
-    return 301 https://wiki.galaxyproject.org$request_uri;
-}
-
-server {
     listen      *:443 ssl;
     server_name wiki.galaxyproject.org;
 

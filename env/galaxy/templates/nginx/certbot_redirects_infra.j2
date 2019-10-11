@@ -9,6 +9,11 @@ server {
 
     location /.well-known/ {
         root {{ certbot_well_known_root }};
+        # each server in the DNS RR gets its own certs, this is necessary if LE hits the server that's not requesting
+        if (!-f $request_filename) {
+            {% set proxy_host = 'delirium' if inventory_hostname_short == 'chouffe' else 'chouffe' -%}
+            proxy_pass http://{{ proxy_host }}.galaxyproject.org;
+        }
     }
 
     location / {
