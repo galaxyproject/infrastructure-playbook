@@ -14,7 +14,11 @@ cvmfs0-tacc0.galaxyproject.org ansible_user=root
 cvmfs1-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs1-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-psu0.galaxyproject.org ansible_user=root
-cvmfs1-psu0.galaxyproject.org ansible_user=root
+# TEMP TEMP TEMP
+cvmfs1-psu0.galaxyproject.org ansible_user=root ansible_host=128.118.250.10
+
+[smartosglobalzones]
+thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
 
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
@@ -238,17 +242,17 @@ jetstream-iu0.galaxyproject.org
 
 # there should only be one host in this group
 [dockersslcamaster]
-cvmfs1-psu0.galaxyproject.org # serving double duty here
+#cvmfs1-psu0.galaxyproject.org # serving double duty here
 
 [dockersslservers]
-cvmfs1-psu0.galaxyproject.org
+#cvmfs1-psu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
 [dockerswarmmanagers]
-cvmfs1-psu0.galaxyproject.org
-jetstream-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
+jetstream-tacc0.galaxyproject.org
+#cvmfs1-psu0.galaxyproject.org
 
 # Docker
 

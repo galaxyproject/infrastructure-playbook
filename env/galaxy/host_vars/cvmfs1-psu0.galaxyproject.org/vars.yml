@@ -2,11 +2,30 @@
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
+zfs_filesystems:
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs
+    mountpoint: /srv/cvmfs
+    atime: "off"
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/test.galaxyproject.org
+    mountpoint: /srv/cvmfs/test.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/main.galaxyproject.org
+    mountpoint: /srv/cvmfs/main.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/data.galaxyproject.org
+    mountpoint: /srv/cvmfs/data.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/sandbox.galaxyproject.org
+    mountpoint: /srv/cvmfs/sandbox.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/singularity.galaxyproject.org
+    mountpoint: /srv/cvmfs/singularity.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/usegalaxy.galaxyproject.org
+    mountpoint: /srv/cvmfs/usegalaxy.galaxyproject.org
+  - name: zones/cf809043-71de-c6f1-9f3a-b61ce96ffaff/data/srv-cvmfs/cvmfs-config.galaxyproject.org
+    mountpoint: /srv/cvmfs/cvmfs-config.galaxyproject.org
+
 cvmfs_squid_conf_src: templates/squid/cvmfs1-psu0_squid.conf.j2
-cvmfs_stratum1_cache_mem: 1024
+cvmfs_stratum1_cache_mem: 2048
 cvmfs_quota_limit: 1024
 
-cvmfs_srv_device: /dev/vdb
+#cvmfs_srv_device: /dev/vdb
 
 cvmfs_server_urls:
   - domain: galaxyproject.org
@@ -61,63 +80,51 @@ host_templates:
         'read only': 'yes'
         list: 'yes'
 
-host_firewall_rules:
-  - service: rsyncd
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 2377/tcp
-    source: 129.114.17.191/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 2377/tcp
-    source: 149.165.168.157/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/tcp
-    source: 129.114.17.191/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/tcp
-    source: 149.165.168.157/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/udp
-    source: 129.114.17.191/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/udp
-    source: 149.165.168.157/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 4789/udp
-    source: 129.114.17.191/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 4789/udp
-    source: 149.165.168.157/32
-    state: enabled
-    permanent: yes
-    immediate: yes
-
-docker_daemon_bip: '172.17.0.1/17'
-docker_swarm_network: '172.17.128.0/17'
-docker_swarm_gateway: '172.17.128.1'
-
-docker_ssl_ca_dn:
-  country: US
-  state: Pennsylvania
-  locality: University Park
-  organization: The Pennsylvania State University
-  organizational_unit: The Galaxy Project
-  common_name: Galaxy Docker CA Root
+#host_firewall_rules:
+#  - service: rsyncd
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 2377/tcp
+#    source: 129.114.17.191/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 2377/tcp
+#    source: 149.165.168.157/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 7946/tcp
+#    source: 129.114.17.191/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 7946/tcp
+#    source: 149.165.168.157/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 7946/udp
+#    source: 129.114.17.191/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 7946/udp
+#    source: 149.165.168.157/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 4789/udp
+#    source: 129.114.17.191/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - port: 4789/udp
+#    source: 149.165.168.157/32
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
 
 # datacache.galaxyproject.org
 nginx_enable_default_server: false
