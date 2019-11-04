@@ -2,15 +2,16 @@
 
 # infrastats is a smartos lx-branded zone
 
-# FIXME: how did this work, there's no zfs utils in the CentOS zone
-#zfs_filesystems:
-#  - name: zones/{{ ansible_hostname }}/data/influxdb
-#    owner: influxdb
-#    group: influxdb
+smartos_vm_id: 7928caca-d19d-6a5f-c90f-9dc4de2ba11a
+
+zfs_filesystems:
+  - name: zones/{{ smartos_vm_id }}/data/influxdb
+    owner: influxdb
+    group: influxdb
 
 host_links:
   - path: /var/lib/influxdb
-    src: /zones/{{ ansible_hostname }}/data/influxdb
+    src: /zones/{{ smartos_vm_id }}/data/influxdb
     owner: influxdb
     group: influxdb
     force: yes   # remove dir if it exists
