@@ -1,0 +1,28 @@
+---
+
+smartos_images:
+  # centos-7 20190122 linux zvol
+  - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
+    state: present
+
+smartos_vms:
+  - name: jeltz
+    brand: kvm
+    ram: "2048"
+    vcpus: "2"
+    quota: 32768
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 128.118.250.24
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
+        boot: true
+        model: virtio
+    delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"

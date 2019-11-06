@@ -181,8 +181,9 @@
         daemon_reload: true
   tags: cvmfs
 
-- name: Tasks for CVMFS Servers
+- name: Tasks for CVMFS hosts
   hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies:cvmfsclients
+  remote_user: root
   roles:
     # need epel for the jq package
     - geerlingguy.repo-epel
@@ -191,6 +192,7 @@
 
 - name: Tasks for Docker Swarm managers
   hosts: dockerswarmmanagers
+  remote_user: root
   roles:
     - role: docker_swarm
     - role: cron

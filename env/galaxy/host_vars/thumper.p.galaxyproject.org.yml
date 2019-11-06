@@ -13,10 +13,7 @@ smartos_vms:
     hostname: cvmfs1-psu0
     max_physical_memory: 8192
     quota: 32768
-    resolvers:
-      - 128.118.250.8
-      - 54.172.110.33
-      - 54.172.173.123
+    resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: admin
         ip: 128.118.250.10
@@ -25,4 +22,4 @@ smartos_vms:
         vlan_id: 306
     delegate_dataset: true
     customer_metadata:
-      root_authorized_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhyhYQ8GT480B1rTYQQxGoQqeEMzMBEkVn9nRbSK35xyoLgDQyFyZ2QJ+9Y6GAHtnwnaXhutVrYwiKfpEFTWhoUsAWXvTFa81NPwkY04tIf0rrbEyu2chwYVeAjsXX0QKMuAjtN8t4JqnpmUugeDDPvU+1L5Sp3vVkFKJBou5y+4m9ROuitFrE86cqMAQUhuTXYaQjm8gl287hko3acPRC71xUljEosXPgvZLsqRrgX0IBtgUn9tswKSO7WNddDjuuSpSPG9T+81Ack5XDdENgq6qY6L6KwJO0LDkYg8FbadaUi+JXiwsVmsVAsjhDYeRsJvSPbnLg7wbdW6htr7bU6aIv3xc3jOGLUmqDhBQ89iY6cpB0h/7QHGT69RezTgFmEzMKh2fTE+mAivOCe3UBn9aZxl4Cjwr+y9CSA9iQ09V2TVXf3CdHUwW+HehjVJycV0nckJ5U7C+qALj9+hiNftoMwFymyNmvQLKpgwsjDcenQ6uXCTXSoH6Mc4v9gErWIC/090jK2lOYQ2YlbPpxrqwRE5pK6d982wqCTBhNYKZYZGiGq8B8IX76QiA2hltUT202QqOhCdWvIfmllOEf1aKzbB2o8ktILx0ECNJpe8vVS4DMKyB9FmIz86mXVadnlnzhTNEWJpmehlvOf3gFu+sZaSz9+hoz1eO5RBBgcw== nate@duvel
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"

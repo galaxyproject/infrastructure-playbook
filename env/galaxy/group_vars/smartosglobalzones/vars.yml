@@ -1,0 +1,19 @@
+---
+
+smartos_root_authorized_keys: "{{ vault_smartos_root_authorized_keys }}"
+
+smartos_resolvers:
+  - 128.118.250.8
+  - 54.172.110.33
+  - 54.172.173.123
+
+smartosglobalzones_group_directories:
+  - path: /usbkey/config.inc
+
+smartosglobalzones_group_files:
+  - dest: /usbkey/config.inc/root_authorized_keys
+    content: |
+      ### This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+      {% for user in smartos_root_authorized_keys %}
+      {{ sshkeys[user] }}
+      {% endfor %}

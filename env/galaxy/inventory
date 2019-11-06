@@ -14,10 +14,10 @@ cvmfs0-tacc0.galaxyproject.org ansible_user=root
 cvmfs1-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs1-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-psu0.galaxyproject.org ansible_user=root
-# TEMP TEMP TEMP
-cvmfs1-psu0.galaxyproject.org ansible_user=root ansible_host=128.118.250.10
+cvmfs1-psu0.galaxyproject.org ansible_user=root
 
 [smartosglobalzones]
+smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
 
 # These get all the common roles. Additionally:
@@ -40,12 +40,14 @@ leeroy.galaxyproject.org
 mjolnir0.galaxyproject.org
 duvel.galaxyproject.org
 infrastats.galaxyproject.org
+jeltz.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
 [sshservers]
 [sshservers:children]
 baseenv
 jetstreamhosts
+smartosglobalzones
 
 # For things that need access to env-specific sshprivatekeys
 [sshclients]
@@ -100,10 +102,12 @@ duvel.galaxyproject.org
 radegast.galaxyproject.org
 duvel.galaxyproject.org
 infrastats.galaxyproject.org
+jeltz.galaxyproject.org
 
 [virtual:children]
 ec2hosts
 jetstreamhosts
+cvmfsstratum1servers
 
 [ec2hosts]
 delirium.galaxyproject.org
@@ -169,7 +173,7 @@ delirium.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
-cvmfs1-psu0.galaxyproject.org  # for datacache
+jeltz.galaxyproject.org
 #status.usegalaxy.org
 
 [webservers:children]
@@ -234,25 +238,24 @@ cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [cvmfsclients]
-# cvmfs1-psu0 is a client due to its role as the datacache server
-cvmfs1-psu0.galaxyproject.org
+jeltz.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
 # Docker Swarm
 
 # there should only be one host in this group
 [dockersslcamaster]
-#cvmfs1-psu0.galaxyproject.org # serving double duty here
+jeltz.galaxyproject.org
 
 [dockersslservers]
-#cvmfs1-psu0.galaxyproject.org
+jeltz.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
 [dockerswarmmanagers]
 jetstream-iu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
-#cvmfs1-psu0.galaxyproject.org
+jeltz.galaxyproject.org
 
 # Docker
 
