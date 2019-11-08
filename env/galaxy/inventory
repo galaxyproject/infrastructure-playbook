@@ -15,6 +15,7 @@ cvmfs1-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs1-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
+jsts.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.223
 
 [smartosglobalzones]
 smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
@@ -25,6 +26,8 @@ thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/to
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
+jsts.galaxyproject.org
+
 [baseenv:children]
 galaxyenv
 baseenv-nomail
@@ -55,6 +58,7 @@ smartosglobalzones
 [sshclients]
 orval.galaxyproject.org
 radegast.galaxyproject.org
+jsts.galaxyproject.org
 westvleteren.galaxyproject.org
 
 [sshclients:children]
@@ -65,6 +69,7 @@ jenkinsslaves
 
 [toolshedservers]
 radegast.galaxyproject.org
+jsts.galaxyproject.org
 
 # For things that need access to sslkeys and the "PKI"
 [sslservers]
@@ -102,6 +107,7 @@ duvel.galaxyproject.org
 # - sets the hostname to the inventory_hostname
 [virtual]
 radegast.galaxyproject.org
+jsts.galaxyproject.org
 duvel.galaxyproject.org
 infrastats.galaxyproject.org
 jeltz.galaxyproject.org
@@ -122,6 +128,7 @@ cvmfs1-iu0.galaxyproject.org
 cvmfs1-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
+jsts.galaxyproject.org
 
 [authkeyhosts]
 [authkeyhosts:children]
