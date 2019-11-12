@@ -1,8 +1,8 @@
 ---
-# TS in JS Test
+# TS in JS
 
 os_name: "{{ inventory_hostname_short }}"
-os_flavor: m1.small
+os_flavor: m1.medium
 os_auto_ip: true
 os_cloud_id: "jetstream_tacc"
 os_key_name: "nate_jetstream"

@@ -1,3 +1,30 @@
 ---
 
 jetstreamhosts_group_authorized_key_users: "{{ vault_jetstreamhosts_group_authorized_key_users }}"
+
+# Common Openstack networks and security groups
+
+os_network:
+  name: "infrastructure-net"
+  subnet:
+    name: "infrastructure-subnet"
+    cidr: 10.3.0.0/20
+  router:
+    name: "infrastructure-trt"
+    network: public
+
+os_security_group_rules:
+  - name: "infrastructure-sg"
+    rules:
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 22
+        port_range_max: 22
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 80
+        port_range_max: 80
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 443
+        port_range_max: 443

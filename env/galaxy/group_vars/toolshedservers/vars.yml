@@ -1,5 +1,11 @@
 ---
 
+toolshedservers_group_packages:
+  - htop
+  - strace
+  - dstat
+  - tmux
+
 toolshedservers_group_authorized_key_users: "{{ vault_toolshedservers_group_authorized_key_users }}"
 
 toolshedservers_group_groups:
