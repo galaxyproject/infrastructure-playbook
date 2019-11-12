@@ -73,7 +73,7 @@
         - name: Spawn new instance
           os_server:
             cloud: "{{ os_cloud_id }}"
-            name: "{{ inventory_hostname }}"
+            name: "{{ os_name | default(inventory_hostname) }}"
             image: "{{ os_image }}"
             flavor: "{{ os_flavor }}"
             key_name: "{{ os_key_name }}"
@@ -93,7 +93,7 @@
         - name: Attach volumes to instances
           os_server_volume:
             cloud: "{{ os_cloud_id }}"
-            server: "{{ inventory_hostname }}"
+            server: "{{ os_name | default(inventory_hostname) }}"
             volume: "{{ item.name }}"
           delegate_to: localhost
           loop: "{{ os_volumes | default([]) }}"

@@ -1,6 +1,7 @@
 ---
 # TS in JS Test
 
+os_name: "{{ inventory_hostname_short }}"
 os_flavor: m1.small
 os_auto_ip: true
 os_cloud_id: "jetstream_tacc"
