@@ -1,0 +1,60 @@
+---
+
+# A simple role for managing SSSD that allows for dynamically defining configs
+#
+# 1. Run before things that want to configure SSSD with sssd_install: true, sssd_configure: false
+# 2. Run other things that build up sssd_services and sssd_domain_configs
+# 3. Run after things with sssd_install: false, sssd_configure: true
+#
+# Only one domain is supported
+
+- name: Main task block
+  block:
+
+    - name: Install SSSD
+      package:
+        name: sssd
+      #when: sssd_install
+
+    - name: Install SSSD domain configs
+      template:
+        src: sssd_domain.conf.j2
+        dest: "/etc/sssd/conf.d/{{ item.precedence | default(10) }}-{{ item.config_name }}.conf"
+        owner: root
+        group: root
+        mode: "0600"
+      loop: "{{ sssd_domain_configs }}"
+      #when: sssd_configure
+      notify:
+        - restart sssd
+
+    # TODO: caching config
+    - name: Install SSSD primary config
+      template:
+        src: sssd.conf.j2
+        dest: /etc/sssd/sssd.conf
+        owner: root
+        group: root
+        mode: "0600"
+      #when: sssd_configure
+      notify:
+        - restart sssd
+
+    #- name: Configure SSSD domain
+    #  ini_file:
+    #    path: /etc/sssd/sssd.conf
+    #    section: sssd
+    #    option: "domains = {{ sssd_domain }}"
+    #    owner: root
+    #    group: root
+    #    mode: "0600"
+    #  when: sssd_configure
+
+    #- name: Configure SSSD services
+    #  ini_file:
+    #    path: /etc/sssd/sssd.conf
+    #    section: sssd
+    #    option: "services = {{ ', '.join(sssd_services) }}"
+    #  when: sssd_configure and sssd_services | length > 0
+
+  when: ansible_os_family == 'RedHat'

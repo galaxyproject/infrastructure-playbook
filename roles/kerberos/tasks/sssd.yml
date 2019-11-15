@@ -1,0 +1,42 @@
+---
+
+#- name: Install Kerberos authentication provider config
+#  template:
+#    src: sssd.conf.j2
+#    dest: /etc/sssd/conf.d/10-pam-krb5.conf
+
+# lineinfile's behavior when `backrefs = True` is very odd. We don't want to overwrite include_dirs if it's already
+# properly set, but we don't know the exact format it will be in (with or without '=', with a comment at end of line,
+# etc.). So check for a match first and then add if there's no match.
+#- name: Configure SSSD for PAM
+#  lineinfile:
+#    name: /etc/sssd/sssd.conf
+#    regexp: '^(services\s*=\s*)
+
+- name: Set Kerberos authentication provider config
+  set_fact:
+    __kerberos_sssd_config:
+      precendence: 10
+      config_name: auth-krb5
+      config:
+        auth_provider: krb5
+        krb5_server: _srv_
+        krb5_realm: "{{ kerberos_realm }}"
+
+- name: Add Kerberos authentication provider config to SSSD domain configs
+  set_fact:
+    sssd_domain_configs: "{{ sssd_domain_configs | default([]) }} + [{{ __kerberos_sssd_config }}]"
+    sssd_services: "{{ sssd_services | default([]) }} + ['pam']"
+
+- name: Check for presence of SSSD in PAM config
+  lineinfile:
+    name: /etc/pam.d/password-auth
+    regexp: '^auth.*\spam_sss\.so(\s|$)'
+    state: absent
+  check_mode: true
+  changed_when: __sss_configured is not changed     # yeah...
+  register: __sss_configured
+
+- name: Configure PAM for SSSD
+  command: authconfig --enablesssdauth --update
+  when: __sss_configured is changed

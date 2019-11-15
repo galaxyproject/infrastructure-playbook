@@ -1,0 +1,8 @@
+---
+
+# 'nfs' role
+nfsv4_domain: galaxyproject.org
+#nfs_symlinks:
+#  - { dest: '/galaxy/home', src: '/nfs/thumper.galaxyproject.org/home' }
+#  - { dest: '/galaxy/data', src: '/nfs/thumper.galaxyproject.org/data' }
+#  - { dest: '/galaxy/software', src: '/nfs/thumper.galaxyproject.org/software' }

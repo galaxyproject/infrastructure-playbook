@@ -1,0 +1,7 @@
+---
+
+sssd_install: true
+sssd_configure: true
+sssd_domain: default
+sssd_services: []
+sssd_domain_configs: []

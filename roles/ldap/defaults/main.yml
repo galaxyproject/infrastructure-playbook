@@ -1,0 +1,46 @@
+---
+
+# required:
+#ldap_base_dn:
+
+# I don't love that these can't be undefined like they were when using include_vars instead of none, but I don't like
+# that a role has to run before its include_vars vars are available to other roles in the play, so here we are
+ldap_implementation: openldap
+ldap_ldap_conf_path: "{{ __ldap_debian_ldap_conf_path if __ldap_debian else __ldap_redhat_ldap_conf_path }}"
+ldap_nss_ldap_conf_path: "{{ __ldap_ubuntu_nss_ldap_conf_path if __ldap_ubuntu else (__ldap_debian_nss_ldap_conf_path if __ldap_debian else none) }}"
+ldap_sudo_ldap_conf_path: "{{ __ldap_debian_sudo_ldap_conf_path if __ldap_debian and not __ldap_ubuntu else none }}"
+ldap_nsswitch_conf_src: "{{ 'debian-nsswitch.conf' if __ldap_debian and not __ldap_ubuntu else none }}"
+
+__ldap_debian: "{{ ansible_os_family == 'Debian' }}"
+__ldap_ubuntu: "{{ ansible_distribution == 'Ubuntu' }}"
+__ldap_redhat: "{{ ansible_os_family == 'RedHat' }}"
+
+__ldap_debian_ldap_conf_path: /etc/ldap/ldap.conf
+__ldap_redhat_ldap_conf_path: /etc/openldap/ldap.conf
+
+__ldap_debian_nss_ldap_conf_path: /etc/libnss-ldap.conf
+__ldap_ubuntu_nss_ldap_conf_path: /etc/ldap.conf
+
+# on Ubuntu this is already a symlink to /etc/ldap/ldap.conf
+__ldap_debian_sudo_ldap_conf_path: /etc/sudo-ldap.conf
+
+__ldap_debian_cache_service_name: nscd
+__ldap_redhat_cache_service_name: sssd
+ldap_cache_service_name: "{{ __ldap_debian_cache_service_name if __ldap_debian else __ldap_redhat_cache_service_name }}"
+
+__ldap_debian_packages:
+  openldap:
+    - ldap-utils
+  nss:
+    - libnss-ldap
+    - sudo-ldap
+    - nscd
+
+__ldap_redhat_packages:
+  openldap:
+    - openldap-clients
+  nss:
+    - sssd-ldap
+
+__ldap_packages: "{{ __ldap_debian_packages[ldap_implementation] if __ldap_debian else __ldap_redhat_packages[ldap_implementation] }}"
+__ldap_nss_packages: "{{ __ldap_debian_packages.nss if __ldap_debian else __ldap_redhat_packages.nss }}"

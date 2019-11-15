@@ -27,15 +27,15 @@ thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/to
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
-testtoolshed.galaxyproject.org
 toolshed.galaxyproject.org
 
 [baseenv:children]
 galaxyenv
+liteenv
 baseenv-nomail
 jenkinsslaves
 
-# Adds postfix, resolv.conf config
+# Everything in baseenv + adds postfix, resolv.conf config
 [galaxyenv]
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
@@ -88,14 +88,19 @@ cvmfs1-tacc0.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
-# These get LDAP, Kerberos+Auth, and NFS, but not AFS
+# These get everything in baseenv + LDAP and Kerberos+Auth, but not NFS
 [liteenv]
+testtoolshed.galaxyproject.org
+
+[liteenv:children]
+fullenv
+
+# These get everything in liteenv + NFS
+[fullenv]
 mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
 nn14.galaxyproject.org
 
-# These get everything in liteenv + AFS
-[fullenv]
 [fullenv:children]
 infrastructure
 
@@ -216,24 +221,27 @@ infrastats.galaxyproject.org
 
 ## Kerberos
 
+# - consume k5login_users to create ~/.k5login; without AFS and automation for the host keytab this is less relevant
+#   (and cloud resources can't have reverse DNS set properly anyway)
+# - install kerberos client
+# - configure PAM/SSSD for kerberos auth
 [kerberosauthclients]
-
 [kerberosauthclients:children]
 liteenv
 
 ## LDAP
 
+# - install ldap client
+# - configure NSS/SSSD for kerberos auth
 [ldapnssclients]
-
 [ldapnssclients:children]
 liteenv
 
 ## NFS
 
 [nfsldapclients]
-
 [nfsldapclients:children]
-liteenv
+fullenv
 
 ## CVMFS
 

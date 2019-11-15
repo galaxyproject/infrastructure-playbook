@@ -1,26 +1,15 @@
 ---
 
-# Set ldap_ldap_conf
-- name: Collect OS-specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_distribution | lower }}.yml"
-    - "{{ ansible_os_family | lower }}_family.yml"
-    - default.yml
-
 - name: Install packages for LDAP client
-  apt:
-    pkg: "ldap-utils"
+  package:
+    name: "{{ __ldap_packages }}"
 
 - name: Install OpenLDAP ldap.conf
   template:
     src: ldap.conf.j2
-    dest: "{{ ldap_ldap_conf }}"
-    owner: "root"
-    group: "root"
+    dest: "{{ ldap_ldap_conf_path }}"
     mode: 0444
     backup: yes
-  when: ldap_ldap_conf is defined
 
-- include: nss.yml
+- include_tasks: nss.yml
   when: inventory_hostname in groups['ldapnssclients']

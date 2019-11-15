@@ -2,5 +2,33 @@
 
 kerberos_domain: "{{ kerberos_realm | lower }}"
 kerberos_admin_server: "{{ groups.kerberosmasterservers[0] }}"
-kerberos_implementation: heimdal
+kerberos_implementation: "{{ 'heimdal' if __kerberos_debian else 'mit' }}"
 kerberos_krb5_conf_dest: /etc/krb5.conf
+
+__kerberos_debian: "{{ ansible_os_family == 'Debian' }}"
+__kerberos_redhat: "{{ ansible_os_family == 'RedHat' }}"
+
+__kerberos_debian_packages:
+  heimdal:
+    - heimdal-clients
+    - krb5-config
+    - libsasl2-modules-gssapi-heimdal
+  mit:
+    - krb5-user
+    - krb5-config
+    - libsasl2-modules-gssapi-mit
+  pam:
+    - libpam-krb5
+
+__kerberos_redhat_packages:
+  heimdal:
+    - heimdal-workstation
+    # FIXME: heimdal GSSAPI package?
+  mit:
+    - krb5-workstation
+    - cyrus-sasl-gssapi
+  pam:
+    - sssd-krb5
+
+__kerberos_packages: "{{ __kerberos_debian_packages[kerberos_implementation] if __kerberos_debian else __kerberos_redhat_packages[kerberos_implementation] }}"
+__kerberos_auth_packages: "{{ __kerberos_debian_packages.pam if __kerberos_debian else __kerberos_redhat_packages.pam }}"

@@ -1,47 +1,38 @@
 ---
 
 - name: Install packages for LDAP NSS
-  apt:
-    pkg: "{{ item }}"
-  with_items:
-    - libnss-ldap
-    - sudo-ldap
-    - nscd
+  package:
+    name: "{{ __ldap_nss_packages }}"
+
+- name: Install nss_ldap ldap.conf
+  template:
+    src: "ldap.conf.j2"
+    dest: "{{ ldap_nss_ldap_conf_path }}"
+    mode: 0444
+    backup: yes
+  when: ldap_nss_ldap_conf_path != ""
+  notify:
+    - restart ldap cache service
+
+- name: Install sudo ldap.conf
+  template:
+    src: "ldap.conf.j2"
+    dest: "{{ ldap_sudo_ldap_conf_path }}"
+    mode: 0444
+    backup: yes
+  when: ldap_sudo_ldap_conf_path != ""
 
 - name: Install nsswitch.conf
   copy:
     src: "{{ ldap_nsswitch_conf_src }}"
     dest: "/etc/nsswitch.conf"
-    owner: "root"
-    group: "root"
     mode: 0444
     backup: yes
-  when: ldap_nsswitch_conf_src is defined
+  when: ldap_nsswitch_conf_src != ""
   notify:
-    - restart nscd
+    - restart ldap cache service
 
-- name: Install nss_ldap ldap.conf
-  template:
-    src: "ldap.conf.j2"
-    dest: "{{ ldap_nss_ldap_conf }}"
-    owner: "root"
-    group: "root"
-    mode: 0444
-    backup: yes
-  when: ldap_nss_ldap_conf is defined
-  notify:
-    - restart nscd
-
-- name: Install sudo ldap.conf
-  template:
-    src: "ldap.conf.j2"
-    dest: "{{ ldap_sudo_ldap_conf }}"
-    owner: "root"
-    group: "root"
-    mode: 0444
-    backup: yes
-  when: ldap_sudo_ldap_conf is defined
-
+# FIXME: authconfig method for rhel?
 - name: Install pam_mkhomedir config
   copy:
     src: "pam-config-mkhomedir"
@@ -49,6 +40,10 @@
     owner: "root"
     group: "root"
     mode: 0444
-  when: ldap_nss_home_directory_attribute is defined and ansible_os_family == "Debian"
+  when: ldap_nss_home_directory_attribute is defined and __ldap_debian
   notify:
     - run pam-auth-update
+
+- name: Include tasks for configuring SSSD
+  include_tasks: sssd.yml
+  when: __ldap_redhat

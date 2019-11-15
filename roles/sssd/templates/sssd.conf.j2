@@ -1,0 +1,17 @@
+##
+## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+##
+
+[sssd]
+services = {{ ', '.join(sssd_services | unique) }}
+domains = {{ sssd_domain }}
+
+{# FIXME: group-scoped stuff doesn't really belong in the template -#}
+{% if 'ldapnssclients' in group_names %}
+[sudo]
+{% endif %}
+
+[domain/default]
+{% if sssd_dns_discovery_domain is defined %}
+dns_discovery_domain = {{ sssd_dns_discovery_domain }}
+{% endif %}

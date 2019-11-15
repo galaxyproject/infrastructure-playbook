@@ -1,0 +1,49 @@
+---
+
+- name: Set LDAP identity provider config
+  set_fact:
+    __ldap_sssd_config:
+      precendence: 10
+      config_name: id-ldap
+      config:
+        id_provider: ldap
+        ldap_uri: _srv_
+        ldap_search_base: "{{ ldap_base_dn }}"
+
+- name: Alternate home directory tasks block
+  block:
+
+    # ugly...
+    - name: Add ldap_user_home_directory to SSSD identity provider config
+      set_fact:
+        __ldap_sssd_config: "{{ __ldap_sssd_config | combine({'config': {'ldap_user_home_directory': ldap_nss_home_directory_attribute}}, recursive=True) }}"
+
+    - name: Check for presence of pam_mkhomedir in PAM config
+      lineinfile:
+        name: /etc/pam.d/password-auth
+        regexp: '^session.*\spam_mkhomedir\.so(\s|$)'
+        state: absent
+      changed_when: __sss_configured is not changed     # yeah...
+      register: __sss_configured
+
+    - name: Configure PAM for alternate home directory
+      command: authconfig --enablemkhomedir --update
+      when: __sss_configured is changed
+
+  when: ldap_nss_home_directory_attribute is defined
+
+- name: Add LDAP identity provider config to SSSD domain configs
+  set_fact:
+    sssd_domain_configs: "{{ sssd_domain_configs | default([]) }} + [{{ __ldap_sssd_config }}]"
+    sssd_services: "{{ sssd_services | default([]) }} + ['nss', 'sudo']"
+
+# Warning: clobbers existing sudoers config (but there shouldn't be one)
+- name: Ensure SSSD is a provider for sudoers in NSS
+  lineinfile:
+    path: /etc/nsswitch.conf
+    regexp: '^sudoers:.*\ssss(\s|$)'
+    line: "sudoers: files sss"
+    backup: yes
+
+# [sudo] section needs to be added, but currently it's done in the sssd.conf template in the sssd role, since sssd isn't
+# installed yet (and thus conf.d does not exist yet)

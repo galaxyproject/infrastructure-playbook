@@ -48,39 +48,27 @@
       tags: users
   tags: initial
 
-# This play is currently Debuntu-only
-- name: Tasks for "full environment" hosts (Kerberos/LDAP/NFS/AFS)
-  hosts: fullenv
-  remote_user: root
-  roles:
-    - role: kerberos
-      tags: kerberos
-    # Run the ssh role again here because doing so with the liteenv group will
-    # enable GSSAPIAuthentication
-    - role: ssh
-      tags: ssh
-    - role: ldap
-      tags: ldap
-    - role: nfs
-      tags: nfs
-  tags: fullenv
-
-# This play is currently Debuntu-only
-- name: Tasks for "lite environment" hosts (Kerberos/LDAP/NFS, no AFS)
+- name: Tasks for "lite environment" hosts
   hosts: liteenv
   remote_user: root
   roles:
     - role: kerberos
-      tags: kerberos
-    # Run the ssh role again here because doing so with the liteenv group will
-    # enable GSSAPIAuthentication
-    - role: ssh
-      tags: ssh
+      tags: kerberos,sssd
     - role: ldap
-      tags: ldap
+      tags: ldap,sssd
+    # Must run after kerberos and ldap, which build up the SSSD config dynamically
+    - role: sssd
+      tags: sssd
+  tags: liteenv
+
+# This play is currently Debuntu-only
+- name: Tasks for "full environment" hosts
+  hosts: fullenv
+  remote_user: root
+  roles:
     - role: nfs
       tags: nfs
-  tags: liteenv
+  tags: fullenv
 
 # FIXME: why is the always tag being applied to this whole play?
 #- name: Tasks for infrastructure servers

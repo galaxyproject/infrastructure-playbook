@@ -1,8 +1,8 @@
 ---
 
-- name: restart nscd
+- name: restart ldap cache service
   service:
-    name: "nscd"
+    name: "{{ ldap_cache_service_name }}"
     state: "restarted"
 
 - name: run pam-auth-update

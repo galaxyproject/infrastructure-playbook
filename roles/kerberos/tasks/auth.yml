@@ -1,5 +1,9 @@
 ---
 
 - name: Install packages for Kerberos auth
-  apt:
-    pkg: libpam-krb5
+  package:
+    name: "{{ __kerberos_auth_packages }}"
+
+- name: Include tasks for configuring SSSD
+  include_tasks: sssd.yml
+  when: __kerberos_redhat

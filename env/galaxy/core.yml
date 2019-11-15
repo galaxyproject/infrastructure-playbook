@@ -5,7 +5,7 @@
   remote_user: root
   tasks:
     - name: Get EC2 Facts
-      action: ec2_facts
+      action: ec2_metadata_facts
   tags: always
 
 - name: Tasks for virtualized hosts
@@ -28,6 +28,11 @@
 - name: Tasks for infrastructure servers
   hosts: infrastructure
   remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - name: Gathering Facts
+      gather_facts:
+      tags: always
   roles:
     - name: required_vars
       required_vars_roles:
