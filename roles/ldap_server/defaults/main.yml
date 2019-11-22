@@ -3,11 +3,52 @@
 ldap_server_implementation: "openldap"
 ldap_server_users_ou: "people"
 
-# openldap defaults
-ldap_server_openldap_schemas:
-  - core
-  - cosine
-  - rfc2307bis
-  - inetorgperson
-# this is a debian default, it doesn't belong here but it should be overrideable
-ldap_server_openldap_primary_db_dn: "olcDatabase={1}mdb,cn=config"
+# This allows us to support multiple distros/implementations even though only Debian/OpenLDAP are defined
+__ldap_server_defaults:
+  debian:
+    openldap:
+      packages:
+        - slapd
+        - ldap-utils
+        - libsasl2-modules-gssapi-heimdal   # assumes heimdal
+        - ldapvi
+        - python-ldap
+      config_file: /etc/ldap/slapd.conf
+      config_dir: /etc/ldap/slapd.d
+      service_name: slapd
+      # OpenLDAP-specific options
+      files:
+        schemas_dir: /etc/ldap/schema
+        local_schemas_dir: /etc/ldap/schema-local
+        access_file: /etc/ldap/slapd.access
+        database_directory: /var/lib/ldap
+        pidfile: /var/run/slapd/slapd.pid
+        argsfile: /var/run/slapd/slapd.args
+        modulepath: /usr/lib/ldap
+        loglevel: stats
+        sizelimit: unlimited
+      olc:
+        schemas_dir: /etc/ldap/slapd.d/cn=config/cn=schema
+        database_directory: /var/lib/ldap
+        primary_db_dn: olcDatabase={1}mdb,cn=config
+      schemas:
+        - core
+        - cosine
+        - rfc2307bis
+        - inetorgperson
+__ldap_server_distro: "{{ ansible_os_family |lower }}"
+
+ldap_server_packages: "{{ __ldap_server_defaults[__ldap_server_distro][ldap_server_implementation].packages }}"
+ldap_server_config_file: "{{ __ldap_server_defaults[__ldap_server_distro][ldap_server_implementation].config_file }}"
+ldap_server_config_dir: "{{ __ldap_server_defaults[__ldap_server_distro][ldap_server_implementation].config_dir }}"
+ldap_server_service_name: "{{ __ldap_server_defaults[__ldap_server_distro][ldap_server_implementation].service_name }}"
+
+# OpenLDAP-specific options
+# either "files" or "olc"
+ldap_server_openldap_config_style: "files"
+__ldap_server_openldap_config: "{{ __ldap_server_defaults[__ldap_server_distro].openldap[ldap_server_openldap_config_style] }}"
+__ldap_server_openldap_config_merged: "{{ __ldap_server_openldap_config |combine(ldap_server_openldap_config |default({})) }}"
+ldap_server_openldap_schemas_dir: "{{ __ldap_server_openldap_config_merged.schemas_dir }}"
+ldap_server_openldap_local_schemas_dir: "{{ __ldap_server_openldap_config_merged.local_schemas_dir |default(none) }}"
+ldap_server_openldap_primary_db_dn: "{{ __ldap_server_openldap_config_merged.primary_db_dn }}"
+ldap_server_openldap_schemas: "{{ __ldap_server_defaults[__ldap_server_distro].openldap.schemas }}"

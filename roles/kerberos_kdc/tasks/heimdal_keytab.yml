@@ -12,12 +12,9 @@
         kerberos_kdc_iprop_principal: "iprop/{{ ansible_fqdn }}@{{ kerberos_kdc_realm }}"
 
     - name: Write admin keytab
-      action:
-        module: decode
-      args:
-        content: "{{ kerberos_kdc_admin_principal_keytab }}"
+      copy:
+        content: "{{ kerberos_kdc_admin_principal_keytab |b64decode }}"
         dest: "{{ _ret_keytab_mktemp.stdout }}"
-        filter: base64
         mode: "0600"
 
     # these steps could be collapsed to one if there was a way to run `ktutil get` promptless
@@ -29,7 +26,7 @@
 
     - name: Create iprop principal
       command: "{{ kerberos_kdc_kadmin_command }} add --random-key --use-defaults {{ kerberos_kdc_iprop_principal }}"
-      when: _ret_kadmin_list_iprop_principal | failed
+      when: _ret_kadmin_list_iprop_principal is failed
 
     - name: Extract iprop keytab
       command: "{{ kerberos_kdc_kadmin_command }} ext_keytab --keytab={{ kerberos_kdc_iprop_keytab }} {{ kerberos_kdc_iprop_principal }}"

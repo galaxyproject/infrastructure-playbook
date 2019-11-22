@@ -1,0 +1,149 @@
+---
+
+- name: Check for desired schemas
+  stat:
+    path: "{{ ldap_server_openldap_schemas_dir }}/cn={{ '{' ~ index ~ '}' }}{{ item }}.ldif"
+  loop: "{{ ldap_server_openldap_schemas |flatten(levels=1) }}"
+  loop_control:
+    index_var: index
+  register: _ret_slapd_schemas
+
+- name: Check for conflicting schemas
+  shell: echo {{ ldap_server_openldap_schemas_dir }}/cn={{ '{' ~ index ~ '}*.ldif' }}
+  loop: "{{ _ret_slapd_schemas.results |flatten(levels=1) }}"
+  when: not item.stat.exists
+  register: _ret_slapd_schema_conflicts
+  loop_control:
+    label: "{{ item.item }}"
+    index_var: index
+
+- name: Remove conflicting schemas
+  file:
+    path: "{{ item.stdout }}"
+    state: absent
+  loop: "{{ _ret_slapd_schema_conflicts.results }}"
+  when: item is changed and '*' not in item.stdout
+  loop_control:
+    label: "{{ item.stdout | default(item.item.item) }}"
+  notify:
+    - restart ldap server
+
+- name: Install missing schemas
+  copy:
+    src: "{{ item.item }}.ldif"
+    dest: "{{ item.invocation.module_args.path }}"
+  loop: "{{ _ret_slapd_schemas.results }}"
+  when: not item.stat.exists
+  loop_control:
+    label: "{{ item.item }}"
+  notify:
+    - restart ldap server
+
+- name: Force OpenLDAP server restart if schemas were changed
+  meta: flush_handlers
+
+- name: Enable GSSAPI authentication to cn=config
+  ldap_attr:
+    dn: "cn=config"
+    name: "olcAuthzRegexp"
+    values: "{0}uid=(.+),cn=gssapi,cn=auth uid=$1,ou={{ ldap_server_users_ou }},{{ ldap_server_base_dn }}"
+    state: "exact"
+
+# default is 500
+- name: Set return record size limit
+  ldap_attr:
+    dn: "cn=config"
+    name: "olcSizeLimit"
+    values: "5000"
+    state: "exact"
+
+# conditionally required: 'ldap_server_openldap_syncrepl_config.provider' if an 'ldap_server_openldap_access' item uses the 'role' key is set
+- name: Configure access restrictions
+  ldap_attr:
+    dn: "{{ item.dn }}"
+    name: "olcAccess"
+    values: "{{ item.entries }}"
+    state: "exact"
+  loop: "{{ ldap_server_openldap_access }}"
+  when: >
+    item.role is not defined or
+    (item.role == 'provider' and inventory_hostname == ldap_server_openldap_syncrepl_config.provider) or
+    (item.role == 'consumer' and inventory_hostname != ldap_server_openldap_syncrepl_config.provider)
+
+- name: Set root DN if unset and sync replication is in use
+  set_fact:
+    ldap_server_openldap_root_dn: "{{ ldap_server_openldap_syncrepl_config.dn | default('cn=syncrepl,' ~ ldap_server_base_dn) }}"
+  when: >-
+    ldap_server_openldap_syncrepl_config is defined
+        and ldap_server_openldap_root_dn is not defined
+        and inventory_hostname != ldap_server_openldap_syncrepl_config.provider
+
+- name: Set or unset root DN and password
+  ldap_attr:
+    dn: "{{ ldap_server_openldap_primary_db_dn }}"
+    name: "{{ item.name }}"
+    values: "{{ item.value }}"
+    state: "exact"
+  loop:
+    - name: "olcRootDN"
+      value: "{{ ldap_server_openldap_root_dn | default('') }}"
+    # This valid syntax seems to be not working as of 2.8.5
+    #- name: "olcRootPW"
+    #  value: "{{ ldap_server_openldap_root_password | default('') }}"
+
+- name: "HACK: unset root password (will always be changed/error or skipped)"
+  command: ldapmodify -Y EXTERNAL -H ldapi:///
+  args:
+    stdin: |
+      dn: {{ ldap_server_openldap_primary_db_dn }}
+      changetype: modify
+      delete: olcRootPW
+  when: ldap_server_openldap_root_password is not defined
+  register: _ret_delete_rootpw
+  failed_when: not (_ret_delete_rootpw.rc == 0 or _ret_delete_rootpw.rc == 16)
+  changed_when: _ret_delete_rootpw.rc == 0
+
+- name: Load syncprov module (provider)
+  ldap_attr:
+    dn: "cn=module{0},cn=config"
+    name: "olcModuleLoad"
+    values: "syncprov"
+    state: "present"
+  when: ldap_server_openldap_syncrepl_config is defined and inventory_hostname == ldap_server_openldap_syncrepl_config.provider
+  register: _ret_load_syncprov
+  failed_when: _ret_load_syncprov | failed and 'Type or value exists' not in _ret_load_syncprov.details
+
+# HACK: could be something else at {0}, but this will work for our controlled scenario
+# https://github.com/ansible/ansible/issues/22287
+- name: Configure sync replication (provider)
+  ldap_entry:
+    dn: "olcOverlay={0}syncprov,{{ ldap_server_openldap_primary_db_dn }}"
+    objectClass:
+      - "olcOverlayConfig"
+      - "olcSyncProvConfig"
+    attributes:
+      olcOverlay: "{0}syncprov"
+  when: ldap_server_openldap_syncrepl_config is defined and inventory_hostname == ldap_server_openldap_syncrepl_config.provider
+
+- name: Ensure cn=admin entry does not exist
+  ldap_entry:
+    dn: "cn=admin,{{ ldap_server_base_dn }}"
+    state: "absent"
+
+- name: Configure sync replication (consumer)
+  ldap_attr:
+    dn: "{{ ldap_server_openldap_primary_db_dn }}"
+    name: "olcSyncrepl"
+    values:
+      - >-
+        {0}rid={{ ldap_server_openldap_syncrepl_config.rid | default(1) }}
+        provider=ldap://{{ ldap_server_openldap_syncrepl_config.provider }}
+        type={{ ldap_server_openldap_syncrepl_config.type | default('refreshAndPersist') }}
+        interval={{ ldap_server_openldap_syncrepl_config.interval | default('00:01:00:00') }}
+        retry="{{ ldap_server_openldap_syncrepl_config.retry | default('60 10 300 3') }}"
+        searchbase="{{ ldap_server_base_dn }}"
+        scope={{ ldap_server_openldap_syncrepl_config.scope | default('sub') }}
+        schemachecking={{ ldap_server_openldap_syncrepl_config.schemachecking | default('on') }}
+        bindmethod={{ ldap_server_openldap_syncrepl_config.bindmethod | default('simple') }}
+    state: "exact"
+  when: ldap_server_openldap_syncrepl_config is defined and inventory_hostname != ldap_server_openldap_syncrepl_config.provider

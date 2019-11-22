@@ -12,5 +12,4 @@
 
 - name: Install packages
   apt:
-    name: "{{ item }}"
-  with_items: "{{ kerberos_kdc_packages }}"
+    name: "{{ kerberos_kdc_packages }}"

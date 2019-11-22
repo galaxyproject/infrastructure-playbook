@@ -1,0 +1,71 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+{% for item in _ret_slapd_schemas.results %}
+include {{ ldap_server_openldap_schemas_dir if item.stat.exists else ldap_server_openldap_local_schemas_dir }}/{{ item.item }}.schema
+{% endfor %}
+
+pidfile {{ __ldap_server_openldap_config_merged.pidfile }}
+argsfile {{ __ldap_server_openldap_config_merged.argsfile }}
+modulepath {{ __ldap_server_openldap_config_merged.modulepath }}
+loglevel {{ __ldap_server_openldap_config_merged.loglevel }}
+
+{% for module in __ldap_server_openldap_config_merged.modules |default([]) %}
+moduleload {{ module }}
+{% endfor %}
+
+authz-regexp uid=(.+),cn=gssapi,cn=auth uid=$1,ou=people,{{ ldap_server_base_dn }}
+
+allow bind_v2
+sizelimit {{ __ldap_server_openldap_config_merged.sizelimit }}
+
+include {{ __ldap_server_openldap_config_merged.access_file }}
+
+{% for database in __ldap_server_openldap_config_merged.databases |default([]) %}
+database {{ database.module }}
+suffix {{ ldap_server_base_dn }}
+directory {{ database.directory |default(__ldap_server_openldap_config_merged.database_directory) }}
+
+{% for opt in database.options |default([]) %}
+{% for key in opt -%}
+{{ key }} {{ opt[key] }}
+{% endfor %}
+{% endfor %}
+
+rootdn {{ database.rootdn | default("cn=syncrepl," + ldap_server_base_dn) }}
+#rootpw
+
+{% for index in database.indexes |default([]) %}
+index {{ index.attrib |default(index) }} {{ index.type |default("eq") }}
+{% endfor %}
+{% for overlay in database.overlays |default([]) %}
+
+overlay {{ overlay.module }}
+{% for opt in overlay.options |default([]) %}
+{% for key in opt -%}
+{{ key }} {{ opt[key] }}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% if 'syncrepl' in database %}
+
+{% if database.syncrepl.provider == inventory_hostname %}
+overlay syncprov
+syncprov-checkpoint {{ database.syncrepl.checkpoint |default("100 10") }}
+syncprov-sessionlog {{ database.syncrepl.sessionlog |default(100) }}
+{% else %}
+syncrepl rid={{ database.syncrepl.rid |default(loop.index) }}
+        provider=ldap://{{ database.syncrepl.provider }}
+        type={{ database.syncrepl.type |default("refreshAndPersist") }}
+        interval={{ database.syncrepl.interval |default("00:00:10:00") }}
+        retry="{{ database.syncrepl.retry |default('60 10 300 +') }}"
+        searchbase={{ database.syncrepl.searchbase |default(ldap_server_base_dn) }}
+        scope={{ database.syncrepl.scope |default("sub") }}
+        schemachecking={{ database.syncrepl.schemachecking |default("off") }}
+        bindmethod={{ database.syncrepl.bindmethod |default("simple") }}
+
+updateref ldap://{{ database.syncrepl.provider }}
+{% endif %}
+{% endif %}
+{% endfor %}

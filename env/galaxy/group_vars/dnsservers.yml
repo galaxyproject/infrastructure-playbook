@@ -1,7 +1,10 @@
 ---
 
 dns_bind_options:
+  - dnssec-validation: 'auto'
+  - auth-nxdomain: 'no'
   - listen-on: [ 'any' ]
+  - listen-on-v6: [ 'any' ]
   - notify: 'no'
   - recursion: 'no'
   - allow-recursion: [ 'none' ]
@@ -37,7 +40,7 @@ dns_bind_control_inet_specs:
 dns_bind_logging_channels:
   - name: 'bind'
     options:
-      - file: '"{{ dns_bind_log_dir }}/named.log" versions 3 size 5m'
+      - file: '"{{ dns_log_dir }}/named.log" versions 3 size 5m'
       - severity: 'debug 1'
       - print-severity: 'yes'
       - print-time: 'yes'

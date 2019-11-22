@@ -1,0 +1,60 @@
+##
+## $Header: /afs/galaxy.psu.edu/admin/documents/RCS/galaxy.schema,v 1.3 2010/03/22 18:46:00 phalenor Exp $
+##
+
+# 1.3.6.1.4.1.6806.1.4 <= this is the Enterprise Number given to us by AIT
+# 1.3.6.1.4.1.6806.1.4.1 <= LDAP
+# 1.3.6.1.4.1.6806.1.4.1.1 <= attribute types
+# 1.3.6.1.4.1.6806.1.4.1.2 <= object classes
+
+##
+## attributes
+##
+
+attributetype ( 1.3.6.1.4.1.15347.2.102 NAME 'transport'
+  SUP name )
+
+attributetype ( 1.3.6.1.4.1.15347.2.101 NAME 'mailRoutingAddress'
+  SUP mail )
+
+attributetype ( 1.3.6.1.4.1.15347.2.110 NAME 'maildest'
+  DESC 'Restrict ed to send only to local network'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.15347.2.111 NAME 'mailaccess'
+  DESC 'Can be mailed to restricted groups'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.15347.2.100 NAME 'maildrop'
+  DESC 'RFC1274: RFC822 Mailbox'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
+
+attributetype ( 1.3.6.1.4.1.10018.1.1.1 NAME 'mailbox'
+  DESC 'The absolute path to the mailbox for a mail account in a non-default location'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+  SINGLE-VALUE )
+
+##
+## object classes
+##
+
+objectclass ( 1.3.6.1.4.1.15347.2.1 NAME 'mailUser' SUP top AUXILIARY
+  DESC 'E-Mail User'
+  MUST ( uid $ mail $ maildrop )
+  MAY ( cn $ mailbox $ maildest $ mailaccess ) )
+
+objectclass ( 1.3.6.1.4.1.15347.2.2 NAME 'mailGroup' SUP top STRUCTURAL
+  DESC 'E-Mail Group'
+  MUST ( cn $ mail )
+  MAY ( mailRoutingAddress $ member $ description ) )
+
+objectclass ( 1.3.6.1.4.1.15347.2.3 NAME 'transportTable' SUP top STRUCTURAL
+  DESC 'MTA Transport Table'
+  MUST ( cn $ transport ) )

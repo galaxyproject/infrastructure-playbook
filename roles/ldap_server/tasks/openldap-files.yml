@@ -1,0 +1,46 @@
+---
+
+- name: Collect system schemas
+  stat:
+    path: "{{ ldap_server_openldap_schemas_dir }}/{{ item }}.schema"
+  loop: "{{ ldap_server_openldap_schemas |flatten(levels=1) }}"
+  register: _ret_slapd_schemas
+
+- name: Ensure local schema directory exists
+  file:
+    path: "{{ ldap_server_openldap_local_schemas_dir }}"
+    state: directory
+
+- name: Install local schemas
+  copy:
+    src: "{{ item }}.schema"
+    dest: "{{ ldap_server_openldap_local_schemas_dir }}/{{ item }}.schema"
+  loop: "{{ ldap_server_openldap_schemas |flatten(levels=1) }}"
+  when: not _ret_slapd_schemas.results[index].stat.exists
+  loop_control:
+    index_var: index
+  notify:
+    - restart ldap server
+
+- name: Install slapd.conf
+  template:
+    src: slapd.conf.j2
+    dest: "{{ ldap_server_config_file }}"
+    backup: yes
+  notify:
+    - restart ldap server
+
+- name: Install slapd.access
+  template:
+    src: slapd.access.j2
+    dest: "{{ __ldap_server_openldap_config_merged.access_file }}"
+    backup: yes
+  notify:
+    - restart ldap server
+
+- name: Ensure OLC directory is absent
+  file:
+    path: "{{ ldap_server_config_dir }}"
+    state: absent
+  notify:
+    - restart ldap server

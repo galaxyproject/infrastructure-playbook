@@ -39,6 +39,7 @@
       imgadm:
         force: "{{ item.force | default(omit) }}"
         pool: "{{ item.pool | default(omit) }}"
+        source: "{{ item.source | default(omit) }}"
         state: "{{ item.state | default(omit) }}"
         type: "{{ item.type | default(omit) }}"
         uuid: "{{ item.uuid | default(omit) }}"

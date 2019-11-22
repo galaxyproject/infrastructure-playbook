@@ -1,3 +1,40 @@
 ---
 
 dns_implementation: "bind"
+
+# This allows us to support multiple distros/implementations even though only Debian/BIND are defined
+__dns_defaults:
+  debian:
+    bind:
+      packages: [bind9]
+      config_dir: /etc/bind
+      log_dir: /var/log/named
+      user: bind
+      group: bind
+      config_templates:
+        - src: named_views.conf
+          dest: named.conf.local
+        - src: named_options.conf
+          dest: named.conf.options
+      service_name: "bind9"
+      # BIND-specific options
+      zones_dir: /etc/bind/zones
+      directory: /var/cache/bind
+      options:
+        - dnssec-validation: "auto"
+        - auth-nxdomain: "no"         # conform to RFC1035
+        - listen-on-v6: [ "any" ]
+__dns_distro: "{{ ansible_os_family |lower }}"
+
+dns_packages: "{{ __dns_defaults[__dns_distro][dns_implementation].packages }}"
+dns_config_dir: "{{ __dns_defaults[__dns_distro][dns_implementation].config_dir }}"
+dns_log_dir: "{{ __dns_defaults[__dns_distro][dns_implementation].log_dir }}"
+dns_user: "{{ __dns_defaults[__dns_distro][dns_implementation].user }}"
+dns_group: "{{ __dns_defaults[__dns_distro][dns_implementation].group }}"
+dns_config_templates: "{{ __dns_defaults[__dns_distro][dns_implementation].config_templates }}"
+dns_service_name: "{{ __dns_defaults[__dns_distro][dns_implementation].service_name }}"
+
+# BIND-specific options
+dns_bind_zones_dir: "{{ __dns_defaults[__dns_distro].bind.zones_dir }}"
+dns_bind_directory: "{{ __dns_defaults[__dns_distro].bind.directory }}"
+dns_bind_options_merged: "{{ __dns_defaults[__dns_distro].bind.options |ordered(dns_bind_options | default([])) }}"

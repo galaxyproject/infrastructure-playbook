@@ -1,0 +1,51 @@
+---
+
+# Tried a community Debian 10 LX image but unfortunately it's broken (ldconfig segfaults), so back to full virt we go
+# https://smartos.topicbox.com/groups/smartos-discuss/T926769842daee99c-Me1ce46716a424b2d570f76e8
+
+smartos_images:
+  #- source: https://dsapid.root1.ass.de/
+  #  state: present
+  # ass-debian-10 20190810 linux lx-dataset
+  #- uuid: 55bcd862-bb70-11e9-9991-7b9a40d4e95f
+  #  state: present
+  # ubuntu-certified-18.04 20190627.1.1 linux zvol
+  - uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
+    state: present
+
+smartos_vms:
+  #- name: duvel
+  #  brand: lx
+  #  kernel_version: 4.19.0-5-amd64
+  #  image_uuid: 55bcd862-bb70-11e9-9991-7b9a40d4e95f
+  #  hostname: duvel
+  #  max_physical_memory: 2048
+  #  quota: 16384
+  #  resolvers: "{{ smartos_resolvers }}"
+  #  nics:
+  #    - nic_tag: external
+  #      ip: 128.118.250.7
+  #      netmask: 255.255.255.224
+  #      gateway: 128.118.250.1
+  #      vlan_id: 306
+  #  delegate_dataset: true
+  #  customer_metadata:
+  #    root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+  - name: duvel
+    brand: bhyve
+    ram: 4096
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 128.118.250.7
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
+        boot: true
+        model: virtio
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"

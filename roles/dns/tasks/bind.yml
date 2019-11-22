@@ -3,7 +3,7 @@
 - name: Create zones directory
   file:
     state: directory
-    dest: "{{ dns_zones_dir }}"
+    dest: "{{ dns_bind_zones_dir }}"
     mode: "0755"
 
 - name: Disable inclusion of named.conf.default-zones

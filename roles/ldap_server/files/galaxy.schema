@@ -1,0 +1,64 @@
+##
+## $Header: /afs/galaxy.psu.edu/admin/documents/RCS/galaxy.schema,v 1.3 2010/03/22 18:46:00 phalenor Exp $
+##
+
+# 1.3.6.1.4.1.6806.1.4 <= this is the Enterprise Number given to us by AIT
+# 1.3.6.1.4.1.6806.1.4.1 <= LDAP
+# 1.3.6.1.4.1.6806.1.4.1.1 <= attribute types
+# 1.3.6.1.4.1.6806.1.4.1.2 <= object classes
+
+##
+## attributes
+##
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.1 NAME 'altHomeDirectory'
+  DESC 'Alternate home directory'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+  SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.2 NAME 'galaxyAFSGroupId'
+  DESC 'Galaxy AFS PTS Group ID'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+  SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.3 NAME 'galaxyAlternateEmail'
+	DESC 'Galaxy alternate contact email address'
+	EQUALITY caseIgnoreIA5Match
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256}
+	SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.4 NAME 'galaxyAccountCreated'
+	DESC 'GMT time at which the account was created'
+	EQUALITY generalizedTimeMatch
+	ORDERING generalizedTimeOrderingMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.24
+	SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.5 NAME 'galaxyAFSPTSName'
+  DESC 'Galaxy AFS PTS Name'
+  EQUALITY caseExactIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+  SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.6806.1.4.1.1.6 NAME 'galaxyPSUId'
+  DESC 'Galaxy PSU Id'
+  EQUALITY caseIgnoreIA5Match
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+  SINGLE-VALUE )
+
+##
+## object classes
+##
+
+objectclass ( 1.3.6.1.4.1.6806.1.4.1.2.1 NAME 'galaxyAccount' SUP top AUXILIARY
+  DESC 'Galaxy Account optional attributes'
+  MUST ( uid )
+  MAY ( altHomeDirectory $ galaxyAlternateEmail $ galaxyAccountCreated $ galaxyAFSPTSName $ galaxyPSUId ) )
+
+objectclass ( 1.3.6.1.4.1.6806.1.4.1.2.2 NAME 'galaxyAFSGroup' SUP top AUXILIARY
+  DESC 'Galaxy AFS PTS Group'
+  MUST ( cn $ galaxyAFSGroupId )
+  MAY ( member $ galaxyAFSPTSName ) )
+

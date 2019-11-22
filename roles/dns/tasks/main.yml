@@ -1,20 +1,11 @@
 ---
 
-# in case we want to implement EL support
-- name: Include OS vars
-  include_vars:
-    file: "{{ ansible_os_family | lower }}.yml"
-
-# in case we want to implement support for another nameserver
-- name: Include DNS implementation vars
-  include_vars:
-    file: "{{ dns_implementation | lower }}.yml"
-
-- name: Include OS tasks
-  include: "{{ ansible_os_family | lower }}.yml"
+- name: Install packages
+  package:
+    name: "{{ dns_packages }}"
 
 - name: Include DNS implementation tasks
-  include: "{{ dns_implementation | lower }}.yml"
+  include_tasks: "{{ dns_implementation | lower }}.yml"
 
 - name: Create DNS log directory
   file:

@@ -16,7 +16,7 @@
   tags: initial,system
 
 - name: Include baseenv plays
-  include: _inc_baseenv.yml
+  import_playbook: _inc_baseenv.yml
 
 - name: Set up authentication keys for non-baseenv hosts
   hosts: authkeyhosts
@@ -45,4 +45,15 @@
       tags: dns
     - name: ldap_server
       tags: ldap
+    - name: ldap
+      tags: ldap
   tags: infrastructure
+
+- name: Tasks for webservers
+  hosts: webservers
+  remote_user: root
+  roles:
+    - role: geerlingguy.repo-epel
+      when: ansible_os_family == "RedHat"
+    - role: galaxyproject.nginx
+  tags: nginx

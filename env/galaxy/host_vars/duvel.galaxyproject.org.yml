@@ -7,12 +7,12 @@ ldap_server_uris:
 
 nginx_flavor: full
 
-nginx_servers:
-  - certbot_redirects
+#nginx_servers:
+#  - certbot_redirects
 
-nginx_ssl_servers:
-  - duvel
-  - jenkins
+#nginx_ssl_servers:
+#  - duvel
+#  - jenkins
 
 certbot_domains:
   - "{{ inventory_hostname }}"

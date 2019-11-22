@@ -1,0 +1,11 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+{% set __role = (__ldap_server_openldap_config_merged.databases.syncrepl.provider |default(none) == inventory_hostname) |ternary("provider", "consumer") %}
+{% for entry in ldap_server_openldap_access[__role].entries %}
+access to {{ entry.to }}
+{% for by in entry.by |flatten(levels=1) %}
+    by {{ by }}
+{% endfor %}
+{% endfor %}

@@ -32,17 +32,29 @@
   notify:
     - restart ldap cache service
 
-# FIXME: authconfig method for rhel?
-- name: Install pam_mkhomedir config
-  copy:
-    src: "pam-config-mkhomedir"
-    dest: "/usr/share/pam-configs/mkhomedir"
-    owner: "root"
-    group: "root"
-    mode: 0444
+- name: PAM configuration task block
+  block:
+
+    - name: Install pam_mkhomedir config
+      copy:
+        src: "pam-config-mkhomedir"
+        dest: "/usr/share/pam-configs/mkhomedir"
+        owner: "root"
+        group: "root"
+        mode: 0444
+      register: __ldap_mkhomedir_result
+      notify:
+        - run pam-auth-update
+
+    # https://bugs.launchpad.net/ubuntu/+source/pam/+bug/682662
+    - name: Remove mkhomedir from /var/lib/pam/seen
+      lineinfile:
+        path: /var/lib/pam/seen
+        line: mkhomedir
+        state: absent
+      when: __ldap_mkhomedir_result is changed and __ldap_ubuntu and ansible_distribution_version is version('16.04', '>=')
+
   when: ldap_nss_home_directory_attribute is defined and __ldap_debian
-  notify:
-    - run pam-auth-update
 
 - name: Include tasks for configuring SSSD
   include_tasks: sssd.yml
