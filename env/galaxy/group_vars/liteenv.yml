@@ -9,7 +9,7 @@ kerberos_realm: GALAXYPROJECT.ORG
 kerberos_domain: galaxyproject.org
 kerberos_admin_server: duvel.galaxyproject.org
 
-ssh_group_sshd_config:
+liteenv_group_sshd_config:
   # GSSAPI Authentication is disabled by default
   - option: "GSSAPIAuthentication"
     value: "yes"
