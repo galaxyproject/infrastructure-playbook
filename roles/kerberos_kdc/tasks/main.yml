@@ -24,14 +24,14 @@
   notify:
     - restart kdc
 
-# TODO: what's the replacement?
-#- name: Install heimdal-kdc defaults
-#  template:
-#    src: default-heimdal-kdc.j2
-#    dest: /etc/default/heimdal-kdc
-#    backup: yes
-#  notify:
-#    - restart heimdal-kdc
+- name: Install defaults
+  template:
+    src: "default-{{ kerberos_kdc_defaults_file |basename }}.j2"
+    dest: "{{ kerberos_kdc_defaults_file }}"
+    backup: yes
+  when: kerberos_kdc_defaults_file is defined
+  notify:
+    - restart kdc
 
 # MIT and Heimdal appear to use the same format
 - name: Install kadmind ACL file
@@ -43,7 +43,7 @@
   when: "'kerberosmasterservers' in group_names and kerberos_kdc_admin_principals is defined"
 
 - name: Include Kerberos implementation tasks
-  include: "{{ kerberos_kdc_implementation | lower }}.yml"
+  include_tasks: "{{ kerberos_kdc_implementation | lower }}.yml"
 
 - name: Ensure KDC is enabled and running
   service:

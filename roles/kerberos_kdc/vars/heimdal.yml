@@ -4,6 +4,7 @@ kerberos_kdc_packages: "{{ kerberos_kdc_heimdal_packages }}"
 kerberos_kdc_debconf_options: "{{ kerberos_kdc_heimdal_debconf_options }}"  # this would just be ignored on EL
 kerberos_kdc_service_name: "{{ kerberos_kdc_heimdal_service_name }}"
 kerberos_kdc_config_dir: "{{ kerberos_kdc_heimdal_config_dir }}"
+kerberos_kdc_defaults_file: "{{ kerberos_kdc_heimdal_defaults_file }}"
 kerberos_kdc_kadmind_acl_file: "{{ kerberos_kdc_heimdal_kadmind_acl_file }}"
 kerberos_kdc_slaves_file: "{{ kerberos_kdc_heimdal_slaves_file }}"
 kerberos_kdc_inetd_service_name: "{{ kerberos_kdc_heimdal_inetd_service_name }}"

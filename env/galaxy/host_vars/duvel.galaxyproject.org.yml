@@ -7,15 +7,13 @@ ldap_server_uris:
 
 nginx_flavor: full
 
-#nginx_servers:
-#  - certbot_redirects
+nginx_servers:
+  - certbot_redirects
 
-#nginx_ssl_servers:
-#  - duvel
-#  - jenkins
+nginx_ssl_servers:
+  - jenkins
 
 certbot_domains:
-  - "{{ inventory_hostname }}"
   - jenkins.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
@@ -23,6 +21,3 @@ nginx_default_redirect_uri: https://galaxyproject.org/
 nginx_conf_http:
   server_names_hash_bucket_size: 128
   proxy_read_timeout: 300
-
-# TODO: implement me
-nginx_pam_config_dest: /etc/pam.d/nginx

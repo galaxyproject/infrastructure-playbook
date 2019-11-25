@@ -14,7 +14,7 @@
 [kdc]
     database = {
         realm = {{ kerberos_kdc_realm }}
-        dbname = "{{ kerberos_kdc_dbname }}"
+        dbname = {{ kerberos_kdc_dbname }}
         acl_file = {{ kerberos_kdc_kadmind_acl_file }}
     }
 

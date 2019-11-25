@@ -38,7 +38,7 @@ smartos_vms:
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
-        ip: 128.118.250.7
+        ip: 128.118.250.8
         netmask: 255.255.255.224
         gateway: 128.118.250.1
         vlan_id: 306

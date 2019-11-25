@@ -22,5 +22,6 @@ kerberos_kdc_heimdal_kadmind_acl_file: "{{ kerberos_kdc_heimdal_config_dir }}/ka
 kerberos_kdc_heimdal_slaves_file: "{{ kerberos_kdc_heimdal_state_dir }}/slaves"
 kerberos_kdc_heimdal_dbname: "{{ kerberos_kdc_heimdal_state_dir }}/heimdal"
 kerberos_kdc_heimdal_log: "FILE:/var/log/heimdal-kdc.log"
+kerberos_kdc_heimdal_defaults_file: "/etc/default/heimdal-kdc"
 
 ## MIT would go down here
