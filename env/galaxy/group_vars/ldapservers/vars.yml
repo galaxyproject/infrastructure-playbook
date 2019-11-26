@@ -51,7 +51,7 @@ ldap_server_openldap_config:
             - valsort-attr: memberUid ou=group,dc=galaxyproject,dc=org alpha-ascend
             - valsort-attr: member ou=group,dc=galaxyproject,dc=org alpha-ascend
       syncrepl:
-        provider: delirium.galaxyproject.org
+        provider: newtrail.galaxyproject.org
 
 
 ldap_server_openldap_access: "{{ vault_ldap_server_openldap_access }}"
