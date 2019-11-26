@@ -1,0 +1,68 @@
+---
+
+dns_bind_keys: "{{ vault_dns_bind_keys }}"
+
+dns_bind_options:
+  - dnssec-validation: 'auto'
+  - auth-nxdomain: 'no'
+  - listen-on: [ 'any' ]
+  - listen-on-v6: [ 'any' ]
+  - notify: 'explicit'
+  - recursion: 'no'
+  - allow-recursion: [ 'none' ]
+  - allow-transfer:
+     - 'key axfr-galaxy.'
+     - 'key axfr-global.'
+     #- 3.14.29.7        # newtrail
+     #- 54.172.110.33    # delirium
+     #- 54.172.173.123   # chouffe
+     #- 128.118.250.8    # duvel
+  - allow-query: [ 'any' ]
+  - query-source: 'address * port *'
+  # negative cache ttl
+  - max-ncache-ttl: 3600        # 1 hour
+  # how long to remember that a given ns isn't authoritative for a domain
+  - lame-ttl: 86400             # 24 hours
+  # how long to clean the cache
+  - cleaning-interval: 120      # 2 hours
+
+dns_bind_acls:
+  - name: 'axfr-galaxy'
+    entries:
+      - '!key axfr-global.'
+      - 'key axfr-galaxy.'
+  - name: 'axfr-global'
+    entries:
+      - '!key axfr-galaxy.'
+      - 'key axfr-global.'
+  - name: 'galaxy'
+    entries:
+      - '3.14.29.7/32'          # newtrail
+      - '54.172.110.33/32'      # delirium
+      - '54.172.173.123/32'     # chouffe
+      - '52.6.100.165/32'       # athena
+      - '128.118.250.0/27'
+      - '172.18.0.0/20'
+      - '10.0.0.0/8'
+      - '127.0.0.1/32'
+      - '::1/128'
+  - name: 'bx'
+    entries:
+      - '128.118.200.0/23'
+      - '128.118.202.0/24'
+
+dns_bind_control_inet_specs:
+  - '127.0.0.1 allow { localhost; }'
+
+dns_bind_logging_channels:
+  - name: 'bind'
+    options:
+      - file: '"{{ dns_log_dir }}/named.log" versions 3 size 5m'
+      - severity: 'debug 1'
+      - print-severity: 'yes'
+      - print-time: 'yes'
+
+dns_bind_logging_categories:
+  - name: 'default'
+    channels:
+      - 'bind'

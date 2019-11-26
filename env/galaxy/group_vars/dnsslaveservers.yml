@@ -1,0 +1,52 @@
+---
+
+dns_bind_views:
+  - name: 'galaxy'
+    match_clients:
+      - 'axfr-galaxy'
+      - 'galaxy'
+      - 'bx'
+    recursion: yes
+    includes:
+      - '{{ dns_config_dir }}/named.conf.default-zones'
+    zone_defaults:
+      type: slave
+      masters:
+        - '3.14.29.7 key axfr-galaxy.'      # newtrail
+    zones:
+      - name: 'galaxyproject.org'
+      - name: 'usegalaxy.org'
+      - name: 'getgalaxy.org'
+      - name: 'galaxycast.org'
+      - name: 'repeatme.org'
+      - name: 'galaxy2.org'
+      - name: 'galaxyworkbench.org'
+      - name: 'galaxy.tools'
+      - name: 'toolshed.tools'
+      - name: 'gxy.io'
+      - name: '0.18.172.in-addr.arpa'
+      - name: '2.18.172.in-addr.arpa'
+      - name: '3.18.172.in-addr.arpa'
+      - name: '68.28.172.in-addr.arpa'
+      - name: '255.128.10.in-addr.arpa'
+  - name: 'global'
+    match_clients:
+      - 'axfr-global'
+      - '!galaxy'
+      - '!bx'
+      - 'any'
+    zone_defaults:
+      type: slave
+      masters:
+        - '3.14.29.7 key axfr-global.'      # newtrail
+    zones:
+      - name: 'galaxyproject.org'
+      - name: 'usegalaxy.org'
+      - name: 'getgalaxy.org'
+      - name: 'galaxycast.org'
+      - name: 'repeatme.org'
+      - name: 'galaxy2.org'
+      - name: 'galaxyworkbench.org'
+      - name: 'galaxy.tools'
+      - name: 'toolshed.tools'
+      - name: 'gxy.io'

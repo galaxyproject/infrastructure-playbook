@@ -19,6 +19,7 @@ __dns_defaults:
       service_name: "bind9"
       # BIND-specific options
       zones_dir: /etc/bind/zones
+      slave_zones_dir: /var/lib/bind
       directory: /var/cache/bind
       options:
         - dnssec-validation: "auto"
@@ -36,5 +37,6 @@ dns_service_name: "{{ __dns_defaults[__dns_distro][dns_implementation].service_n
 
 # BIND-specific options
 dns_bind_zones_dir: "{{ __dns_defaults[__dns_distro].bind.zones_dir }}"
+dns_bind_slave_zones_dir: "{{ __dns_defaults[__dns_distro].bind.slave_zones_dir }}"
 dns_bind_directory: "{{ __dns_defaults[__dns_distro].bind.directory }}"
 dns_bind_options_merged: "{{ __dns_defaults[__dns_distro].bind.options |ordered(dns_bind_options | default([])) }}"

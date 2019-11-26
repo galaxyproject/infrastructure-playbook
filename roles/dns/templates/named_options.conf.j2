@@ -3,11 +3,19 @@
 // This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
 //
 
+/* Keys */
+{% for key in dns_bind_keys | default([]) %}
+key "{{ key.name }}" {
+    algorithm {{ key.algorithm }};
+    secret "{{ key.secret }}";
+};
+{% endfor %}
+
 /* ACLs */
 {% for acl in dns_bind_acls | default([]) %}
 acl "{{ acl.name }}" {
-    {% for addr in acl.addresses %}
-    {{ addr }};
+    {% for entry in acl.entries %}
+    {{ entry }};
     {% endfor %}
 };
 {% endfor %}
