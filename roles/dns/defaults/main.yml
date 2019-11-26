@@ -19,7 +19,7 @@ __dns_defaults:
       service_name: "bind9"
       # BIND-specific options
       zones_dir: /etc/bind/zones
-      slave_zones_dir: /var/lib/bind
+      slave_zones_dir: /var/cache/bind
       directory: /var/cache/bind
       options:
         - dnssec-validation: "auto"
