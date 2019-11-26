@@ -27,14 +27,6 @@ dns_bind_options:
   - cleaning-interval: 120      # 2 hours
 
 dns_bind_acls:
-  - name: 'axfr-galaxy'
-    entries:
-      - '!key axfr-global.'
-      - 'key axfr-galaxy.'
-  - name: 'axfr-global'
-    entries:
-      - '!key axfr-galaxy.'
-      - 'key axfr-global.'
   - name: 'galaxy'
     entries:
       - '3.14.29.7/32'          # newtrail

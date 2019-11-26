@@ -110,9 +110,9 @@ infrastructure
 ##
 
 [infrastructure]
-delirium.galaxyproject.org
-chouffe.galaxyproject.org
+#delirium.galaxyproject.org
 newtrail.galaxyproject.org
+chouffe.galaxyproject.org
 duvel.galaxyproject.org
 
 # - sets the hostname to the inventory_hostname
@@ -189,7 +189,7 @@ secondarymxservers
 [primarymxservers]
 chouffe.galaxyproject.org
 newtrail.galaxyproject.org
-delirium.galaxyproject.org
+#delirium.galaxyproject.org
 
 [secondarymxservers]
 #delirium.galaxyproject.org

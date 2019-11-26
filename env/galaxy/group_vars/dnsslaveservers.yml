@@ -3,7 +3,8 @@
 dns_bind_views:
   - name: 'galaxy'
     match_clients:
-      - 'axfr-galaxy'
+      - '!key axfr-global.'
+      - 'key axfr-galaxy.'
       - 'galaxy'
       - 'bx'
     recursion: yes
@@ -31,7 +32,8 @@ dns_bind_views:
       - name: '255.128.10.in-addr.arpa'
   - name: 'global'
     match_clients:
-      - 'axfr-global'
+      - '!key axfr-galaxy.'
+      - 'key axfr-global.'
       - '!galaxy'
       - '!bx'
       - 'any'
