@@ -138,7 +138,7 @@ mailman3_distribute_maps:
     mailman3_distribute_maps_dir: "{{ mailman3_distribute_maps_dir }}"
     mailman3_postmap_command: /usr/sbin/postmap
   - host: chouffe.galaxyproject.org
-  - host: delirium.galaxyproject.org
+  - host: newtrail.galaxyproject.org
 
 #
 # galaxyproject.nginx + usegalaxy-eu.certbot
