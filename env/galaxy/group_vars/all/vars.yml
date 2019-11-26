@@ -44,3 +44,9 @@ telegraf_plugins_default:
   - plugin: swap
   - plugin: net
   - plugin: netstat
+
+# these need to be available to both listservers and primarymxservers
+mailman3_distribute_maps_dir: /var/list
+mailman3_domains:
+  - lists.galaxyproject.org
+  - lists.anvilproject.org

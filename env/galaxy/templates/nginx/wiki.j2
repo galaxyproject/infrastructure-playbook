@@ -9,29 +9,9 @@ server {
     access_log  /var/log/nginx/wiki.galaxyproject.org_access.log;
     error_log   /var/log/nginx/wiki.galaxyproject.org_error.log;
 
-    client_max_body_size 256M;
-
-    root        /srv/moin/wiki/htdocs;
-
-    rewrite ^/Events/GCC2016/Training/?$ https://gcc2016.iu.edu/training/;
-    rewrite ^/Events/GCC2016/?$ https://gcc2016.iu.edu/;
-
-    location ~ /moin_static[^/]+/(.*) {
-        alias   /srv/moin/wiki/htdocs/$1;
-    }
-
-    location /favicon.ico {
-        alias   /srv/moin/wiki/htdocs/$1;
-    }
+    client_max_body_size 8M;
 
     include {{ nginx_conf_dir }}/wiki_hub_rewrites.conf;
-
-    location / {
-        include uwsgi_params;
-        uwsgi_param     SCRIPT_NAME /;
-        uwsgi_modifier1 30;
-        uwsgi_pass unix:/srv/moin/run/uwsgi.sock;
-    }
 }
 
 # vim: set filetype=nginx

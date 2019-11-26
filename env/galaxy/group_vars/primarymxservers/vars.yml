@@ -5,19 +5,35 @@
 #
 
 # for galaxyproject.mailman3's distribute_maps feature
-mailservers_mx_group_authorized_key_users: "{{ vault_mailservers_mx_group_authorized_key_users }}"
+primarymxservers_group_authorized_key_users: "{{ vault_primarymxservers_group_authorized_key_users }}"
+
+primarymxservers_group_users:
+  # ships with the OS but with the nologin shell
+  - name: list
+    shell: /bin/bash
+
 
 #
 # galaxyproject.postfix
 #
 
 postfix_role: mta
-postfix_mailname: "{{ inventory_hostname }}"
+postfix_mailname: galaxyproject.org
+postfix_backup_configs: true
 
 postfix_config:
+  alias_database: null
+  alias_maps: "ldap:{{ postfix_config_dir }}/ldap-aliases.cf, ldap:{{ postfix_config_dir }}/ldap-local.cf"
+  local_recipient_maps: $alias_maps
+  mnetworks_style: null
+  mynetworks: "127.0.0.0/8 {{ (ansible_default_ipv4.network ~ '/' ~ ansible_default_ipv4.netmask) |ipaddr('network/prefix') }} [::1]/128 [fe80::]/64"
   proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  recipient_delimiter: +
   relay_recipient_maps: hash:{{ mailman3_distribute_maps_dir }}/postfix_lmtp
   relay_domains: "{{ mailman3_domains | join(', ') }}"
+  smtpd_relay_restrictions: permit_mynetworks, reject_unauth_destination
+  mydomain: galaxyproject.org
+  mydestination: $myhostname, localhost.$mydomain, localhost, $mydomain
   # This config allows you to bypass the content_filter, but it's not needed since amavisd-new is configured to do the bypass
   #content_filter: null
   #smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
@@ -48,14 +64,11 @@ postfix_master_config:
 # For conditional content_filter
 #          -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,defer_unauth_destination
 
-# TODO: check templated format of these to make sure they're valid, last time I wrote these I probably still remembered
-# some perl ;P
-#
 # I think these were originally based off https://verchick.com/mecham/public_html/spam/bypassing.html
 # bypass_virus_checks_acl was not in my old config though
 postfix_amavisd_new_config:
   '@bypass_spam_checks_acl': "@spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})"
-  '@spam_kill_level_maps': ({'{{ mailman3_domains | join("' => 9999, ") }}' => 9999}, \$sa_kill_level_deflt,)
+  '@spam_kill_level_maps': ({'{{ mailman3_domains | join("' => 9999, '") }}' => 9999}, \$sa_kill_level_deflt,)
   '@bypass_virus_checks_acl': "@virus_lovers_acl = qw({{ mailman3_domains | join(' ') }})"
 
 # templates/postfix/relay_restrictions.j2 in the playbook

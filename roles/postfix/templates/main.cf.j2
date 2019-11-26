@@ -42,7 +42,7 @@ content_filter = smtp-amavis:localhost:10024
 #  1. Use virtual, but that's a pain because virtual can't do local delivery to a command
 #  2. Don't differentiate between list names and local/alias names
 
-{% if 'mailservers-primarymx' in group_names %}
+{% if 'primarymxservers' in group_names %}
 
 # Accept @domain mail
 mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
@@ -60,7 +60,7 @@ relay_domains = {{ mailman_default_email_host }}, lists.anvilproject.org
 mynetworks = 127.0.0.0/8 172.30.0.0/16 [::1]/128 [fe80::]/64
 smtpd_relay_restrictions = permit_mynetworks, reject_unauth_destination
 
-{% elif 'mailservers-secondarymx' in group_names %}
+{% elif 'secondarymxservers' in group_names %}
 
 relay_recipient_maps = ldap:/etc/postfix/ldap-aliases.cf, ldap:/etc/postfix/ldap-local.cf
 relay_domains = $mydomain

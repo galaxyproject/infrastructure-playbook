@@ -25,6 +25,32 @@
     - users
   tags: users
 
+# FIXME: was referencing the old postfix role
+#- name: Include galaxyenv plays
+#  import_playbook: _inc_galaxyenv.yml
+
+# FIXME:new duvel was run with the old postfix role (somewhat by accident) but has a working null client config, need to
+# set up group vars to make a null client config with the new role and then enable the new role in the galaxyenv plays
+- name: TEMP Mail configuration
+  hosts: primarymxservers
+  roles:
+    - role: galaxyproject.postfix
+  post_tasks:
+    - name: Install LDAP support for Postfix
+      apt:
+        name: postfix-ldap
+    # need a postfix_config_templates list of hashes like the galaxy role?
+    - name: Install Postfix LDAP configurations
+      template:
+        src: "{{ inventory_dir }}/../../roles/postfix/templates/{{ item }}.j2"
+        dest: "/etc/postfix/{{ item }}"
+      loop:
+        - ldap-aliases.cf
+        - ldap-local.cf
+      notify:
+        - restart postfix
+  tags: postfix
+
 - name: Tasks for infrastructure servers
   hosts: infrastructure
   remote_user: root
@@ -47,7 +73,7 @@
       tags: ldap
     - name: ldap
       tags: ldap
-  tags: infrastructure
+  #tags: infrastructure
 
 - name: Tasks for webservers
   hosts: webservers

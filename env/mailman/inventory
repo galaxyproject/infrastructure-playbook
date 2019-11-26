@@ -3,9 +3,7 @@
 ##
 
 #claven.galaxyproject.org ansible_connection=docker
-claven.galaxyproject.org        ansible_user=ubuntu ansible_become=yes #ansible_host=3.88.192.208
-chouffe.galaxyproject.org       ansible_python_interpreter=/usr/bin/python2
-delirium.galaxyproject.org      ansible_python_interpreter=/usr/bin/python2
+claven.galaxyproject.org        ansible_user=ubuntu ansible_become=yes
 
 [all:vars]
 ansible_user                = root
@@ -15,8 +13,6 @@ ansible_python_interpreter  = /usr/bin/python3
 # - common authorized_keys for root
 [baseenv]
 claven.galaxyproject.org
-chouffe.galaxyproject.org
-delirium.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
 [sshservers]
@@ -57,14 +53,6 @@ listservers
 
 [mailservers]
 claven.galaxyproject.org
-
-[mailservers:children]
-# TODO: still managed via the old role in the galaxy env for now
-#mailservers-mx
-
-[mailservers-mx]
-chouffe.galaxyproject.org
-delirium.galaxyproject.org
 
 [listservers]
 claven.galaxyproject.org

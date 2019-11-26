@@ -8,26 +8,19 @@ host_users:
     system: 'yes'
     shell: '/bin/bash'
     groups: 'www-data'
-  - name: gxsite
-    comment: 'Galaxy site'
-    system: 'yes'
-    shell: '/bin/bash'
 
 host_directories:
   - path: /srv/nginx
     owner: sites
     group: sites
-  - path: /srv/nginx/new.galaxyproject.org/root
-    owner: gxsite
-    group: gxsite
 
-mounts:
-  - name: /var/mail
-    src: /dev/xvdn
-    fstype: xfs
-    mode: 2775
-    owner: root
-    group: mail
+#mounts:
+#  - name: /var/mail
+#    src: /dev/xvdn
+#    fstype: xfs
+#    mode: 2775
+#    owner: root
+#    group: mail
 
 ldap_server_uris:
   - ldap://localhost/ # prefer self
@@ -39,18 +32,15 @@ nginx_servers:
 
 nginx_ssl_servers:
   - wiki
-  - moin
-  - intron
+#  - moin
   - galaxydomains
   - new
   - training
 
 certbot_domains:
-  - "{{ inventory_hostname }}"
   - wiki.g2.bx.psu.edu
   - wiki.galaxyproject.org
-  - moin.galaxyproject.org
-  - intron.galaxyproject.org
+  #- moin.galaxyproject.org
   - galaxy2.org
   - galaxyworkbench.org
   - repeatme.org
@@ -62,9 +52,5 @@ certbot_domains:
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf
-
-# not implemented
-#nginx_pam_config_src: pam_galaxy
-#nginx_pam_config_dest: /etc/pam.d/nginx
 
 nginx_default_redirect_uri: https://galaxyproject.org/
