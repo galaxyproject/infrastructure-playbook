@@ -8,17 +8,20 @@ ldap_server_uris:
   - ldap://ldap2.galaxyproject.org/
   - ldap://ldap3.galaxyproject.org/
 
-#nginx_servers:
-#  - certbot_redirects_infra
+nginx_servers:
+  - certbot_redirects
 
-#nginx_ssl_servers:
+nginx_ssl_servers:
+  - newtrail
 #  - wiki
 ##  - moin
 #  - galaxydomains
 #  - new
 #  - training
 
-#certbot_domains:
+certbot_environment: staging
+certbot_domains:
+  - newtrail.galaxyproject.org
 #  - wiki.g2.bx.psu.edu
 #  - wiki.galaxyproject.org
 #  #- moin.galaxyproject.org

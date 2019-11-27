@@ -225,12 +225,25 @@ certbotservers
 orval.galaxyproject.org
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
-#newtrail.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 infrastats.galaxyproject.org
 # TODO: probably need to use DNS-01 for this
 #status.usegalaxy.org
+
+[certbotservers:children]
+ddnsservers
+
+# provides:
+#   - certbot TSIG key for DNS servers
+#   - certbot TSIG key to certbot webservers
+#   - certbot DNS-01 rfc2136 provider config
+# overrides WEB-01 (webroot) mode
+[ddnsservers]
+newtrail.galaxyproject.org
+
+[ddnsservers:children]
+infrastructure
 
 ## Kerberos
 

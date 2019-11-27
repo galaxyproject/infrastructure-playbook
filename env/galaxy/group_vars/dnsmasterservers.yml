@@ -3,6 +3,7 @@
 dns_bind_views:
   - name: 'galaxy'
     match_clients:
+      - '!key certbot.'
       - '!key axfr-global.'
       - 'key axfr-galaxy.'
       - 'galaxy'
@@ -33,6 +34,7 @@ dns_bind_views:
       - file: '255.128.10.in-addr.arpa.zone'
   - name: 'global'
     match_clients:
+      - 'key certbot.'
       - '!key axfr-galaxy.'
       - 'key axfr-global.'
       - '!galaxy'
@@ -43,6 +45,8 @@ dns_bind_views:
       - "128.118.250.8 key axfr-global."    # duvel
     zones:
       - file: 'galaxyproject.org.zone'
+        update_policy:
+          - 'grant certbot. zonesub TXT'
       - file: 'usegalaxy.org.zone'
       - file: 'getgalaxy.org.zone'
       - file: 'galaxycast.org.zone'

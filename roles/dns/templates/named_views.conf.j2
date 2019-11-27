@@ -35,6 +35,7 @@ view "{{ view.name }}" {
     {%- set zone_type = zone.type | default(view.zone_defaults.type | default("master")) %}
     {%- set zone_file = zone.file | default((zone_type == 'slave') | ternary(view.name ~ '-db.' ~ zone_name, zone_name ~ '.zone')) %}
     {%- set zone_masters = zone.masters | default(view.zone_defaults.masters | default([])) %}
+    {%- set zone_update_policy = zone.update_policy | default(view.zone_defaults.update_policy | default([])) %}
     zone "{{ zone_name }}" {{ zone.class | default("IN") }} {
         type {{ zone_type }};
         file "{{ (zone_type == 'slave') | ternary(dns_bind_slave_zones_dir, dns_bind_zones_dir) }}/{{ zone_file }}";
@@ -42,6 +43,13 @@ view "{{ view.name }}" {
         masters {
         {% for master in zone_masters %}
             {{ master }};
+        {% endfor %}
+        };
+        {% endif %}
+        {% if zone_update_policy | length > 0 %}
+        update-policy {
+        {% for update_policy in zone_update_policy %}
+            {{ update_policy }};
         {% endfor %}
         };
         {% endif %}

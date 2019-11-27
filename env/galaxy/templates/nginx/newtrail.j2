@@ -1,0 +1,20 @@
+##
+## FIXME: testing
+##
+
+server {
+    listen      *:443 ssl;
+    server_name newtrail.galaxyproject.org;
+
+    #access_log  /var/log/nginx/newtrail.galaxyproject.org_access.log;
+    #error_log   /var/log/nginx/newtrail.galaxyproject.org_error.log;
+
+    #root        /srv/nginx/docs.galaxyproject.org/root;
+
+    location / {
+        return 200 'newt rail\n';
+        add_header Content-Type text/plain;
+    }
+}
+
+# vim: set filetype=nginx

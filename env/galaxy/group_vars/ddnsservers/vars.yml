@@ -1,0 +1,11 @@
+---
+
+certbot_ddns_keys: "{{ vault_certbot_ddns_keys }}"
+
+certbot_dns_provider: rfc2136
+certbot_dns_credentials:
+  server: 3.14.29.7
+  port: 53
+  name: certbot.
+  secret: "{{ (certbot_ddns_keys |selectattr('name', 'equalto', 'certbot.') |first).secret }}"
+  algorithm: "{{ (certbot_ddns_keys |selectattr('name', 'equalto', 'certbot.') |first).algorithm }}"
