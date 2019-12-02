@@ -13,7 +13,7 @@ dns_bind_views:
     zone_defaults:
       type: slave
       masters:
-        - '3.14.29.7 key axfr-galaxy.'      # newtrail
+        - '3.14.178.173 key axfr-galaxy.'       # newtrail
     zones:
       - name: 'galaxyproject.org'
       - name: 'usegalaxy.org'
@@ -40,7 +40,7 @@ dns_bind_views:
     zone_defaults:
       type: slave
       masters:
-        - '3.14.29.7 key axfr-global.'      # newtrail
+        - '3.14.178.173 key axfr-global.'       # newtrail
     zones:
       - name: 'galaxyproject.org'
       - name: 'usegalaxy.org'

@@ -29,7 +29,7 @@ dns_bind_options:
 dns_bind_acls:
   - name: 'galaxy'
     entries:
-      - '3.14.29.7/32'          # newtrail
+      - '3.14.178.173/32'       # newtrail
       - '54.172.110.33/32'      # delirium
       - '54.172.173.123/32'     # chouffe
       - '52.6.100.165/32'       # athena
