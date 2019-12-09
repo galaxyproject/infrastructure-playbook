@@ -4,8 +4,10 @@
 
 # TODO: now that so many features are enabled/disabled just based on group inclusion, it should be documented in the inventory exactly what each group membership enables
 
-chouffe.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 newtrail.galaxyproject.org ansible_user=ubuntu ansible_become=yes
+artifact.galaxyproject.org ansible_user=ubuntu ansible_become=yes
+
+chouffe.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
@@ -44,10 +46,11 @@ jenkinsslaves
 
 # Everything in baseenv + adds postfix, resolv.conf config
 [galaxyenv]
+newtrail.galaxyproject.org
+artifact.galaxyproject.org
+duvel.galaxyproject.org
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
-newtrail.galaxyproject.org
-duvel.galaxyproject.org
 athena.galaxyproject.org
 radegast.galaxyproject.org
 orval.galaxyproject.org
@@ -112,6 +115,7 @@ infrastructure
 [infrastructure]
 #delirium.galaxyproject.org
 newtrail.galaxyproject.org
+artifact.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 
@@ -133,6 +137,7 @@ cvmfsstratum1servers
 delirium.galaxyproject.org
 chouffe.galaxyproject.org
 newtrail.galaxyproject.org
+artifact.galaxyproject.org
 athena.galaxyproject.org
 
 # - authorized keys for non-root admin user
@@ -168,6 +173,7 @@ infrastructure
 newtrail.galaxyproject.org
 
 [dnsslaveservers]
+artifact.galaxyproject.org
 chouffe.galaxyproject.org
 duvel.galaxyproject.org
 

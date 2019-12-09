@@ -1,0 +1,6 @@
+---
+
+ldap_server_uris:
+  - ldap://localhost/ # prefer self
+  - ldap://ldap1.galaxyproject.org/
+  - ldap://ldap3.galaxyproject.org/
