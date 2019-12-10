@@ -34,8 +34,15 @@
 - name: TEMP Mail configuration
   hosts: primarymxservers
   roles:
+    - role: galaxyproject.opendkim
     - role: galaxyproject.postfix
   post_tasks:
+    - name: Add postfix user to opendkim group
+      user:
+        name: postfix
+        groups: opendkim
+      notify:
+        - restart postfix
     - name: Install LDAP support for Postfix
       apt:
         name: postfix-ldap

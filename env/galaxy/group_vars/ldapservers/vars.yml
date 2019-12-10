@@ -51,7 +51,8 @@ ldap_server_openldap_config:
             - valsort-attr: memberUid ou=group,dc=galaxyproject,dc=org alpha-ascend
             - valsort-attr: member ou=group,dc=galaxyproject,dc=org alpha-ascend
       syncrepl:
-        provider: newtrail.galaxyproject.org
+        # dirty hack for using VPC network
+        provider: "{{ '172.31.27.88' if inventory_hostname == 'artifact.galaxyproject.org' else  'newtrail.galaxyproject.org' }}"
 
 
 ldap_server_openldap_access: "{{ vault_ldap_server_openldap_access }}"

@@ -14,12 +14,43 @@ primarymxservers_group_users:
 
 
 #
+# galaxyproject.opendkim
+#
+
+opendkim_backup_configs: true
+opendkim_keys:
+  - selector: mail
+    domain: galaxyproject.org
+    secret: "{{ vault_opendkim_key_mail_secret }}"
+    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzZfThCqxA0wdJY1ku+r+onhkpGiMLOPW8Ou/MpsxhhobXZRNePhyONfYbuc4l/bUdy9SNpSa/jVgwRAwg7UGWjyU6k4kwbRTGD1SwgSAL+xN8e9obbAgqDuj8jxSctmEMZK/dQhQcTUDvfjJ8DX9W6XgmZljqys6eb+YE9mtqrTJ933yuKZkYlXt8b/aPp/MQjhVVqGZ6Hkn8CYb0t7mtmFvkLFwyG40PLYXTwVONDvG+fAlV9XzjJKCmz3cK/qUtmtyo0Gwt7ej/xTxCITRnE+zddmtlBZNAP6VfKn/t9cF82UaFbB+mzZnt0JIzIDlMuWQO9dxJaAJbbYeezdSwIDAQAB"
+
+# FIXME: if we only run DKIM on the amavis return do we need anything else here?
+opendkim_trusted_hosts:
+  - 127.0.0.1
+  - ::1
+  - localhost
+
+opendkim_signing_table:
+  - galaxyproject.org mail._domainkey.galaxyproject.org
+
+opendkim_config:
+  Syslog: yes
+  SyslogSuccess: yes
+  LogWhy: yes
+  Socket: "local:/var/run/opendkim/opendkim.sock"
+  KeyTable: "file:{{ opendkim_config_dir }}/KeyTable"
+  ExternalIgnoreList: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  InternalHosts: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  SigningTable: "file:{{ opendkim_config_dir }}/SigningTable"
+
+#
 # galaxyproject.postfix
 #
 
 postfix_role: mta
 postfix_mailname: galaxyproject.org
 postfix_backup_configs: true
+postfix_postsrsd: true
 
 postfix_config:
   alias_database: null
@@ -34,13 +65,17 @@ postfix_config:
   smtpd_relay_restrictions: permit_mynetworks, reject_unauth_destination
   mydomain: galaxyproject.org
   mydestination: $myhostname, localhost.$mydomain, localhost, $mydomain
+  sender_canonical_maps: tcp:localhost:10001
+  sender_canonical_classes: envelope_sender
+  recipient_canonical_maps: tcp:localhost:10002
+  recipient_canonical_classes: envelope_recipient,header_recipient
   # This config allows you to bypass the content_filter, but it's not needed since amavisd-new is configured to do the bypass
   #content_filter: null
   #smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
   #parent_domain_matches_subdomains: debug_peer_list,fast_flush_domains,mynetworks,permit_mx_backup_networks,qmqpd_authorized_clients,relay_domains
 postfix_master_config:
   # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
-  # we create a loop
+  # we create a loop; additionally, sign all mail that passes through amavis.
   localhost:10025-inet:
     args: |
       -o content_filter=
@@ -61,6 +96,14 @@ postfix_master_config:
           -o smtpd_client_connection_count_limit=0
           -o smtpd_client_connection_rate_limit=0
           -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+          -o milter_default_action=accept
+          -o milter_protocol=6
+          -o smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+          -o non_smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+#          -o sender_canonical_maps=tcp:localhost:10001
+#          -o sender_canonical_classes=envelope_sender
+#          -o recipient_canonical_maps=tcp:localhost:10002
+#          -o recipient_canonical_classes=envelope_recipient,header_recipient
 # For conditional content_filter
 #          -o smtpd_relay_restrictions=permit_mynetworks,permit_sasl_authenticated,defer_unauth_destination
 

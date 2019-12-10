@@ -3,8 +3,10 @@
   version: 0.6.3
 - name: galaxyproject.mailman3
   src: https://github.com/galaxyproject/ansible-mailman3
+- name: galaxyproject.opendkim
+  version: 0.1.0
 - name: galaxyproject.postfix
-  src: https://github.com/galaxyproject/ansible-postfix
+  version: 0.1.0
 - name: galaxyproject.postgresql
 - name: usegalaxy-eu.certbot
   src: https://github.com/usegalaxy-eu/ansible-certbot

@@ -8,6 +8,7 @@ roles/galaxyproject.cvmfs
 roles/galaxyproject.galaxy
 roles/galaxyproject.mailman3
 roles/galaxyproject.nginx
+roles/galaxyproject.opendkim
 roles/galaxyproject.postfix
 roles/galaxyproject.postgresql
 roles/galaxyproject.slurm

@@ -193,8 +193,8 @@ primarymxservers
 secondarymxservers
 
 [primarymxservers]
-chouffe.galaxyproject.org
 newtrail.galaxyproject.org
+artifact.galaxyproject.org
 #delirium.galaxyproject.org
 
 [secondarymxservers]
