@@ -4,8 +4,8 @@ smartos_root_authorized_keys: "{{ vault_smartos_root_authorized_keys }}"
 
 smartos_resolvers:
   - 128.118.250.8
-  - 54.172.110.33
-  - 54.172.173.123
+  - 3.14.178.173
+  - 3.136.94.7
 
 smartosglobalzones_group_directories:
   - path: /usbkey/config.inc

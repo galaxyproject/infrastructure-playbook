@@ -28,6 +28,7 @@ smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local
 smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 smart3.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
+westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
