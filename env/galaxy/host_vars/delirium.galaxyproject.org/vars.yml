@@ -41,7 +41,6 @@ nginx_servers:
   - eggs
 
 nginx_ssl_servers:
-  - wheels
   - lists
   - eggs-ssl
   - galaxydomains
@@ -51,7 +50,6 @@ nginx_ssl_servers:
 
 certbot_redirect_domains:
   - "{{ inventory_hostname }}"
-  - wheels.galaxyproject.org
   - mailman2.galaxyproject.org
   - galaxy2.org
   - galaxyworkbench.org
@@ -65,7 +63,6 @@ certbot_redirect_domains:
 
 certbot_domains:
   - "{{ inventory_hostname }}"
-  - wheels.galaxyproject.org
   - mailman2.galaxyproject.org
   - eggs.galaxyproject.org
   - eggs.g2.bx.psu.edu
