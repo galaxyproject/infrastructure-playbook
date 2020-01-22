@@ -47,6 +47,7 @@ view "{{ view.name }}" {
         };
         {% endif %}
         {% if zone_update_policy | length > 0 %}
+        journal "{{ dns_bind_slave_zones_dir }}/{{ zone_name }}.jnl";
         update-policy {
         {% for update_policy in zone_update_policy %}
             {{ update_policy }};

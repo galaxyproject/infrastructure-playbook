@@ -8,4 +8,4 @@ certbot_dns_credentials:
   port: 53
   name: certbot.
   secret: "{{ (certbot_ddns_keys |selectattr('name', 'equalto', 'certbot.') |first).secret }}"
-  algorithm: "{{ (certbot_ddns_keys |selectattr('name', 'equalto', 'certbot.') |first).algorithm }}"
+  algorithm: "{{ (certbot_ddns_keys |selectattr('name', 'equalto', 'certbot.') |first).algorithm |upper }}"

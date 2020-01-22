@@ -18,7 +18,8 @@ __dns_defaults:
           dest: named.conf.options
       service_name: "bind9"
       # BIND-specific options
-      zones_dir: /etc/bind/zones
+      #zones_dir: /etc/bind/zones
+      zones_dir: /var/lib/bind
       slave_zones_dir: /var/cache/bind
       directory: /var/cache/bind
       options:

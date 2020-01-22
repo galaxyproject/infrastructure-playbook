@@ -3,7 +3,15 @@
 - name: Create zones directory
   file:
     state: directory
-    path: "{{ ('dnsmasterservers' in group_names) | ternary(dns_bind_zones_dir, dns_bind_slave_zones_dir) }}"
+    path: "{{ dns_bind_zones_dir }}"
+    group: "{{ dns_group }}"
+    mode: "0775"
+  when: "'dnsmasterservers' in group_names"
+
+- name: Create slave/journal directory
+  file:
+    state: directory
+    path: "{{ dns_bind_slave_zones_dir }}"
     group: "{{ dns_group }}"
     mode: "0775"
 
