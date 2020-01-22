@@ -2,3 +2,12 @@
 
 - name: Include configuration schema tasks
   include_tasks: "openldap-{{ ldap_server_openldap_config_style }}.yml"
+
+- name: Set slapd keytab path
+  lineinfile:
+    path: /etc/default/slapd
+    line: export KRB5_KTNAME={{ ldap_server_keytab_path | quote }}
+    regexp: '^export KRB5_KTNAME='
+  when: ldap_server_keytab_path is defined and ansible_os_family == "Debian"
+  notify:
+    - restart ldap server
