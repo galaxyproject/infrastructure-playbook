@@ -12,6 +12,9 @@ smartos_images:
   # ubuntu-certified-18.04 20190627.1.1 linux zvol
   - uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
     state: present
+  # centos-7 20190122 linux zvol
+  - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
+    state: present
 
 smartos_vms:
   #- name: duvel
@@ -47,5 +50,31 @@ smartos_vms:
       - image_uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
         boot: true
         model: virtio
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+  - name: cvmfs0-psu1
+    brand: bhyve
+    ram: 8192
+    vcpus: 4
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'cvmfs0-psu1.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
+        boot: true
+        model: virtio
+      # /var/spool/cvmfs
+      - boot: false
+        model: virtio
+        size: 16384
+      # /srv
+      - boot: false
+        model: virtio
+        size: 262144
     customer_metadata:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"

@@ -62,6 +62,7 @@
     service:
       name: docker
       state: "{{ 'started' if docker_service_enabled else 'stopped' }}"
+      enabled: "{{ docker_service_enabled }}"
 
   rescue:
     - name: Remove secrets

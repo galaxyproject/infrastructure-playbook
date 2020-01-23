@@ -1,0 +1,135 @@
+---
+
+host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
+cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
+
+filesystems:
+  - dev: /dev/vdb
+    fstype: ext4
+
+mounts:
+  - name: /var/spool/cvmfs
+    src: /dev/vdb
+    fstype: ext4
+    mode: "0755"
+    owner: root
+    group: root
+
+cvmfs_srv_device: /dev/vdc
+
+cvmfs_manage_firewall: true
+galaxy_cvmfs_repos_enabled: false
+cvmfs_repositories:
+  - repository: test.galaxyproject.org
+    stratum0: cvmfs0-psu1.galaxyproject.org
+    owner: g2test
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_VIRTUAL_DIR=true
+    client_options:
+      - CVMFS_NFILES=4096
+  #- repository: main.galaxyproject.org
+  #  stratum0: cvmfs0-psu1.galaxyproject.org
+  #  owner: g2main
+  #  server_options:
+  #    - CVMFS_AUTO_TAG=false
+  #    - CVMFS_GARBAGE_COLLECTION=true
+  #    - CVMFS_AUTO_GC=false
+  #    - CVMFS_IGNORE_XDIR_HARDLINKS=false
+  #    - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+  #    - CVMFS_VIRTUAL_DIR=true
+  #  client_options:
+  #    - CVMFS_NFILES=4096
+
+cvmfs_keys:
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.pub
+    owner: g2test
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtfc5SSX9ALcrukWYcxkI
+      mkLhlkJa5tCP1oZNWFA7GfE4xQW2vcKE5qmbZqhYVfdiy+FHPnhWPJp577hekD2F
+      vMITbApdZ0265AjRC0+EKKxpMF8zZ0q71vCFxvdK0c3DtT/3LmqKrr2wimtJZjQN
+      UAZcQG2ykzeHzFZ46w74IO0o8Fv/w2XEbYI0QqbNFv+0hcp5SruFqaaLsRZdd6Bn
+      3iSylgVRQ5b+h1LfB/EuEpSmH1sDozZ4tU0fpbrBSknK76aad1o/cvWY1X87ToUV
+      helU0HE2Rw/u9EqJDvPFTbUmad3MtspkqbG5Eo7lI+ktzbcD7UTsQ/7noIXIQ5dD
+      PwIDAQAB
+      -----END PUBLIC KEY-----
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.crt
+    owner: g2test
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIC9DCCAdwCCQC3lM3Z8xqGAjANBgkqhkiG9w0BAQsFADA8MTowOAYDVQQDDDF0
+      ZXN0LmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxlYXNlIE1hbmFnZXJz
+      MB4XDTE2MDMzMDAzMjkyN1oXDTE3MDMzMDAzMjkyN1owPDE6MDgGA1UEAwwxdGVz
+      dC5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBNYW5hZ2VyczCC
+      ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALw45Jfo9SD2LX8fA3/fULz7
+      QQakPXc+s61dKIB7eBG5ZRd99IFu3RJbinn2/zx9V8fgsMPvj2fYyHqRJ2jUXsre
+      sIDLB8yEH97HLIUXwZFdA1RF+z1BTsH0PoUKeI/jQR2NqSEBBLOYQI3pFq+W7b32
+      gDl+uAasx4pc0VE6p/3Hfre7Fki0vNodcC4eZr8nr0vfkx8dDFm+7fTzqMjBCcNP
+      qp+vdqyH/D72qWzV5+Db0a2G5NhuPzd7/wjrSKH46L8BSgjIucx6YBYeXA5D1akR
+      oj+F/mygUHXx2XeAknjDN03jspRgSJGwcDxfvV3H9KRMrOi6Glt2AsxW9B6TbnsC
+      AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAe4p3qRPHMGikobrcqZMfb2eOQCALMbxL
+      g52xyd85uoXtM/4HZl1Y5oaUdalfJET0T2mI0Nxt88GXkI6jtNsKJGg2SKlNrhCP
+      HzJRc0MZ+TvQFWWe23nY3krXKqWSXIT41AUMYz4t+BuJPb32y7cIFmX2SNPsaWFj
+      aOFCh39K3wq6OD1SEp3wWPUQqC6dQEiQthG/xRe8HBZXxyGuGsGuZbC5L6ltUEvn
+      QbKTk0xXXpBChXvEaSD1D5TATVUFbf8fwqHjkDVarhJxAtrv1p0k/EzJGrhbcEh+
+      ka2GnWe8NST2zVvhBhnKVErSMJa0ZVSikljy8/ftJ24gfCjDFf6mEg==
+      -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/main.galaxyproject.org.pub
+    owner: g2main
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6S6Tugcv4kk4C06f574l
+      YCXQdK6lv2m7mqCh60G0zL1+rAkkEBDWna0yMQLBbj+yDsHjcOe0yISzbTfzG6wk
+      KnHZUQ/JOeK7lUAbDMxHqnjkEPAbAl4vXl2Y04MW2lzJtXcDKakmLirvV/dfUYqE
+      gGGx0dc/Z+XmUTf1DvZFJknrBUUxO5+F6m7k/NGrlpAca+e9B0kwCclaE4NyaNWK
+      Jv5rPWCYz5/sDNW4cNvBdBjwGf46etbczmJoTAbl0oM6LLGdebwkJStd0R1wkj+A
+      torRYcoFZICTZqY9e/KsadHUeZnH3RvfMypH5oS1POzsFszoSxBhZIBkZbG3/f9Y
+      OQIDAQAB
+      -----END PUBLIC KEY-----
+  - path: /etc/cvmfs/keys/main.galaxyproject.org.crt
+    owner: g2main
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIC9DCCAdwCCQCu1/uoOM2BxjANBgkqhkiG9w0BAQsFADA8MTowOAYDVQQDDDFt
+      YWluLmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxlYXNlIE1hbmFnZXJz
+      MB4XDTE2MDQxMTE1MjkxN1oXDTE3MDQxMTE1MjkxN1owPDE6MDgGA1UEAwwxbWFp
+      bi5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBNYW5hZ2VyczCC
+      ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALsxdKt+ol4QOGsIy3Z49m7s
+      uvfjFVwCXVBJcZMR1iaqIdqpVMn/9h4MQZn6npxwYFZ5zFirVs409kIDbUUNnF9V
+      eD16AEhgHuarXsoiFG7msy6YhXa2ErIoR378b7sF5fSBzcYlcgUJb2DzS3vr17H6
+      ZMxj0IMymdrynBaoUi5GyD7471cWr09onL8LSrO1gxXYVBl4RkLKIEOaRs8Kgf1g
+      trZE2rfJXqseQHUfGUGQH4jP++nNPSBNxQGyHMZxAPJe5OukcHpsp+QvtSJKNTkC
+      A4G1AEEbxw8bi3sER6tpzZEg3HuI8v03jOf5b/3bdHTAz3Au9jxO/h9sPqqszxsC
+      AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAgJoWcG45RwS6VlkT7CDFyb1eVvt/i3aJ
+      XXPod2odg49zKBZ2pidKYkKSgmMfF6BKS3VIWW6Op5kZrw1gNSU22xMwqTHgkvOl
+      c13DZGZbsDlYL2hp7fFg3pLw2KFITY5B31PCOqrXXpgPQPL/uedV2bjGHcIeerPj
+      9GbQbSqSRNZ4Kq8mz4zjMPUC01nJL+S82Dz04JjIVqhT/bmMn67AeFqxBzN3B1wk
+      bAGzbVAm14suDOEoallf/MXSRkeU6J3hEGdWbAS/0HfyTpPzdlytyihvz5R0UDZp
+      3LfKBSCPAcZI4A1CecNIBgCvV3YT4qow68xovCmI9x7YXbdXwAA3Zw==
+      -----END CERTIFICATE-----
+
+# FIXME: supplemental groups below don't work the first time
+host_users:
+  - name: g2test
+    uid: 819456
+    group: G-803372
+    comment: "Galaxy Test"
+    home: /home/g2test
+    shell: /bin/bash
+    groups: docker
+  - name: g2main
+    uid: 819800
+    group: G-803372
+    comment: "Galaxy Main"
+    home: /home/g2main
+    shell: /bin/bash
+    groups: docker
+
+host_groups:
+  - name: G-803372
+    gid: 803372

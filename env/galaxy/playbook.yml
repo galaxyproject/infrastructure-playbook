@@ -174,8 +174,10 @@
   remote_user: root
   roles:
     # need epel for the jq package
-    - geerlingguy.repo-epel
-    - galaxyproject.cvmfs
+    - role: geerlingguy.repo-epel
+    - role: galaxyproject.cvmfs
+    - role: docker
+      when: "'cvmfsstratum0servers' in group_names"
   tags: cvmfs
 
 - name: Tasks for Docker Swarm managers
