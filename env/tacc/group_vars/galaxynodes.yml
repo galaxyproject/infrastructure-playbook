@@ -3,6 +3,20 @@
 # 500 GB why not
 cvmfs_quota_limit: 512000
 
+galaxy_cvmfs_repos_enabled: config-repo
+
+# override so that the TACC stratum 1 is always first
+cvmfs_server_urls:
+  - domain: galaxyproject.org
+    use_geoapi: no
+    urls:
+      - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+cvmfs_http_proxies:
+  - "DIRECT"
+
 galaxynodes_group_authorized_key_users:
   - name: g2test
     authorized: "{{ galaxy_team_users }}"
