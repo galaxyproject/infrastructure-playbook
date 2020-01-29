@@ -44,6 +44,15 @@ host_templates:
         gid: nobody
         'read only': 'yes'
         list: 'yes'
+      byhand:
+        path: /cvmfs/data.galaxyproject.org/byhand
+        comment: Alternate mount point for /indexes/ for rsync data manager
+        'use chroot': 'yes'
+        uid: nobody
+        gid: nobody
+        'read only': 'yes'
+        list: 'yes'
+        exclude: '*/tmp/* */work/* bin/*'
 
 host_firewall_rules:
   - service: http
