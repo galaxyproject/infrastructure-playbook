@@ -3,6 +3,10 @@
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
+host_packages:
+  # for yarn
+  - bzip2
+
 filesystems:
   - dev: /dev/vdb
     fstype: ext4
