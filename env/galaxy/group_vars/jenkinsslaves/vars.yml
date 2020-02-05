@@ -3,6 +3,9 @@
 jenkinsslaves_group_authorized_key_users: "{{ vault_jenkinsslaves_group_authorized_key_users }}"
 jenkinsslaves_group_private_key_users: "{{ vault_jenkinsslaves_group_private_key_users }}"
 
+# hopefully overrides config-repo in cvmfsclients.yml
+galaxy_cvmfs_repos_enabled: true
+
 _jenkinsslaves_openjdk_version: "{{ '11' if ansible_distribution == 'Debian' and ansible_distribution_major_version == '10' else '8' }}"
 jenkinsslaves_group_packages:
   - git
@@ -13,6 +16,10 @@ jenkinsslaves_group_packages:
   - curl
   - pandoc
   - python3-venv
+  # for usegalaxy-tools
+  #- fuse-overlayfs
+  - tree
+  - rsync
 
 # Moved to a post-task
 #jenkinsslaves_group_users:

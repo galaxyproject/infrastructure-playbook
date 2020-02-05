@@ -1,0 +1,6 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+Defaults!/usr/local/sbin/jenkins-mount-overlayfs env_keep+="JOB_NAME WORKSPACE BUILD_NUMBER"
+Defaults!/usr/local/sbin/jenkins-umount-overlayfs env_keep+="JOB_NAME WORKSPACE BUILD_NUMBER"
+jenkins ALL = (root) NOPASSWD: /usr/local/sbin/jenkins-mount-overlayfs, /usr/local/sbin/jenkins-umount-overlayfs

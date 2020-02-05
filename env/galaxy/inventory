@@ -302,6 +302,9 @@ cvmfs1-psu0.galaxyproject.org
 jeltz.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
+[cvmfsclients:children]
+jenkinsslaves
+
 # Docker Swarm
 
 # there should only be one host in this group

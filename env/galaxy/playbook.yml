@@ -110,6 +110,25 @@
         name: jenkins
         groups: docker
         system: true
+    - name: Install OverlayFS mount script
+      copy:
+        src: files/jenkins/mount-overlayfs.sh
+        dest: /usr/local/sbin/jenkins-mount-overlayfs
+        owner: root
+        group: root
+        mode: '0755'
+    - name: Create OverlayFS unmount link
+      file:
+        src: jenkins-mount-overlayfs
+        dest: /usr/local/sbin/jenkins-umount-overlayfs
+        state: link
+    - name: Install OverlayFS mount sudo configuration
+      copy:
+        src: files/jenkins/mount-overlayfs.sudoers
+        dest: /etc/sudoers.d/99_jenkins_overlayfs
+        owner: root
+        group: root
+        mode: '0440'
   tags: jenkins
 
 - name: Tasks for biostar hosts
@@ -175,9 +194,17 @@
   roles:
     # need epel for the jq package
     - role: geerlingguy.repo-epel
+      when: ansible_os_family == "RedHat"
     - role: galaxyproject.cvmfs
     - role: docker
       when: "'cvmfsstratum0servers' in group_names"
+  post_tasks:
+    - name: Allow other access to FUSE mounts
+      lineinfile:
+        path: /etc/fuse.conf
+        regexp: '^#?user_allow_other$'
+        line: user_allow_other
+      when: "'jenkinsslaves' in group_names"
   tags: cvmfs
 
 - name: Tasks for Docker Swarm managers
