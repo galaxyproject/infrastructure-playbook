@@ -6,7 +6,7 @@
   roles:
     - role: geerlingguy.repo-epel
       when: ansible_os_family == "RedHat"
-    # galaxyproject.nginx will run usegalaxy-eu.certbot
+    # galaxyproject.nginx will run usegalaxy_eu.certbot
     - role: galaxyproject.nginx
   tags: 
     - nginx
