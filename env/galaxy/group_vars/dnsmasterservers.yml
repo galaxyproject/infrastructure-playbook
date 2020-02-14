@@ -27,6 +27,7 @@ dns_bind_views:
       - file: 'galaxy.tools.zone'
       - file: 'toolshed.tools.zone'
       - file: 'gxy.io.zone'
+      - file: 'galaxy.training.zone'
       #- file: '0-27.250.118.128.in-addr.arpa.zone'
       - file: '0.18.172.in-addr.arpa.zone'
       - file: '2.18.172.in-addr.arpa.zone'
@@ -58,4 +59,5 @@ dns_bind_views:
       - file: 'galaxy.tools.zone'
       - file: 'toolshed.tools.zone'
       - file: 'gxy.io.zone'
+      - file: 'galaxy.training.zone'
       #- file: '0-27.250.118.128.in-addr.arpa.zone'

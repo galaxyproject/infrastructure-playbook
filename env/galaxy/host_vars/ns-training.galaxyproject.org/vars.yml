@@ -1,22 +1,15 @@
 ---
 
-dns_bind_keys: "{{ vault_dns_bind_keys }} + {{ certbot_ddns_keys }}"
+#dns_bind_keys: "{{ vault_dns_bind_keys }} + {{ certbot_ddns_keys }}"
 
 dns_bind_options:
   - dnssec-validation: 'auto'
   - auth-nxdomain: 'no'
   - listen-on: ['any']
   - listen-on-v6: ['any']
-  - notify: 'explicit'
   - recursion: 'no'
   - allow-recursion: ['none']
-  - allow-transfer:
-     - 'key axfr-galaxy.'
-     - 'key axfr-global.'
-     #- 3.14.29.7        # newtrail
-     #- 54.172.110.33    # delirium
-     #- 54.172.173.123   # chouffe
-     #- 128.118.250.8    # duvel
+  - allow-transfer: ['none']
   - allow-query: ['any']
   - query-source: 'address * port *'
   # negative cache ttl
@@ -25,24 +18,6 @@ dns_bind_options:
   - lame-ttl: 86400             # 24 hours
   # how long to clean the cache
   - cleaning-interval: 120      # 2 hours
-
-dns_bind_acls:
-  - name: 'galaxy'
-    entries:
-      - '3.14.178.173/32'       # newtrail
-      - '3.136.94.7/32'         # artifact
-      - '54.172.110.33/32'      # delirium
-      - '54.172.173.123/32'     # chouffe
-      - '52.6.100.165/32'       # athena
-      - '128.118.250.0/27'
-      - '172.18.0.0/20'
-      - '10.0.0.0/8'
-      - '127.0.0.1/32'
-      - '::1/128'
-  - name: 'bx'
-    entries:
-      - '128.118.200.0/23'
-      - '128.118.202.0/24'
 
 dns_bind_control_inet_specs:
   - '127.0.0.1 allow { localhost; }'
@@ -59,3 +34,13 @@ dns_bind_logging_categories:
   - name: 'default'
     channels:
       - 'bind'
+
+dns_bind_views:
+  - name: 'global'
+    match_clients:
+      - 'any'
+    zones:
+      - file: 'student.galaxy.training.zone'
+        update_policy:
+          - 'grant certbot-training. zonesub TXT'
+          - 'grant certbot-training. wildcard *.interactivetoolentrypoint.interactivetool.*.student.galaxy.training. TXT'
