@@ -34,11 +34,12 @@ view "{{ view.name }}" {
     {%- set zone_name = zone.name | default(zone.file | default('') | basename | splitext | first) %}
     {%- set zone_type = zone.type | default(view.zone_defaults.type | default("master")) %}
     {%- set zone_file = zone.file | default((zone_type == 'slave') | ternary(view.name ~ '-db.' ~ zone_name, zone_name ~ '.zone')) %}
+    {%- set zone_file_dir = zone.dir | default((zone_type == 'slave') | ternary(dns_bind_slave_zones_dir, dns_bind_zones_dir)) %}
     {%- set zone_masters = zone.masters | default(view.zone_defaults.masters | default([])) %}
     {%- set zone_update_policy = zone.update_policy | default(view.zone_defaults.update_policy | default([])) %}
     zone "{{ zone_name }}" {{ zone.class | default("IN") }} {
         type {{ zone_type }};
-        file "{{ (zone_type == 'slave') | ternary(dns_bind_slave_zones_dir, dns_bind_zones_dir) }}/{{ zone_file }}";
+        file "{{ zone_file_dir }}/{{ zone_file }}";
         {% if zone_type == "slave" and zone_masters | length > 0 %}
         masters {
         {% for master in zone_masters %}

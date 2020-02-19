@@ -215,3 +215,11 @@
     - role: cron
       tags: cron
   tags: docker
+
+# This is for ns-training, the regular nameservers are set up through the core playbook
+- name: Tasks for training DNS servers
+  hosts: ns-training.galaxyproject.org
+  remote_user: root
+  roles:
+    - role: dns
+      tags: dns

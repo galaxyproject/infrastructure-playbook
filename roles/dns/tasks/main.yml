@@ -14,6 +14,7 @@
     owner: "{{ dns_user }}"
     group: "{{ dns_group }}"
     mode: "0755"
+  when: dns_log_dir is not none and dns_log_dir != ""
 
 - name: Install config files
   template:
@@ -21,7 +22,7 @@
     dest: "{{ dns_config_dir }}/{{ item.dest }}"
     # this owner/mode scheme matches what debian does, even though it doesn't really make sense
     group: "{{ dns_group }}"
-    mode: "0444"
+    mode: "0440"
     backup: yes
   with_items: "{{ dns_config_templates }}"
   notify:

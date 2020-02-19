@@ -41,6 +41,7 @@ cvmfs0-tacc0.galaxyproject.org
 cvmfs1-tacc0.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
+ns-training.galaxyproject.org
 
 [baseenv:children]
 galaxyenv
@@ -171,6 +172,7 @@ infrastructure
 duvel.galaxyproject.org
 
 [dnsservers]
+# ns-training is not here because it shouldn't get these group vars
 [dnsservers:children]
 infrastructure
 

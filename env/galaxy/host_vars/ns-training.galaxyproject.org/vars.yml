@@ -1,39 +1,27 @@
 ---
 
 #dns_bind_keys: "{{ vault_dns_bind_keys }} + {{ certbot_ddns_keys }}"
+certbot_ddns_keys: "{{ vault_certbot_ddns_keys }}"
+dns_bind_keys: "{{ certbot_ddns_keys }}"
 
 dns_bind_options:
   - dnssec-validation: 'auto'
   - auth-nxdomain: 'no'
-  - listen-on: ['any']
-  - listen-on-v6: ['any']
+  - 'listen-on port 53': ['any']
   - recursion: 'no'
   - allow-recursion: ['none']
   - allow-transfer: ['none']
   - allow-query: ['any']
   - query-source: 'address * port *'
-  # negative cache ttl
-  - max-ncache-ttl: 3600        # 1 hour
-  # how long to remember that a given ns isn't authoritative for a domain
-  - lame-ttl: 86400             # 24 hours
-  # how long to clean the cache
-  - cleaning-interval: 120      # 2 hours
 
 dns_bind_control_inet_specs:
   - '127.0.0.1 allow { localhost; }'
 
 dns_bind_logging_channels:
-  - name: 'bind'
+  - name: 'default_debug'
     options:
-      - file: '"{{ dns_log_dir }}/named.log" versions 3 size 5m'
-      - severity: 'debug 1'
-      - print-severity: 'yes'
-      - print-time: 'yes'
-
-dns_bind_logging_categories:
-  - name: 'default'
-    channels:
-      - 'bind'
+      - file: '"data/named.run"'
+      - severity: 'dynamic'
 
 dns_bind_views:
   - name: 'global'
@@ -41,6 +29,7 @@ dns_bind_views:
       - 'any'
     zones:
       - file: 'student.galaxy.training.zone'
+        dir: '/var/named/dynamic'
         update_policy:
           - 'grant certbot-training. zonesub TXT'
           - 'grant certbot-training. wildcard *.interactivetoolentrypoint.interactivetool.*.student.galaxy.training. TXT'

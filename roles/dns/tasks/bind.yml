@@ -13,7 +13,7 @@
     state: directory
     path: "{{ dns_bind_slave_zones_dir }}"
     group: "{{ dns_group }}"
-    mode: "0775"
+    mode: "0770"
 
 - name: Disable inclusion of named.conf.default-zones
   replace:

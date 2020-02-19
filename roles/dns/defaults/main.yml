@@ -25,7 +25,44 @@ __dns_defaults:
       options:
         - dnssec-validation: "auto"
         - auth-nxdomain: "no"         # conform to RFC1035
-        - listen-on-v6: [ "any" ]
+        - listen-on-v6: ["any"]
+  redhat:
+    bind:
+      packages: [bind]
+      config_dir: /etc
+      log_dir: null
+      user: named
+      group: named
+      config_templates:
+        - src: named_include.conf
+          dest: named.conf
+        - src: named_views.conf
+          dest: named.views.conf
+        - src: named_options.conf
+          dest: named.options.conf
+      service_name: "named"
+      # BIND-specific options
+      #zones_dir: /etc/bind/zones
+      zones_dir: /etc/named
+      slave_zones_dir: /var/named/slaves
+      directory: /var/named
+      options:
+        - "listen-on port 53": [127.0.0.1]
+        - "listen-on-v6 port 53": ["::1"]
+        - dump-file: '"/var/named/data/cache_dump.db"'
+        - statistics-file: '"/var/named/data/named_stats.txt"'
+        - memstatistics-file: '"/var/named/data/named_mem_stats.txt"'
+        - recursing-file: '"/var/named/data/named.recursing"'
+        - secroots-file: '"/var/named/data/named.secroots"'
+        - allow-query:
+          - localhost
+        - recursion: "yes"
+        - dnssec-enable: "yes"
+        - dnssec-validation: "yes"
+        - bindkeys-file: '"/etc/named.root.key"'
+        - managed-keys-directory: '"/var/named/dynamic"'
+        - pid-file: '"/run/named/named.pid"'
+        - session-keyfile: '"/run/named/session.key"'
 __dns_distro: "{{ ansible_os_family |lower }}"
 
 dns_packages: "{{ __dns_defaults[__dns_distro][dns_implementation].packages }}"
