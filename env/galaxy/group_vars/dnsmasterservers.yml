@@ -19,6 +19,7 @@ dns_bind_views:
       - name: 'galaxyproject.org'
         file: 'galaxyproject.org.private.zone'
       - file: 'usegalaxy.org.zone'
+        file: 'usegalaxy.org.private.zone'
       - file: 'getgalaxy.org.zone'
       - file: 'galaxycast.org.zone'
       - file: 'repeatme.org.zone'
@@ -51,6 +52,8 @@ dns_bind_views:
         update_policy:
           - 'grant certbot. zonesub TXT'
       - file: 'usegalaxy.org.zone'
+        update_policy:
+          - 'grant certbot. zonesub TXT'
       - file: 'getgalaxy.org.zone'
       - file: 'galaxycast.org.zone'
       - file: 'repeatme.org.zone'
