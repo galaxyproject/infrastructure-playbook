@@ -133,6 +133,7 @@ infrastats.galaxyproject.org
 jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
+ns-training.galaxyproject.org
 
 [virtual:children]
 ec2hosts
