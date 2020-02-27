@@ -126,3 +126,10 @@
   roles:
     - role: docker
   tags: docker
+
+- name: Tasks for Galaxy DB servers
+  hosts: galaxydbservers
+  remote_user: root
+  roles:
+    - role: usegalaxy_eu.gxadmin
+  tags: gxadmin

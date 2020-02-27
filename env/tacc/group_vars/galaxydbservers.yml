@@ -17,3 +17,15 @@ telegraf_plugins_extra:
       - interval = "1m"
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_tools_likely_broken_1w:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery tool-likely-broken --short-tool-id 1'"]
+      - timeout = "180s"
+      - data_format = "influx"
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+
+gxadmin_dir: /usr/local/lib/gxadmin
+gxadmin_bin_dir: /usr/local/bin

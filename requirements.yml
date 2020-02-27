@@ -19,3 +19,5 @@
   version: 1.2.3
 - name: dj-wasabi.telegraf
   version: 0.12.0
+- name: usegalaxy_eu.gxadmin
+  version: 0.0.2
