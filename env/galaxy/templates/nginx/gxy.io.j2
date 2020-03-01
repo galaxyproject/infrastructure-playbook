@@ -20,6 +20,11 @@ server {
     rewrite ^/gadminmachines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
     rewrite ^/gadminchat/?$ https://gitter.im/dagobah-training/Lobby;
 
+    rewrite ^/gat/?$ https://github.com/galaxyproject/dagobah-training/;
+    rewrite ^/gatmachines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
+    rewrite ^/gatchat/?$ https://gitter.im/dagobah-training/Lobby;
+    rewrite ^/admin-?chat/?$ https://gitter.im/galaxyproject/admins;
+
     return 302 https://galaxyproject.org;
 
 }
