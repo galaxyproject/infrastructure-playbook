@@ -14,16 +14,12 @@ server {
     rewrite ^/nate/gccbosc2018infra/?$ https://docs.google.com/presentation/d/1_y3m4p_KwoG3gRIV--buQ_xXw0ZlyKtKVFfxMpkIjBU/;
     rewrite ^/gcc19k8s/?$ https://gist.github.com/natefoo/16a68683b45a7bc4f0020cbf5240f5dc;
     rewrite ^/gcc19arch/?$ https://docs.google.com/document/d/1u-HKEN_yoODEEGBeVBuxEvIxcrJGhtS98TQzhx84bHw/edit;
+    rewrite ^/admin-?chat/?$ https://gitter.im/galaxyproject/admins;
 
     # Galaxy Admin Training
-    rewrite ^/galaxyadmin/?$ https://github.com/galaxyproject/dagobah-training/;
-    rewrite ^/gadminmachines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
-    rewrite ^/gadminchat/?$ https://gitter.im/dagobah-training/Lobby;
-
-    rewrite ^/gat/?$ https://github.com/galaxyproject/dagobah-training/;
+    rewrite ^/gat/?$ https://github.com/galaxyproject/admin-training/;
     rewrite ^/gat-?machines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
-    rewrite ^/gat-?chat/?$ https://gitter.im/dagobah-training/Lobby;
-    rewrite ^/admin-?chat/?$ https://gitter.im/galaxyproject/admins;
+    rewrite ^/gat-?chat/?$ https://gitter.im/galaxyproject/admin-training;
 
     return 302 https://galaxyproject.org;
 
