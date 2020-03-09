@@ -18,7 +18,7 @@ dns_bind_views:
     zones:
       - name: 'galaxyproject.org'
         file: 'galaxyproject.org.private.zone'
-      - file: 'usegalaxy.org.zone'
+      - name: 'usegalaxy.org'
         file: 'usegalaxy.org.private.zone'
       - file: 'getgalaxy.org.zone'
       - file: 'galaxycast.org.zone'
