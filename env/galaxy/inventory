@@ -115,7 +115,6 @@ infrastructure
 ##
 
 [infrastructure]
-#delirium.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 duvel.galaxyproject.org
@@ -198,13 +197,10 @@ secondarymxservers
 [primarymxservers]
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
-#delirium.galaxyproject.org
 
 [secondarymxservers]
-#delirium.galaxyproject.org
 
 [listservers]
-#delirium.galaxyproject.org
 
 ## Web
 
