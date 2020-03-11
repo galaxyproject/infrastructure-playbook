@@ -2,7 +2,8 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-proxy_cache_path    /var/lib/nginx/proxy levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m; # 1.7.10 use_temp_path=off;
+# defined in training
+#proxy_cache_path    /var/lib/nginx/proxy levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m use_temp_path=off;
 
 server {
     listen      *:443 ssl;
@@ -30,7 +31,7 @@ server {
         proxy_hide_header      x-amz-server-side-encryption;
         proxy_hide_header      Set-Cookie;
         proxy_ignore_headers   Set-Cookie;
-        #proxy_cache_revalidate on;  # 1.5.7
+        proxy_cache_revalidate on;
         proxy_intercept_errors on;
         proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
         proxy_cache_lock       on;

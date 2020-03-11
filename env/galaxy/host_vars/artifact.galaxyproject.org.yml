@@ -1,6 +1,30 @@
 ---
 
+host_directories:
+  - path: /srv/nginx
+
 ldap_server_uris:
   - ldap://localhost/ # prefer self
   - ldap://ldap1.galaxyproject.org/
   - ldap://ldap3.galaxyproject.org/
+
+nginx_conf_http:
+  server_names_hash_bucket_size: 128
+  # why are these so high?
+  client_max_body_size: 1g
+  proxy_read_timeout: 3600
+
+nginx_servers:
+  - certbot_redirects
+
+nginx_ssl_servers:
+  - training
+  - biostar
+
+certbot_domains:
+  - artifact.galaxyproject.org
+  - training.galaxyproject.org
+  - biostar.usegalaxy.org
+  - biostar.galaxyproject.org
+
+nginx_default_redirect_uri: https://galaxyproject.org/

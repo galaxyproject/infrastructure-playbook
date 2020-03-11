@@ -1,7 +1,5 @@
 ---
 
-certbot_ddns_keys: "{{ vault_certbot_ddns_keys }}"
-
 certbot_dns_provider: rfc2136
 certbot_dns_credentials:
   server: 3.14.178.173

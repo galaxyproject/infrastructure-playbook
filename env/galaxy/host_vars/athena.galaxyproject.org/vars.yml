@@ -50,11 +50,10 @@ nginx_servers:
 
 nginx_ssl_servers:
   - galaxyproject
-  - gxy.io
-  - biostar
 
 certbot_domains:
   - galaxyproject.org
-  - gxy.io
-  - biostar.usegalaxy.org
-  - biostar.galaxyproject.org
+
+# athena is old
+certbot_post_renewal: |
+    service nginx restart || true

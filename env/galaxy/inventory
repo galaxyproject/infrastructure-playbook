@@ -7,7 +7,6 @@
 newtrail.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 artifact.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 
-chouffe.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
@@ -54,7 +53,6 @@ newtrail.galaxyproject.org
 artifact.galaxyproject.org
 duvel.galaxyproject.org
 delirium.galaxyproject.org
-chouffe.galaxyproject.org
 athena.galaxyproject.org
 radegast.galaxyproject.org
 orval.galaxyproject.org
@@ -120,7 +118,6 @@ infrastructure
 #delirium.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
-chouffe.galaxyproject.org
 duvel.galaxyproject.org
 
 # - sets the hostname to the inventory_hostname
@@ -142,7 +139,6 @@ cvmfsstratum1servers
 
 [ec2hosts]
 delirium.galaxyproject.org
-chouffe.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 athena.galaxyproject.org
@@ -182,7 +178,6 @@ newtrail.galaxyproject.org
 
 [dnsslaveservers]
 artifact.galaxyproject.org
-chouffe.galaxyproject.org
 duvel.galaxyproject.org
 
 [ldapservers]
@@ -216,8 +211,8 @@ artifact.galaxyproject.org
 [webservers]
 orval.galaxyproject.org
 delirium.galaxyproject.org
-chouffe.galaxyproject.org
 newtrail.galaxyproject.org
+artifact.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 jeltz.galaxyproject.org
@@ -238,26 +233,30 @@ certbotservers
 [certbotservers]
 orval.galaxyproject.org
 delirium.galaxyproject.org
-chouffe.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
 infrastats.galaxyproject.org
+newtrail.galaxyproject.org
+artifact.galaxyproject.org
 # TODO: probably need to use DNS-01 for this
 #status.usegalaxy.org
 
 [certbotservers:children]
-ddnsservers
+certbotdnsservers
+
+# provides:
+#   - certbot TSIG key to certbot webservers
+#   - certbot DNS-01 rfc2136 provider config
+# overrides WEB-01 (webroot) mode
+[certbotdnsservers]
 
 # provides:
 #   - certbot TSIG key for DNS servers
 #   - certbot TSIG key to certbot webservers
-#   - certbot DNS-01 rfc2136 provider config
-# overrides WEB-01 (webroot) mode
-[ddnsservers]
-newtrail.galaxyproject.org
-
-[ddnsservers:children]
-infrastructure
+[certbottsigkeyservers]
+[certbottsigkeyservers:children]
+certbotdnsservers
+dnsmasterservers
 
 ## Kerberos
 

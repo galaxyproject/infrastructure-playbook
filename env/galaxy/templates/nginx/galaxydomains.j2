@@ -4,7 +4,7 @@
 
 server {
     listen       *:443 ssl;
-    server_name  galaxy2.org galaxyworkbench.org repeatme.org;
+    server_name  galaxy2.org galaxyworkbench.org repeatme.org g2.bx.psu.edu;
 
     return 302 https://galaxyproject.org;
 }
@@ -31,3 +31,19 @@ server {
 
     return 302 https://galaxyproject.org/admin/get-galaxy;
 }
+
+server {
+    listen       *:443 ssl;
+    server_name  galaxy.training;
+
+    return 302 https://training.galaxyproject.org;
+}
+
+server {
+    listen      *:443 ssl;
+    server_name new.galaxyproject.org;
+
+    return 301 https://galaxyproject.org$request_uri;
+}
+
+# vim: set filetype=nginx

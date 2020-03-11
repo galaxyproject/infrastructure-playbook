@@ -31,26 +31,9 @@ nginx_servers:
   - certbot_redirects_infra
 
 nginx_ssl_servers:
-  - wiki
-#  - moin
-  - galaxydomains
-  - new
   - training
 
 certbot_domains:
-  - wiki.g2.bx.psu.edu
-  - wiki.galaxyproject.org
-  #- moin.galaxyproject.org
-  - galaxy2.org
-  - galaxyworkbench.org
-  - repeatme.org
-  - galaxy.psu.edu
-  - galaxycast.org
-  - getgalaxy.org
-  - new.galaxyproject.org
   - training.galaxyproject.org
-
-nginx_extra_configs:
-  - wiki_hub_rewrites.conf
 
 nginx_default_redirect_uri: https://galaxyproject.org/

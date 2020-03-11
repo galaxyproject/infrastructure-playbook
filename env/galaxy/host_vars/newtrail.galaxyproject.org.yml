@@ -12,29 +12,26 @@ nginx_servers:
   - certbot_redirects
 
 nginx_ssl_servers:
-  - newtrail
-#  - wiki
-##  - moin
-#  - galaxydomains
-#  - new
-#  - training
+  - wiki
+  - galaxydomains
+  - gxy.io
 
-certbot_environment: staging
 certbot_domains:
   - newtrail.galaxyproject.org
-#  - wiki.g2.bx.psu.edu
-#  - wiki.galaxyproject.org
-#  #- moin.galaxyproject.org
-#  - galaxy2.org
-#  - galaxyworkbench.org
-#  - repeatme.org
-#  - galaxy.psu.edu
-#  - galaxycast.org
-#  - getgalaxy.org
-#  - new.galaxyproject.org
-#  - training.galaxyproject.org
+  - wiki.g2.bx.psu.edu
+  - wiki.galaxyproject.org
+  - galaxy2.org
+  - galaxyworkbench.org
+  - repeatme.org
+  - g2.bx.psu.edu
+  - galaxy.psu.edu
+  - galaxycast.org
+  - getgalaxy.org
+  - galaxy.training
+  - new.galaxyproject.org
+  - gxy.io
 
-#nginx_extra_configs:
-#  - wiki_hub_rewrites.conf
+nginx_extra_configs:
+  - wiki_hub_rewrites.conf
 
 nginx_default_redirect_uri: https://galaxyproject.org/
