@@ -1,22 +1,31 @@
 ---
 
-#- name: Bootstrap python
-#  hosts: smartosglobalzones
-#  gather_facts: false
-#  vars:
-#    pkgsrc_bootstrap_tar: bootstrap-trunk-x86_64-20190317.tar.gz
-#    pkgsrc_bootstrap_sha: cda0f6cd27b2d8644e24bc54d19e489d89786ea7
-#  pre_tasks:
-#    - name: Bootsrap Python for Ansible
-#      raw: >-
-#        bash -c 'test -e /opt/tools/bin/python3 || (
-#        curl -O https://pkgsrc.joyent.com/packages/SmartOS/bootstrap/{{ pkgsrc_bootstrap_tar }} ;
-#        [ "{{ pkgsrc_bootstrap_sha }}" = "$(/bin/digest -a sha1 {{ pkgsrc_bootstrap_tar }})" ] || echo "ERROR: checksum failure" ;
-#        tar -zxpf {{ pkgsrc_bootstrap_tar }} -C / ;
-#        /opt/tools/bin/pkgin -y install python37
-#        )'
-#      register: output
-#      changed_when: output.stdout != ""
+- name: Bootstrap python
+  hosts: smartosglobalzones
+  gather_facts: false
+  vars:
+    pkgsrc_bootstrap_tar: bootstrap-trunk-tools-20200124.tar.gz
+    pkgsrc_bootstrap_sha: 80adb2d113af4ea9742a3e467dc954ded6b48845
+  pre_tasks:
+    - name: Bootstrap GZ pkgsrc tools
+      raw: >-
+        bash -c 'test -e /opt/tools/bin/pkgin || (
+        cd /var/tmp &&
+        curl -kO https://pkgsrc.joyent.com/packages/SmartOS/bootstrap/{{ pkgsrc_bootstrap_tar }} &&
+        [ "{{ pkgsrc_bootstrap_sha }}" = "$(/bin/digest -a sha1 {{ pkgsrc_bootstrap_tar }})" ] &&
+        tar -zxpf {{ pkgsrc_bootstrap_tar }} -C /
+        )'
+      register: output
+      changed_when: output.stdout != ""
+
+    - name: Bootstrap Python for Ansible
+      raw: >-
+        bash -c 'test -e /opt/tools/bin/python3 || (
+        /opt/tools/bin/pkgin -y update ;
+        /opt/tools/bin/pkgin -y install python37
+        )'
+      register: output
+      changed_when: output.stdout != ""
 
 - name: Manage SmartOS GZs
   hosts: smartosglobalzones

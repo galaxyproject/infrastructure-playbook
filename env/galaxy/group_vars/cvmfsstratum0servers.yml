@@ -1,6 +1,0 @@
----
-
-#cvmfs_manage_units_group: docker
-cvmfsstratum0servers_group_packages:
-  # for usegalaxy-tools
-  - tree

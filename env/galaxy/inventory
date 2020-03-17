@@ -19,6 +19,7 @@ cvmfs1-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs1-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs0-psu1.galaxyproject.org ansible_user=root
+cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 testtoolshed.galaxyproject.org ansible_user=centos ansible_become=yes
 toolshed.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.108
@@ -29,23 +30,19 @@ smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local
 smart3.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
 westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
+rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
 toolshed.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
-cvmfs0-tacc0.galaxyproject.org
-cvmfs1-tacc0.galaxyproject.org
-cvmfs1-iu0.galaxyproject.org
-cvmfs1-psu0.galaxyproject.org
 ns-training.galaxyproject.org
 
 [baseenv:children]
 galaxyenv
 liteenv
 jenkinsslaves
+cvmfsservers
 
 # Everything in baseenv + adds postfix, resolv.conf config
 [galaxyenv]
@@ -129,6 +126,7 @@ infrastats.galaxyproject.org
 jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
+cvmfs0-psu2.galaxyproject.org
 ns-training.galaxyproject.org
 
 [virtual:children]
@@ -290,6 +288,7 @@ cvmfsstratum1servers
 cvmfs0-tacc0.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
+cvmfs0-psu2.galaxyproject.org
 
 [cvmfsstratum1servers]
 cvmfs1-tacc0.galaxyproject.org
