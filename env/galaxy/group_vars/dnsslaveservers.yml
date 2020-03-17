@@ -1,5 +1,7 @@
 ---
 
+dns_bind_keys: "{{ vault_dns_bind_keys }}"
+
 dns_bind_views:
   - name: 'galaxy'
     match_clients:

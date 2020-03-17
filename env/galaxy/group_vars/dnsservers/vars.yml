@@ -1,7 +1,5 @@
 ---
 
-dns_bind_keys: "{{ vault_dns_bind_keys }} + {{ certbot_ddns_keys }}"
-
 dns_bind_options:
   - dnssec-validation: 'auto'
   - auth-nxdomain: 'no'
