@@ -62,14 +62,3 @@ ssl_cas:
           common_name: "{{ inventory_hostname }}"
         ext:
           extendedKeyUsage: clientAuth
-  stats:
-    dn:
-      <<: *dn_defaults
-      common_name: Galaxy Stats CA Root
-    certs:
-      influxdb:
-        dn:
-          <<: *dn_defaults
-          common_name: "{{ inventory_hostname }}"
-        ext:
-          subjectAltName: "DNS:{{ inventory_hostname }},IP:{{ ansible_default_ipv4.address }},DNS:infrastats.galaxyproject.org"

@@ -15,19 +15,20 @@
 
 certbot_domains:
  - "{{ inventory_hostname }}"
+ - infrastats.galaxyproject.org
 
-nginx_default_redirect_uri: https://infrastats.galaxyproject.org/
+nginx_default_redirect_uri: https://stats.galaxyproject.org/
 nginx_servers:
   - certbot_redirects
 nginx_ssl_servers:
-  - infrastats
+  - stats
 
 stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
 
 statsservers_group_packages:
   # for influxdb_user module
-    - python2-requests
-    - python2-pip
+  - python-requests
+  - python-pip
 
 grafana_admin_user: "{{ vault_grafana_admin_user }}"
 grafana_admin_pass: "{{ vault_grafana_admin_pass }}"
@@ -37,16 +38,13 @@ stats_grafana_conf_auth_github_client_id: "{{ vault_stats_grafana_conf_auth_gith
 stats_grafana_conf_auth_github_client_secret: "{{ vault_stats_grafana_conf_auth_github_client_secret }}"
 stats_grafana_conf_auth_github_team_ids: "{{ vault_stats_grafana_conf_auth_github_team_ids }}"
 
-stats_grafana_conf_root_url: "https://infrastats.galaxyproject.org/"
+stats_grafana_conf_root_url: "https://stats.galaxyproject.org/"
 stats_grafana_conf_auth_github: true
 stats_grafana_conf_auth_github_allowed_organizations:
   - galaxyproject
 
-#statsservers_group_packages:
-#  - '@development'
-
 stats_conf_email_host: 'localhost:25'
-stats_conf_email_from: 'stats@infrastats.galaxyproject.org'
+stats_conf_email_from: 'stats@stats.galaxyproject.org'
 
 stats_influxdb_http_bind_address: "127.0.0.1:8086"
 

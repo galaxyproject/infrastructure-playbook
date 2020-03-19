@@ -1,11 +1,21 @@
 ---
 
-- name: Bootsrap Python2 for Ansible
+- name: Bootstrap Python2 for Ansible
   hosts: jenkinsslaves_eu
   gather_facts: false
   tasks:
-    - name: Bootsrap Python2 for Ansible
+    - name: Bootstrap Python2 for Ansible
       raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python2.7 python)"
+      register: output
+      changed_when: output.stdout != ""
+
+- name: Bootstrap Python 3 for Ansible
+  hosts: usepython3_el
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: Bootstrap Python 3 for Ansible
+      raw: bash -c "test -e /opt/rh/rh-python36/root/bin/python3|| (yum install -y dnf centos-release-scl && yum install -y rh-python36)"
       register: output
       changed_when: output.stdout != ""
 

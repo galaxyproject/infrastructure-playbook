@@ -99,7 +99,7 @@ cvmfs_install_setuid_cvmfs_remount_sync: yes
 telegraf_agent_output:
   - type: influxdb
     config:
-      - urls = ["https://infrastats.galaxyproject.org:8086"]
+      - urls = ["https://stats.galaxyproject.org:8086"]
       - username = "client"
       - password = "{{ influxdb_client_pass }}"
       - database = "system"
@@ -107,7 +107,7 @@ telegraf_agent_output:
       - '  influxdb_database = ["*"]'
   - type: influxdb
     config:
-      - urls = ["https://infrastats.galaxyproject.org:8086"]
+      - urls = ["https://stats.galaxyproject.org:8086"]
       - username = "client"
       - password = "{{ influxdb_client_pass }}"
       - database = "telegraf"
@@ -116,7 +116,7 @@ telegraf_agent_output:
       - '  influxdb_database = ["telegraf"]'
   - type: influxdb
     config:
-      - urls = ["https://infrastats.galaxyproject.org:8086"]
+      - urls = ["https://stats.galaxyproject.org:8086"]
       - username = "client"
       - password = "{{ influxdb_client_pass }}"
       - database = "{{ galaxy_instance_codename }}_sql"

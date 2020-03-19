@@ -24,6 +24,14 @@ cvmfs1-psu0.galaxyproject.org ansible_user=root
 testtoolshed.galaxyproject.org ansible_user=centos ansible_become=yes
 toolshed.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.108
 
+# Installs Python 2.6 from SCL and automatically sets ansible_python_interpreter
+# TODO: not currently working: `yum` module is incompatible with Python 3 and there is no python36-dnf module
+[usepython3_el]
+#stats.galaxyproject.org
+
+[usepython3_el:vars]
+ansible_python_interpreter = /opt/rh/rh-python36/root/bin/python3
+
 [smartosglobalzones]
 smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
@@ -56,7 +64,7 @@ orval.galaxyproject.org
 westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
 mjolnir0.galaxyproject.org
-infrastats.galaxyproject.org
+stats.galaxyproject.org
 jeltz.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
@@ -122,7 +130,7 @@ radegast.galaxyproject.org
 testtoolshed.galaxyproject.org
 toolshed.galaxyproject.org
 duvel.galaxyproject.org
-infrastats.galaxyproject.org
+stats.galaxyproject.org
 jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
@@ -229,7 +237,7 @@ orval.galaxyproject.org
 delirium.galaxyproject.org
 duvel.galaxyproject.org
 athena.galaxyproject.org
-infrastats.galaxyproject.org
+stats.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 # TODO: probably need to use DNS-01 for this
@@ -369,7 +377,7 @@ biostar.usegalaxy.org
 mjolnir0.galaxyproject.org
 
 [statsservers]
-infrastats.galaxyproject.org
+stats.galaxyproject.org
 
 # for serial console setup
 [x2200s]

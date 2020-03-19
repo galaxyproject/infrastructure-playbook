@@ -1,5 +1,7 @@
 ---
 
+# TODO: split this into Sentry and InfluxDB/Grafana roles
+
 # Telegraf is managed by dj-wasabi.telegraf
 
 - name: Include OS vars

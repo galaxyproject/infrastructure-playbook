@@ -8,7 +8,7 @@ telegraf_agent_package_state: latest
 telegraf_agent_output:
   - type: influxdb
     config:
-    - urls = ["https://infrastats.galaxyproject.org:8086"]
+    - urls = ["https://stats.galaxyproject.org:8086"]
     - username = "client"
     - password = "{{ influxdb_client_pass }}"
     - database = "system"

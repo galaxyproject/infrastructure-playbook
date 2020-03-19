@@ -1,17 +1,5 @@
 ---
 
-filesystems:
-  - dev: /dev/sdb
-    fstype: xfs
-
-# FIXME: on a new install this would install over the initialized influxdb (packages install before mounts)
-mounts:
-  - name: /var/lib/influxdb
-    src: /dev/sdb
-    fstype: xfs
-    owner: influxdb
-    group: influxdb
-
 nginx_default_redirect_uri: https://sentry.galaxyproject.org/
 
 nginx_servers:
@@ -19,11 +7,9 @@ nginx_servers:
 
 nginx_ssl_servers:
   - sentry
-  - stats
 
 certbot_domains:
   - sentry.galaxyproject.org
-  - stats.galaxyproject.org
 
 local_users:
   - name: sentry
@@ -32,13 +18,5 @@ local_users:
     comment: 'Sentry'
     system: yes
     home: /var/opt/sentry
-    createhome: yes
-    shell: /bin/bash
-  - name: stats
-    #group: sentry # this happens automatically if unset
-    groups: nginx
-    comment: 'Stats'
-    system: yes
-    home: /var/opt/stats
     createhome: yes
     shell: /bin/bash

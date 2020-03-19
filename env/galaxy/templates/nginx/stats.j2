@@ -14,8 +14,17 @@ server {
     listen *:443 ssl;
     server_name infrastats.galaxyproject.org;
 
-    access_log  /var/log/nginx/infrastats.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/infrastats.galaxyproject.org_error.log;
+    location / {
+        return 301 https://stats.galaxyproject.org$request_uri;
+    }
+}
+
+server {
+    listen *:443 ssl;
+    server_name stats.galaxyproject.org;
+
+    access_log  /var/log/nginx/stats.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/stats.galaxyproject.org_error.log;
 
     location /.well-known/ {
         root {{ certbot_well_known_root }};
@@ -31,10 +40,10 @@ server {
 
 server {
     listen {{ ansible_default_ipv4.address }}:8086 ssl;
-    server_name infrastats.galaxyproject.org;
+    server_name stats.galaxyproject.org infrastats.galaxyproject.org;
 
-    access_log  /var/log/nginx/infrastats-influxdb.galaxyproject.org_access.log;
-    error_log   /var/log/nginx/infrastats-influxdb.galaxyproject.org_error.log;
+    access_log  /var/log/nginx/stats-influxdb.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/stats-influxdb.galaxyproject.org_error.log;
 
     location / {
         proxy_pass   http://influxdb_app;

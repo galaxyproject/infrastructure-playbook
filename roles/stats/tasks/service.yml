@@ -17,4 +17,4 @@
     name: "{{ grafana_service_name }}"
     state: started
     enabled: yes
-    daemon_reload: "{{ 'yes' if stats_grafana_service_unit_file | changed else 'no' }}"
+    daemon_reload: "{{ 'yes' if stats_grafana_service_unit_file is changed else 'no' }}"
