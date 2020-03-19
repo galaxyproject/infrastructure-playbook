@@ -1,7 +1,5 @@
 ---
 
-influxdb_client_pass: "{{ vault_influxdb_client_pass }}"
-
 # for the resolv role
 resolv_nameservers:
   - 128.118.250.8
@@ -19,31 +17,6 @@ ldap_server_uris:
 
 # template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
 zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}
-
-# run telegraf on everything
-telegraf_agent_package_state: latest
-
-telegraf_agent_output:
-  - type: influxdb
-    config:
-    - urls = ["https://infrastats.galaxyproject.org:8086"]
-    - username = "client"
-    - password = "{{ influxdb_client_pass }}"
-    - database = "system"
-
-telegraf_plugins_default:
-  - plugin: cpu
-    config:
-      - percpu = true
-  - plugin: disk
-  - plugin: kernel
-  - plugin: processes
-  - plugin: io
-  - plugin: mem
-  - plugin: system
-  - plugin: swap
-  - plugin: net
-  - plugin: netstat
 
 # these need to be available to both listservers and primarymxservers
 mailman3_distribute_maps_dir: /var/list

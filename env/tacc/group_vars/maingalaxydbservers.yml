@@ -15,13 +15,17 @@ stats_slurp:
 telegraf_agent_output:
   - type: influxdb
     config:
-      - urls = ["http://stats.galaxyproject.org:8086"]
+      - urls = ["https://infrastats.galaxyproject.org:8086"]
+      - username = "client"
+      - password = "{{ influxdb_client_pass }}"
       - database = "system"
       - '[outputs.influxdb.tagdrop]'
       - '  influxdb_database = ["*"]'
   - type: influxdb
     config:
-      - urls = ["http://stats.galaxyproject.org:8086"]
+      - urls = ["https://infrastats.galaxyproject.org:8086"]
+      - username = "client"
+      - password = "{{ influxdb_client_pass }}"
       - database = "{{ galaxy_instance_codename }}_sql"
       - 'tagexclude = ["influxdb_database"]'
       - '[outputs.influxdb.tagpass]'

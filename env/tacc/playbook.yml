@@ -90,8 +90,6 @@
       tags: postgres
     - role: sentry
       tags: sentry
-    - role: stats
-      tags: stats
     - role: supervisor
       tags: supervisor
 

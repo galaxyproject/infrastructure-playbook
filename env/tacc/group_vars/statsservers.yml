@@ -1,0 +1,102 @@
+---
+
+statsservers_group_packages:
+  - '@development'
+  - python-virtualenv
+  - python-psycopg2
+  # sentry deps
+  - memcached
+  - postgresql95-devel
+  - libxml2-devel
+  - libxslt-devel
+  - libffi-devel
+  - openssl-devel
+
+postgresql_version: '9.5'
+
+postgresql_objects_users:
+  - name: sentry
+  - name: graphite
+
+postgresql_objects_databases:
+  - name: sentry
+    owner: sentry
+  - name: graphite
+    owner: graphite
+
+#stats_use_supervisord: true
+
+# supervisor is used only for sentry
+supervisord_install: package
+statsservers_group_supervisor_configs:
+  - sentry
+
+sentry_conf_email_host: 'localhost'
+
+#stats_slurp: true
+
+# used in the nginx template, which is run in a play that does not include the
+# sentry role
+sentry_sock_dir: /var/opt/sentry/run
+
+#statsservers_group_crontabs:
+#  - id: slurp_galaxy_stats_test
+#    name: Slurp Galaxy Test Stats
+#    user: stats
+#    minute: "*/5"
+#    job: "/srv/statslurp/bin/galaxy_slurp.py test"
+#  - id: slurp_galaxy_stats_main
+#    name: Slurp Galaxy Main Stats
+#    user: stats
+#    minute: "*/5"
+#    job: "/srv/statslurp/bin/galaxy_slurp.py main"
+#  - id: slurp_galaxy_services_stats
+#    name: Slurp Galaxy Service Stats
+#    user: stats
+#    job: "/srv/statslurp/bin/galaxy_services_slurp.py"
+
+# separate db filtering for statsd (Galaxy timing) and system stuff using
+#   https://github.com/influxdata/telegraf/issues/1778
+#telegraf_agent_output:
+#  - type: influxdb
+#    config:
+#      - urls = ["http://localhost:8086"]
+#      - database = "system"
+#      - '[outputs.influxdb.tagdrop]'
+#      - '  influxdb_database = ["*"]'
+#  - type: influxdb
+#    config:
+#      - urls = ["http://localhost:8086"]
+#      - database = "telegraf"
+#      - 'tagexclude = ["influxdb_database"]'
+#      - '[outputs.influxdb.tagpass]'
+#      - '  influxdb_database = ["telegraf"]'
+
+#telegraf_plugins_default:
+#  - plugin: statsd
+#    config:
+#      - service_address = "0.0.0.0:8125"
+#      - delete_gauges = false
+#      - delete_counters = false
+#      - delete_sets = false
+#      - delete_timings = true
+#      - percentiles = [90]
+#      - metric_separator = "_"
+#      - parse_data_dog_tags = false
+#      - allowed_pending_messages = 10000
+#      - percentile_limit = 1000
+#      - udp_packet_size = 1500
+#      - '[inputs.statsd.tags]'
+#      - '  influxdb_database = "telegraf"'
+#  - plugin: cpu
+#    config:
+#      - percpu = true
+#  - plugin: disk
+#  - plugin: kernel
+#  - plugin: processes
+#  - plugin: io
+#  - plugin: mem
+#  - plugin: system
+#  - plugin: swap
+#  - plugin: net
+#  - plugin: netstat
