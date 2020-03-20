@@ -2,6 +2,13 @@
 
 host_directories:
   - path: /srv/nginx
+  # FIXME: these wouldn't work on a clean deployment due to ordering
+  - path: /srv/nginx/toolshed.tools/root
+    owner: marten
+    group: marten
+  - path: /srv/nginx/galaxy.tools/root
+    owner: marten
+    group: marten
 
 ldap_server_uris:
   - ldap://localhost/ # prefer self
@@ -15,6 +22,8 @@ nginx_ssl_servers:
   - wiki
   - galaxydomains
   - gxy.io
+  - toolshed.tools
+  - galaxy.tools
 
 certbot_domains:
   - newtrail.galaxyproject.org
@@ -30,6 +39,8 @@ certbot_domains:
   - galaxy.training
   - new.galaxyproject.org
   - gxy.io
+  - toolshed.tools
+  - galaxy.tools
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf

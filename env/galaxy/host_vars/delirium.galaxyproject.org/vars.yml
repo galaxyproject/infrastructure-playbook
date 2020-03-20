@@ -17,21 +17,4 @@ nginx_conf_ssl_protocols:
   - TLSv1.1
   - TLSv1.2
 
-nginx_servers:
-  - certbot_redirects_infra
-
-nginx_ssl_servers:
-  - toolshed.tools
-  - galaxy.tools
-
-certbot_redirect_domains:
-  - "{{ inventory_hostname }}"
-  - toolshed.tools
-  - galaxy.tools
-
-certbot_domains:
-  - "{{ inventory_hostname }}"
-  - toolshed.tools
-  - galaxy.tools
-
 nginx_default_redirect_uri: https://galaxyproject.org/

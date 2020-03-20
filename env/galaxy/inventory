@@ -108,8 +108,9 @@ fullenv
 radegast.galaxyproject.org
 nn14.galaxyproject.org
 
-[fullenv:children]
-infrastructure
+# FIXME: why was this the case?
+#[fullenv:children]
+#infrastructure
 
 ##
 ## Host groupings
