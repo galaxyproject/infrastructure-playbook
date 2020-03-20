@@ -135,6 +135,12 @@ zfs_filesystems:
     setuid: "off"
     owner: depot
     group: depot
+  - name: promise-1/orval/eggs
+    mountpoint: /srv/nginx/eggs.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
   - name: ift-1/orval/depot/singularity
     mountpoint: legacy
     exec: "off"
@@ -271,6 +277,7 @@ nginx_conf_ssl_protocols:
 
 nginx_servers:
   - certbot_redirects
+  - eggs
 
 nginx_ssl_servers:
   - orval
@@ -280,6 +287,7 @@ nginx_ssl_servers:
   - sample-data
   - bioarchive
   - depot
+  - eggs-ssl
 
 # needs cffi, which needs gcc, which isn't installed
 #certbot_virtualenv_package_name: py37-virtualenv
@@ -289,6 +297,15 @@ certbot_script: /opt/local/bin/certbot
 certbot_letsencrypt_dir: /opt/local/etc/letsencrypt
 certbot_post_renewal: |
   svcadm restart nginx || true
+certbot_redirect_domains:
+  - "{{ inventory_hostname }}"
+  - snpeff-data.galaxyproject.org
+  - screencast.galaxyproject.org
+  - screencast.g2.bx.psu.edu
+  - images.galaxyproject.org
+  - sample-data.galaxyproject.org
+  - bioarchive.galaxyproject.org
+  - depot.galaxyproject.org
 certbot_domains:
   - "{{ inventory_hostname }}"
   - snpeff-data.galaxyproject.org
@@ -298,3 +315,5 @@ certbot_domains:
   - sample-data.galaxyproject.org
   - bioarchive.galaxyproject.org
   - depot.galaxyproject.org
+  - eggs.galaxyproject.org
+  - eggs.g2.bx.psu.edu

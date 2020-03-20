@@ -2,10 +2,6 @@
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
-host_users:
-  - name: docs
-    comment: 'Galaxy Docs'
-
 mounts:
   - name: /srv/nginx/wheels_eggs
     src: /dev/xvdl
@@ -23,27 +19,19 @@ nginx_conf_ssl_protocols:
 
 nginx_servers:
   - certbot_redirects_infra
-  - eggs
 
 nginx_ssl_servers:
-  - eggs-ssl
-  - galaxydomains
   - toolshed.tools
   - galaxy.tools
-  - docs
 
 certbot_redirect_domains:
   - "{{ inventory_hostname }}"
   - toolshed.tools
   - galaxy.tools
-  - docs.galaxyproject.org
 
 certbot_domains:
   - "{{ inventory_hostname }}"
-  - eggs.galaxyproject.org
-  - eggs.g2.bx.psu.edu
   - toolshed.tools
   - galaxy.tools
-  - docs.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
