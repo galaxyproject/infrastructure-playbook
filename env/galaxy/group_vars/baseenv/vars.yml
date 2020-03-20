@@ -2,6 +2,7 @@
 
 baseenv_group_authorized_key_users: "{{ vault_baseenv_group_authorized_key_users }}"
 
+# Remember, these package names need to be valid across Debian/Ubuntu/CentOS/pkgsrc
 all_packages:
   - zsh
   - git

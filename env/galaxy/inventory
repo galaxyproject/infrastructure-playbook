@@ -11,7 +11,6 @@ duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 orval.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
-biostar.usegalaxy.org ansible_user=www
 jetstream-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 jetstream-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-tacc0.galaxyproject.org ansible_user=root
@@ -22,7 +21,7 @@ cvmfs0-psu1.galaxyproject.org ansible_user=root
 cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 testtoolshed.galaxyproject.org ansible_user=centos ansible_become=yes
-toolshed.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.108
+#toolshed.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.108
 
 # Installs Python 2.6 from SCL and automatically sets ansible_python_interpreter
 # TODO: not currently working: `yum` module is incompatible with Python 3 and there is no python36-dnf module
@@ -43,7 +42,7 @@ rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/
 # These get all the common roles. Additionally:
 # - common authorized_keys for root
 [baseenv]
-toolshed.galaxyproject.org
+#toolshed.galaxyproject.org
 ns-training.galaxyproject.org
 
 [baseenv:children]
@@ -63,7 +62,6 @@ radegast.galaxyproject.org
 orval.galaxyproject.org
 westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
-mjolnir0.galaxyproject.org
 stats.galaxyproject.org
 jeltz.galaxyproject.org
 
@@ -79,19 +77,18 @@ smartosglobalzones
 orval.galaxyproject.org
 radegast.galaxyproject.org
 testtoolshed.galaxyproject.org
-toolshed.galaxyproject.org
+#toolshed.galaxyproject.org
 westvleteren.galaxyproject.org
 
 [sshclients:children]
 dockerswarmmanagers
-biostarservers
 jenkinsservers
 jenkinsslaves
 
 [toolshedservers]
 #radegast.galaxyproject.org
 testtoolshed.galaxyproject.org
-toolshed.galaxyproject.org
+#toolshed.galaxyproject.org
 
 # For things that need access to sslkeys and the "PKI"
 [sslservers]
@@ -108,7 +105,6 @@ fullenv
 
 # These get everything in liteenv + NFS
 [fullenv]
-mjolnir0.galaxyproject.org
 radegast.galaxyproject.org
 nn14.galaxyproject.org
 
@@ -128,7 +124,7 @@ duvel.galaxyproject.org
 [virtual]
 radegast.galaxyproject.org
 testtoolshed.galaxyproject.org
-toolshed.galaxyproject.org
+#toolshed.galaxyproject.org
 duvel.galaxyproject.org
 stats.galaxyproject.org
 jeltz.galaxyproject.org
@@ -156,7 +152,7 @@ cvmfs1-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
 testtoolshed.galaxyproject.org
-toolshed.galaxyproject.org
+#toolshed.galaxyproject.org
 
 [authkeyhosts]
 [authkeyhosts:children]
@@ -345,7 +341,6 @@ jenkinsslaves_au
 jenkinsslaves_eu
 
 [jenkinsslaves_psu]
-mjolnir0.galaxyproject.org
 n1.galaxyproject.org
 n2.galaxyproject.org
 # n3 is leeroy
@@ -369,12 +364,6 @@ ansible_become = yes
 
 [zfsbackupservers]
 westvleteren.galaxyproject.org
-
-[biostarservers]
-biostar.usegalaxy.org
-
-[starforgebuilders]
-mjolnir0.galaxyproject.org
 
 [statsservers]
 stats.galaxyproject.org

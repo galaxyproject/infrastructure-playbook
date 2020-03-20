@@ -28,9 +28,6 @@ host_directories:
   - path: /srv/nginx/new.galaxyproject.org/root
     owner: gxsite
     group: gxsite
-  - path: /srv/nginx/biostar.usegalaxy.org/root
-    owner: gxsite
-    group: gxsite
 
 nginx_flavor: full
 

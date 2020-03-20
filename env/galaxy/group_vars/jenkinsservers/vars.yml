@@ -16,7 +16,8 @@ jenkinsservers_group_packages:
   - python-virtualenv
   - jenkins
   - npm
-  - nodejs-legacy
+  # No longer needed on buster
+  #- nodejs-legacy
   # TS packages
   - autoconf
   - automake
@@ -37,7 +38,6 @@ jenkinsservers_group_packages:
   - python-dev
   - pkg-config
   - unzip
-  - docker.io
   - samtools
   - sudo
   - curl
