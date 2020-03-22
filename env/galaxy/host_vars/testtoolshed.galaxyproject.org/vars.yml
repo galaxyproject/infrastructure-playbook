@@ -32,3 +32,36 @@ mounts:
   - path: /srv
     src: "{{ filesystems[1].dev }}"
     fstype: "{{ os_volumes[1].fstype }}"
+
+# FIXME: moved from group_vars because it's not all valid on radegast
+toolshedservers_group_packages:
+  - htop
+  - strace
+  - dstat
+  - tmux
+  - vim
+  - tmpwatch
+
+toolshedservers_group_groups:
+  - name: shed
+    gid: 899
+    system: yes
+  - name: gxsrc
+    gid: 898
+    system: yes
+
+toolshedservers_group_users:
+  - name: shed
+    comment: "Galaxy Tool Shed"
+    uid: 899
+    group: shed
+    home: /home/shed
+    shell: /bin/bash
+    system: yes
+  - name: gxsrc
+    comment: "Galaxy Source Code"
+    uid: 898
+    group: gxsrc
+    home: /home/gxsrc
+    shell: /bin/bash
+    system: yes

@@ -86,7 +86,7 @@ jenkinsservers
 jenkinsslaves
 
 [toolshedservers]
-#radegast.galaxyproject.org
+radegast.galaxyproject.org
 testtoolshed.galaxyproject.org
 #toolshed.galaxyproject.org
 
