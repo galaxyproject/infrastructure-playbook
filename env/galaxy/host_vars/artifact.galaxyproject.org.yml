@@ -2,6 +2,7 @@
 
 host_directories:
   - path: /srv/nginx
+  - path: /srv/nginx/galaxyproject.org/alias
 
 ldap_server_uris:
   - ldap://localhost/ # prefer self
@@ -18,11 +19,14 @@ nginx_servers:
   - certbot_redirects
 
 nginx_ssl_servers:
+  - galaxyproject
   - training
   - biostar
 
 certbot_domains:
   - artifact.galaxyproject.org
+  - galaxyproject.org
+  - www.galaxyproject.org
   - training.galaxyproject.org
   - biostar.usegalaxy.org
   - biostar.galaxyproject.org

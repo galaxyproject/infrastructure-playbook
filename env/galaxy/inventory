@@ -102,6 +102,7 @@ testtoolshed.galaxyproject.org
 
 [liteenv:children]
 fullenv
+infrastructure
 
 # These get everything in liteenv + NFS
 [fullenv]

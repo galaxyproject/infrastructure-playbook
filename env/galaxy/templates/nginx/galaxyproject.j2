@@ -2,16 +2,27 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
+proxy_cache_path    /var/lib/nginx/cache levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m use_temp_path=off;
+
+server {
+    listen      *:443 ssl;
+    server_name www.galaxyproject.org;
+
+    location / {
+        return 301 https://galaxyproject.org$request_uri;
+    }
+}
+
 server {
     listen      *:443 ssl default_server;
-    server_name galaxyproject.org www.galaxyproject.org;
+    server_name galaxyproject.org;
 
     access_log  /var/log/nginx/galaxyproject.org_access.log;
     error_log   /var/log/nginx/galaxyproject.org_error.log;
 
     client_max_body_size 256M;
 
-    root        /srv/nginx/galaxyproject.org/root;
+    #root        /srv/nginx/galaxyproject.org/root;
 
     error_page  404      /page-not-found/;
     error_page  403 =404 /page-not-found/;
@@ -23,7 +34,7 @@ server {
     }
 
     # former wiki redirects
-    rewrite ^/wiki(.*)          https://moin.galaxyproject.org$1;
+    #rewrite ^/wiki(.*)          https://moin.galaxyproject.org$1;
     rewrite (?i)^/GCC2012.*     /events/gcc2012;
     rewrite (?i)^/GCC2013.*     /events/gcc2013;
     rewrite (?i)^/GCC2014.*     /events/gcc2014;
@@ -90,6 +101,27 @@ server {
     rewrite ^/install-and-test-certification/?$ /archive/install-and-test-certification;
     rewrite ^/FTPUpload/?$ /ftp-upload;
 
+    location / {
+        proxy_cache            s3_cache;
+        proxy_http_version     1.1;
+        proxy_set_header       Connection "";
+        proxy_set_header       Authorization '';
+        proxy_set_header       Host galaxy-hub.s3-website.us-east-2.amazonaws.com;
+        proxy_hide_header      x-amz-id-2;
+        proxy_hide_header      x-amz-request-id;
+        proxy_hide_header      x-amz-meta-server-side-encryption;
+        proxy_hide_header      x-amz-server-side-encryption;
+        proxy_hide_header      Set-Cookie;
+        proxy_ignore_headers   Set-Cookie;
+        proxy_cache_revalidate on;
+        proxy_intercept_errors on;
+        proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock       on;
+        proxy_cache_valid      200 304 30m;
+        add_header             Cache-Control max-age=31536000;
+        add_header             X-Cache-Status $upstream_cache_status;
+        proxy_pass             http://galaxy-hub.s3-website.us-east-2.amazonaws.com/;
+    }
 }
 
 # vim: set filetype=nginx
