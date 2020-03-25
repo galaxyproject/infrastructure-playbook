@@ -20,6 +20,7 @@ cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs0-psu1.galaxyproject.org ansible_user=root
 cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
+cvmfs-stratum0.galaxyproject.eu ansible_user=centos ansible_become=yes
 testtoolshed.galaxyproject.org ansible_user=centos ansible_become=yes
 #toolshed.galaxyproject.org ansible_user=centos ansible_become=yes ansible_host=129.114.17.108
 
@@ -50,6 +51,10 @@ galaxyenv
 liteenv
 jenkinsslaves
 cvmfsservers
+
+# baseenv hosts not to install telegraf on
+[baseenv_no_telegraf]
+cvmfs-stratum0.galaxyproject.eu
 
 # Everything in baseenv + adds postfix, resolv.conf config
 [galaxyenv]
@@ -295,6 +300,7 @@ cvmfs0-tacc0.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
+cvmfs-stratum0.galaxyproject.eu
 
 [cvmfsstratum1servers]
 cvmfs1-tacc0.galaxyproject.org

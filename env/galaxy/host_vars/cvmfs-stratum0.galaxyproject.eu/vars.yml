@@ -1,0 +1,53 @@
+---
+
+host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
+
+# overrides
+baseenv_group_authorized_key_users: []
+baseenv_group_sshd_config: []
+
+host_directories:
+  - path: /srv
+
+host_links:
+  - src: /vols/vdb
+    path: /var/spool/cvmfs
+  - src: /data/stratum0
+    path: /srv/cvmfs
+
+galaxy_cvmfs_repos_enabled: false
+cvmfs_repositories:
+  - repository: singularity.galaxyproject.org
+    stratum0: cvmfs0-psu2.galaxyproject.org
+    owner: singularity
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_VIRTUAL_DIR=true
+    client_options: []
+
+cvmfs_private_keys:
+  - path: /etc/cvmfs/keys/singularity.galaxyproject.org.key
+    owner: singularity
+    key: "{{ cvmfs_site_keys.key }}"
+  - path: /etc/cvmfs/keys/singularity.galaxyproject.org.masterkey
+    owner: singularity
+    key: "{{ cvmfs_site_keys.masterkey }}"
+
+cvmfs_keys:
+  - path: /etc/cvmfs/keys/singularity.galaxyproject.org.pub
+    owner: singularity
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/singularity.galaxyproject.org.crt
+    owner: singularity
+    key: "{{ cvmfs_site_keys.crt }}"
+
+host_users:
+  - name: singularity
+    comment: "Singularity Images"
+    home: /home/singularity
+    shell: /bin/bash
+    system: yes

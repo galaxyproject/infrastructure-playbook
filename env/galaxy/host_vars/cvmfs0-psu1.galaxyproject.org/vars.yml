@@ -1,6 +1,9 @@
 ---
 
-host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
+host_authorized_key_users:
+  - name: g2test
+    authorized: "{{ galaxy_team_users }}"
+
 cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
 host_packages:

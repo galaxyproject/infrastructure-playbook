@@ -30,7 +30,7 @@
       tags: services
     - role: dj-wasabi.telegraf
       tags: stats,telegraf
-      when: ansible_os_family in ("Debian", "RedHat")
+      when: '"baseenv_no_telegraf" not in group_names and ansible_os_family in ("Debian", "RedHat")'
   tags:
     - initial
     - system
