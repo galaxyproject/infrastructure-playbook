@@ -1,5 +1,7 @@
 ---
 
+# TODO: move to controllers.yml once TACC is in use again
+telegraf_agent_hostname: "{{ inventory_hostname }}"
 slurmservers_group_templates:
   - src: templates/telegraf/slurm_slurp.sh.j2
     dest: /usr/local/bin/slurm_slurp.sh
@@ -7,11 +9,9 @@ slurmservers_group_templates:
     group: root
     mode: '0755'
 
-slurm_slurp_cluster_name: roundup
+slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:
-  - normal
   - multi
-  - reserved
 
 telegraf_plugins_extra:
   slurm_slurp:

@@ -1,0 +1,169 @@
+#!/bin/bash
+set -euo pipefail
+#set -xv
+
+
+PARTITIONS=({{ slurm_slurp_partitions |join(' ') }})
+
+typeset -A JOBS
+JOB_STATES=(completing configuring pending running)
+
+typeset -A NODES NODES_BY_PARTITION
+NODE_STATES=(allocated completing down drained draining idle mixed)
+
+CLUSTER="{{ slurm_slurp_cluster_name }}"
+typeset -A TAGS
+TAGS[cluster]="$CLUSTER"
+
+
+function _array_copy() {
+    # TODO: replace with nameref
+    local src="$1"
+    local dest="$2"
+    local _t=$(declare -p $1)
+    eval "declare -g -A ${dest}="${_t#*=}
+}
+
+
+function _array_to_csv() {
+    # set $2 to `true` to lowercase key names
+    local lowercase="${2:-false}"
+    # TODO: replace with nameref
+    eval "declare -A arr=${1#*=}"
+    s=
+    for k in "${!arr[@]}"; do
+        _k="$k"
+        if $lowercase; then
+            k="${_k,,}"
+        fi
+        #s+="$k=\"${arr[$_k]}\","
+        s+="$k=${arr[$_k]},"
+    done
+    echo -n ${s:0:-1}
+}
+
+
+function _normalize_state() {
+    local state="$1"
+    state="${state,,}"      # lowercase
+    state="${state%*~}"     # drop trailing ~
+    state="${state%*\*}"    # drop trailing *
+    state="${state%*#}"     # drop trailing #
+    echo "$state"
+}
+
+
+# TODO: namerefs require bash 4.3+
+function initialize_jobs_arrays_43() {
+    for partition in ${PARTITIONS[@]}; do
+        local name="JOBS_${partition}"
+        typeset -A "$name"
+        typeset -n _jobs="$name"
+        for state in ${JOB_STATES[@]}; do
+            _jobs[$state]=0
+        done
+    done
+}
+
+
+function initialize_jobs_arrays() {
+    for state in ${JOB_STATES[@]}; do
+        JOBS[$state]=0
+    done
+    for partition in ${PARTITIONS[@]}; do
+        _array_copy JOBS "JOBS_${partition}"
+    done
+}
+
+
+function initialize_nodes_arrays() {
+    for state in ${NODE_STATES[@]}; do
+        NODES[$state]=0
+    done
+    for partition in ${PARTITIONS[@]}; do
+        _array_copy NODES "NODES_${partition}"
+    done
+}
+
+
+function collect_jobs_43() {
+    while read partition state; do
+        local name="JOBS_${partition}"
+        typeset -n _jobs="$name"
+        (($_jobs[$state]++))
+    done < <(squeue -h -O partition,state)
+}
+
+
+function collect_jobs() {
+    while read partition state; do
+        state="$(_normalize_state $state)"
+        case "$partition" in
+        {% for partition in slurm_slurp_partitions %}
+            {{ partition }})
+                JOBS_{{ partition }}[$state]=$((JOBS_{{ partition }}[$state]+1))
+                ;;
+        {% endfor %}
+        esac
+    done < <(squeue -h -O partition,state)
+}
+
+
+function collect_nodes() {
+    while read name state; do
+        state="$(_normalize_state $state)"
+        NODES[$state]=$((NODES[$state]+1))
+    done < <(sinfo -Neh -O nodelist:32,statelong | sort | uniq)
+    while read name partition state; do
+        state="$(_normalize_state $state)"
+        case "$partition" in
+        {% for partition in slurm_slurp_partitions %}
+            {{ partition }})
+                NODES_{{ partition }}[$state]=$((NODES_{{ partition }}[$state]+1))
+                ;;
+        {% endfor %}
+        esac
+    done < <(sinfo -Neh -O nodelist:32,partition,statelong)
+}
+
+
+function print_telegraf() {
+    local measurement="$1"
+    local tags="$(_array_to_csv "$(declare -p "$2")")"
+    local values="$(_array_to_csv "$(declare -p "$3")")"
+    echo "${measurement},${tags} ${values}"
+}
+
+
+function print_jobs() {
+    local partition
+    _array_copy TAGS local_tags
+    for partition in "${PARTITIONS[@]}"; do
+        local_tags[partition]="$partition"
+        print_telegraf slurm_jobs local_tags "JOBS_${partition}"
+    done
+}
+
+
+function print_nodes() {
+    print_telegraf slurm_nodes TAGS NODES
+    local partition
+    _array_copy TAGS local_tags
+    for partition in "${PARTITIONS[@]}"; do
+        local_tags[partition]="$partition"
+        print_telegraf slurm_nodes_by_partition local_tags "NODES_${partition}"
+    done
+}
+
+
+function main() {
+    initialize_jobs_arrays
+    initialize_nodes_arrays
+    collect_jobs
+    collect_nodes
+    print_jobs
+    print_nodes
+}
+
+
+main

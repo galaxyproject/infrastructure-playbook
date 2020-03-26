@@ -21,22 +21,24 @@
   become_method: sudo
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
-      tags: initial,requiretty
+      tags: requiretty
     - role: geerlingguy.repo-epel
       tags: packages
     - role: packages          # Install packages
-      tags: system,packages
+      tags: packages
     - role: users             # Create users and set up authentication keys
-      tags: system,users
+      tags: users
     - role: paths             # Configure path permissions, filesystems
-      tags: system,paths
+      tags: paths
     - role: copy              # Copy arbitrary files/templates
-      tags: system,copy
+      tags: copy
     - role: cron              # Create cron jobs
-      tags: system,cron
+      tags: cron
     - role: services          # Manage services
-      tags: system,services
-  tags: initial
+      tags: services
+    - role: dj-wasabi.telegraf
+      tags: stats,telegraf
+  tags: initial,system
 
 - name: CVMFS tasks
   hosts: cvmfsclients
