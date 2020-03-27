@@ -28,3 +28,20 @@ StorageType=accounting_storage/mysql
 StoragePass={{ slurm_dbd_mysql_pass }}
 StorageUser=slurm
 #StorageLoc=slurm_acct_db
+
+# Purge/Archive options
+ArchiveDir=/galaxy-repl/slurm/archive
+ArchiveEvents=yes
+ArchiveJobs=yes
+ArchiveResvs=yes
+ArchiveSteps=yes
+ArchiveSuspend=yes
+ArchiveTXN=yes
+ArchiveUsage=yes
+PurgeEventAfter=48months
+PurgeJobAfter=48months
+PurgeResvAfter=48months
+PurgeStepAfter=48months
+PurgeSuspendAfter=48months
+PurgeTXNAfter=48months
+PurgeUsageAfter=48months
