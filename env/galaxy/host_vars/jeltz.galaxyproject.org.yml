@@ -105,3 +105,5 @@ host_firewall_rules:
 nginx_enable_default_server: false
 nginx_configs:
   - datacache
+
+cvmfs_quota_limit: 2048
