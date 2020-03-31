@@ -38,6 +38,7 @@ smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local
 smart3.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
 westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
+orval.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 
 # These get all the common roles. Additionally:
