@@ -74,7 +74,12 @@ controllers_group_files:
     owner: root
     group: root
   - src: files/admin/pdsh-up
-    dest: /usr/bin/pdsh-up
+    dest: /usr/local/bin/pdsh-up
+    mode: "0755"
+    owner: root
+    group: root
+  - src: files/admin/tmpwatch-auto
+    dest: /usr/local/bin/tmpwatch-auto
     mode: "0755"
     owner: root
     group: root
@@ -117,9 +122,9 @@ controllers_group_crontabs:
     name: Clean Test Scratch
     user: g2test
     minute: 05,20,35,50
-    job: /usr/bin/tmpwatch --mtime --dirmtime 4d /jetstream/scratch0/test/jobs
+    job: /usr/local/bin/tmpwatch-auto /jetstream/scratch0/test/jobs
   - id: clean_scratch
     name: Clean Main Scratch
     user: g2main
     minute: 00,15,30,45
-    job: /usr/bin/tmpwatch --mtime --dirmtime 4d /jetstream/scratch0/main/jobs
+    job: /usr/local/bin/tmpwatch-auto /jetstream/scratch0/main/jobs

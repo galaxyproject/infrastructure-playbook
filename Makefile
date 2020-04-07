@@ -16,7 +16,7 @@ endif
 PLAYBOOK := playbook
 
 
-galaxy tacc:
+galaxy tacc jsiu jstacc:
 	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml $(TAGS_ARG) $(LIMIT_ARG)
 
 
