@@ -6,7 +6,7 @@
 - name: galaxyproject.opendkim
   version: 0.1.0
 - name: galaxyproject.postfix
-  version: 0.1.0
+  version: 0.1.1
 - name: galaxyproject.postgresql
   version: 1.0.2
 - name: usegalaxy_eu.certbot
