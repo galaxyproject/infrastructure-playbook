@@ -1,29 +1,25 @@
 ---
 
-- name: Install RabbitMQ yum keys
-  rpm_key:
-    key: "{{ item }}"
-  loop:
-    - https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey
-    - https://packagecloud.io/rabbitmq/erlang/gpgkey
-
 - name: Install RabbitMQ repos
   yum_repository:
-    name: "{{ item.name }}"
-    description: "{{ item.name }}"
-    baseurl: "{{ item.baseurl }}"
-    gpgcheck: "{{ item.gpgcheck }}"
+    name: "rabbitmq_{{ item }}"
+    description: "RabbitMQ {{ item }} Packages"
+    baseurl: "https://packagecloud.io/rabbitmq/{{ item }}/el/7/$basearch"
+    repo_gpgcheck: "1"
+    gpgcheck: "0"
+    enabled: "1"
+    gpgkey: "https://packagecloud.io/rabbitmq/{{ item }}/gpgkey"
+    sslverify: "1"
+    sslcacert: "/etc/pki/tls/certs/ca-bundle.crt"
+    metadata_expire: "300"
   loop:
-    - name: rabbitmq_rabbitmq-server
-      baseurl: https://packagecloud.io/rabbitmq/rabbitmq-server/el/7/$basearch
-      gpgcheck: true
-    - name: rabbitmq_erlang-server
-      baseurl: https://packagecloud.io/rabbitmq/erlang/el/7/$basearch
-      gpgcheck: true
+    - rabbitmq-server
+    - erlang
 
 - name: Install RabbitMQ
   yum:
     name: rabbitmq-server
+    state: "{{ 'latest' if rabbitmq_upgrade else omit }}"
 
 # FIXME: not Ansible 2.7-compatible
 #- name: Include SSL role to create/distribute SSL certs
@@ -57,14 +53,16 @@
     state: present
   with_items: "{{ rabbitmq_vhosts | default([]) }}"
 
-- name: Create RabbitMQ users
-  rabbitmq_user:
-    user: "{{ item.user }}"
-    password: "{{ item.password | default(omit) }}"
-    vhost: "{{ item.vhost | default(omit) }}"
-    configure_priv: "{{ item.configure_priv | default(omit) }}"
-    read_priv: "{{ item.read_priv | default(omit) }}"
-    write_priv: "{{ item.write_priv | default(omit) }}"
-    tags: "{{ item.tags | default(omit) }}"
-    permissions: "{{ item.permissions | default(omit) }}"
-  with_items: "{{ rabbitmq_users | default([]) }}"
+# FIXME: broken for a year and a half for `permissions` entries why not (uncomment when fixed)
+#   https://github.com/ansible/ansible/issues/48890
+#- name: Create RabbitMQ users
+#  rabbitmq_user:
+#    user: "{{ item.user }}"
+#    password: "{{ item.password | default(omit) }}"
+#    vhost: "{{ item.vhost | default(omit) }}"
+#    configure_priv: "{{ item.configure_priv | default(omit) }}"
+#    read_priv: "{{ item.read_priv | default(omit) }}"
+#    write_priv: "{{ item.write_priv | default(omit) }}"
+#    tags: "{{ item.tags | default(omit) }}"
+#    permissions: "{{ item.permissions | default(omit) }}"
+#  with_items: "{{ rabbitmq_users | default([]) }}"
