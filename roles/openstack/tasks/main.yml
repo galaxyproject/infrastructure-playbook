@@ -1,5 +1,7 @@
 ---
 
-- include: secrets.yml
+- include_tasks: jump_host.yml
+  when: os_jump_host is defined
 
-- include: spawn.yml
+- import_tasks: secrets.yml
+- import_tasks: spawn.yml

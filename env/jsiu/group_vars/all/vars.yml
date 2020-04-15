@@ -4,7 +4,7 @@ cloud_id: jetstream_iu
 
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 
-openstack_image: JS-API-Featured-CentOS7-May-11-2018
+#openstack_image: JS-API-Featured-CentOS7-May-11-2018
 
 # This turns out to be unnecessary
 #openstack_userdata: |

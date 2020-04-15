@@ -1,5 +1,4 @@
 ---
-# include as a task, not a play
 
 - name: Remove clouds.yaml
   file:
@@ -13,7 +12,7 @@
   file:
     path: "{{ inventory_dir }}/{{ item.dest }}"
     state: absent
-  with_items: "{{ openstack_secrets | default([]) }}"
+  loop: "{{ os_secrets | default([]) }}"
   delegate_to: localhost
   run_once: yes
   no_log: yes

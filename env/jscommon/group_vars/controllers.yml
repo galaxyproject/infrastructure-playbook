@@ -3,40 +3,32 @@
 slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
-ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+os_flavor: m1.medium
 
-_scratch_vol_name: "{{ inventory_hostname_short }}-scratch0"
-
-openstack_cloud_id: "{{ cloud_id }}"
-openstack_clouds_yaml: "{{ clouds_yaml }}"
-openstack_secrets:
-  - dest: "{{ openstack_key_name }}.pem"
-    content: "{{ openstack_privatekeys.admin }}"
-
-openstack_flavor: m1.medium
-openstack_key_name: admin-kp
-openstack_nics:
-  - net-name: usegalaxy
-openstack_security_groups:
+os_security_groups:
   - default
   - docker
   - usegalaxy-control
-openstack_floating_ips:
+
+os_floating_ips:
   - "{{ lookup('dig', inventory_hostname) }}"
-openstack_volumes:
-  - name: "{{ _scratch_vol_name }}"
+
+# fstype isn't used by any of the openstack modules, but both mounts and filesystems need it, and putting it in
+# os_volumes avoids circular references. See the "Write volume device(s) to host_vars" task in the Jetstream playbook.
+os_volumes:
+  - name: "{{ inventory_hostname_short }}-scratch0"
     size: 10000
+    fstype: xfs
+
+#filesystems: is set automatically by the playbook in os_volume_devices.yml
+
+# this is parallel with os_volumes and filesystems
+mounts:
+  - path: /jetstream/scratch0
+    src: "{{ filesystems[0].dev }}"
+    fstype: "{{ os_volumes[0].fstype }}"
 
 cvmfs_quota_limit: 1024
-
-filesystems:
-  - dev: "{{ openstack_volume_map[_scratch_vol_name] }}"  # this is collected by os_server
-    fstype: xfs
-
-mounts:
-  - name: /jetstream/scratch0
-    src: "{{ openstack_volume_map[_scratch_vol_name] }}"
-    fstype: xfs
 
 controllers_group_authorized_key_users:
   - name: centos

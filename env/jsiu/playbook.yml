@@ -1,16 +1,16 @@
 ---
 
-- name: Launch instance(s)
-  hosts: instances
-  gather_facts: no
-  environment:
-    OS_CLOUD: "{{ openstack_cloud_id }}"
-    OS_IDENTITY_API_VERSION: '3'
-  roles:
-    - openstack
-  tags:             # must be run for these tags to collect openstack_volume_map for paths role
-    - system
-    - paths
+#- name: Launch instance(s)
+#  hosts: instances
+#  gather_facts: no
+#  environment:
+#    OS_CLOUD: "{{ openstack_cloud_id }}"
+#    OS_IDENTITY_API_VERSION: '3'
+#  roles:
+#    - openstack
+#  tags:             # must be run for these tags to collect openstack_volume_map for paths role
+#    - system
+#    - paths
 
 # NOTE: you *must* run the openstack role for the paths role, which needs the volume device
 
