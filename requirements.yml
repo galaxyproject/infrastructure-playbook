@@ -14,7 +14,7 @@
 - name: galaxyproject.slurm
   version: 0.1.1
 - name: galaxyproject.cvmfs
-  version: 0.2.9
+  version: 0.2.10
 - name: geerlingguy.repo-epel
   version: 1.2.3
 - name: dj-wasabi.telegraf

@@ -1,7 +1,11 @@
 ---
 
 clouds_yaml: "{{ vault_clouds_yaml }}"
+
 all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
+
+all_packages:
+  - htop
 
 ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ os_key_name }}.pem"
 

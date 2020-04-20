@@ -1,5 +1,19 @@
 ---
 
+#- name: Launch instance(s)
+#  hosts: instances
+#  gather_facts: no
+#  environment:
+#    OS_CLOUD: "{{ openstack_cloud_id }}"
+#    OS_IDENTITY_API_VERSION: '3'
+#  roles:
+#    - openstack
+#  tags:             # must be run for these tags to collect openstack_volume_map for paths role
+#    - system
+#    - paths
+
+# NOTE: you *must* run the openstack role for the paths role, which needs the volume device
+
 - name: Tasks for "base environment" hosts
   hosts: baseenv
   remote_user: centos
@@ -26,29 +40,36 @@
       tags: stats,telegraf
   tags: initial,system
 
-- name: Filesystem tasks
+- name: CVMFS tasks
+  hosts: cvmfsclients
+  remote_user: centos
+  become: yes
+  become_method: sudo
+  roles:
+    #- role: packages
+    #  tags: packages
+    - role: galaxyproject.cvmfs
+  tags: cvmfs
+
+- name: NFS tasks
   hosts: controllers:galaxynodes
   remote_user: centos
   become: yes
   become_method: sudo
   roles:
-    - role: packages
-      tags: packages
-    #- role: cvmfs
-    #  tags: cvmfs
     - role: jetstream_nfs
-      tags: nfs
+  tags: nfs
 
-- name: Update /etc/hosts
-  hosts: controllers:galaxynodes
-  remote_user: centos
-  become: yes
-  become_method: sudo
-  tasks:
-    - name: Update /etc/hosts
-      template:
-        src: templates/etc/hosts.j2
-        dest: /etc/hosts
+#- name: Update /etc/hosts
+#  hosts: controllers:galaxynodes
+#  remote_user: centos
+#  become: yes
+#  become_method: sudo
+#  tasks:
+#    - name: Update /etc/hosts
+#      template:
+#        src: templates/etc/hosts.j2
+#        dest: /etc/hosts
 
 - name: Install supervisor
   hosts: all
@@ -67,5 +88,6 @@
   become: yes
   become_method: sudo
   roles:
-    - role: slurm
-      tags: slurm
+    - galaxyproject.slurm
+    - slurmscale
+  tags: slurm

@@ -1,0 +1,19 @@
+---
+
+cloud_id: jetstream_tacc
+
+openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
+
+# Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in
+# sshkeys provided by the sshservers group vars)
+os_admin_users: "{{ galaxy_admin_users }}"
+
+# This turns out to be unnecessary
+#openstack_userdata: |
+#  #cloud-config
+#  manage_resolv_conf: true
+#  resolv_conf:
+#    searchdomains:
+#      - jetstreamlocal
+#      - galaxyproject.org
+#    domain: galaxyproject.org

@@ -27,6 +27,10 @@ jetstream-iu0.galaxyproject.org
 [cvmfsservers]
 cvmfs1-iu0.galaxyproject.org
 
+[cvmfslocalproxies]
+[cvmfslocalproxies:children]
+controllers
+
 [cvmfsclients]
 [cvmfsclients:children]
 controllers

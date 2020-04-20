@@ -1,6 +1,6 @@
 ---
 
-slurm_cluster_name: jetstream-iu
+slurm_cluster_name: jetstream-tacc
 
 slurm_munge_key: files/slurm/munge.key
 
@@ -45,7 +45,7 @@ slurm_config:
   SlurmdDebug: 4
 
   # TODO: redeployed controller, any way to do this dynamically?
-  FirstJobId: 592574
+  FirstJobId: 1261014
 
   # Cloud configuration
   PrivateData: cloud
@@ -58,22 +58,18 @@ slurm_config:
   SuspendTimeout: 60   # time between running SuspendProgram and the node being completely down
 
 slurm_nodes:
-  - name: "{{ slurm_cluster_name }}-small[0-15]"
+  - name: "{{ slurm_cluster_name }}-small[0-7]"
     State: CLOUD
     CPUs: 2
     RealMemory: 3789
-  - name: "{{ slurm_cluster_name }}-medium[0-7]"
+  - name: "{{ slurm_cluster_name }}-medium[0-15]"
     State: CLOUD
     CPUs: 6
     RealMemory: 15884
-  - name: "{{ slurm_cluster_name }}-large[0-31]"
-    State: CLOUD
-    CPUs: 10
-    RealMemory: 29995
 
 slurm_partitions:
   - name: small
-    Nodes: "{{ slurm_cluster_name }}-small[0-15]"
+    Nodes: "{{ slurm_cluster_name }}-small[0-7]"
     Default: YES
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
@@ -81,25 +77,11 @@ slurm_partitions:
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: normal
-    Nodes: "{{ slurm_cluster_name }}-medium[0-7]"
+    Nodes: "{{ slurm_cluster_name }}-medium[0-15]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
     State: UP
-  - name: multi
-    Nodes: "{{ slurm_cluster_name }}-large[0-31]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
-  #- name: reserved
-  #  Nodes: "{{ slurm_cluster_name }}-large[23-26]"
-  #  DefaultTime: "48:20:00"
-  #  MaxTime: "96:20:00"
-  #  MaxNodes: 1
-  #  State: UP
-  #  OverSubscribe: EXCLUSIVE
 
 slurm_cgroup_config:
   CgroupAutomount: yes

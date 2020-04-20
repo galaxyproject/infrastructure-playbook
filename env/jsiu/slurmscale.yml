@@ -1,9 +1,0 @@
----
-
-- name: Deploy slurmscale
-  hosts: controllers
-  remote_user: centos
-  become: yes
-  become_method: sudo
-  roles:
-    - slurmscale

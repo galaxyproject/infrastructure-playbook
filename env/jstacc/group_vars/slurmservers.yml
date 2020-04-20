@@ -11,7 +11,8 @@ slurmservers_group_templates:
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:
-  - multi
+  - small
+  - normal
 
 telegraf_plugins_extra:
   slurm_slurp:

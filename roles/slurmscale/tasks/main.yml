@@ -6,11 +6,16 @@
     state: directory
     owner: "{{ slurm_scale_user }}"
 
+- name: Install CentOS SCL
+  yum:
+    name: centos-release-scl
+
 - name: Install dependencies
   yum:
     name:
       - python-virtualenv
       - openssl-devel
+      - rh-python36
 
 - name: Create slurm scale virtualenv
   pip:
@@ -18,6 +23,7 @@
       - pip
       - setuptools
     virtualenv: "{{ slurm_scale_root }}"
+    virtualenv_python: /opt/rh/rh-python36/root/bin/python3
     state: latest
   become: yes
   become_user: "{{ slurm_scale_user }}"
@@ -37,7 +43,7 @@
 
 - name: Create slurm scale ansible directories
   file:
-    path: "{{ slurm_scale_root }}/{{ item }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
   loop:
@@ -67,6 +73,7 @@
   loop:
     - path: group_vars/all/cloud.yml
     - path: files/slurm/munge.key
+    - path: inventory/openstack.yml
     #- path: templates/slurm/slurm.conf.j2
     #- path: templates/slurm.conf.j2
 
@@ -78,6 +85,7 @@
   loop:
     - path: group_vars/all/cloud.yml
     - path: group_vars/all/slurm.yml
+    - path: inventory/openstack.yml
 
 #- name: Create symlinks
 #  file:
@@ -126,7 +134,7 @@
 # FIXME: this is always changed
 # TODO: versions from requirements.yml
 - name: Install Ansible modules from Galaxy
-  command: "{{ slurm_scale_root }}/bin/ansible-galaxy -p {{ slurm_scale_root }}/etc/ansible/roles install {{ item }}"
+  command: "{{ slurm_scale_root }}/bin/ansible-galaxy role install -p {{ slurm_scale_root }}/etc/ansible/roles {{ item }}"
   #args:
   #  creates: "{{ slurm_scale_root }}/etc/ansible/roles/{{ item }}"
   become: yes

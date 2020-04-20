@@ -10,11 +10,16 @@ galaxy_cvmfs_repos_enabled: true
 
 galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org
+    use_geoapi: true
     urls:
       - "http://cvmfs1-{{ cloud_id[10:] }}0.jetstreamlocal/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+cvmfs_http_proxies:
+  - "http://jetstream-{{ cloud_id[10:] }}0.jetstreamlocal:3128"
+  - "DIRECT"
 
 slurm_user:
   uid: 40302
