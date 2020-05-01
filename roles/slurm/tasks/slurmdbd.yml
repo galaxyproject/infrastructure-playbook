@@ -19,7 +19,7 @@
 
 - name: Install slurmdbd.conf
   template:
-    src: slurmdbd.conf.j2
+    src: "{{ slurmdbd_conf_src | default( 'templates/slurm/slurmdbd.conf.j2' ) }}"
     dest: "{{ slurm_conf_dir }}/slurmdbd.conf"
     owner: slurm
     group: root

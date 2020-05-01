@@ -14,7 +14,18 @@
     no_extra_spaces: true
   notify:
     - restart mariadb
-  when: mariadb_allow_network is undefined or mariadb_allow_network is defined and not mariadb_allow_network
+  when: mariadb_allow_network | default(false)
+
+- name: Set MariaDB tuning parameters
+  ini_file:
+    path: /etc/my.cnf.d/server.cnf
+    section: mysqld
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: true
+  notify:
+    - restart mariadb
+  loop: "{{ mariadb_options | default({}) | dict2items }}"
 
 - name: Start and enable MariaDB
   service:
