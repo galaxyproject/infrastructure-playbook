@@ -2,7 +2,12 @@
 
 galaxy_cvmfs_repos_enabled: false
 
-cvmfsstratum1servers_group_authorized_key_users: "{{ vault_cvmfsstratum1servers_group_authorized_key_users }}"
+cvmfsstratum1servers_group_authorized_key_users:
+  - name: g2test
+    authorized: "{{ galaxy_team_users }}"
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
+
 cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
 
 # in MB (value is 0.825 of 16GB)
