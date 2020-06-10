@@ -25,7 +25,7 @@ Match User gxsite Host athena.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_gxsite
 
 Host n? n?? n?.galaxyproject.org n??.galaxyproject.org jenkins-aust-*.genome.edu.au n?.galaxyproject.eu n??.galaxyproject.eu
-    IdentityFile ~/.ssh/id_rsa_slave
+    IdentityFile ~/.ssh/id_rsa_agent
 
 Host github.com
     IdentityFile ~/.ssh/id_rsa_github

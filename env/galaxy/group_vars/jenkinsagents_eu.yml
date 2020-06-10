@@ -11,7 +11,7 @@ mounts:
     owner: root
     group: root
 
-jenkinsslaves_eu_group_directories:
+jenkinsagents_eu_group_directories:
   - path: /mnt/jenkins
     owner: jenkins
     group: jenkins
@@ -20,7 +20,7 @@ jenkinsslaves_eu_group_directories:
     group: jenkins
   - path: /mnt/docker
 
-jenkinsslaves_eu_group_links:
+jenkinsagents_eu_group_links:
   - src: /mnt/jenkins
     path: /var/jenkins
 

@@ -1,7 +1,7 @@
 ---
 
 - name: Bootstrap Python2 for Ansible
-  hosts: jenkinsslaves_eu
+  hosts: jenkinsagents_eu
   gather_facts: false
   tasks:
     - name: Bootstrap Python2 for Ansible
@@ -110,7 +110,7 @@
       tags: supervisor,services
 
 - name: Tasks for jenkins hosts
-  hosts: jenkinsslaves
+  hosts: jenkinsagents
   remote_user: root
   roles:
     - role: docker
@@ -214,7 +214,7 @@
         path: /etc/fuse.conf
         regexp: '^#?user_allow_other$'
         line: user_allow_other
-      when: "'jenkinsslaves' in group_names"
+      when: "'jenkinsagents' in group_names"
   tags: cvmfs
 
 - name: Tasks for Docker Swarm managers

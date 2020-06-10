@@ -50,7 +50,7 @@ ns-training.galaxyproject.org
 [baseenv:children]
 galaxyenv
 liteenv
-jenkinsslaves
+jenkinsagents
 cvmfsservers
 
 # baseenv hosts not to install telegraf on
@@ -87,7 +87,7 @@ westvleteren.galaxyproject.org
 [sshclients:children]
 dockerswarmmanagers
 jenkinsservers
-jenkinsslaves
+jenkinsagents
 
 [toolshedservers]
 radegast.galaxyproject.org
@@ -311,7 +311,7 @@ jeltz.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
 [cvmfsclients:children]
-jenkinsslaves
+jenkinsagents
 
 # Docker Swarm
 
@@ -333,7 +333,7 @@ jeltz.galaxyproject.org
 
 [dockerservers]
 [dockerservers:children]
-jenkinsslaves
+jenkinsagents
 cvmfsstratum0servers
 
 # Jenkins
@@ -341,29 +341,29 @@ cvmfsstratum0servers
 [jenkinsservers]
 leeroy.galaxyproject.org
 
-[jenkinsslaves]
-[jenkinsslaves:children]
-jenkinsslaves_psu
-jenkinsslaves_au
-jenkinsslaves_eu
+[jenkinsagents]
+[jenkinsagents:children]
+jenkinsagents_psu
+jenkinsagents_au
+jenkinsagents_eu
 
-[jenkinsslaves_psu]
+[jenkinsagents_psu]
 n1.galaxyproject.org
 n2.galaxyproject.org
 # n3 is leeroy
 n[4:14].galaxyproject.org
 
-[jenkinsslaves_au]
+[jenkinsagents_au]
 jenkins-aust-[1:4].genome.edu.au
 
-[jenkinsslaves_au:vars]
+[jenkinsagents_au:vars]
 ansible_user = ubuntu
 ansible_become = yes
 
-[jenkinsslaves_eu]
+[jenkinsagents_eu]
 n[0:1].galaxyproject.eu
 
-[jenkinsslaves_eu:vars]
+[jenkinsagents_eu:vars]
 ansible_user = ubuntu
 ansible_become = yes
 

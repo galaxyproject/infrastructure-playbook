@@ -1,6 +1,6 @@
 ---
 
-jenkinsslaves_au_group_directories:
+jenkinsagents_au_group_directories:
   - path: /mnt/jenkins
     owner: jenkins
     group: jenkins
@@ -9,7 +9,7 @@ jenkinsslaves_au_group_directories:
     group: jenkins
   - path: /mnt/docker
 
-jenkinsslaves_au_group_links:
+jenkinsagents_au_group_links:
   - src: /mnt/jenkins
     path: /var/jenkins
 
