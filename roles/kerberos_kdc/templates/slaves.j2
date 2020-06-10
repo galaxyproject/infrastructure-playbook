@@ -1,3 +1,0 @@
-{% for hostname in groups.kerberosservers |difference(groups.kerberosmasterservers) %}
-iprop/{{ hostname }}@{{ kerberos_kdc_realm }}
-{% endfor %}

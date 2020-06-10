@@ -172,7 +172,7 @@ jetstreamhosts
 [kerberosservers:children]
 infrastructure
 
-[kerberosmasterservers]
+[kerberosprimaryservers]
 duvel.galaxyproject.org
 
 [dnsservers]

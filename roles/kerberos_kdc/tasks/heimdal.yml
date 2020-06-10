@@ -9,17 +9,17 @@
   include: heimdal_keytab.yml
   when: not _ret_iprop_keytab_stat.stat.exists
 
-- name: Install iprop slaves file
+- name: Install iprop replicas file
   template:
-    src: slaves.j2
-    dest: "{{ kerberos_kdc_slaves_file }}"
+    src: replicas.j2
+    dest: "{{ kerberos_kdc_replicas_file }}"
     mode: "0444"
     backup: yes
-  when: "'kerberosmasterservers' in group_names"
+  when: "'kerberosprimaryservers' in group_names"
 
 - name: Ensure inetd is running (for kadmind)
   service:
     name: "{{ kerberos_kdc_inetd_service_name }}"
     state: "started"
     enabled: yes
-  when: "'kerberosmasterservers' in group_names"
+  when: "'kerberosprimaryservers' in group_names"

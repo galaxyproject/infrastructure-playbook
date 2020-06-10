@@ -40,7 +40,7 @@
     dest: "{{ kerberos_kdc_kadmind_acl_file }}"
     mode: "0444"
     backup: yes
-  when: "'kerberosmasterservers' in group_names and kerberos_kdc_admin_principals is defined"
+  when: "'kerberosprimaryservers' in group_names and kerberos_kdc_admin_principals is defined"
 
 - name: Include Kerberos implementation tasks
   include_tasks: "{{ kerberos_kdc_implementation | lower }}.yml"

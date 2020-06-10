@@ -1,7 +1,7 @@
 ---
 
 kerberos_domain: "{{ kerberos_realm | lower }}"
-kerberos_admin_server: "{{ groups.kerberosmasterservers[0] }}"
+kerberos_admin_server: "{{ groups.kerberosprimaryservers[0] }}"
 kerberos_implementation: "{{ 'heimdal' if __kerberos_debian else 'mit' }}"
 kerberos_krb5_conf_dest: /etc/krb5.conf
 

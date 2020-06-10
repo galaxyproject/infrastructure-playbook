@@ -6,7 +6,7 @@ kerberos_kdc_service_name: "{{ kerberos_kdc_heimdal_service_name }}"
 kerberos_kdc_config_dir: "{{ kerberos_kdc_heimdal_config_dir }}"
 kerberos_kdc_defaults_file: "{{ kerberos_kdc_heimdal_defaults_file }}"
 kerberos_kdc_kadmind_acl_file: "{{ kerberos_kdc_heimdal_kadmind_acl_file }}"
-kerberos_kdc_slaves_file: "{{ kerberos_kdc_heimdal_slaves_file }}"
+kerberos_kdc_replicas_file: "{{ kerberos_kdc_heimdal_replicas_file }}"
 kerberos_kdc_inetd_service_name: "{{ kerberos_kdc_heimdal_inetd_service_name }}"
 kerberos_kdc_dbname: "{{ kerberos_kdc_heimdal_dbname }}"  # what does MIT use for this?
 kerberos_kdc_log: "{{ kerberos_kdc_heimdal_log }}"
