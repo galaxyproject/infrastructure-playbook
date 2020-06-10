@@ -20,7 +20,7 @@ __dns_defaults:
       # BIND-specific options
       #zones_dir: /etc/bind/zones
       zones_dir: /var/lib/bind
-      slave_zones_dir: /var/cache/bind
+      secondary_zones_dir: /var/cache/bind
       directory: /var/cache/bind
       options:
         - dnssec-validation: "auto"
@@ -44,7 +44,7 @@ __dns_defaults:
       # BIND-specific options
       #zones_dir: /etc/bind/zones
       zones_dir: /etc/named
-      slave_zones_dir: /var/named/slaves
+      secondary_zones_dir: /var/named/secondary
       directory: /var/named
       options:
         - "listen-on port 53": [127.0.0.1]
@@ -75,6 +75,6 @@ dns_service_name: "{{ __dns_defaults[__dns_distro][dns_implementation].service_n
 
 # BIND-specific options
 dns_bind_zones_dir: "{{ __dns_defaults[__dns_distro].bind.zones_dir }}"
-dns_bind_slave_zones_dir: "{{ __dns_defaults[__dns_distro].bind.slave_zones_dir }}"
+dns_bind_secondary_zones_dir: "{{ __dns_defaults[__dns_distro].bind.secondary_zones_dir }}"
 dns_bind_directory: "{{ __dns_defaults[__dns_distro].bind.directory }}"
 dns_bind_options_merged: "{{ __dns_defaults[__dns_distro].bind.options |ordered(dns_bind_options | default([])) }}"

@@ -6,12 +6,12 @@
     path: "{{ dns_bind_zones_dir }}"
     group: "{{ dns_group }}"
     mode: "0775"
-  when: "'dnsmasterservers' in group_names"
+  when: "'dnsprimaryservers' in group_names"
 
-- name: Create slave/journal directory
+- name: Create secondary/journal directory
   file:
     state: directory
-    path: "{{ dns_bind_slave_zones_dir }}"
+    path: "{{ dns_bind_secondary_zones_dir }}"
     group: "{{ dns_group }}"
     mode: "0770"
 

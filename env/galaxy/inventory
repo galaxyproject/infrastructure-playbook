@@ -182,10 +182,10 @@ duvel.galaxyproject.org
 [dnsservers:children]
 infrastructure
 
-[dnsmasterservers]
+[dnsprimaryservers]
 newtrail.galaxyproject.org
 
-[dnsslaveservers]
+[dnssecondaryservers]
 artifact.galaxyproject.org
 duvel.galaxyproject.org
 
@@ -262,7 +262,7 @@ certbotdnsservers
 [certbottsigkeyservers]
 [certbottsigkeyservers:children]
 certbotdnsservers
-dnsmasterservers
+dnsprimaryservers
 
 ## Kerberos
 

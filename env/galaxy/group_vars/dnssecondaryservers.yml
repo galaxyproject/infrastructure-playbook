@@ -13,8 +13,8 @@ dns_bind_views:
     includes:
       - '{{ dns_config_dir }}/named.conf.default-zones'
     zone_defaults:
-      type: slave
-      masters:
+      type: secondary
+      primaries:
         - '3.14.178.173 key axfr-galaxy.'       # newtrail
     zones:
       - name: 'galaxyproject.org'
@@ -41,8 +41,8 @@ dns_bind_views:
       - '!bx'
       - 'any'
     zone_defaults:
-      type: slave
-      masters:
+      type: secondary
+      primaries:
         - '3.14.178.173 key axfr-global.'       # newtrail
     zones:
       - name: 'galaxyproject.org'
