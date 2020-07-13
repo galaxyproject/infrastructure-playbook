@@ -22,6 +22,9 @@ server {
     rewrite ^/gat-?machines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
     rewrite ^/gat-?chat/?$ https://gitter.im/galaxyproject/admin-training;
 
+    # Train the Trainer discussions
+    rewrite ^/ttt/?$ https://docs.google.com/document/d/1E9VcFNh3nWeQq142szEy-NRHkqYIxFQglqbTaqiAXqQ/edit;
+
     return 302 https://galaxyproject.org;
 
 }
