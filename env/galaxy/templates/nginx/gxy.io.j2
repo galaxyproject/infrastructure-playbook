@@ -9,6 +9,8 @@ server {
     access_log  /var/log/nginx/gxy.io_access.log;
     error_log   /var/log/nginx/gxy.io_error.log;
 
+    rewrite ^/bcc/?$ https://live.remo.co/e/bcc-2020;
+
     rewrite ^/toolshed/?$ https://toolshed.g2.bx.psu.edu/;
     rewrite ^/nate/ccbb2018/?$ https://docs.google.com/presentation/d/18VO-J2Ie-wNSApBN_4JlOaCilWQP6qNOtni9NLENZOE/;
     rewrite ^/nate/sgci2020/?$ https://docs.google.com/presentation/d/1hDcGBXiaQ7-hWk9hNHVfpGFl14RKrTAVwwt7K68yPrU/;
@@ -22,7 +24,6 @@ server {
     rewrite ^/gat-?machines/?$ https://docs.google.com/spreadsheets/d/11nQKJmHHf7GWR_C36rdu2dVOHZZ0cXpv09b84txm_3A/;
     rewrite ^/gat-?chat/?$ https://gitter.im/galaxyproject/admin-training;
     rewrite ^/gat-?(qa|qanda|discussion|questions)/?$ https://docs.google.com/document/d/1mmhZRpV4XQnMB5UoPGDw0qT8I3oF2DIEYPxvPH4tDz0/edit;
-
 
     # Train the Trainer discussions
     rewrite ^/ttt/?$ https://docs.google.com/document/d/1E9VcFNh3nWeQq142szEy-NRHkqYIxFQglqbTaqiAXqQ/edit;
