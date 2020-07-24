@@ -1,5 +1,10 @@
 ---
 
+# for refgenie
+install_scl: true
+host_packages:
+  - rh-python36
+
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
@@ -9,6 +14,15 @@ cvmfs_repositories:
   - repository: data.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: g2test
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+    client_options: []
+  - repository: refgenomes-databio.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: refgenie
     server_options:
       - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
@@ -78,6 +92,12 @@ cvmfs_keys:
       IVsc8y8pyu4e2uiuvAiDkIWDwTj5LwvQlzCeAn4Z2crBEMDXOg5Ax7DE+8K+VaS7
       umt/c7usl22IscRFArkCPbTMJuUxyJYH8g9rl1AiziVw9zC9SCbD2w==
       -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/refgenomes-databio.galaxyproject.org.pub
+    owner: refgenie
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/refgenomes-databio.galaxyproject.org.crt
+    owner: refgenie
+    key: "{{ cvmfs_site_keys.crt }}"
   - path: /etc/cvmfs/keys/sandbox.galaxyproject.org.pub
     owner: sandbox
     key: |
@@ -213,6 +233,11 @@ host_users:
   - name: usegalaxy
     comment: "UseGalaxy Common Data"
     home: /home/usegalaxy
+    shell: /bin/bash
+    system: yes
+  - name: refgenie
+    comment: "refgenie-managed data"
+    home: /home/refgenie
     shell: /bin/bash
     system: yes
 
