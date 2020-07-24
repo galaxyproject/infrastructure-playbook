@@ -18,6 +18,10 @@ zfs_filesystems:
     mountpoint: /srv/cvmfs/data.galaxyproject.org
     owner: g2test
     group: G-803372
+  - name: zones/428357b0-0432-c34f-8221-b2c218b64a62/data/srv-cvmfs/refgenomes-databio.galaxyproject.org
+    mountpoint: /srv/cvmfs/refgenomes-databio.galaxyproject.org
+    owner: refgenie
+    group: refgenie
   - name: zones/428357b0-0432-c34f-8221-b2c218b64a62/data/srv-cvmfs/sandbox.galaxyproject.org
     mountpoint: /srv/cvmfs/sandbox.galaxyproject.org
     owner: sandbox

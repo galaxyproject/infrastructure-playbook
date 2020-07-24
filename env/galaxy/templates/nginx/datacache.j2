@@ -20,6 +20,11 @@ server {
         alias /cvmfs/data.galaxyproject.org/byhand;
         autoindex on;
     }
+
+    location /refgenomes-databio {
+        alias /cvmfs/refgenomes-databio.galaxyproject.org;
+        autoindex on;
+    }
 }
 
 # vim: set filetype=nginx
