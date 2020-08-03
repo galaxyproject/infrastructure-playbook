@@ -52,11 +52,34 @@ SlurmdDebug=debug
 NodeName=roundup[49-54] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=0
 NodeName=roundup[55-60] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=10
 NodeName=roundup[61-64] RealMemory=122880 CPUS=24 State=UNKNOWN Weight=0
+NodeName=galaxy-1 NodeAddr=129.114.104.99 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-2 NodeAddr=129.114.104.89 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-3 NodeAddr=129.114.104.105 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-4 NodeAddr=129.114.104.64 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-5 NodeAddr=129.114.17.246 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-6 NodeAddr=129.114.104.142 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-7 NodeAddr=129.114.17.222 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-8 NodeAddr=129.114.104.120 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-9 NodeAddr=129.114.104.57 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-10 NodeAddr=129.114.104.100 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-11 NodeAddr=129.114.104.52 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-12 NodeAddr=129.114.104.124 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-13 NodeAddr=129.114.104.93 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-14 NodeAddr=129.114.104.130 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-15 NodeAddr=129.114.104.153 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-16 NodeAddr=129.114.104.98 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-17 NodeAddr=129.114.104.126 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-18 NodeAddr=129.114.104.34 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-19 NodeAddr=129.114.104.104 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
+NodeName=galaxy-20 NodeAddr=129.114.104.96 CPUS=10 RealMemory=29995 STATE=UNKNOWN Weight=10
 
 #
 # Partition Configurations
 #
 # Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
-PartitionName=multi State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=5120 Nodes=roundup[49-60] LLN=YES PriorityTier=0
-PartitionName=normal State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[55-64] LLN=YES Default=YES PriorityTier=10
-PartitionName=reserved State=UP MaxTime=96:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[49-64] PriorityTier=20
+PartitionName=multi State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=5120 Nodes=roundup[49-60] LLN=YES PriorityTier=0
+PartitionName=normal State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[55-64] LLN=YES Default=YES PriorityTier=10
+PartitionName=reserved State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=7680 Nodes=roundup[49-64] PriorityTier=20
+PartitionName=jsmulti State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=4990 Nodes=galaxy-[1-20] LLN=YES PriorityTier=0
+PartitionName=jsnormal State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=7490 Nodes=galaxy-[1-20] LLN=YES PriorityTier=10
+PartitionName=jsreserved State=UP MaxTime=8-00:00:00 MaxNodes=1 DefMemPerCPU=7490 Nodes=galaxy-[1-20] LLN=YES PriorityTier=20

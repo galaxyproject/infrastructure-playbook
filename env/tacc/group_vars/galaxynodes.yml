@@ -3,7 +3,7 @@
 # 500 GB why not
 cvmfs_quota_limit: 512000
 
-galaxy_cvmfs_repos_enabled: config-repo
+galaxy_cvmfs_repos_enabled: true
 
 # override so that the TACC stratum 1 is always first
 cvmfs_server_urls:

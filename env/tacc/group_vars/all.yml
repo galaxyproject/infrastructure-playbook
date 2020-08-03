@@ -19,11 +19,12 @@ all_yum_repositories:
 all_packages:
   - git
 
-__corral_ip: "{{ ((ansible_default_ipv4.address | ipv4('address') | ipaddr('int')) % 2) + 34 }}"
-mounts:
-  - src: 129.114.60.{{ __corral_ip }}:/gpfs/corral3/repl/projects/galaxy/
-    path: /galaxy-repl
-    fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.{{ __corral_ip }}
-    owner: ndc
-    group: G-803372
+# FIXME: update for new corral gateway
+#__corral_ip: "{{ ((ansible_default_ipv4.address | ipv4('address') | ipaddr('int')) % 2) + 34 }}"
+#mounts:
+#  - src: 129.114.60.{{ __corral_ip }}:/gpfs/corral3/repl/projects/galaxy/
+#    path: /galaxy-repl
+#    fstype: nfs
+#    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.{{ __corral_ip }}
+#    owner: ndc
+#    group: G-803372
