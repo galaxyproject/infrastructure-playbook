@@ -26,6 +26,33 @@ telegraf_plugins_extra:
       - interval = "15m"
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_queue_by_tool:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue --by tool'"]
+      - timeout = "180s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_queue_by_destination:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue --by destination'"]
+      - timeout = "180s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  #galaxy_queue_by_user:
+  #  plugin: "exec"
+  #  config:
+  #    - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue --by user'"]
+  #    - timeout = "180s"
+  #    - data_format = "influx"
+  #    - interval = "1m"
+  #    - '[inputs.exec.tags]'
+  #    - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
 
 gxadmin_dir: /usr/local/lib/gxadmin
 gxadmin_bin_dir: /usr/local/bin
