@@ -1,6 +1,9 @@
 ---
 
 cloud_id: jetstream_iu
+jetstream_local_controller_address: "{{ controller_name }}.jetstreamlocal"
+jetstream_local_cvmfs_stratum1_address: "cvmfs1-{{ cloud_id[10:] }}0.jetstreamlocal"
+jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.jetstreamlocal"
 
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 

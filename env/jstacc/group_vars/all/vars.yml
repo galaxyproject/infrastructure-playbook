@@ -1,6 +1,10 @@
 ---
 
 cloud_id: jetstream_tacc
+# FIXME: .jetstreamlocal is broken @ TACC
+jetstream_local_controller_address: 10.0.0.16
+jetstream_local_cvmfs_stratum1_address: 10.0.0.10
+jetstream_local_cvmfs_proxy_address: 10.0.0.16
 
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 

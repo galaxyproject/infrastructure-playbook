@@ -7,9 +7,10 @@
      OS_CLOUD: "{{ cloud_id }}"
      OS_IDENTITY_API_VERSION: '3'
   tasks:
-    - name: Stop instance
-      os_server_action:
+    - name: Destroy instance
+      os_server:
         cloud: "{{ cloud_id }}"
-        server: "{{ inventory_hostname }}"
-        action: "stop"
+        name: "{{ inventory_hostname }}"
+        state: absent
       delegate_to: localhost
+      become: false

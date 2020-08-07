@@ -1,32 +1,101 @@
 ---
 
-- name: Start/Spawn instance(s)
+- name: Define groups for resume/spawn nodes
   hosts: galaxynodes
-  gather_facts: no
+  gather_facts: false
   environment:
      OS_CLOUD: "{{ cloud_id }}"
      OS_IDENTITY_API_VERSION: '3'
   tasks:
-    - name: Instance start/spawn block
+
+    - name: Create existing nodes group
+      group_by:
+        key: startnodes
+      when: openstack is defined
+
+    - name: Create new nodes group
+      group_by:
+        key: spawnnodes
+      when: openstack is not defined
+
+
+- name: Start existing instance(s)
+  hosts: startnodes
+  gather_facts: false
+  environment:
+     OS_CLOUD: "{{ cloud_id }}"
+     OS_IDENTITY_API_VERSION: '3'
+  tasks:
+
+    - name: Instance start block
       block:
 
-        - name: Create new nodes group
-          group_by:
-            key: newnodes
-          when: openstack is not defined
-
-        - name: Collect image facts
-          os_image_info:
-          run_once: true
+        - name: Start instance
+          os_server_action:
+            cloud: "{{ cloud_id }}"
+            server: "{{ inventory_hostname }}"
+            action: "start"
           delegate_to: localhost
-          when: "'newnodes' in group_names"
-          register: __os_image_info
 
-        - name: Find current JS-API-Featured-CentOS7 image
-          set_fact:
-            image: "{{ ( __os_image_info.openstack_image | selectattr('name', 'match', '(?i)^JS-API-Featured-CentOS7-[A-Z]{3}-\\d{1,2}-\\d{4}$') | list | last ).id }}"
-          run_once: true
-          when: "'newnodes' in group_names"
+        # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
+        # task alone will wait up to 600 seconds.
+        - name: Wait for instance to become accessible
+          wait_for_connection:
+
+        - name: Copy slurm.conf
+          copy:
+            src: /etc/slurm/slurm.conf
+            dest: /etc/slurm/slurm.conf
+          become: true
+          register: slurm_conf
+
+        - name: Log IP address
+          debug:
+            var: ansible_host
+
+        # This shouldn't be strictly necessary for started instances, but it can't hurt
+        - name: Update slurm controller with instance IP
+          command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
+          delegate_to: localhost
+          become: false
+
+        - name: Restart slurmd
+          service:
+            name: slurmd
+            state: restarted
+          become: true
+          when: slurm_conf is changed
+
+        # FIXME: should not be doing this most likely
+        - name: Run slurmd -b to signal slurmctld
+          command: /usr/sbin/slurmd -b
+          become: true
+
+      rescue:
+
+        - name: Destroy existing instance on start failure
+          os_server:
+            cloud: "{{ cloud_id }}"
+            name: "{{ inventory_hostname }}"
+            state: absent
+          delegate_to: localhost
+          become: false
+
+        - name: Fail due to previous failure
+          fail:
+            msg: failed
+
+
+- name: Spawn new instance(s)
+  hosts: spawnnodes
+  gather_facts: false
+  environment:
+     OS_CLOUD: "{{ cloud_id }}"
+     OS_IDENTITY_API_VERSION: '3'
+  tasks:
+
+    - name: Instance spawn block
+      block:
 
         - name: Spawn new instance
           os_server:
@@ -44,58 +113,50 @@
               package_upgrade: false
           delegate_to: localhost
           register: spawned_out
-          when: "'newnodes' in group_names"
 
         - name: Update inventory with spawned instance IP
           set_fact:
             ansible_host: "{{ spawned_out.server.private_v4 }}"
           delegate_to: localhost
-          when: "'newnodes' in group_names"
-
-        - name: Start instance
-          os_server_action:
-            cloud: "{{ cloud_id }}"
-            server: "{{ inventory_hostname }}"
-            action: "start"
-          delegate_to: localhost
-          when: "'newnodes' not in group_names"
 
         # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
         # task alone will wait up to 600 seconds.
         - name: Wait for instance to become accessible
           wait_for_connection:
 
-        - name: Copy slurm.conf
-          copy:
-            src: /etc/slurm/slurm.conf
-            dest: /etc/slurm/slurm.conf
-          become: yes
-          register: slurm_conf
-          when: "'newnodes' not in group_names"
+        - name: Gather Facts
+          gather_facts:
+          become: true
 
-        - name: Restart slurmd
+        - name: Import new node setup role
+          import_role:
+            name: galaxynodeconfig
+          become: true
+
+        - name: Import CVMFS role
+          import_role:
+            name: galaxyproject.cvmfs
+          become: true
+
+        - name: Import Slurm role
+          import_role:
+            name: galaxyproject.slurm
+          become: true
+
+        # on restarts we want to wait until the playbook copies slurm.conf and starts slurmd itself
+        - name: Disable slurmd autostart
           service:
             name: slurmd
-            state: restarted
-          become: yes
-          when: "'newnodes' not in group_names and slurm_conf is changed"
+            enabled: false
+          become: true
 
         - name: Log IP address
           debug:
             var: ansible_host
-          when: "'newnodes' not in group_names"
 
-        # This shouldn't be strictly necessary for started instances, but it can't hurt
         - name: Update slurm controller with instance IP
           command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
           delegate_to: localhost
-          #when: "'newnodes' not in group_names"
-
-        # FIXME: should not be doing this most likely
-        - name: Run slurmd -b to signal slurmctld
-          command: /usr/sbin/slurmd -b
-          become: yes
-          when: "'newnodes' not in group_names"
 
       rescue:
 
@@ -105,44 +166,8 @@
             name: "{{ inventory_hostname }}"
             state: absent
           delegate_to: localhost
-          become: no
-          when: "'newnodes' in group_names"
-
-        - name: Stop existing instance on failure
-          os_server_action:
-            cloud: "{{ cloud_id }}"
-            server: "{{ inventory_hostname }}"
-            action: "stop"
-          delegate_to: localhost
-          become: no
-          when: "'newnodes' not in group_names"
+          become: false
 
         - name: Fail due to previous failure
           fail:
             msg: failed
-
-
-- name: Configure new instance(s)
-  hosts: newnodes
-  become: yes
-  handlers:
-  roles:
-    - galaxynodeconfig
-    - galaxyproject.cvmfs
-    - galaxyproject.slurm
-
-  post_tasks:
-    - name: Log IP address
-      debug:
-        var: ansible_host
-
-    # on restarts we want to wait until the playbook copies slurm.conf and starts slurmd itself
-    - name: Disable slurmd autostart
-      service:
-        name: slurmd
-        enabled: no
-
-    - name: Update slurm controller with instance IP
-      command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
-      delegate_to: localhost
-      become: false

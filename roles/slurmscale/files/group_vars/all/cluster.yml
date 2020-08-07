@@ -12,13 +12,13 @@ galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org
     use_geoapi: true
     urls:
-      - "http://cvmfs1-{{ cloud_id[10:] }}0.jetstreamlocal/cvmfs/@fqrn@"
+      - "http://{{ jetstream_local_cvmfs_stratum1_address }}/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
 
 cvmfs_http_proxies:
-  - "http://jetstream-{{ cloud_id[10:] }}0.jetstreamlocal:3128"
+  - "http://{{ jetstream_local_cvmfs_proxy_address }}:3128/cvmfs/@fqrn@"
   - "DIRECT"
 
 slurm_user:
@@ -29,7 +29,7 @@ slurm_user:
   shell: /bin/bash
 
 jetstream_nfs_filesystems:
-  - device: "{{ controller_name }}.jetstreamlocal:/jetstream/scratch0"
+  - device: "{{ jetstream_local_controller_address }}:/jetstream/scratch0"
     dir: scratch0
 
 directories:
