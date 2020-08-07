@@ -51,6 +51,7 @@ slurm_config:
   PrivateData: cloud
   ResumeProgram: "/opt/slurmscale/sbin/slurm_resume"
   SuspendProgram: "/opt/slurmscale/sbin/slurm_suspend"
+  ResumeFailProgram: "/opt/slurmscale/sbin/slurm_suspend"
   ResumeRate: 0        # number of nodes per minute that can be created; 0 means no limit
   ResumeTimeout: 900   # max time in seconds between ResumeProgram running and when the node is ready for use
   SuspendRate: 0       # number of nodes per minute that can be suspended/destroyed
