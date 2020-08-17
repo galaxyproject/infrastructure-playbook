@@ -139,3 +139,7 @@ dockerclients
 
 [rabbitmqservers]
 galaxy08.tacc.utexas.edu
+
+[irodsclients]
+[irodsclients:children]
+testgalaxyservers

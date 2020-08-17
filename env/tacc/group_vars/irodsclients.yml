@@ -1,0 +1,46 @@
+---
+
+irodsclients_group_rpm_keys:
+  - key: https://packages.irods.org/irods-signing-key.asc
+    fingerprint: 9014FF9F75C66C771F1CB574BD925DBDACF9B42B
+
+irodsclients_group_yum_repositories:
+  - name: renci-irods
+    description: RENCI iRODS Repository
+    baseurl: https://packages.irods.org/yum/pool/centos$releasever/$basearch
+    enabled: 1
+    gpgcheck: 1
+    repo_gpgcheck: 1
+    gpgkey: https://packages.irods.org/irods-signing-key.asc
+
+irodsclients_group_packages:
+  - irods-icommands
+
+__irods_environment_json: |
+  {
+      "irods_zone_name": "galaxy",
+      "irods_host": "gs-0.corral.tacc.utexas.edu",
+      "irods_port": 1247,
+      "irods_user_name": "gtest",
+      "irods_default_resource": "corralResc"
+  }
+
+# TODO: this isn't really scalable, but it works for now
+irodsclients_group_directories:
+  - path: ~g2test/.irods
+    owner: g2test
+  - path: ~ndc/.irods
+    owner: ndc
+  - path: ~kxk302/.irods
+    owner: kxk302
+
+irodsclients_group_files:
+  - dest: ~g2test/.irods/irods_environment.json
+    owner: g2test
+    content: "{{ __irods_environment_json }}"
+  - dest: ~ndc/.irods/irods_environment.json
+    owner: ndc
+    content: "{{ __irods_environment_json }}"
+  - dest: ~kxk302/.irods/irods_environment.json
+    owner: kxk302
+    content: "{{ __irods_environment_json }}"
