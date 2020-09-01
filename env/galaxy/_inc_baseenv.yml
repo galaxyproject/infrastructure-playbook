@@ -4,6 +4,8 @@
   hosts: baseenv
   remote_user: root
   roles:
+    - role: locale            # Configure default locale
+      tags: locale
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: requiretty
     - role: remote_management # Set up IPMI/serial stuff

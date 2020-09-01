@@ -4,6 +4,16 @@ smartos_images:
   # centos-7 20190122 linux zvol
   - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
     state: present
+  # ubuntu-16.04 20170403 linux lx-dataset
+  # For manual upgrade to ubuntu-20.04 image from OmniOS
+  # Images from https://github.com/omniosorg/lx-images
+  # Process from https://smartos.topicbox.com/groups/smartos-discuss/T68ebed9ce2f20ae0/fresh-lx-zone-linux-images-for-ubuntu-18-04-and-20-04
+  #   1. Created a zone with the latest available Ubuntu 16.04 LX image as a base (7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b)
+  #   2. Moved the existing /zones/<UUID>/root directory elsewhere
+  #   3. Extracted the latest 20.04 dataset from https://github.com/omniosorg/lx-images/releases into /zones/<UUID>/root/
+  #   4. UNNECESSARY (already in image or created on boot?): Copied missing SmartOS directories from the old root/ directory (e.g., "native/")
+  - uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
+    state: present
 
 smartos_vms:
   - name: jeltz
@@ -23,6 +33,23 @@ smartos_vms:
       - image_uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
         boot: true
         model: virtio
+    delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+  - name: eddie
+    brand: lx
+    kernel_version: 5.4.0-26-generic
+    image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
+    hostname: eddie
+    max_physical_memory: 8192
+    quota: 8192
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 128.118.250.11
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
     delegate_dataset: true
     customer_metadata:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"

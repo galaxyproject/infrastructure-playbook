@@ -7,6 +7,9 @@ all_packages:
   - zsh
   - git
   - tmux
+  # this is for apt_key in the telegraf role; technically Debian only needs gpg, but gnupg2 - which is the EL package
+  # name - exists on Debian and depends on gnupg, which depends on gpg)
+  - gnupg2
 
 baseenv_group_sshd_config:
   # Password auth is disabled in the EC2 Ubuntu AMIs
