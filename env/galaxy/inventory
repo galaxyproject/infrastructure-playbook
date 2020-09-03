@@ -60,7 +60,8 @@ cvmfs-stratum0.galaxyproject.eu
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 duvel.galaxyproject.org
-radegast.galaxyproject.org
+# FIXME: this group does nothing now (see _inc_galaxyenv.yml)
+#radegast.galaxyproject.org
 orval.galaxyproject.org
 westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
@@ -98,6 +99,7 @@ statsservers
 
 # These get everything in baseenv + LDAP and Kerberos+Auth, but not NFS
 [liteenv]
+radegast.galaxyproject.org
 eddie.galaxyproject.org
 
 [liteenv:children]
@@ -106,7 +108,7 @@ infrastructure
 
 # These get everything in liteenv + NFS
 [fullenv]
-radegast.galaxyproject.org
+#radegast.galaxyproject.org
 nn14.galaxyproject.org
 
 # FIXME: why was this the case?

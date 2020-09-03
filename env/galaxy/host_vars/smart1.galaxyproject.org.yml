@@ -11,7 +11,7 @@ smartos_images:
   #   1. Created a zone with the latest available Ubuntu 16.04 LX image as a base (7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b)
   #   2. Moved the existing /zones/<UUID>/root directory elsewhere
   #   3. Extracted the latest 20.04 dataset from https://github.com/omniosorg/lx-images/releases into /zones/<UUID>/root/
-  #   4. UNNECESSARY (already in image or created on boot?): Copied missing SmartOS directories from the old root/ directory (e.g., "native/")
+  #   4. UNNECESSARY (created on boot): Copied missing SmartOS directories from the old root/ directory (e.g., "native/")
   - uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
     state: present
 

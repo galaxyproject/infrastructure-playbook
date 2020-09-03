@@ -1,0 +1,23 @@
+---
+
+default_locale: en_US.UTF-8
+
+zfs_filesystems:
+  - name: zones/4a558562-e630-c666-a554-9b659537e387/data/srv
+    mountpoint: /srv
+    setuid: "off"
+  - name: zones/4a558562-e630-c666-a554-9b659537e387/data/srv/toolshed-repos
+    mountpoint: /srv/toolshed-repos
+    exec: "off"
+    setuid: "off"
+    compression: "lz4"
+  - name: zones/4a558562-e630-c666-a554-9b659537e387/data/postgres
+    mountpoint: /var/lib/postgresql
+    exec: "off"
+    setuid: "off"
+
+host_directories:
+  - path: /srv/toolshed-repos/main
+    owner: shed
+    group: shed
+    mode: "0750"
