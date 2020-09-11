@@ -12,7 +12,7 @@ smartos_vms:
     kernel_version: 5.4.0-26-generic
     image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
     hostname: radegast
-    max_physical_memory: 8192
+    max_physical_memory: 12288
     quota: 8192
     resolvers: "{{ smartos_resolvers }}"
     maintain_resolvers: true
