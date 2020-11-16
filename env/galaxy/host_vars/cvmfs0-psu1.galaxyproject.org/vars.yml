@@ -3,6 +3,8 @@
 host_authorized_key_users:
   - name: g2test
     authorized: "{{ galaxy_team_users + ['usegalaxy_tools_travis_cvmfs0'] }}"
+  - name: cloud
+    authorized: "{{ galaxy_cloud_team_users + ['usegalaxy_tools_travis_cvmfs0'] }}"
 
 cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
@@ -51,6 +53,18 @@ cvmfs_repositories:
   #    - CVMFS_VIRTUAL_DIR=true
   #  client_options:
   #    - CVMFS_NFILES=4096
+  - repository: cloud.galaxyproject.org
+    stratum0: cvmfs0-psu1.galaxyproject.org
+    owner: cloud
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_VIRTUAL_DIR=true
+    client_options:
+      - CVMFS_NFILES=4096
 
 cvmfs_keys:
   - path: /etc/cvmfs/keys/test.galaxyproject.org.pub
@@ -119,6 +133,12 @@ cvmfs_keys:
       bAGzbVAm14suDOEoallf/MXSRkeU6J3hEGdWbAS/0HfyTpPzdlytyihvz5R0UDZp
       3LfKBSCPAcZI4A1CecNIBgCvV3YT4qow68xovCmI9x7YXbdXwAA3Zw==
       -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.pub
+    owner: root
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.crt
+    owner: root
+    key: "{{ cvmfs_site_keys.crt }}"
 
 # FIXME: supplemental groups below don't work the first time
 host_users:
@@ -136,6 +156,12 @@ host_users:
     home: /home/g2main
     shell: /bin/bash
     groups: docker
+  - name: cloud
+    comment: "CVMFS Cloud Repo"
+    home: /home/cloud
+    shell: /bin/bash
+    #groups: docker
+    system: yes
 
 host_groups:
   - name: G-803372
