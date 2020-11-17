@@ -22,6 +22,7 @@ rabbitmq_vhosts:
   - /main_pulsar
   - /test_internal
   - /main_internal
+  - /nate_test
 
 telegraf_plugins_extra:
   rabbitmq:
