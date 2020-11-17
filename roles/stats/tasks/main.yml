@@ -121,3 +121,8 @@
         label: "{{ item.user_name }}"
 
   when: stats_influxdb_users is defined
+
+- name: Install Grafana plugins
+  community.grafana.grafana_plugin:
+    name: "{{ item }}"
+  loop: "{{ grafana_plugins | default([]) }}"

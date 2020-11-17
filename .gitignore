@@ -2,6 +2,8 @@
 *.retry
 clouds.yaml
 
+collections
+
 # Ignore specific roles installed with Ansible Galaxy. Once they're all moved, this can be roles/*.*
 roles/dj-wasabi.telegraf
 roles/galaxyproject.cvmfs

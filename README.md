@@ -12,6 +12,7 @@ Set up `pass` and get the `ansible-env` function as documented on the [usegalaxy
 wiki](https://github.com/galaxyproject/usegalaxy-playbook/wiki/Getting-Set-Up-At-TACC), then:
 
 ```shell
-% ansible-galaxy -p roles install -r requirements.yml
+% ansible-galaxy role install -p roles -r requirements.yml
+% ansible-galaxy collection install -p collections -r requirements.yml
 % ansible-env <env> <playbook>
 ```

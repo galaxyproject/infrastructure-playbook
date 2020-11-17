@@ -1,23 +1,29 @@
 ---
-- name: galaxyproject.nginx
-  version: 0.6.3
-- name: galaxyproject.mailman3
-  src: https://github.com/galaxyproject/ansible-mailman3
-- name: galaxyproject.opendkim
-  version: 0.1.0
-- name: galaxyproject.postfix
-  version: 0.1.1
-- name: galaxyproject.postgresql
-  version: 1.0.2
-- name: usegalaxy_eu.certbot
-  version: 0.1.4
-- name: galaxyproject.slurm
-  version: 0.1.1
-- name: galaxyproject.cvmfs
-  version: 0.2.12
-- name: geerlingguy.repo-epel
-  version: 1.2.3
-- name: dj-wasabi.telegraf
-  version: 0.12.0
-- name: usegalaxy_eu.gxadmin
-  version: 0.0.2
+
+roles:
+  - name: galaxyproject.nginx
+    version: 0.6.3
+  - name: galaxyproject.mailman3
+    src: https://github.com/galaxyproject/ansible-mailman3
+  - name: galaxyproject.opendkim
+    version: 0.1.0
+  - name: galaxyproject.postfix
+    version: 0.1.1
+  - name: galaxyproject.postgresql
+    version: 1.0.2
+  - name: usegalaxy_eu.certbot
+    version: 0.1.4
+  - name: galaxyproject.slurm
+    version: 0.1.1
+  - name: galaxyproject.cvmfs
+    version: 0.2.12
+  - name: geerlingguy.repo-epel
+    version: 1.2.3
+  - name: dj-wasabi.telegraf
+    version: 0.12.0
+  - name: usegalaxy_eu.gxadmin
+    version: 0.0.2
+
+collections:
+  - name: community.grafana
+    version: 1.1.0
