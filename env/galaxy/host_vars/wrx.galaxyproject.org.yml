@@ -1,0 +1,10 @@
+---
+
+host_users:
+  - name: kxk302
+    groups: sudo
+
+host_authorized_key_users:
+  - name: kxk302
+    authorized:
+      - kaivan_kamali

@@ -14,6 +14,9 @@ smartos_images:
   #   4. UNNECESSARY (created on boot): Copied missing SmartOS directories from the old root/ directory (e.g., "native/")
   - uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
     state: present
+  # ubuntu-certified-18.04 20190627.1.1 linux zvol
+  - uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
+    state: present
 
 smartos_vms:
   - name: jeltz
@@ -51,5 +54,23 @@ smartos_vms:
         gateway: 128.118.250.1
         vlan_id: 306
     delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+  - name: wrx
+    brand: bhyve
+    ram: 2048
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 172.18.2.121
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+        model: virtio
+    disks:
+      - image_uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
+        boot: true
+        model: virtio
     customer_metadata:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"
