@@ -72,5 +72,8 @@ smartos_vms:
       - image_uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
         boot: true
         model: virtio
+      - boot: false
+        model: virtio
+        size: 32768
     customer_metadata:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"

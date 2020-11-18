@@ -8,3 +8,15 @@ host_authorized_key_users:
   - name: kxk302
     authorized:
       - kaivan_kamali
+
+filesystems:
+  - dev: /dev/vdb
+    fstype: xfs
+
+mounts:
+  - name: /data
+    src: /dev/vdb
+    fstype: xfs
+    mode: "0755"
+    owner: kxk302
+    group: kxk302
