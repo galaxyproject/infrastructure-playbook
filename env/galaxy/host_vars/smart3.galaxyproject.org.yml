@@ -103,7 +103,7 @@ smartos_vms:
     kernel_version: 3.10.0-1062.1.2.el7.x86_64
     image_uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
     hostname: stats
-    max_physical_memory: 4096
+    max_physical_memory: 8192
     # TODO: how was this set and how is it not breaking things?
     quota: 256
     resolvers: "{{ smartos_resolvers }}"
