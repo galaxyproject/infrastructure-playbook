@@ -22,6 +22,23 @@
       tags: stats,telegraf
   tags: initial,system
 
+- name: Tasks for jsgalaxynodes
+  hosts: jsgalaxynodes
+  remote_user: root
+  tasks:
+    - name: Decrease log level of yum-cron
+      ini_file:
+        path: "{{ item }}"
+        create: false
+        section: base
+        option: debuglevel
+        value: -4
+        backup: true
+      loop:
+        - /etc/yum/yum-cron-hourly.conf
+        - /etc/yum/yum-cron.conf
+  tags: initial,system
+
 - name: Forward mail for local accounts
   hosts: all
   remote_user: root
