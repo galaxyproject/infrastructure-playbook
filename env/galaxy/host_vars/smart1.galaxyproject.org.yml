@@ -58,7 +58,7 @@ smartos_vms:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"
   - name: wrx
     brand: bhyve
-    ram: 2048
+    ram: 8192
     vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
