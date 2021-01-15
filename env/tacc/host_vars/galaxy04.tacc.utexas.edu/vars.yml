@@ -4,7 +4,7 @@ host_authorized_key_users:
   - name: g2main
     authorized: "{{ galaxy_team_users + ['usegalaxy_tools_travis_cvmfs0'] }}"
   - name: g2test
-    authorized: "{{ galaxy_team_users + ['usegalaxy_tools_travis_cvmfs0', 'sshtunnel_cvmfs0-psu1_g2test_galaxy04'] }}"
+    authorized: "{{ galaxy_team_users + ['usegalaxy_tools_travis_cvmfs0', 'sshtunnel_cvmfs0-psu1_g2test_galaxy04', 'sshtunnel_cvmfs1-psu0_g2test_galaxy04'] }}"
 
 # for use as a virtualenv/ansible management host
 host_packages:
