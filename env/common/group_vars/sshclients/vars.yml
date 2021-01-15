@@ -1,3 +1,8 @@
 ---
 
 common_sshprivatekeys: "{{ vault_common_sshprivatekeys }}"
+common_sshhostkeys:
+  galaxy04.tacc.utexas.edu: galaxy04.tacc.utexas.edu,129.114.60.176 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBATkn2kkYnIK0WvQ7V1vtoAo+39S2CP4VtFJ8S1OrQg4lCixgF4cdYhf4Na018RUgWfaj5cYSEnkRAoICBUEcAQ=
+
+# can move this to envs later if necessary
+sshhostkeys: "{{ common_sshhostkeys }}"

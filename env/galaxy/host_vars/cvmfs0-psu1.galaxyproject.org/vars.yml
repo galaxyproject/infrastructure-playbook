@@ -174,4 +174,4 @@ systemd_ssh_tunnels:
     remote_port: 2222
     key_name: id_rsa_galaxy04
     key: "{{ sshprivatekeys['sshtunnel_cvmfs0-psu1_g2test_galaxy04'] }}"
-    host_key: galaxy04.tacc.utexas.edu,129.114.60.176 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBATkn2kkYnIK0WvQ7V1vtoAo+39S2CP4VtFJ8S1OrQg4lCixgF4cdYhf4Na018RUgWfaj5cYSEnkRAoICBUEcAQ=
+    host_key: "{{ sshhostkeys['galaxy04.tacc.utexas.edu'] }}"

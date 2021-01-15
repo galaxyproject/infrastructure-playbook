@@ -94,6 +94,7 @@ sshtunnels
 # For hosts that create outbound ssh tunnels
 [sshtunnels]
 cvmfs0-psu1.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org
 
 [toolshedservers]
 radegast.galaxyproject.org

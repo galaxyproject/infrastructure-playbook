@@ -97,3 +97,12 @@ cvmfs_server_urls:
 #    server_options:
 #      - CVMFS_AUTO_GC=false
 #    client_options: []
+
+systemd_ssh_tunnels:
+  - name: galaxy04
+    remote_host: galaxy04.tacc.utexas.edu
+    remote_user: g2test
+    remote_port: 2322
+    key_name: id_rsa_galaxy04
+    key: "{{ sshprivatekeys['sshtunnel_cvmfs1-psu0_g2test_galaxy04'] }}"
+    host_key: "{{ sshhostkeys['galaxy04.tacc.utexas.edu'] }}"
