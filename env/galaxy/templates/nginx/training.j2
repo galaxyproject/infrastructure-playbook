@@ -40,6 +40,28 @@ server {
         add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/archive;
     }
+    
+    location /videos/topic {
+        proxy_cache            s3_cache;
+        proxy_http_version     1.1;
+        proxy_set_header       Connection "";
+        proxy_set_header       Authorization '';
+        proxy_set_header       Host galaxy-training.s3-website.us-east-1.amazonaws.com;
+        proxy_hide_header      x-amz-id-2;
+        proxy_hide_header      x-amz-request-id;
+        proxy_hide_header      x-amz-meta-server-side-encryption;
+        proxy_hide_header      x-amz-server-side-encryption;
+        proxy_hide_header      Set-Cookie;
+        proxy_ignore_headers   Set-Cookie;
+        proxy_cache_revalidate on;
+        #proxy_intercept_errors on;
+        #proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock       on;
+        proxy_cache_valid      200 304 60m;
+        add_header             Cache-Control max-age=31536000;
+        add_header             X-Cache-Status $upstream_cache_status;
+        proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/videos/topic;
+    }
 
     location /training-material/ {
         proxy_http_version     1.1;
