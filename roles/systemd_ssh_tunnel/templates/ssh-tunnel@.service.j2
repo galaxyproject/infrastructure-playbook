@@ -1,0 +1,18 @@
+[Unit]
+Description=Setup a secure tunnel to %I
+After=network.target
+
+[Service]
+Environment="REMOTE_ADDR=127.0.0.1"
+Environment="KEY_NAME=id_rsa"
+EnvironmentFile=/etc/default/ssh-tunnel@%i
+ExecStart=/usr/bin/ssh -NT -o ServerAliveInterval=60 -o ExitOnForwardFailure=yes -i ~{{ systemd_ssh_tunnel_user }}/.ssh/${KEY_NAME} -R ${REMOTE_ADDR}:${REMOTE_PORT}:localhost:22 -l ${REMOTE_USER} ${REMOTE_HOST}
+User={{ systemd_ssh_tunnel_user }}
+Group={{ systemd_ssh_tunnel_group }}
+
+# Restart every >2 seconds to avoid StartLimitInterval failure
+#RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

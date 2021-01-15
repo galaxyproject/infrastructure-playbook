@@ -47,6 +47,13 @@
     - users
   tags: users
 
+- name: Set up SSH tunnels
+  hosts: sshtunnels
+  remote_user: root
+  roles:
+    - systemd_ssh_tunnel
+  tags: [system, sshtunnel]
+
 # This is sort of ugly - we don't want to use the galaxyenv basenv for
 # jetstream controllers because they are controlled in the jetstream envs. All
 # this is used for currently is setting up the `swarm` system user.

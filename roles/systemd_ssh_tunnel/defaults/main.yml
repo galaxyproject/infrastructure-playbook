@@ -1,0 +1,8 @@
+---
+
+systemd_ssh_tunnel_create_user: true
+systemd_ssh_tunnel_user: sshtunnel
+systemd_ssh_tunnel_group: "{{ systemd_ssh_tunnel_user }}"
+systemd_ssh_tunnel_home: /home/sshtunnel
+systemd_ssh_tunnel_shell: /bin/bash
+systemd_ssh_tunnels: []

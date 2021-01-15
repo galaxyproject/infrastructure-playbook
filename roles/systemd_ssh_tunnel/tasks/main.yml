@@ -1,0 +1,82 @@
+---
+# Adapted from https://gist.github.com/drmalex07/c0f9304deea566842490
+#
+# Remote end user and authorized keys are not handled by this role and should be set up via other means
+
+- name: Create user
+  user:
+    name: "{{ systemd_ssh_tunnel_user }}"
+    comment: "systemd SSH Tunnel"
+    home: "{{ systemd_ssh_tunnel_home }}"
+    shell: "{{ systemd_ssh_tunnel_shell }}"
+    system: true
+  when: systemd_ssh_tunnel_create_user | bool
+
+- name: Install service unit
+  template:
+    src: ssh-tunnel@.service.j2
+    dest: /etc/systemd/system/ssh-tunnel@.service
+    mode: 0644
+  register: __systemd_ssh_tunnel_service_unit
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+  when: __systemd_ssh_tunnel_service_unit is changed
+
+- name: Ensure ~/.ssh directory exists for installing private keys
+  file:
+    path: "~{{ systemd_ssh_tunnel_user }}/.ssh"
+    state: directory
+    owner: "{{ systemd_ssh_tunnel_user }}"
+    group: "{{ systemd_ssh_tunnel_group }}"
+
+- name: Install ssh tunnel private keys
+  copy:
+    content: "{{ item.key }}"
+    dest: "~{{ systemd_ssh_tunnel_user }}/.ssh/{{ item.key_name }}"
+    owner: "{{ systemd_ssh_tunnel_user }}"
+    group: "{{ systemd_ssh_tunnel_group }}"
+    mode: 0600
+  loop: "{{ systemd_ssh_tunnels }}"
+  loop_control:
+    label: "{{ item.key_name }}"
+
+- name: Install ssh tunnel host keys
+  known_hosts:
+    name: "{{ item.remote_host }}"
+    key: "{{ item.host_key }}"
+    path: "~{{ systemd_ssh_tunnel_user }}/.ssh/known_hosts"
+    state: "{{ item.state | default(omit) }}"
+  loop: "{{ systemd_ssh_tunnels | selectattr('host_key') | list }}"
+  loop_control:
+    label: "{{ item.key_name }}"
+
+- name: Fix known_hosts ownership
+  file:
+    path: "~{{ systemd_ssh_tunnel_user }}/.ssh/known_hosts"
+    owner: "{{ systemd_ssh_tunnel_user }}"
+    group: "{{ systemd_ssh_tunnel_group }}"
+    mode: 0644
+
+- name: Install ssh tunnel configs
+  copy:
+    content: |
+      KEY_NAME={{ item.key_name }}
+      REMOTE_PORT={{ item.remote_port }}
+      REMOTE_USER={{ item.remote_user }}
+      REMOTE_HOST={{ item.remote_host }}
+    dest: /etc/default/ssh-tunnel@{{ item.name }}
+    mode: 0644
+  loop: "{{ systemd_ssh_tunnels }}"
+  loop_control:
+    label: "{{ item.key_name }}"
+
+- name: Ensure ssh tunnels are running and enabled
+  systemd:
+    name: "ssh-tunnel@{{ item.name }}.service"
+    state: started
+    enabled: true
+  loop: "{{ systemd_ssh_tunnels }}"
+  loop_control:
+    label: "{{ item.key_name }}"
