@@ -84,6 +84,7 @@ orval.galaxyproject.org
 radegast.galaxyproject.org
 eddie.galaxyproject.org
 westvleteren.galaxyproject.org
+cvmfs0-psu1.galaxyproject.org
 
 [sshclients:children]
 dockerswarmmanagers
