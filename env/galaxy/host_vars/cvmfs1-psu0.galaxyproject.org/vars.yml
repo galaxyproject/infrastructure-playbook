@@ -98,6 +98,7 @@ cvmfs_server_urls:
 #      - CVMFS_AUTO_GC=false
 #    client_options: []
 
+systemd_ssh_tunnel_restart_seconds: 90
 systemd_ssh_tunnels:
   - name: galaxy04
     remote_host: galaxy04.tacc.utexas.edu

@@ -10,8 +10,7 @@ ExecStart=/usr/bin/ssh -NT -o ServerAliveInterval=60 -o ExitOnForwardFailure=yes
 User={{ systemd_ssh_tunnel_user }}
 Group={{ systemd_ssh_tunnel_group }}
 
-# Restart every >2 seconds to avoid StartLimitInterval failure
-#RestartSec=5
+RestartSec={{ systemd_ssh_tunnel_restart_seconds }}
 Restart=always
 
 [Install]

@@ -5,4 +5,7 @@ systemd_ssh_tunnel_user: sshtunnel
 systemd_ssh_tunnel_group: "{{ systemd_ssh_tunnel_user }}"
 systemd_ssh_tunnel_home: /home/sshtunnel
 systemd_ssh_tunnel_shell: /bin/bash
+# Set >=2 to avoid StartLimitInterval from killing restart attempts, but set higher to avoid flooding connection
+# attempts during network disruption
+systemd_ssh_tunnel_restart_seconds: 10
 systemd_ssh_tunnels: []

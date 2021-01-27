@@ -167,6 +167,7 @@ host_groups:
   - name: G-803372
     gid: 803372
 
+systemd_ssh_tunnel_restart_seconds: 90
 systemd_ssh_tunnels:
   - name: galaxy04
     remote_host: galaxy04.tacc.utexas.edu
