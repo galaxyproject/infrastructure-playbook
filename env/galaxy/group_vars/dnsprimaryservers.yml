@@ -15,7 +15,6 @@ dns_bind_views:
       - '{{ dns_config_dir }}/named.conf.default-zones'
     also_notify:
       - '3.136.94.7 key axfr-galaxy.'       # artifact
-      - '54.172.173.123 key axfr-galaxy.'   # chouffe
       - '128.118.250.8 key axfr-galaxy.'    # duvel
     zones:
       - file: 'galaxyproject.org.private.zone'
@@ -47,7 +46,6 @@ dns_bind_views:
       - 'any'
     also_notify:
       - '3.136.94.7 key axfr-global.'       # artifact
-      - '54.172.173.123 key axfr-global.'   # chouffe
       - '128.118.250.8 key axfr-global.'    # duvel
     zones:
       - file: 'galaxyproject.org.zone'
