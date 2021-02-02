@@ -3,6 +3,20 @@
 ##
 
 server {
+    listen      *:443 ssl;
+    server_name test.g2.bx.psu.edu;
+
+    return 301 https://test.galaxyproject.org$request_uri;
+}
+
+server {
+    listen      *:443 ssl;
+    server_name main.g2.bx.psu.edu;
+
+    return 301 https://usegalaxy.org$request_uri;
+}
+
+server {
     listen       *:443 ssl;
     server_name  galaxy2.org galaxyworkbench.org repeatme.org g2.bx.psu.edu;
 

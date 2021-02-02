@@ -29,6 +29,8 @@ certbot_domains:
   - newtrail.galaxyproject.org
   - wiki.g2.bx.psu.edu
   - wiki.galaxyproject.org
+  - test.g2.bx.psu.edu
+  - main.g2.bx.psu.edu
   - galaxy2.org
   - galaxyworkbench.org
   - repeatme.org
