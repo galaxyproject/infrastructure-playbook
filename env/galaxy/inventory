@@ -152,10 +152,8 @@ jetstreamhosts
 cvmfsstratum1servers
 
 [ec2hosts]
-delirium.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
-athena.galaxyproject.org
 
 # - authorized keys for non-root admin user
 # - common Openstack networks and security groups
@@ -219,11 +217,9 @@ artifact.galaxyproject.org
 
 [webservers]
 orval.galaxyproject.org
-delirium.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 duvel.galaxyproject.org
-athena.galaxyproject.org
 jeltz.galaxyproject.org
 #status.usegalaxy.org
 
@@ -241,9 +237,7 @@ certbotservers
 #   - certbot_domains
 [certbotservers]
 orval.galaxyproject.org
-delirium.galaxyproject.org
 duvel.galaxyproject.org
-athena.galaxyproject.org
 stats.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
