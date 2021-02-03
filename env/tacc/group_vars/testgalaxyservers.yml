@@ -7,6 +7,9 @@ galaxy_instance_hostname: test.galaxyproject.org
 testgalaxyservers_group_authorized_key_users:
   - name: g2test
     authorized: "{{ galaxy_team_users }}"
+  # For Main's k8s runner
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
   - name: gxsrc
     authorized: "{{ galaxy_team_users }}"
 
