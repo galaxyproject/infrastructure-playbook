@@ -25,5 +25,7 @@ mounts:
     path: /galaxy-repl
     fstype: nfs
     opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.{{ __corral_ip }}
-    owner: ndc
-    group: G-803372
+    #owner: ndc
+    owner: 815276
+    #group: G-803372
+    group: 803372
