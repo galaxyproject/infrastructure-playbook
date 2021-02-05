@@ -1,0 +1,4 @@
+---
+
+# has a smaller disk than other nodes   
+cvmfs_quota_limit: 384000
