@@ -1,5 +1,8 @@
 ---
 
+# vaulted as an anti-spam measure
+certbot_admin_email: "{{ vault_certbot_admin_email }}"
+
 certbotservers_group_directories:
   - path: "{{ certbot_well_known_root }}"
     mode: "0755"
@@ -27,3 +30,5 @@ telegraf_plugins_extra:
   x509_cert:
     config:
       - sources = ["https://{{ inventory_hostname }}:443"]
+      # https://github.com/influxdata/telegraf/issues/8809
+      - timeout = "5s"

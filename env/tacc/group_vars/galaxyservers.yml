@@ -163,6 +163,8 @@ telegraf_plugins_default:
       # could use the cert file directly, but this way we check the actual cert in use, you just have to filter out the
       # CA cert in grafana
       - sources = ["https://{{ inventory_hostname }}:443"]
+      # https://github.com/influxdata/telegraf/issues/8809
+      - timeout = "5s"
   - plugin: procstat
     config:
       - pattern = "galaxy-main.*handler0"

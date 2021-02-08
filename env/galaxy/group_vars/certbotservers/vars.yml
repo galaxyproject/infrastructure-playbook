@@ -26,3 +26,5 @@ telegraf_plugins_extra:
   x509_cert:
     config:
       - sources = ["https://{{ inventory_hostname }}:443"]
+      # https://github.com/influxdata/telegraf/issues/8809
+      - timeout = "5s"
