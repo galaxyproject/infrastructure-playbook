@@ -37,6 +37,9 @@ galaxyservers_group_directories:
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/proxy
     owner: gxsrc
     group: gxsrc
+  - path: /srv/galaxy/{{ galaxy_instance_codename }}/tools
+    owner: gxsrc
+    group: gxsrc
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/log
     owner: "{{ galaxy_user }}"
     group: G-803372
