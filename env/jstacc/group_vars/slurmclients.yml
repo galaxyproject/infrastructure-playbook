@@ -67,7 +67,7 @@ slurm_nodes:
     State: CLOUD
     CPUs: 6
     RealMemory: 15884
-  - name: "{{ slurm_cluster_name }}-xlarge[0-13]"
+  - name: "{{ slurm_cluster_name }}-xlarge[0-23]"
     State: CLOUD
     CPUs: 24
     RealMemory: 60230
@@ -89,7 +89,7 @@ slurm_partitions:
     DefMemPerCPU: 7942
     State: UP
   - name: xlarge
-    Nodes: "{{ slurm_cluster_name }}-xlarge[0-13]"
+    Nodes: "{{ slurm_cluster_name }}-xlarge[0-23]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
