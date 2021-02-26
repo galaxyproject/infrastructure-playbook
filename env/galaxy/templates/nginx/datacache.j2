@@ -25,6 +25,11 @@ server {
         alias /cvmfs/refgenomes-databio.galaxyproject.org;
         autoindex on;
     }
+
+    location /singularity {
+        alias /cvmfs/singularity.galaxyproject.org;
+        autoindex on;
+    }
 }
 
 # vim: set filetype=nginx
