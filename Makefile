@@ -17,7 +17,7 @@ PLAYBOOK := playbook
 
 
 galaxy tacc jsiu jstacc:
-	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml $(TAGS_ARG) $(LIMIT_ARG)
+	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml --diff $(TAGS_ARG) $(LIMIT_ARG)
 
 
 .PHONY: galaxy tacc
