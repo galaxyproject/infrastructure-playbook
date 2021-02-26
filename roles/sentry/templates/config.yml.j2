@@ -1,0 +1,113 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# While a lot of configuration in Sentry can be changed via the UI, for all
+# new-style config (as of 8.0) you can also declare values here in this file
+# to enforce defaults or to ensure they cannot be changed via the UI. For more
+# information see the Sentry documentation.
+
+###############
+# Mail Server #
+###############
+
+# mail.backend: 'smtp'  # Use dummy if you want to disable email entirely
+mail.host: '{{ sentry_mail_host }}'
+# mail.port: 25
+# mail.username: ''
+# mail.password: ''
+# mail.use-tls: false
+# The email address to send on behalf of
+{% if sentry_mail_from is defined %}
+mail.from: '{{ sentry_mail_from }}'
+{% endif %}
+
+# If you'd like to configure email replies, enable this.
+# mail.enable-replies: true
+
+# When email-replies are enabled, this value is used in the Reply-To header
+# mail.reply-hostname: ''
+
+# If you're using mailgun for inbound mail, set your API key and configure a
+# route to forward to /api/hooks/mailgun/inbound/
+# Also don't forget to set `mail.enable-replies: true` above.
+# mail.mailgun-api-key: ''
+
+###################
+# System Settings #
+###################
+
+# If this file ever becomes compromised, it's important to generate a new key.
+# Changing this value will result in all current sessions being invalidated.
+# A new key can be generated with `$ sentry config generate-secret-key`
+system.secret-key: '{{ sentry_secret_key }}'
+
+# The ``redis.clusters`` setting is used, unsurprisingly, to configure Redis
+# clusters. These clusters can be then referred to by name when configuring
+# backends such as the cache, digests, or TSDB backend.
+# redis.clusters:
+#   default:
+#     hosts:
+#       0:
+#         host: 127.0.0.1
+#         port: 6379
+
+################
+# File storage #
+################
+
+# Uploaded media uses these `filestore` settings. The available
+# backends are either `filesystem` or `s3`.
+
+filestore.backend: 'filesystem'
+filestore.options:
+  location: '/data/files'
+dsym.cache-path: '/data/dsym-cache'
+releasefile.cache-path: '/data/releasefile-cache'
+
+# filestore.backend: 's3'
+# filestore.options:
+#   access_key: 'AKIXXXXXX'
+#   secret_key: 'XXXXXXX'
+#   bucket_name: 's3-bucket-name'
+
+system.internal-url-prefix: 'http://web:9000'
+symbolicator.enabled: true
+symbolicator.options:
+  url: "http://symbolicator:3021"
+
+transaction-events.force-disable-internal-project: true
+
+######################
+# GitHub Integration #
+######################
+
+{% if sentry_github_app_id is defined %}
+github-login.extended-permissions: ['repo']
+# FIXME: If you set GITHUB_REQUIRE_VERIFIED_EMAIL in sentry.conf.py, you get:
+#   /usr/local/lib/python3.6/site-packages/sentry/runner/initializer.py:185: DeprecatedSettingWarning: The GITHUB_REQUIRE_VERIFIED_EMAIL setting is deprecated. Please use SENTRY_OPTIONS['github-login.require-verified-email'] instead.
+# But if you set github-login.require-verified-email, you get:
+#   * Unknown config option found: 'github-login.require-verified-email'
+#github-login.require-verified-email: true
+github-app.id: {{ sentry_github_app_id }}
+github-app.name: '{{ sentry_github_app_name }}'
+# github-app.webhook-secret: 'GITHUB_WEBHOOK_SECRET' # Use only if configured in GitHub
+github-app.client-id: '{{ sentry_github_client_id }}'
+github-app.client-secret: '{{ sentry_github_client_secret }}'
+github-app.private-key: |
+  {{ sentry_github_private_key | indent(2) }}
+{% endif %}
+
+#####################
+# Slack Integration #
+#####################
+
+# Refer to https://develop.sentry.dev/integrations/slack/ for setup instructions.
+
+# slack.client-id: <'client id'>
+# slack.client-secret: <client secret>
+# slack.signing-secret: <signing secret>
+## If you made your slack bot before july 2020 set legacy-app to True
+#slack.legacy-app: False
+## If legacy-app is True use verfication-token instead of signing-secret
+# slack.verification-token: <verification token>

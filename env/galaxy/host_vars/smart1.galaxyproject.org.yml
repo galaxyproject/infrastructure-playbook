@@ -4,6 +4,9 @@ smartos_images:
   # centos-7 20190122 linux zvol
   - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
     state: present
+  # debian-10 20200508 linux zvol
+  - uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+    state: present
   # ubuntu-16.04 20170403 linux lx-dataset
   # For manual upgrade to ubuntu-20.04 image from OmniOS
   # Images from https://github.com/omniosorg/lx-images
@@ -75,5 +78,26 @@ smartos_vms:
       - boot: false
         model: virtio
         size: 32768
+    customer_metadata:
+      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+  - name: sentry
+    brand: bhyve
+    ram: 8192
+    vcpus: 4
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'sentry.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+        boot: true
+        model: virtio
+      - boot: false
+        model: virtio
+        size: 65536
     customer_metadata:
       root_authorized_keys: "{{ sshkeys.nate_coraor }}"

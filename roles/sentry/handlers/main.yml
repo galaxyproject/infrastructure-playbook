@@ -1,0 +1,20 @@
+---
+
+- name: Restart Sentry
+  docker_compose:
+    project_src: "{{ sentry_prefix }}"
+    services:
+      - web
+      - worker
+      - cron
+      - sentry-cleanup
+      # not documented but I think it's necessary to update upstream container IP?
+      - nginx
+    build: false
+    restarted: true
+
+- name: Upgrade Sentry
+  docker_compose:
+    project_src: "{{ sentry_prefix }}"
+    build: false
+    restarted: true

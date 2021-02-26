@@ -60,7 +60,6 @@ galaxy-20 ansible_host=129.114.104.96
 
 [baseenv]
 galaxy04.tacc.utexas.edu
-galaxy06.tacc.utexas.edu
 galaxy07.tacc.utexas.edu
 galaxy08.tacc.utexas.edu
 galaxy-db-02.tacc.utexas.edu
@@ -96,10 +95,6 @@ certbotservers
 [certbotservers]
 # note: Galaxy webservers are managed in usegalaxy-playbook
 galaxy04.tacc.utexas.edu
-galaxy06.tacc.utexas.edu
-
-[statsservers]
-galaxy06.tacc.utexas.edu
 
 [cvmfsclients]
 galaxy-db-02.tacc.utexas.edu

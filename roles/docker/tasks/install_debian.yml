@@ -23,8 +23,3 @@
       - docker-ce-cli
       - containerd.io
     state: "{{ 'latest' if docker_upgrade else 'present' }}"
-
-- name: Enable or disable docker as desired
-  service:
-    name: docker
-    enabled: "{{ docker_service_enabled }}"

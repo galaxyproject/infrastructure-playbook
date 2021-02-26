@@ -1,96 +1,120 @@
 ---
-# based on https://github.com/DandyDev/statserver/
 
-- name: Install sentry and dependencies
-  pip:
-    name: "{{ item }}"
-    virtualenv: "{{ sentry_prefix }}"
-  with_items:
-    - python-memcached
-    - sentry[postgres]
-    - uwsgi
-  environment:
-    # FIXME: ditry hack
-    PATH: "/usr/pgsql-9.5/bin:{{ ansible_env.PATH }}"
-  register: sentry_installed
-
-- name: Create sentry config directory
-  file:
-    path: "{{ sentry_conf_dir }}"
-    state: directory
-
-- name: Create sentry var directory
-  file:
-    path: "{{ sentry_var_dir }}"
-    state: directory
-    owner: sentry
-    group: nginx
-    mode: 0750
-
-- name: Create sentry socket directory
-  file:
-    path: "{{ sentry_sock_dir }}"
-    state: directory
-    owner: sentry
-    group: nginx
-    mode: 0770
-
-- name: Copy sentry configs
-  template:
-    src: "{{ item }}.j2"
-    dest: "{{ sentry_conf_dir }}/{{ item }}"
-  with_items:
-    - sentry.conf.py
-    - uwsgi.ini
-  # FIXME: HUP uwsgi
-
-# This is safe to run at all times but is very slow, so we only do so when there's been an upgrade
-- name: Initialize/upgrade sentry database
-  become: yes
-  become_user: sentry
-  become_method: su
-  command: "{{ sentry_prefix }}/bin/sentry --config={{ sentry_conf_dir }}/sentry.conf.py upgrade"
-  when: sentry_installed.changed
-
-# Need to detect first run and do a `sentry createuser here`
-# Actually when running `sentry upgrade` interactively, it prompted me to create a new user
-
-- name: Check for redis
+- name: Check Sentry onpremise repo presence
   stat:
-    path: "{{ sentry_prefix }}/bin/redis-server"
-  register: redis_stat
+    path: "{{ sentry_prefix }}"
+  register: __sentry_prefix_stat
 
-- name: Create temporary directory for building redis
-  command: mktemp -d
-  register: mktemp_cmd
-  when: not redis_stat.stat.exists
+- name: Clone Sentry onpremise repo
+  git:
+    dest: "{{ sentry_prefix }}"
+    repo: "{{ sentry_repo }}"
+    version: "{{ sentry_repo_version }}"
+  register: __sentry_repo_cloned
+  notify:
+    - Upgrade Sentry
 
-- name: Fetch redis source
-  get_url:
-    url: "http://download.redis.io/redis-stable.tar.gz"
-    dest: "{{ mktemp_cmd.stdout }}/redis-stable.tar.gz"
-  when: not redis_stat.stat.exists
+- name: Set sentry_run_install_script
+  set_fact:
+    __sentry_run_install_script: "{{ sentry_run_install_script if sentry_run_install_script is defined else (__sentry_repo_cloned is changed) }}"
 
-- name: Unarchive redis source
-  unarchive:
-    copy: no
-    dest: "{{ mktemp_cmd.stdout }}"
-    src: "{{ mktemp_cmd.stdout }}/redis-stable.tar.gz"
-  when: not redis_stat.stat.exists
-
-- name: Compile redis
-  command: make PREFIX={{ sentry_prefix }} install
+- name: Run installation script
+  command: /bin/bash ./install.sh --no-user-prompt
   args:
-    chdir: "{{ mktemp_cmd.stdout }}/redis-stable"
-  when: not redis_stat.stat.exists
+    chdir: "{{ sentry_prefix }}"
+  when: __sentry_run_install_script
 
-- name: Clean up redis temporary directory
-  file:
-    path: "{{ mktemp_cmd.stdout }}"
-    state: absent
-  when: not redis_stat.stat.exists
-
-- name: Copy redis config
+- name: Copy configs
   template:
-    src: "redis.conf.j2"
-    dest: "{{ sentry_conf_dir }}/redis.conf"
+    src: "{{ item | basename }}.j2"
+    dest: "{{ sentry_prefix }}/{{ item }}"
+  loop:
+    - sentry/sentry.conf.py
+    - sentry/config.yml
+  notify:
+    - Restart Sentry
+
+# This always reports changed, not sure why
+- name: Run Sentry
+  docker_compose:
+    project_src: "{{ sentry_prefix }}"
+
+# TODO: this breaks the running container
+#- name: Create Sentry superuser
+#  docker_container:
+#    container_default_behavior: no_defaults
+#    name: sentry_onpremise_web_1
+#    command: sentry createuser --superuser --email {{ sentry_superuser_email }} --password {{ sentry_superuser_password }} --no-input
+
+- name: Create Sentry superuser
+  command: docker exec sentry_onpremise_web_1 sentry createuser --superuser --email {{ sentry_superuser_email }} --password {{ sentry_superuser_password }} --no-input
+  when: not __sentry_prefix_stat.stat.exists
+
+# Below was an initial attempt at deconstructing the install script to make this role more properly Ansible, but there's
+# just too much going on in there, especially conditionals checking things in docker volumes that is difficult to
+# replicate in Ansible. And the script is going to change over time, so this is not really sustainable for us. Progress
+# saved in case we ever want to revisit it though.
+
+#- name: Create Sentry Docker volumes
+#  docker_volume:
+#    volume_name: "{{ item }}"
+#  loop: "{{ sentry_docker_volumes }}"
+#
+#- name: Create config files from samples
+#  copy:
+#    src: "{{ sentry_prefix }}/{{ item }}"
+#    dest: "{{ sentry_prefix }}/{{ item | replace('.example', '') }}"
+#    remote_src: true
+#    force: false
+#  loop: "{{ sentry_example_configs }}"
+#
+#- name: Read Compose definition
+#  slurp:
+#    src: "{{ sentry_prefix }}/docker-compose.yml"
+#  register: __sentry_compose_slurp
+#
+#- name: Set Compose definition fact
+#  set_fact:
+#    __sentry_compose: "{{ __sentry_compose_slurp['content'] | b64decode | from_yaml }}"
+#
+#- name: Separate services requiring build from pull
+#  set_fact:
+#    __sentry_build_services: |
+#      {% set rval = {} -%}
+#      {% for service in __sentry_compose.services.keys() -%}
+#          {% if __sentry_compose.services[service].image.endswith('-onpremise-local') -%}
+#              {% set _ = rval.update({service: __sentry_compose.services[service].image}) -%}
+#          {% endif -%}
+#      {% endfor -%}
+#      {{ rval }}
+#    __sentry_pull_services: |
+#      {% set rval = {} -%}
+#      {% for service in __sentry_compose.services.keys() -%}
+#          {% if not __sentry_compose.services[service].image.endswith('-onpremise-local') -%}
+#              {% set _ = rval.update({service: __sentry_compose.services[service].image}) -%}
+#          {% endif -%}
+#      {% endfor -%}
+#      {{ rval }}
+#
+#- name: Pull images
+#  docker_compose:
+#    project_src: "{{ sentry_prefix }}"
+#    services: "{{ __sentry_pull_services.keys() }}"
+#    build: false
+#    pull: true
+#    # FIXME: you won't want this after the first time...
+#    stopped: true
+#
+#- name: Build images
+#  docker_compose:
+#    project_src: "{{ sentry_prefix }}"
+#    services: "{{ __sentry_build_services.keys() }}"
+#    build: true
+#    pull: false
+#    # FIXME: you won't want this after the first time...
+#    stopped: true
+#
+#- name: Run Zookeeper setup
+#  docker_container:
+#    auto_remove: true
+#    container_default_behavior: no_defaults

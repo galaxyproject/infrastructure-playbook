@@ -1,7 +1,23 @@
 ---
 
 sentry_prefix: /opt/sentry
-sentry_conf_dir: /etc/opt/sentry
-sentry_sock_dir: /var/opt/sentry/run
-sentry_var_dir: /var/opt/sentry
-sentry_mail_from: sentry@galaxyproject.org
+sentry_repo: https://github.com/getsentry/onpremise.git/
+sentry_repo_version: HEAD
+sentry_mail_host: smtp
+
+#sentry_docker_volumes:
+#  - sentry-data
+#  - sentry-postgres
+#  - sentry-redis
+#  - sentry-zookeeper
+#  - sentry-kafka
+#  - sentry-clickhouse
+#  - sentry-symbolicator
+
+#sentry_example_configs:
+#  - sentry/sentry.conf.example.py
+#  - sentry/config.example.yml
+#  - sentry/requirements.example.txt
+#  - symbolicator/config.example.yml
+#  - relay/config.example.yml
+#  #- relay/credentials.json

@@ -186,6 +186,26 @@
   tags:
     - stats
 
+- name: Tasks for sentry servers
+  hosts: sentryservers
+  remote_user: root
+  tasks:
+    # must be installed in ansible_python_interpreter
+    - name: Install Docker Compose
+      pip:
+        name: docker-compose
+        version: "{{ docker_compose_version | default(omit) }}"
+    - name: Import docker role
+      import_role:
+        name: docker
+    # restart docker for moved data dir
+    - name: Flush handlers
+      meta: flush_handlers
+    - name: Import sentry role
+      import_role:
+        name: sentry
+  tags: sentry
+
 # This is only necessary on the new lx-brand zone PSU stratum 1, which can't bind port 80 when run in standard
 # daemon/forking mode (and iptables and setcap aren't possible in lx-brand, and systemd-socket-proxyd yields a strange
 # arp error in squid). Run before CVMFS is installed or repo initialization will fail.

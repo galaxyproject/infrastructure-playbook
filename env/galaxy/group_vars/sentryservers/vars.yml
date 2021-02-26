@@ -1,0 +1,27 @@
+---
+
+sentry_superuser_email: "{{ vault_sentry_superuser_email }}"
+sentry_superuser_password: "{{ vault_sentry_superuser_password }}"
+
+sentry_repo_version: 21.2.0
+
+sentryservers_group_packages:
+  - python3-docker
+  - python3-pip
+
+sentry_mail_host: smtp.psu.edu
+sentry_mail_from: "{{ vault_sentry_mail_from }}"
+sentry_secret_key: "{{ vault_sentry_secret_key }}"
+
+# NOTE: Enabling GitHub SSO auth appears to disable all other auth options including the local superuser account, and
+# the Sentry devs appear to be planning not to fix this:
+#   https://github.com/getsentry/sentry/pull/16247
+# Also since I installed the GitHub app using my GitHub account and the Sentry local superuser, my account was linked
+# with the superuser and could not be unlinked. I changed the superuser account's email to my own so now there is no
+# longer a local superuser account. I could probably recreate it but it would be impossible to log in to anyway with SSO
+# enabled.
+sentry_github_app_id: 102271
+sentry_github_app_name: galaxyproject-SentryIntegration
+sentry_github_client_id: "{{ vault_sentry_github_client_id }}"
+sentry_github_client_secret: "{{ vault_sentry_github_client_secret }}"
+sentry_github_private_key: "{{ vault_sentry_github_private_key }}"

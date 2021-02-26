@@ -69,6 +69,7 @@ orval.galaxyproject.org
 westvleteren.galaxyproject.org
 leeroy.galaxyproject.org
 stats.galaxyproject.org
+sentry.galaxyproject.org
 jeltz.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
@@ -145,6 +146,7 @@ cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 ns-training.galaxyproject.org
 wrx.galaxyproject.org
+sentry.galaxyproject.org
 
 [virtual:children]
 ec2hosts
@@ -225,6 +227,7 @@ jeltz.galaxyproject.org
 
 [webservers:children]
 statsservers
+sentryservers
 certbotservers
 
 # provides:
@@ -239,6 +242,7 @@ certbotservers
 orval.galaxyproject.org
 duvel.galaxyproject.org
 stats.galaxyproject.org
+sentry.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 # TODO: probably need to use DNS-01 for this
@@ -333,6 +337,7 @@ jeltz.galaxyproject.org
 [dockerservers]
 [dockerservers:children]
 jenkinsagents
+sentryservers
 cvmfsstratum0servers
 
 # Jenkins
@@ -373,6 +378,9 @@ westvleteren.galaxyproject.org
 
 [statsservers]
 stats.galaxyproject.org
+
+[sentryservers]
+sentry.galaxyproject.org
 
 # for serial console setup
 [x2200s]
