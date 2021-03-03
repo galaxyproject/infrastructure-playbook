@@ -51,3 +51,27 @@ host_users:
     home: /home/singularity
     shell: /bin/bash
     system: yes
+
+host_directories:
+  - path: /home/singularity/bin
+    owner: singularity
+    group: singularity
+    mode: "0755"
+
+host_files:
+  - src: files/cvmfs/updaterepo.sh
+    dest: /home/singularity/bin/updaterepo.sh
+    mode: "0755"
+    owner: singularity
+    group: singularity
+
+host_crontabs:
+  - id: singularity_updaterepo
+    use_cron_file: false
+    user: singularity
+    hour: '*'
+    minute: '0'
+    day: '*'
+    month: '*'
+    weekday: '*'
+    job: pgrep -U singularity -fx '/bin/bash /home/singularity/bin/updaterepo.sh -r -t 300' >/dev/null || { cvmfs_server abort -f singularity.galaxyproject.org ; $HOME/bin/updaterepo.sh -r -t 300; } 2>&1 >> $HOME/updaterepo.log
