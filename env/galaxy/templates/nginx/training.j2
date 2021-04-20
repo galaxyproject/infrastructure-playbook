@@ -53,6 +53,8 @@ server {
         proxy_hide_header      x-amz-server-side-encryption;
         proxy_hide_header      Set-Cookie;
         proxy_ignore_headers   Set-Cookie;
+        proxy_set_header       Range $http_range;
+        proxy_set_header       If-Range $http_if_range;
         proxy_cache_revalidate on;
         #proxy_intercept_errors on;
         #proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
