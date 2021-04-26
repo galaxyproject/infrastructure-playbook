@@ -16,6 +16,10 @@ rabbitmq_ssl_certs:
 rabbitmq_config_options:
   - vm_memory_high_watermark: 0.8
   - disk_free_limit: '"500MB"'
+  # increase to 256 MB from default of 128 MB
+  # TODO: caused OOM errors on the rabbitmq server, probably due to too many in queue at once, but this isn't a
+  # sustainable solution
+  #- max_message_size: 268960000
 
 rabbitmq_vhosts:
   - /test_pulsar
