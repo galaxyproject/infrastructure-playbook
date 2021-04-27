@@ -85,6 +85,7 @@
   hosts: rabbitmqservers
   remote_user: root
   roles:
+    - usegalaxy_eu.certbot
     - rabbitmq
   tags: rabbitmq
 

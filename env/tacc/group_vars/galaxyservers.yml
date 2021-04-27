@@ -65,15 +65,12 @@ galaxyservers_group_crontabs:
     state: absent
 
 # node, npm for GIE proxy
-# scl, rh-python36 for certbot
-install_scl: true
 galaxyservers_group_packages:
   - nodejs
   - npm
   - '@development tools' # for npm modules
   - collectl
   - slurm-drmaa
-  - rh-python36
 
 galaxyservers_group_yum_repositories:
   - name: docker

@@ -96,6 +96,23 @@ certbotservers
 # note: Galaxy webservers are managed in usegalaxy-playbook
 galaxy04.tacc.utexas.edu
 
+[certbotservers:children]
+certbotdnsservers
+
+# provides:
+#   - certbot TSIG key to certbot webservers
+#   - certbot DNS-01 rfc2136 provider config
+# overrides WEB-01 (webroot) mode
+[certbotdnsservers]
+galaxy08.tacc.utexas.edu
+
+# provides:
+#   - certbot TSIG key for DNS servers
+#   - certbot TSIG key to certbot webservers
+[certbottsigkeyservers]
+[certbottsigkeyservers:children]
+certbotdnsservers
+
 [cvmfsclients]
 galaxy-db-02.tacc.utexas.edu
 

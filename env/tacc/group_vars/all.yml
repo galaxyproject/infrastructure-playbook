@@ -16,8 +16,12 @@ all_yum_repositories:
   - name: galaxy_slurm
     state: absent
 
+install_scl: true
 all_packages:
   - git
+  - rh-python36
+
+certbot_virtualenv_command: /opt/rh/rh-python36/root/bin/python3 -m venv
 
 __corral_ip: "{{ ((ansible_default_ipv4.address | ipv4('address') | ipaddr('int')) % 2) + 34 }}"
 mounts:
