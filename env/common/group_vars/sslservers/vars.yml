@@ -11,40 +11,6 @@ ssl_dn_defaults: &dn_defaults
   organizational_unit: The Galaxy Project
 
 ssl_cas:
-  docker:
-    dn:
-      <<: *dn_defaults
-      common_name: Galaxy Docker CA Root
-    certs:
-      server:
-        dn:
-          <<: *dn_defaults
-          common_name: "{{ inventory_hostname }}"
-        ext:
-          subjectAltName: "DNS:{{ inventory_hostname }},IP:{{ ansible_default_ipv4.address }}{{ ',IP:' + docker_swarm_addr | default('') if docker_swarm_addr is defined else '' }}"
-      client:
-        dn:
-          <<: *dn_defaults
-          common_name: "{{ inventory_hostname }}"
-        ext:
-          extendedKeyUsage: clientAuth
-  docker_test:
-    dn:
-      <<: *dn_defaults
-      common_name: Test Galaxy Docker CA Root
-    certs:
-      server:
-        dn:
-          <<: *dn_defaults
-          common_name: "{{ inventory_hostname }}"
-        ext:
-          subjectAltName: "DNS:{{ inventory_hostname }},IP:{{ ansible_default_ipv4.address }}{{ ',IP:' + floating_ip | default('') if floating_ip is defined else '' }}"
-      client:
-        dn:
-          <<: *dn_defaults
-          common_name: "{{ inventory_hostname }}"
-        ext:
-          extendedKeyUsage: clientAuth
   rabbitmq:
     dn:
       <<: *dn_defaults

@@ -87,7 +87,6 @@ eddie.galaxyproject.org
 westvleteren.galaxyproject.org
 
 [sshclients:children]
-dockerswarmmanagers
 jenkinsservers
 jenkinsagents
 sshtunnels
@@ -315,22 +314,6 @@ jetstream-iu0.galaxyproject.org
 
 [cvmfsclients:children]
 jenkinsagents
-
-# Docker Swarm
-
-# there should only be one host in this group
-[dockersslcamaster]
-jeltz.galaxyproject.org
-
-[dockersslservers]
-jeltz.galaxyproject.org
-jetstream-tacc0.galaxyproject.org
-jetstream-iu0.galaxyproject.org
-
-[dockerswarmmanagers]
-jetstream-iu0.galaxyproject.org
-jetstream-tacc0.galaxyproject.org
-jeltz.galaxyproject.org
 
 # Docker
 

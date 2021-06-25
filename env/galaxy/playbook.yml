@@ -54,17 +54,6 @@
     - systemd_ssh_tunnel
   tags: [system, sshtunnel]
 
-# This is sort of ugly - we don't want to use the galaxyenv basenv for
-# jetstream controllers because they are controlled in the jetstream envs. All
-# this is used for currently is setting up the `swarm` system user.
-- name: Initial setup for docker swarm managers
-  hosts: dockerswarmmanagers
-  remote_user: root
-  roles:
-    - role: users
-      tags: users
-  tags: initial
-
 - name: Tasks for "lite environment" hosts
   hosts: liteenv
   remote_user: root
@@ -243,15 +232,6 @@
         line: user_allow_other
       when: "'jenkinsagents' in group_names"
   tags: cvmfs
-
-- name: Tasks for Docker Swarm managers
-  hosts: dockerswarmmanagers
-  remote_user: root
-  roles:
-    - role: docker_swarm
-    - role: cron
-      tags: cron
-  tags: docker
 
 # This is for ns-training, the regular nameservers are set up through the core playbook
 - name: Tasks for training DNS servers
