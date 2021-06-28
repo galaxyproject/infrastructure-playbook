@@ -12,6 +12,7 @@ host_files:
     dest: /home/g2main/bin/cancelled.sh
     owner: g2main
     mode: "0755"
+    state: absent
 
 host_crontabs:
   - id: galaxy_cancelled_jobs
@@ -21,3 +22,4 @@ host_crontabs:
     hour: "11"
     weekday: "1-5"
     job: "/home/g2main/bin/cancelled.sh '1 week ago' | mail -s 'usegalaxy.org jobs cancelled due to memory limit in the past week' galaxy-system@lists.galaxyproject.org"
+    state: absent
