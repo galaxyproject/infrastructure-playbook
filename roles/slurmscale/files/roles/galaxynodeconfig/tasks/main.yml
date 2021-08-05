@@ -62,3 +62,8 @@
     state: link
     force: yes
   loop: "{{ links }}"
+
+- name: Ensure firewalld is not installed
+  yum:
+    name: firewalld
+    state: absent
