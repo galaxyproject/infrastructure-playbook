@@ -37,6 +37,11 @@ roundup[49:64].tacc.utexas.edu
 jsgalaxynodes
 
 [jsgalaxynodes]
+[jsgalaxynodes:children]
+jsgalaxynodes1
+jsgalaxynodes2
+
+[jsgalaxynodes1]
 galaxy-1 ansible_host=129.114.104.99
 galaxy-2 ansible_host=129.114.104.89
 galaxy-3 ansible_host=129.114.104.105
@@ -57,6 +62,28 @@ galaxy-17 ansible_host=129.114.104.126
 galaxy-18 ansible_host=129.114.104.34
 galaxy-19 ansible_host=129.114.104.104
 galaxy-20 ansible_host=129.114.104.96
+
+[jsgalaxynodes2]
+galaxy-21 ansible_host=129.114.19.74
+galaxy-22 ansible_host=129.114.19.62
+galaxy-23 ansible_host=129.114.19.64
+galaxy-24 ansible_host=129.114.19.70
+galaxy-25 ansible_host=129.114.19.79
+galaxy-26 ansible_host=129.114.17.227
+galaxy-27 ansible_host=129.114.19.61
+galaxy-28 ansible_host=129.114.16.160
+galaxy-29 ansible_host=129.114.19.101
+galaxy-30 ansible_host=129.114.19.60
+galaxy-31 ansible_host=129.114.19.88
+galaxy-32 ansible_host=129.114.19.71
+galaxy-33 ansible_host=129.114.19.55
+galaxy-34 ansible_host=129.114.19.68
+galaxy-35 ansible_host=129.114.104.221
+galaxy-36 ansible_host=129.114.19.66
+galaxy-37 ansible_host=129.114.19.83
+galaxy-38 ansible_host=129.114.19.94
+galaxy-39 ansible_host=129.114.104.191
+galaxy-40 ansible_host=129.114.19.102
 
 [baseenv]
 galaxy04.tacc.utexas.edu

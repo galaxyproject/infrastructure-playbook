@@ -2,19 +2,17 @@
 
 - name: Install Slurm DB packages (apt)
   apt:
-    name: "{{ item }}"
+    name:
+      - slurmdbd
     state: "{{ 'latest' if slurm_upgrade else 'present' }}"
   when: ansible_os_family == "Debian"
-  with_items:
-    - slurmdbd
 
 - name: Install Slurm DB packages (yum)
   yum:
-    name: "{{ item }}"
+    name:
+      - munge
+      - slurm-slurmdbd
     state: "{{ 'latest' if slurm_upgrade else 'present' }}"
-  with_items:
-    - munge
-    - slurm-slurmdbd
   when: ansible_os_family == "RedHat"
 
 - name: Install slurmdbd.conf

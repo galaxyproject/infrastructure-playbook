@@ -151,9 +151,8 @@
 
 - name: Install MariaDB
   yum:
-    pkg: "{{ item }}"
-  with_items:
-    - MariaDB-server
-    - MariaDB-client
-    - MariaDB-devel
-    - MySQL-python
+    pkg:
+      - MariaDB-server
+      - MariaDB-client
+      - MariaDB-devel
+      - MySQL-python
