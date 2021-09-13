@@ -4,6 +4,25 @@
   hostname:
     name: "{{ inventory_hostname }}"
 
+- name: Create Galaxy group
+  group:
+    name: G-803372
+    gid: 803372
+
+- name: Create Galaxy users
+  user:
+    name: "{{ item.name }}"
+    uid: "{{ item.uid }}"
+    home: "/home/{{ item.name }}"
+    shell: /bin/bash
+    group: G-803372
+    create_home: true
+  loop:
+    - name: g2main
+      uid: 819800
+    - name: g2test
+      uid: 819456
+
 - name: Enable GPEL
   yum_repository:
     name: galaxy_gpel

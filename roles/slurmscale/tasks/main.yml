@@ -132,6 +132,7 @@
     mode: "0400"
 
 # FIXME: this is always changed
+# FIXME: does not force upgrade or fail when the version is incorrect but you don't want to add -f or it will always reinstall
 # TODO: versions from requirements.yml
 - name: Install Ansible modules from Galaxy
   command: "{{ slurm_scale_root }}/bin/ansible-galaxy role install -p {{ slurm_scale_root }}/etc/ansible/roles {{ item }}"
@@ -141,5 +142,5 @@
   become_user: "{{ slurm_scale_user }}"
   loop:
     - geerlingguy.repo-epel,1.2.3
-    - galaxyproject.cvmfs,0.1.2
+    - galaxyproject.cvmfs,0.2.14
     - galaxyproject.slurm,0.1.1
