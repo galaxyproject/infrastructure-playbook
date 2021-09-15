@@ -24,8 +24,8 @@ server {
 
     #root        /srv/nginx/galaxyproject.org/root;
 
-    error_page  404      /page-not-found/;
-    error_page  403 =404 /page-not-found/;
+    error_page  404      /404/;
+    error_page  403 =404 /404/;
 
     # old static conference pages
     rewrite (?i)^/(dev2010|gcc2011)$ /$1/;
@@ -103,7 +103,6 @@ server {
     rewrite ^/news/2020-04-james-taylor/?$ /jxtx;
 
     location / {
-        proxy_cache            s3_cache;
         proxy_http_version     1.1;
         proxy_set_header       Connection "";
         proxy_set_header       Authorization '';
@@ -114,13 +113,7 @@ server {
         proxy_hide_header      x-amz-server-side-encryption;
         proxy_hide_header      Set-Cookie;
         proxy_ignore_headers   Set-Cookie;
-        proxy_cache_revalidate on;
         proxy_intercept_errors on;
-        proxy_cache_use_stale  error timeout updating http_500 http_502 http_503 http_504;
-        proxy_cache_lock       on;
-        proxy_cache_valid      200 304 30m;
-        add_header             Cache-Control max-age=31536000;
-        add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-hub.s3-website.us-east-2.amazonaws.com/;
     }
     
