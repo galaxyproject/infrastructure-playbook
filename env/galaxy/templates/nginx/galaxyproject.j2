@@ -24,8 +24,8 @@ server {
 
     #root        /srv/nginx/galaxyproject.org/root;
 
-    error_page  404      /page-not-found/;
-    error_page  403 =404 /page-not-found/;
+    error_page  404      /404/;
+    error_page  403 =404 /404/;
 
     # old static conference pages
     rewrite (?i)^/(dev2010|gcc2011)$ /$1/;
