@@ -102,6 +102,26 @@ server {
     rewrite ^/FTPUpload/?$ /ftp-upload;
     rewrite ^/news/2020-04-james-taylor/?$ /jxtx;
 
+    # disable cache for json, html -- everything else is hashed as necessary or safe to cache.
+    location ~ *\.(json|html) {
+        proxy_cache            off;
+        proxy_http_version     1.1;
+        proxy_set_header       Connection "";
+        proxy_set_header       Authorization '';
+        proxy_set_header       Host galaxy-hub.s3-website.us-east-2.amazonaws.com;
+        proxy_hide_header      x-amz-id-2;
+        proxy_hide_header      x-amz-request-id;
+        proxy_hide_header      x-amz-meta-server-side-encryption;
+        proxy_hide_header      x-amz-server-side-encryption;
+        proxy_hide_header      Set-Cookie;
+        proxy_ignore_headers   Set-Cookie;
+        proxy_intercept_errors on;
+        expires                -1;
+        add_header             'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        add_header             X-Cache-Status $upstream_cache_status;
+        proxy_pass             http://galaxy-hub.s3-website.us-east-2.amazonaws.com/;
+    }
+
     location / {
         proxy_cache            s3_cache;
         proxy_http_version     1.1;
