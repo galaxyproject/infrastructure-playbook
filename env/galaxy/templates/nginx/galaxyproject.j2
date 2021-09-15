@@ -118,7 +118,6 @@ server {
         proxy_intercept_errors on;
         expires                -1;
         add_header             'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
-        add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-hub.s3-website.us-east-2.amazonaws.com/;
     }
 
