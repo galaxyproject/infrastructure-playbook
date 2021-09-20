@@ -14,9 +14,7 @@
     owner: root
     group: root
     mode: "0755"
-  with_flattened:
-    # we'd potentially have more lists here in the future
-    - "{{ systemd_resource_controls }}"
+  with_inheritance_chain: "systemd_resource_controls"
   notify:
     - reload systemd
 
@@ -27,7 +25,7 @@
     owner: root
     group: root
     mode: "0444"
-  with_items: "{{ systemd_resource_controls }}"
+  with_inheritance_chain: "systemd_resource_controls"
   register: systemd_service_changes
   notify:
     - reload systemd

@@ -1,9 +1,11 @@
 ---
 
 mounts:
-  - src: 129.114.52.103:/gpfs/corral3/repl/projects/galaxy/ 
+  #- src: 129.114.52.103:/gpfs/corral3/repl/projects/galaxy/
+  - src: 129.114.60.35:/gpfs/corral3/repl/projects/galaxy/
     path: /galaxy-repl
     fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.103
+    #opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.103
+    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.35
     owner: ndc
     group: G-803372

@@ -37,11 +37,6 @@ roundup[49:64].tacc.utexas.edu
 jsgalaxynodes
 
 [jsgalaxynodes]
-[jsgalaxynodes:children]
-jsgalaxynodes1
-jsgalaxynodes2
-
-[jsgalaxynodes1]
 galaxy-1 ansible_host=129.114.104.99
 galaxy-2 ansible_host=129.114.104.89
 galaxy-3 ansible_host=129.114.104.105
@@ -62,8 +57,6 @@ galaxy-17 ansible_host=129.114.104.126
 galaxy-18 ansible_host=129.114.104.34
 galaxy-19 ansible_host=129.114.104.104
 galaxy-20 ansible_host=129.114.104.96
-
-[jsgalaxynodes2]
 galaxy-21 ansible_host=129.114.19.74
 galaxy-22 ansible_host=129.114.19.62
 galaxy-23 ansible_host=129.114.19.64
