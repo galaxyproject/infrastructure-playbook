@@ -71,7 +71,7 @@ slurm_nodes:
     State: CLOUD
     CPUs: 10
     RealMemory: 29995
-  - name: "{{ slurm_cluster_name }}-xlarge[0-7]"
+  - name: "{{ slurm_cluster_name }}-xlarge[0-15]"
     State: CLOUD
     CPUs: 24
     RealMemory: 60230
@@ -93,7 +93,7 @@ slurm_partitions:
   #  DefMemPerCPU: 7942
   #  State: UP
   - name: multi
-    Nodes: "{{ slurm_cluster_name }}-large[0-15]"
+    Nodes: "{{ slurm_cluster_name }}-large[0-7]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
@@ -101,7 +101,7 @@ slurm_partitions:
     OverSubscribe: EXCLUSIVE
     Default: YES
   - name: xlarge
-    Nodes: "{{ slurm_cluster_name }}-xlarge[0-7]"
+    Nodes: "{{ slurm_cluster_name }}-xlarge[0-15]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
