@@ -4,59 +4,64 @@ jenkinsservers_group_authorized_key_users: "{{ vault_jenkinsservers_group_author
 jenkinsservers_group_private_key_users: "{{ vault_jenkinsservers_group_private_key_users }}"
 
 jenkinsservers_group_apt_keys:
-  - url: 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key'
+  - url: 'https://pkg.jenkins.io/debian/jenkins.io.key'
 
 jenkinsservers_group_apt_repositories:
-  - repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
+  # For Debian 10
+  #- repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
   - repo: 'deb http://pkg.jenkins-ci.org/debian binary/'
 
 jenkinsservers_group_packages:
+  - gpg
   - git
-  - postgresql
-  - python-virtualenv
+  - rsync
+  #- postgresql
+  #- python-virtualenv
   - jenkins
-  - npm
-  # No longer needed on buster
-  #- nodejs-legacy
-  # TS packages
-  - autoconf
-  - automake
-  - build-essential
-  - gfortran
-  - cmake
-  - git-core
-  - libatlas-base-dev
-  - libblas-dev
-  - liblapack-dev
-  - openssl
-  - python-dev
-  - python-setuptools
-  - python-virtualenv
-  - zlib1g-dev
-  - libyaml-dev
-  - subversion
-  - python-dev
-  - pkg-config
-  - unzip
-  - samtools
-  - sudo
-  - curl
-  - ntp
-  - ntpdate
-  # for jenkins
-  - openjdk-8-jre-headless
+  #- npm
+  ## No longer needed on buster
+  ##- nodejs-legacy
+  ## TS packages
+  #- autoconf
+  #- automake
+  #- build-essential
+  #- gfortran
+  #- cmake
+  #- git-core
+  #- libatlas-base-dev
+  #- libblas-dev
+  #- liblapack-dev
+  #- openssl
+  #- python-dev
+  #- python-setuptools
+  #- python-virtualenv
+  #- zlib1g-dev
+  #- libyaml-dev
+  #- subversion
+  #- python-dev
+  #- pkg-config
+  #- unzip
+  #- samtools
+  #- sudo
+  #- curl
+  #- ntp
+  #- ntpdate
+  ## for jenkins
+  - openjdk-11-jre-headless
 
-jenkinsservers_group_users:
-  - name: jenkins
-    groups: docker
+jenkins_home: /data/jenkins
 
-jenkinsservers_group_crontabs:
-  - id: jenkins_backup
-    name: Jenkins Backup
-    user: jenkins
-    hour: 22
-    minute: 0
-    job: rsync -av --delete --exclude='jobs/*/workspace*' --exclude='.cache' /var/lib/jenkins/ zfsdump-leeroy@westvleteren.galaxyproject.org:/zones/westvleteren/backup/leeroy/jenkins && ssh -T zfsdump-leeroy@westvleteren.galaxyproject.org -- /usr/sbin/zfs snapshot zones/westvleteren/backup/leeroy/jenkins@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+#jenkinsservers_group_users:
+#  - name: jenkins
+#    groups: docker
+
+#jenkinsservers_group_crontabs:
+#  - id: jenkins_backup
+#    name: Jenkins Backup
+#    user: jenkins
+#    hour: 22
+#    minute: 0
+#    job: rsync -av --delete --exclude='jobs/*/workspace*' --exclude='.cache' /var/lib/jenkins/ zfsdump-leeroy@westvleteren.galaxyproject.org:/zones/westvleteren/backup/leeroy/jenkins && ssh -T zfsdump-leeroy@westvleteren.galaxyproject.org -- /usr/sbin/zfs snapshot zones/westvleteren/backup/leeroy/jenkins@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
 
 # TODO: generate this file automatically from structured data
 # Maybe this? https://github.com/gaqzi/ansible-ssh-config
@@ -73,15 +78,3 @@ jenkinsservers_group_kernel_params:
     value: 30
   - name: net.ipv4.tcp_keepalive_probes
     value: 40
-
-linuxbrew_user_name: jenkins
-linuxbrew_user_home: /var/lib/jenkins
-linuxbrew_user_shellrc: "{{ linuxbrew_user_home }}/.bashrc"
-
-linuxbrew_taps:
-  - homebrew/science
-  - galaxyproject/tap
-linuxbrew_recipes:
-  - bcftools
-  - planemo
-  - node

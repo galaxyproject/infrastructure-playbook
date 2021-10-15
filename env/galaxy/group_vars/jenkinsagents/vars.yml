@@ -1,27 +1,58 @@
 ---
 
+# This stuff wouldn't normally go in group_vars because it's normally host-specific, but in this case our new Jenkins
+# agents will all be configured the same way on the same VM host
+
+# FIXME: SmartOS auto-formats this ext4 and mounts it, so the task for this fails. Rather than enable the force option
+# here and potentially overwrite data on this volume in some future run of this playbook I just ran
+# `umount /data && mkfs.btrfs -f /dev/vdb` by hand.
+filesystems:
+  - dev: /dev/vdb
+    fstype: btrfs
+
+mounts:
+  - name: /data
+    src: /dev/vdb
+    fstype: auto
+    mode: "0755"
+
+jenkinsagents_group_btrfs_subvolumes:
+  - path: /data/docker
+  - path: /data/jenkins
+
+docker_daemon_option_list:
+  - -H fd://
+  - --containerd=/run/containerd/containerd.sock
+  - --data-root=/data/docker
+
+# End host-level stuff
+
+
 jenkinsagents_group_authorized_key_users: "{{ vault_jenkinsagents_group_authorized_key_users }}"
 jenkinsagents_group_private_key_users: "{{ vault_jenkinsagents_group_private_key_users }}"
 
 # hopefully overrides config-repo in cvmfsclients.yml
 galaxy_cvmfs_repos_enabled: true
 
-_jenkinsagents_openjdk_version: "{{ '11' if ansible_distribution == 'Debian' and ansible_distribution_major_version == '10' else '8' }}"
+#_jenkinsagents_openjdk_version: "{{ '11' if ansible_distribution == 'Debian' and ansible_distribution_major_version == '10' else '8' }}"
 jenkinsagents_group_packages:
+  - btrfs-progs
   - git
-  - openjdk-{{ _jenkinsagents_openjdk_version }}-jre-headless
-  - ntp
-  - ntpdate
+#  - openjdk-{{ _jenkinsagents_openjdk_version }}-jre-headless
+  - openjdk-11-jre-headless
+#  - ntp
+#  - ntpdate
   - build-essential
   - curl
-  - pandoc
+#  - pandoc
   - python3-venv
   # for usegalaxy-tools
   #- fuse-overlayfs
+  - sudo
   - tree
   - rsync
 
-# Moved to a post-task
+# Moved to a post-task for order of operations purposes
 #jenkinsagents_group_users:
 #  - name: jenkins
 #    groups: docker
@@ -31,14 +62,45 @@ jenkinsagents_group_directories:
   - path: ~jenkins/bin
     owner: jenkins
     group: jenkins
+    mode: '0755'
+  - path: /data/docker
+    owner: root
+    group: root
+    mode: '0710'
+  - path: /data/jenkins
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+  - path: /data/jenkins/tmp
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
 
 jenkinsagents_group_files:
   - src: files/jenkins/jenkins_agent_user_ssh_config
     dest: ~jenkins/.ssh/config
     owner: jenkins
     group: jenkins
+    mode: '0444'
   - src: files/jenkins/tmpfiles.d-clean-tmp.conf
     dest: /etc/tmpfiles.d/clean-tmp.conf
+    owner: root
+    group: root
+    mode: '0444'
+  - src: files/jenkins/mount-overlayfs.sudoers
+    dest: /etc/sudoers.d/99_jenkins_overlayfs
+    owner: root
+    group: root
+    mode: '0440'
+  - src: files/jenkins/mount-overlayfs.sh
+    dest: /usr/local/sbin/jenkins-mount-overlayfs
+    owner: root
+    group: root
+    mode: '0755'
+
+jenkinsagents_group_links:
+  - path: /usr/local/sbin/jenkins-umount-overlayfs
+    src: jenkins-mount-overlayfs
 
 jenkinsagents_group_kernel_params:
   - name: net.ipv4.tcp_keepalive_time

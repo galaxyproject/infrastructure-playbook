@@ -4,7 +4,7 @@
 ##
 set -euo pipefail
 
-WORKSPACE_PARENT='/var/jenkins/workspace'
+WORKSPACE_PARENT='/data/jenkins/workspace'
 
 
 case "${JOB_NAME:-}" in

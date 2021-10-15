@@ -1,3 +1,26 @@
 ---
 
-linux_console: ttyS1,115200n8
+# FIXME: SmartOS auto-formats this ext4 and mounts it, so the task for this fails. Rather than enable the force option
+# here and potentially overwrite data on this volume in some future run of this playbook I just ran
+# `umount /data && mkfs.btrfs -f /dev/vdb` by hand.
+filesystems:
+  - dev: /dev/vdb
+    fstype: btrfs
+
+mounts:
+  - name: /data
+    src: /dev/vdb
+    fstype: auto
+    mode: "0755"
+
+host_packages:
+  - btrfs-progs
+
+host_btrfs_subvolumes:
+  - path: /data/jenkins
+
+host_directories:
+  - path: /data/jenkins
+    owner: jenkins
+    group: jenkins
+    mode: "0755"

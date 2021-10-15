@@ -1,14 +1,5 @@
 ---
 
-- name: Bootstrap Python2 for Ansible
-  hosts: jenkinsagents_eu
-  gather_facts: false
-  tasks:
-    - name: Bootstrap Python2 for Ansible
-      raw: bash -c "test -e /usr/bin/python || (apt -qqy update && apt install -qqy python2.7 python)"
-      register: output
-      changed_when: output.stdout != ""
-
 - name: Bootstrap Python 3 for Ansible
   hosts: usepython3_el
   remote_user: root
@@ -105,7 +96,26 @@
       when: "{{ lookup('inheritance_chain', 'supervisor_configs') | bool }}"
       tags: supervisor,services
 
-- name: Tasks for jenkins hosts
+- name: Tasks for Jenkins servers
+  hosts: jenkinsservers
+  remote_user: root
+  tasks:
+    # this is specific to the Debian package
+    - name: Set $JENKINS_HOME
+      lineinfile:
+        path: /etc/default/jenkins
+        regexp: '^JENKINS_HOME=.*$'
+        line: "JENKINS_HOME={{ jenkins_home }}"
+        backup: true
+      when: jenkins_home is defined
+      notify: Restart Jenkins
+  handlers:
+    - name: Restart Jenkins
+      service:
+        name: jenkins
+        state: restarted
+
+- name: Tasks for Jenkins agents
   hosts: jenkinsagents
   remote_user: root
   roles:
@@ -116,25 +126,6 @@
         name: jenkins
         groups: docker
         system: true
-    - name: Install OverlayFS mount script
-      copy:
-        src: files/jenkins/mount-overlayfs.sh
-        dest: /usr/local/sbin/jenkins-mount-overlayfs
-        owner: root
-        group: root
-        mode: '0755'
-    - name: Create OverlayFS unmount link
-      file:
-        src: jenkins-mount-overlayfs
-        dest: /usr/local/sbin/jenkins-umount-overlayfs
-        state: link
-    - name: Install OverlayFS mount sudo configuration
-      copy:
-        src: files/jenkins/mount-overlayfs.sudoers
-        dest: /etc/sudoers.d/99_jenkins_overlayfs
-        owner: root
-        group: root
-        mode: '0440'
   tags: jenkins
 
 - name: Tasks for biostar hosts
