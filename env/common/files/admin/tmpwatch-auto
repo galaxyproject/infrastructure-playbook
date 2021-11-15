@@ -1,0 +1,85 @@
+#!/bin/bash
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+set -euo pipefail
+
+DIR="$1"
+PERCENT=
+
+: ${DEBUG:=false}
+
+
+function isintorempty() {
+    # if the value referenced by the var *name* passed in $1 is:
+    #   an integer: return 0
+    #   empty: return 1
+    #   not an integer: return 2
+    local name=${2:-"\$$1"}
+    [ -n "${!1}" ] || return 1
+    [ "${!1}" -eq "${!1}" ] 2>/dev/null || { rc=$?; [ $rc -ne 2 ] || { echo "ERROR: invalid non-integer value for $name: ${!1}"; }; return $rc; }
+    return 0
+}
+
+
+function isint() {
+    local name=${2:-"\$$1"}
+    if isintorempty $1 $name; then
+        return 0
+    else
+        [ $? -ne 1 ] || echo "ERROR: $name value cannot be empty string"
+        return 1
+    fi
+}
+
+
+function error() {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+
+function percent_full() {
+    df --output=pcent "$DIR" | tail -n 1 | tr -d %' '
+}
+
+
+function hours() {
+    PERCENT=$(percent_full)
+    isint PERCENT || exit 1
+    if [[ $PERCENT -ge 99 ]]; then
+        echo 1
+    elif [[ $PERCENT -ge 95 ]]; then
+        echo 12
+    elif [[ $PERCENT -ge 90 ]]; then
+        echo 24
+    elif [[ $PERCENT -ge 80 ]]; then
+        echo 36
+    elif [[ $PERCENT -ge 60 ]]; then
+        echo 48
+    elif [[ $PERCENT -ge 40 ]]; then
+        echo 72
+    else
+        echo 96
+    fi
+}
+
+
+function clean() {
+    local hours=$(hours)
+    local verbose=
+    $DEBUG && verbose="--verbose"
+    $DEBUG && set -x
+    /usr/bin/tmpwatch --mtime --dirmtime --exclude-user=root $verbose "${hours}h" "$DIR"
+    { set +x; } 2>/dev/null
+}
+
+
+function main() {
+    [ -n "$DIR" ] || { echo "usage: $0 <dir>"; exit 2; }
+    [ -d "$DIR" ] || error "Invalid directory: $DIR"
+    clean
+}
+
+
+main
