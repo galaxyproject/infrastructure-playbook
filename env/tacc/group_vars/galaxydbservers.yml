@@ -1,6 +1,20 @@
 ---
 
-dbservers_group_templates:
+# These are necessary for proper quota usage on Corral
+galaxydbservers_group_groups:
+  - name: G-803372
+    gid: 803372
+    local: true
+
+# NOTE: running this on a fresh instance would precreate the postgres user with system-determined uid and gid, which is
+# not ideal (on EL the package seems to create with uid/gid 26).
+galaxydbservers_group_users:
+  - name: postgres
+    groups: G-803372
+    local: true
+    system: true
+
+galaxydbservers_group_templates:
   - src: templates/stats/galaxy_db_slurp.sh.j2
     dest: /usr/local/bin/galaxy_db_slurp.sh
     owner: root
