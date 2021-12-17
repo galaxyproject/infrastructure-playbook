@@ -6,6 +6,8 @@
   roles:
     - role: systemd           # Configure systemd resource controls
       tags: systemd
+    - role: kernel_params     # Set kernel params e.g. with sysctl
+      tags: kernel_params
     - role: packages          # Install packages
       tags: packages
     - role: users             # Create users and set up authentication keys
