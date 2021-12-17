@@ -1,0 +1,3 @@
+---
+
+nessus_agent_key: "{{ vault_nessus_agent_key }}"

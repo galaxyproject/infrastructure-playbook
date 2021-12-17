@@ -353,6 +353,14 @@ cvmfs0-psu1.galaxyproject.org
 #cvmfs1-psu0.galaxyproject.org
 #stats.galaxyproject.org
 
+[nessusagents]
+# Again, just EL machines, Debian are in the BX playbook
+jeltz.galaxyproject.org
+cvmfs0-psu0.galaxyproject.org
+cvmfs0-psu1.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org
+stats.galaxyproject.org
+
 # for serial console setup
 [x2200s]
 n[0:14].galaxyproject.org

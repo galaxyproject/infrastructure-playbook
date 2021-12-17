@@ -1,0 +1,94 @@
+---
+
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - ../vars
+
+# https://docs.tenable.com/nessusagent/Content/InstallNessusAgentLinux.htm
+
+- name: nessus | install packages
+  package:
+    name: "{{ nessus_packages }}"
+    state: present
+
+- name: nessus | get agent status
+  command:
+    cmd: /opt/nessus_agent/sbin/nessuscli agent status
+  changed_when: false
+  failed_when: agent_status.rc not in (0, 2)
+  register: agent_status
+
+# relink nessus agent to tenable.io
+# https://wikispaces.psu.edu/display/vulnscan/Linking+Nessus+Agents+-+Tenable.io
+#
+# need to update host firewall to allow
+#
+# 13.59.252.0/25
+# 54.175.125.192/26
+# 34.201.223.128/25
+# 3.132.217.0/25
+# 54.219.188.128/26
+# 13.56.21.128/25
+# 34.223.64.0/25
+# 44.242.181.128/25
+# 162.159.129.83/32
+# 162.159.130.83/32
+
+- block:
+  - name: nessus | stop agent
+    service:
+      name: nessusagent
+      enabled: yes
+      state: stopped
+
+  - name: nessus | unlink agent
+    command:
+      cmd: /opt/nessus_agent/sbin/nessuscli agent unlink
+    when: "'Linked to: None' not in agent_status.stdout"
+
+  - name: nessus | remove uuid and tenable_tag
+    file:
+      path: "{{ item }}"
+      state: absent
+    loop:
+      - /opt/nessus_agent/var/nessus/uuid
+      - /etc/tenable_tag
+  when: "'cloud.tenable.com' not in agent_status.stdout"
+
+- name: nessus | link nessus agent
+  command:
+    cmd: /opt/nessus_agent/sbin/nessuscli agent link --key={{ nessus_agent_key }} --groups=ECS --cloud
+    creates: /opt/nessus_agent/var/nessus/uuid
+
+- name: nessus | determine if plugin database needs to be updated
+  stat:
+    path: /opt/nessus_agent/var/nessus/plugin_feed_info.inc
+  register: plugin_feed_info
+
+- block:
+  - name: nessus | stop agent
+    service:
+      name: nessusagent
+      enabled: yes
+      state: stopped
+
+  - name: nessus | update plugin database
+    command:
+      cmd: /opt/nessus_agent/sbin/nessusd -R
+  when: not plugin_feed_info.stat.exists
+
+- name: Ensure nessus is enabled and started
+  service:
+    name: nessusagent
+    enabled: yes
+    state: started
+

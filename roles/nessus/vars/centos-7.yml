@@ -1,0 +1,4 @@
+---
+
+nessus_packages:
+  - https://admin.bx.psu.edu/nessus/NessusAgent-10.0.1-es7.x86_64.rpm

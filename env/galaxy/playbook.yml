@@ -231,6 +231,13 @@
     - role: splunk
   tags: splunk
 
+- name: Tasks for Nessus agents
+  hosts: nessusagents
+  remote_user: root
+  roles:
+    - role: nessus
+  tags: nessus
+
 # This is for ns-training, the regular nameservers are set up through the core playbook
 - name: Tasks for training DNS servers
   hosts: ns-training.galaxyproject.org

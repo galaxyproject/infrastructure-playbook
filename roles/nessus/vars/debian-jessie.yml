@@ -1,0 +1,5 @@
+---
+
+nessus_packages:
+  - NessusAgent
+
