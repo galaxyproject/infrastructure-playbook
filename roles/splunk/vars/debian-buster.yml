@@ -1,0 +1,22 @@
+---
+
+
+splunk_packages:
+  - acl
+  - splunkforwarder
+
+splunk_apps_dir: /opt/splunkforwarder/etc/apps
+
+splunk_apps:
+  - 999-DS-SSL-base_uf
+  - 999-DS-SSL-certs_cacert_uf
+  - 999-DS-SSL-certs_uf
+  - 999_uf-output_to-idx_ssl
+  - DS-Splunk-deployment_client
+  - DS-SSL-base_uf
+  - DS-SSL-certs_cacert_uf
+  - DS-SSL-certs_uf
+
+splunk_deploymentclient_dest: /opt/splunkforwarder/etc/system/local/deploymentclient.conf
+splunk_launch_dest: /opt/splunkforwarder/etc/splunk-launch.conf
+

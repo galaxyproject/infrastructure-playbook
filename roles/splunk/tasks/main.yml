@@ -1,0 +1,135 @@
+---
+
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - ../vars
+
+- name: splunk | install splunk packages
+  package:
+    name: "{{ splunk_packages }}"
+    state: present
+
+## TODO: Check files under /opt/splunkforwarder/etc/apps/999_uf-output_to-idx_ssl
+
+- name: splunk | install apps files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ splunk_apps_dir }}"
+    owner: splunk
+    group: splunk
+    directory_mode: u=rwx,g=rx,o=rx,u-s,g-s,o-t
+    mode: u=rw,g=r,o=r,u-s,g-s,o-t
+  loop: "{{ splunk_apps|flatten(levels=1) }}"
+
+- name: splunk | install local deploymentclient.conf
+  template:
+    src: deploymentclient.conf.j2
+    dest: "{{ splunk_deploymentclient_dest }}"
+    owner: splunk
+    group: splunk
+    mode: u=rw,g=r,o=r,u-s,g-s,o-t
+
+## Need to do this to coax "splunk enable boot-start" to create
+## directories with the correct permissions
+- name: splunk | install local splunk-launch.conf.j2
+  template:
+    src: splunk-launch.conf.j2
+    dest: "{{ splunk_launch_dest }}"
+    owner: splunk
+    group: splunk
+    mode: u=rw,g=r,o=r,u-s,g-s,o-t
+
+- name: splunk | enable splunk boot-start
+  command: "{{ splunk_root_dir }}/bin/splunk --accept-license --no-prompt --answer-yes enable boot-start -systemd-managed 1 -user splunk -group splunk -systemd-unit-file-name splunk"
+  args:
+    creates: /etc/systemd/system/splunk.service
+
+- name: splunk | install splunk systemd unit file
+  template:
+    src: splunk.service.j2
+    dest: /etc/systemd/system/splunk.service
+    owner: root
+    group: root
+    mode: u=r,g=r,o=r,u-s,g-s,o-t
+    backup: no
+  register: systemd_config
+
+- name: splunk | reload the systemd configuration
+  command: systemctl daemon-reload
+  when: systemd_config is defined and systemd_config.changed
+
+- name: splunk | find directories under /var/log
+  find:
+    paths: /var/log
+    file_type: directory
+    recurse: yes
+  register: splunk_var_log_dirs
+
+- name: splunk | set splunk_acl_dirs
+  set_fact:
+    splunk_acl_dirs: "{{ splunk_var_log_dirs.files|map(attribute='path')|list|union(['/var/log']) }}"
+  when: splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
+
+- block:
+  - name: splunk | set default directory acls
+    acl:
+      path: "{{ item }}"
+      etype: user
+      entity: splunk
+      permissions: rx
+      default: yes
+      state: present
+    loop: "{{ splunk_acl_dirs }}"
+    notify: restart splunk
+
+  - name: splunk | set directory acls
+    acl:
+      path: "{{ item }}"
+      etype: user
+      entity: splunk
+      permissions: rx
+      state: present
+    loop: "{{ splunk_acl_dirs }}"
+    notify: restart splunk
+  when: splunk_acl_dirs is defined
+
+- name: splunk | find files under /var/log
+  find:
+    paths: /var/log
+    file_type: file
+    recurse: yes
+  register: splunk_var_log_files
+
+## FIXME: /root/.bash_history need to add acl to "/root" dir 
+# setfacl -m user:splunk:x /root
+
+- name: splunk | set splunk_acl_files
+  set_fact:
+    splunk_acl_files: "{{ splunk_var_log_files.files|map(attribute='path')|list|union(['/root/.bash_history']) }}"
+  when: splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
+
+- name: splunk | set file acls
+  acl:
+    path: "{{ item }}"
+    etype: user
+    entity: splunk
+    permissions: r
+    state: present
+  loop: "{{ splunk_acl_files }}"
+  when: splunk_acl_files is defined
+  notify: restart splunk
+
+- name: Ensure splunk is enabled and started
+  systemd:
+    name: splunk
+    enabled: yes
+    state: started

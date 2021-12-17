@@ -344,6 +344,15 @@ stats.galaxyproject.org
 [sentryservers]
 sentry.galaxyproject.org
 
+[splunkagents]
+# Just EL machines running webservers - Rico put the Debian-based ones in the BX playbook
+jeltz.galaxyproject.org
+cvmfs0-psu0.galaxyproject.org
+cvmfs0-psu1.galaxyproject.org
+# lx-brand zone can't use acls
+#cvmfs1-psu0.galaxyproject.org
+#stats.galaxyproject.org
+
 # for serial console setup
 [x2200s]
 n[0:14].galaxyproject.org

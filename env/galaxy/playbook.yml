@@ -224,6 +224,13 @@
       when: "'jenkinsagents' in group_names"
   tags: cvmfs
 
+- name: Tasks for Splunk agents
+  hosts: splunkagents
+  remote_user: root
+  roles:
+    - role: splunk
+  tags: splunk
+
 # This is for ns-training, the regular nameservers are set up through the core playbook
 - name: Tasks for training DNS servers
   hosts: ns-training.galaxyproject.org
