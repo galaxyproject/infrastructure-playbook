@@ -25,6 +25,10 @@ docker_daemon_option_list:
   - --containerd=/run/containerd/containerd.sock
   - --data-root=/data/docker
 
+host_authorized_key_users:
+  - name: root
+    authorized: "{{ galaxy_admin_users }} + ['marius_van_den_beek']"
+
 host_packages:
   - xfsprogs
 
