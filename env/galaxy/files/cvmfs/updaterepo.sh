@@ -9,7 +9,7 @@ ROOT="/cvmfs/${REPO}"
 SUBSET=
 FROM=
 SOURCE=
-SOURCE_ROOT='singularity@orval.galaxyproject.org:/srv/nginx/depot.galaxyproject.org/root/singularity/'
+SOURCE_ROOT='singularity@depot.galaxyproject.org:/srv/nginx/depot.galaxyproject.org/root/singularity/'
 TAG_PREFIX=
 TAG_PREFIX_ROOT='update'
 SLEEP=
@@ -33,7 +33,7 @@ while getopts ":f:s:nrit:" opt; do
             ;;
         f)
             FROM="--files-from=${OPTARG} --no-relative"
-            SOURCE_ROOT="singularity@orval.galaxyproject.org:/"
+            SOURCE_ROOT="singularity@depot.galaxyproject.org:/"
             TAG_PREFIX="-files-from-${OPTARG}"
             ;;
         n)
@@ -41,7 +41,7 @@ while getopts ":f:s:nrit:" opt; do
             ;;
         r)
             RSYNC_OPTS=
-            SOURCE_ROOT='rsync://orval.galaxyproject.org/singularity/'
+            SOURCE_ROOT='rsync://depot.galaxyproject.org/singularity/'
             #SOURCE_ROOT='rsync://it01.pulsar.galaxyproject.eu:12000/singularity/all/'
             ;;
         i)
