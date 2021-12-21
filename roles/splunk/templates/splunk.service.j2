@@ -9,7 +9,7 @@ After=network.target
 [Service]
 Type=simple
 Restart=always
-ExecStart={{ splunk_root_dir }}/bin/splunk _internal_launch_under_systemd
+ExecStart={{ splunk_root_dir }}/bin/splunk _internal_launch_under_systemd --accept-license --answer-yes --no-prompt
 KillMode=mixed
 KillSignal=SIGINT
 TimeoutStopSec=360
