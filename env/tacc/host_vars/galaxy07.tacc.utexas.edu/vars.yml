@@ -9,12 +9,12 @@ mounts:
     path: /var/lib/pgsql
     fstype: xfs
   # need because this 'mounts' overrides the one in all
-  - src: 129.114.60.35:/gpfs/corral3/repl/projects/galaxy/
-    path: /galaxy-repl
-    fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.35
-    owner: ndc
-    group: G-803372
+  #- src: 129.114.60.35:/gpfs/corral3/repl/projects/galaxy/
+  #  path: /galaxy-repl
+  #  fstype: nfs
+  #  opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.35
+  #  owner: ndc
+  #  group: G-803372
   - src: 129.114.52.151:/corral/main/projects/galaxy/
     path: /corral4
     fstype: nfs

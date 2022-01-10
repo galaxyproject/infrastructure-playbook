@@ -25,12 +25,12 @@ certbot_virtualenv_command: /opt/rh/rh-python36/root/bin/python3 -m venv
 
 __corral_ip: "{{ ((ansible_default_ipv4.address | ipv4('address') | ipaddr('int')) % 2) + 34 }}"
 mounts:
-  - src: 129.114.60.{{ __corral_ip }}:/gpfs/corral3/repl/projects/galaxy/
-    path: /galaxy-repl
-    fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.{{ __corral_ip }}
-    owner: ndc
-    group: G-803372
+  #- src: 129.114.60.{{ __corral_ip }}:/gpfs/corral3/repl/projects/galaxy/
+  #  path: /galaxy-repl
+  #  fstype: nfs
+  #  opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.60.{{ __corral_ip }}
+  #  owner: ndc
+  #  group: G-803372
   - src: 129.114.52.151:/corral/main/projects/galaxy/
     path: /corral4
     fstype: nfs
