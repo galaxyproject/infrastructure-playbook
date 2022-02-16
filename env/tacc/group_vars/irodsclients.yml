@@ -18,11 +18,11 @@ irodsclients_group_packages:
 
 __irods_environment_json: |
   {
-      "irods_zone_name": "galaxy",
-      "irods_host": "gs-0.corral.tacc.utexas.edu",
+      "irods_zone_name": "galaxyZ",
+      "irods_host": "galaxy-icat.tacc.utexas.edu",
       "irods_port": 1247,
-      "irods_user_name": "gtest",
-      "irods_default_resource": "corralResc"
+      "irods_user_name": "g2test",
+      "irods_default_resource": "testRootResc"
   }
 
 # TODO: this isn't really scalable, but it works for now
