@@ -57,7 +57,12 @@ while getopts ":f:s:nrit:" opt; do
     esac
 done
 
-SOURCE="${SOURCE_ROOT}${SUBSET}*"
+if [ -n "$SUBSET" ]; then
+    SOURCE="${SOURCE_ROOT}${SUBSET}*"
+else
+    SOURCE="$SOURCE_ROOT"
+fi
+
 TAG_PREFIX="${TAG_PREFIX_ROOT}${TAG_PREFIX}"
 
 function trap_handler() {
