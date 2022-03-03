@@ -160,5 +160,5 @@
   hosts: galaxydbservers
   remote_user: root
   roles:
-    - role: usegalaxy_eu.gxadmin
+    - role: galaxyproject.gxadmin
   tags: gxadmin

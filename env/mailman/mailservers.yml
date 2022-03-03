@@ -8,8 +8,16 @@
       tags:
         - postfix
   roles:
+    # TODO: not actually using this, just need the key for MM3
+    - role: galaxyproject.opendkim
     - role: galaxyproject.postfix
-      tags:
-        - postfix
+  post_tasks:
+    - name: Add list user to opendkim group
+      user:
+        name: list
+        groups: opendkim
+      notify:
+        - restart postfix
   tags: 
     - mail
+    - postfix

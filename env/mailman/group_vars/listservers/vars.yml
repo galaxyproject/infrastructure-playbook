@@ -36,57 +36,6 @@ postgresql_objects_databases:
 mailman3_pgdata: /var/opt/mailman3/postgresql
 
 #
-# galaxyproject.galaxy
-#
-
-postfix_role: mda
-postfix_mailname: "{{ inventory_hostname }}"
-
-# This is set by default in galaxyproject.mailman3, but if we don't set it here you can't run the postfix role w/o the
-# mailman role since it's used in postfix_config.
-postfix_mailman3_var_dir: /var/opt/mailman3/core
-postfix_config:
-  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
-  transport_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
-  local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
-  relay_domains: hash:{{ postfix_mailman3_var_dir }}/data/postfix_domains
-
-postfix_amavisd_new_config:
-  '@local_domains_acl': (".$mydomain", "{{ mailman3_domains | join('", "') }}")
-  # don't alter subject
-  $sa_spam_subject_tag: null
-  # always add headers
-  $sa_tag_level_deflt: -9999
-  # add "spam detected" headers at this level
-  $sa_tag2_level_deflt: 6.31
-  # discard viruses, spam, and messages containing banned files
-  $final_virus_destiny: D_DISCARD
-  $final_banned_destiny: D_DISCARD
-  $final_spam_destiny: D_DISCARD
-  $final_bad_header_destiny: D_PASS
-  # FIXME: need spamassassin plugin for mailman
-  # don't check spam bound for Mailman (Mailman does it itself)
-  #'@bypass_spam_checks_acl': @spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})
-  #'@spam_kill_level_maps': ({'lists.galaxyproject.org' => 9999 }, \$sa_kill_level_deflt, )
-
-postfix_aliases:
-  mailer-daemon: postmaster
-  postmaster: root
-  nobody: root
-  hostmaster: root
-  usenet: root
-  news: root
-  webmaster: root
-  www: root
-  ftp: root
-  abuse: root
-  noc: root
-  security: root
-  postorius: root
-  listmaster: root
-  root: root@galaxyproject.org
-
-#
 # galaxyproject.mailman3
 #
 
@@ -110,6 +59,15 @@ mailman3_config:
   database:
     class: mailman.database.postgresql.PostgreSQLDatabase
     url: postgres:///mailman3_core?host=/var/run/postgresql
+  arc:
+    enabled: 'yes'
+    privkey: "/etc/dkimkeys/mail.private"
+    selector: mail
+    domain: lists.galaxyproject.org
+    dmarc: 'yes'
+    dkim: 'yes'
+    authserv_id: lists.galaxyproject.org
+    trusted_authserv_ids: lists.galaxyproject.org, lists.anvilproject.org, galaxyproject.org
 
 mailman3_postorius_root: ''
 mailman3_hyperkitty_root: 'archives/'

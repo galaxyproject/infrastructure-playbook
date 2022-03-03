@@ -50,6 +50,11 @@
         dest: /opt/mailman3/lib/python3.6/site-packages
       delegate_to: "{{ inventory_hostname }}"
 
+    - name: Gather Facts
+      setup:
+      tags:
+        - mailman
+
     - name: galaxyproject.mailman3 role
       import_role:
         name: galaxyproject.mailman3

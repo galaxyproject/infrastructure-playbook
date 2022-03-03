@@ -1,0 +1,111 @@
+---
+
+#
+# galaxyproject.postfix
+#
+
+postfix_role: mda
+postfix_mailname: "{{ inventory_hostname }}"
+
+# This is set by default in galaxyproject.mailman3, but if we don't set it here you can't run the postfix role w/o the
+# mailman role since it's used in postfix_config.
+postfix_mailman3_var_dir: /var/opt/mailman3/core
+postfix_config:
+  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  transport_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
+  local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/data/postfix_lmtp
+  relay_domains: hash:{{ postfix_mailman3_var_dir }}/data/postfix_domains
+
+postfix_amavisd_new_config:
+  '@local_domains_acl': (".$mydomain", "{{ mailman3_domains | join('", "') }}")
+  # don't alter subject
+  $sa_spam_subject_tag: null
+  # always add headers
+  $sa_tag_level_deflt: -9999
+  # add "spam detected" headers at this level
+  $sa_tag2_level_deflt: 6.31
+  # discard viruses, spam, and messages containing banned files
+  $final_virus_destiny: D_DISCARD
+  $final_banned_destiny: D_DISCARD
+  $final_spam_destiny: D_DISCARD
+  $final_bad_header_destiny: D_PASS
+  # FIXME: need spamassassin plugin for mailman
+  # don't check spam bound for Mailman (Mailman does it itself)
+  #'@bypass_spam_checks_acl': @spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})
+  #'@spam_kill_level_maps': ({'lists.galaxyproject.org' => 9999 }, \$sa_kill_level_deflt, )
+
+postfix_aliases:
+  mailer-daemon: postmaster
+  postmaster: root
+  nobody: root
+  hostmaster: root
+  usenet: root
+  news: root
+  webmaster: root
+  www: root
+  ftp: root
+  abuse: root
+  noc: root
+  security: root
+  postorius: root
+  listmaster: root
+  root: root@galaxyproject.org
+
+#postfix_master_config:
+#  # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
+#  # we create a loop; additionally, sign all mail that passes through amavis.
+#  localhost:10025-inet:
+#    args: |
+#      -o content_filter=
+#          -o local_recipient_maps=
+#          -o relay_recipient_maps=
+#          -o smtpd_restriction_classes=
+#          -o smtpd_delay_reject=no
+#          -o smtpd_client_restrictions=permit_mynetworks,reject
+#          -o smtpd_helo_restrictions=
+#          -o smtpd_sender_restrictions=
+#          -o smtpd_recipient_restrictions=permit_mynetworks,reject
+#          -o smtpd_data_restrictions=reject_unauth_pipelining
+#          -o smtpd_end_of_data_restrictions=
+#          -o mynetworks=127.0.0.0/8
+#          -o smtpd_error_sleep_time=0
+#          -o smtpd_soft_error_limit=1001
+#          -o smtpd_hard_error_limit=1000
+#          -o smtpd_client_connection_count_limit=0
+#          -o smtpd_client_connection_rate_limit=0
+#          -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+#          -o milter_default_action=accept
+#          -o milter_protocol=6
+#          -o smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+#          -o non_smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+
+#
+# galaxyproject.opendkim
+#
+
+opendkim_backup_configs: true
+opendkim_keys:
+  # NOTE: this is the same key as the primary MXs
+  - selector: mail
+    domain: galaxyproject.org
+    secret: "{{ vault_opendkim_key_mail_secret }}"
+    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzZfThCqxA0wdJY1ku+r+onhkpGiMLOPW8Ou/MpsxhhobXZRNePhyONfYbuc4l/bUdy9SNpSa/jVgwRAwg7UGWjyU6k4kwbRTGD1SwgSAL+xN8e9obbAgqDuj8jxSctmEMZK/dQhQcTUDvfjJ8DX9W6XgmZljqys6eb+YE9mtqrTJ933yuKZkYlXt8b/aPp/MQjhVVqGZ6Hkn8CYb0t7mtmFvkLFwyG40PLYXTwVONDvG+fAlV9XzjJKCmz3cK/qUtmtyo0Gwt7ej/xTxCITRnE+zddmtlBZNAP6VfKn/t9cF82UaFbB+mzZnt0JIzIDlMuWQO9dxJaAJbbYeezdSwIDAQAB"
+
+# FIXME: if we only run DKIM on the amavis return do we need anything else here?
+opendkim_trusted_hosts:
+  - 127.0.0.1
+  - ::1
+  - localhost
+
+opendkim_signing_table:
+  - galaxyproject.org mail._domainkey.galaxyproject.org
+
+opendkim_config:
+  Syslog: yes
+  SyslogSuccess: yes
+  LogWhy: yes
+  Socket: "local:/var/run/opendkim/opendkim.sock"
+  KeyTable: "file:{{ opendkim_config_dir }}/KeyTable"
+  ExternalIgnoreList: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  InternalHosts: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  SigningTable: "file:{{ opendkim_config_dir }}/SigningTable"
