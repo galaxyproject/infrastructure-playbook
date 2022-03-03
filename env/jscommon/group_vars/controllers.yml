@@ -3,6 +3,7 @@
 slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
+os_image: Featured-RockyLinux8
 os_flavor: m1.medium
 
 os_security_groups:
@@ -15,10 +16,10 @@ os_floating_ips:
 
 # fstype isn't used by any of the openstack modules, but both mounts and filesystems need it, and putting it in
 # os_volumes avoids circular references. See the "Write volume device(s) to host_vars" task in the Jetstream playbook.
-os_volumes:
-  - name: "{{ inventory_hostname_short }}-scratch0"
-    size: 10000
-    fstype: xfs
+#os_volumes:
+#  - name: "{{ inventory_hostname_short }}-scratch0"
+#    size: 10000
+#    fstype: xfs
 
 #filesystems: is set automatically by the playbook in os_volume_devices.yml
 

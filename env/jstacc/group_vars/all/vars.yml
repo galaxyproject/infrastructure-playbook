@@ -1,6 +1,7 @@
 ---
 
 cloud_id: jetstream_tacc
+controller_name: jetstream-tacc0
 # FIXME: .jetstreamlocal is broken @ TACC
 jetstream_local_controller_address: 10.0.0.16
 jetstream_local_cvmfs_stratum1_address: 10.0.0.10

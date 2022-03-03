@@ -1,7 +1,7 @@
 ---
 
-cloud_id: jetstream_iu
-controller_name: jetstream-iu0
+cloud_id: js2
+controller_name: jetstream2
 jetstream_local_controller_address: "{{ controller_name }}.jetstreamlocal"
 jetstream_local_cvmfs_stratum1_address: "cvmfs1-{{ cloud_id[10:] }}0.jetstreamlocal"
 jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.jetstreamlocal"

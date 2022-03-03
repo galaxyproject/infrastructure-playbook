@@ -1,0 +1,36 @@
+jetstream2.galaxyproject.org ansible_user=centos
+#cvmfs1-iu0.galaxyproject.org ansible_user=centos
+
+[jetstreamhosts]
+jetstream2.galaxyproject.org
+#cvmfs1-iu0.galaxyproject.org
+
+[baseenv]
+jetstream2.galaxyproject.org
+#cvmfs1-iu0.galaxyproject.org
+
+[sshservers]
+[sshservers:children]
+baseenv
+
+# "contoller" node(s) for this cloud (not necessarily a slurm controller)
+[controllers]
+jetstream2.galaxyproject.org
+
+[slurmservers]
+jetstream2.galaxyproject.org
+
+[slurmclients]
+jetstream2.galaxyproject.org
+
+# CVMFS isn't installed in this env, it's installed in the galaxy env. But the instance is launched here
+[cvmfsservers]
+#cvmfs1-iu0.galaxyproject.org
+
+[cvmfslocalproxies]
+[cvmfslocalproxies:children]
+controllers
+
+[cvmfsclients]
+[cvmfsclients:children]
+controllers
