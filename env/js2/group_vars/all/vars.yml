@@ -8,7 +8,13 @@ jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.jetstreamlocal"
 
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 
+elrepo_kernel: true
+
 #openstack_image: JS-API-Featured-CentOS7-May-11-2018
+
+# Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in
+# sshkeys provided by the sshservers group vars)
+os_admin_users: "{{ galaxy_admin_users }}"
 
 # This turns out to be unnecessary
 #openstack_userdata: |

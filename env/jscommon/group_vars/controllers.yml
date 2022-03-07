@@ -4,11 +4,11 @@ slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
 os_image: Featured-RockyLinux8
-os_flavor: m1.medium
+os_flavor: m3.quad
 
 os_security_groups:
   - default
-  - docker
+  #- docker
   - usegalaxy-control
 
 os_floating_ips:
@@ -46,12 +46,12 @@ controllers_group_packages:
   - pdsh
   # Pulsar deps
   - '@development tools'
-  - python-virtualenv
+  #- python-virtualenv
   - libffi-devel
   - libcurl-devel
   - nss-devel
   - openssl-devel
-  - slurm-drmaa
+  #- slurm-drmaa
 
 controllers_group_files:
   - src: files/etc/dhclient.conf

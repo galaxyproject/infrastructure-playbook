@@ -1,1 +1,26 @@
-../../jscommon/group_vars/cvmfsservers.yml
+---
+
+#ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
+
+os_flavor: m1.medium
+
+os_security_groups:
+  - default
+  - cvmfs
+  - usegalaxy-control
+
+os_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+
+os_volumes:
+  - name: "{{ inventory_hostname_short }}-replica"
+    size: 16384
+    fstype: ext4
+
+#filesystems: is set automatically by the playbook in os_volume_devices.yml
+
+# this is parallel with os_volumes and filesystems
+mounts:
+  - path: /srv
+    src: "{{ filesystems[0].dev }}"
+    fstype: "{{ os_volumes[0].fstype }}"

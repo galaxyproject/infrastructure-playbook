@@ -1,1 +1,8 @@
-../common/jetstream.yml
+- name: Spawn instances
+  hosts: jetstreamhosts
+  gather_facts: no
+  environment:
+    OS_CLOUD: "{{ os_cloud_id }}"
+    OS_IDENTITY_API_VERSION: '3'
+  roles:
+    - openstack

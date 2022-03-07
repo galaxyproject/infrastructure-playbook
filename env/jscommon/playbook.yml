@@ -16,9 +16,6 @@
 
 - name: Tasks for "base environment" hosts
   hosts: baseenv
-  remote_user: centos
-  become: yes
-  become_method: sudo
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: requiretty
@@ -36,15 +33,17 @@
       tags: cron
     - role: services          # Manage services
       tags: services
-    - role: dj-wasabi.telegraf
-      tags: stats,telegraf
+    #- role: dj-wasabi.telegraf
+    #  tags: stats,telegraf
   tags: initial,system
+
+- name: Manila
+  hosts: all
+  roles:
+    - role: linuxhq.elrepo
 
 - name: CVMFS tasks
   hosts: cvmfsclients
-  remote_user: centos
-  become: yes
-  become_method: sudo
   roles:
     #- role: packages
     #  tags: packages

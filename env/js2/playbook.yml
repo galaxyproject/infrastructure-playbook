@@ -1,1 +1,92 @@
-../jscommon/playbook.yml
+---
+
+#- name: Launch instance(s)
+#  hosts: instances
+#  gather_facts: no
+#  environment:
+#    OS_CLOUD: "{{ openstack_cloud_id }}"
+#    OS_IDENTITY_API_VERSION: '3'
+#  roles:
+#    - openstack
+#  tags:             # must be run for these tags to collect openstack_volume_map for paths role
+#    - system
+#    - paths
+
+# NOTE: you *must* run the openstack role for the paths role, which needs the volume device
+
+- name: Tasks for "base environment" hosts
+  hosts: baseenv
+  roles:
+    - role: requiretty        # Disable requiretty for Ansible ssh pipelining
+      tags: requiretty
+    - role: geerlingguy.repo-epel
+      tags: packages
+    - role: packages          # Install packages
+      tags: packages
+    - role: users             # Create users and set up authentication keys
+      tags: users
+    - role: paths             # Configure path permissions, filesystems
+      tags: paths
+    - role: copy              # Copy arbitrary files/templates
+      tags: copy
+    - role: cron              # Create cron jobs
+      tags: cron
+    - role: services          # Manage services
+      tags: services
+    #- role: dj-wasabi.telegraf
+    #  tags: stats,telegraf
+  tags: initial,system
+
+- name: Manila
+  hosts: all
+  roles:
+    - role: linuxhq.elrepo
+
+- name: CVMFS tasks
+  hosts: cvmfsclients
+  roles:
+    #- role: packages
+    #  tags: packages
+    - role: galaxyproject.cvmfs
+  tags: cvmfs
+
+#- name: NFS tasks
+#  hosts: controllers:galaxynodes
+#  remote_user: centos
+#  become: yes
+#  become_method: sudo
+#  roles:
+#    - role: jetstream_nfs
+#  tags: nfs
+
+#- name: Update /etc/hosts
+#  hosts: controllers:galaxynodes
+#  remote_user: centos
+#  become: yes
+#  become_method: sudo
+#  tasks:
+#    - name: Update /etc/hosts
+#      template:
+#        src: templates/etc/hosts.j2
+#        dest: /etc/hosts
+
+#- name: Install supervisor
+#  hosts: all
+#  remote_user: centos
+#  become: yes
+#  become_method: sudo
+#  roles:
+#    - role: supervisor
+#      when: "{{ lookup('inheritance_chain', 'supervisor_configs') | bool }}"
+#      tags: supervisor,services
+
+# This has to be last for slurm elastic (everything must be configured/done when slurmd starts)
+#- name: Tasks for slurm hosts
+#  hosts: slurmservers:slurmclients
+#  remote_user: centos
+#  become: yes
+#  become_method: sudo
+#  roles:
+#    - galaxyproject.slurm
+#    - slurmscale
+#  tags: slurm

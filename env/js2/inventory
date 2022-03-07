@@ -1,4 +1,4 @@
-jetstream2.galaxyproject.org ansible_user=centos
+jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true
 #cvmfs1-iu0.galaxyproject.org ansible_user=centos
 
 [jetstreamhosts]
