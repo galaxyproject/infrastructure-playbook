@@ -21,8 +21,12 @@
       tags: requiretty
     - role: geerlingguy.repo-epel
       tags: packages
+    - role: elrepo
+      tags: packages
     - role: packages          # Install packages
       tags: packages
+    - role: ceph_mount
+      tags: paths
     - role: users             # Create users and set up authentication keys
       tags: users
     - role: paths             # Configure path permissions, filesystems
@@ -36,11 +40,6 @@
     #- role: dj-wasabi.telegraf
     #  tags: stats,telegraf
   tags: initial,system
-
-- name: Manila
-  hosts: all
-  roles:
-    - role: linuxhq.elrepo
 
 - name: CVMFS tasks
   hosts: cvmfsclients

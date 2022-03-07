@@ -23,8 +23,6 @@ roles:
     version: 0.12.0
   - name: galaxyproject.gxadmin
     version: 0.0.8
-  - name: linuxhq.elrepo
-    version: v0.0.6
 
 collections:
   - name: community.grafana

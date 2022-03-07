@@ -1,0 +1,21 @@
+---
+# Quick and dirty role to install kernel-ml from ELRepo, inspired by andrewrothstein.elrepo and linuxhq.elrepo
+
+- name: Install ELRepo Key
+  rpm_key:
+    key: "{{ elrepo_key }}"
+
+- name: Install ELRepo Package
+  dnf:
+    name: "{{ elrepo_package }}"
+
+- name: Set DEFAULTKERNEL in /etc/sysconfig/kernel
+  replace:
+    path: /etc/sysconfig/kernel
+    regexp: '^DEFAULTKERNEL=kernel.*'
+    replace: "DEFAULTKERNEL=kernel-ml"
+
+- name: Install kernel-ml
+  dnf:
+    name: kernel-ml
+    enablerepo: elrepo-kernel

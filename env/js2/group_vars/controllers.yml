@@ -24,16 +24,17 @@ os_floating_ips:
 #filesystems: is set automatically by the playbook in os_volume_devices.yml
 
 # this is parallel with os_volumes and filesystems
-mounts:
-  - path: /jetstream/scratch0
-    src: "{{ filesystems[0].dev }}"
-    fstype: "{{ os_volumes[0].fstype }}"
+#mounts:
+#  - path: /jetstream/scratch0
+#    src: "{{ filesystems[0].dev }}"
+#    fstype: "{{ os_volumes[0].fstype }}"
+#
 
 cvmfs_quota_limit: 1024
 
 controllers_group_authorized_key_users:
-  - name: centos
-    authorized: "{{ galaxy_admin_users }} + ['marius_van_den_beek']"
+  #- name: centos
+  #  authorized: "{{ galaxy_admin_users }} + ['marius_van_den_beek']"
   - name: g2test
     authorized: "{{ galaxy_team_users }}"
   - name: g2main
@@ -54,18 +55,19 @@ controllers_group_packages:
   #- slurm-drmaa
 
 controllers_group_files:
-  - src: files/etc/dhclient.conf
-    dest: /etc/dhcp/dhclient.conf
-    backup: yes
-    mode: "0644"
-    owner: root
-    group: root
-  - src: files/etc/ifcfg-eth1
-    dest: /etc/sysconfig/network-scripts/ifcfg-eth1
-    backup: yes
-    mode: "0644"
-    owner: root
-    group: root
+  # FIXME: what was this for and is it still needed?
+  #- src: files/etc/dhclient.conf
+  #  dest: /etc/dhcp/dhclient.conf
+  #  backup: yes
+  #  mode: "0644"
+  #  owner: root
+  #  group: root
+  #- src: files/etc/ifcfg-eth1
+  #  dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+  #  backup: yes
+  #  mode: "0644"
+  #  owner: root
+  #  group: root
   - src: files/admin/pdsh-up
     dest: /usr/local/bin/pdsh-up
     mode: "0755"
@@ -78,7 +80,6 @@ controllers_group_files:
     group: root
 
 controllers_group_directories:
-  - path: /jetstream
   - path: /var/lib/slurm
     mode: "0755"
   - path: /srv/pulsar/test
@@ -115,9 +116,9 @@ controllers_group_crontabs:
     name: Clean Test Scratch
     user: g2test
     minute: 05,20,35,50
-    job: /usr/local/bin/tmpwatch-auto /jetstream/scratch0/test/jobs
+    job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/test/jobs
   - id: clean_scratch
     name: Clean Main Scratch
     user: g2main
     minute: 00,15,30,45
-    job: /usr/local/bin/tmpwatch-auto /jetstream/scratch0/main/jobs
+    job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs

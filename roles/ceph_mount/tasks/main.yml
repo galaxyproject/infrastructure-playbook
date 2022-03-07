@@ -1,0 +1,43 @@
+---
+
+- name: Install CephX Keys
+  copy:
+    content: "{{ item.key }}"
+    dest: "/etc/ceph/{{ item.name }}.secret"
+    mode: 0400
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Create Ceph Mountpoints
+  file:
+    path: "{{ item.path }}"
+    state: "directory"
+    mode: 0755
+    owner: "root"
+    group: "root"
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Mount Ceph Filesystems
+  mount:
+    name: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: ceph
+    opts: "name={{ item.name }},secretfile=/etc/ceph/{{ item.name }}.secret{{ ',' ~ item.opts if item.opts else '' }}"
+    state: "mounted"
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }} -> {{ item.path }}"
+
+- name: Set Filesystem Permissions
+  file:
+    path: "{{ item.path }}"
+    state: "directory"
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }}"

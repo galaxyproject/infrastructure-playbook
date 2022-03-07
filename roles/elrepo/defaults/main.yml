@@ -1,0 +1,5 @@
+---
+
+elrepo_mirror: "https://www.elrepo.org"
+elrepo_key: "{{ elrepo_mirror }}/RPM-GPG-KEY-elrepo.org"
+elrepo_package: "{{ elrepo_mirror }}/elrepo-release-{{ ansible_distribution_major_version }}.el{{ ansible_distribution_major_version }}.elrepo.noarch.rpm"
