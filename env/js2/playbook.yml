@@ -80,12 +80,12 @@
 #      tags: supervisor,services
 
 # This has to be last for slurm elastic (everything must be configured/done when slurmd starts)
-#- name: Tasks for slurm hosts
-#  hosts: slurmservers:slurmclients
+- name: Tasks for slurm hosts
+  hosts: slurmservers:slurmclients
 #  remote_user: centos
 #  become: yes
 #  become_method: sudo
-#  roles:
-#    - galaxyproject.slurm
-#    - slurmscale
-#  tags: slurm
+  roles:
+    - galaxyproject.slurm
+    #- slurmscale
+  tags: slurm

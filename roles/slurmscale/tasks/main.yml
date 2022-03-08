@@ -6,16 +6,10 @@
     state: directory
     owner: "{{ slurm_scale_user }}"
 
-- name: Install CentOS SCL
-  yum:
-    name: centos-release-scl
-
 - name: Install dependencies
   yum:
     name:
-      - python-virtualenv
       - openssl-devel
-      - rh-python36
 
 - name: Create slurm scale virtualenv
   pip:
@@ -23,7 +17,7 @@
       - pip
       - setuptools
     virtualenv: "{{ slurm_scale_root }}"
-    virtualenv_python: /opt/rh/rh-python36/root/bin/python3
+    virtualenv_command: /usr/bin/python3 -m venv
     state: latest
   become: yes
   become_user: "{{ slurm_scale_user }}"

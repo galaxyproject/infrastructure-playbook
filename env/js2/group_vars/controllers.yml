@@ -107,9 +107,9 @@ controllers_group_directories:
 #    src: /cvmfs/main.galaxyproject.org/deps
 #    force: yes
 
-supervisord_install: package
-controllers_group_supervisor_configs:
-  - pulsar
+#supervisord_install: package
+#controllers_group_supervisor_configs:
+#  - pulsar
 
 controllers_group_crontabs:
   - id: clean_scratch
@@ -122,3 +122,5 @@ controllers_group_crontabs:
     user: g2main
     minute: 00,15,30,45
     job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
+
+telegraf_agent_hostname: "{{ inventory_hostname }}"
