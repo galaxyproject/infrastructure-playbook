@@ -26,7 +26,7 @@
     src: "{{ item.src }}"
     fstype: ceph
     opts: "name={{ item.name }},secretfile=/etc/ceph/{{ item.name }}.secret{{ ',' ~ item.opts if item.opts else '' }}"
-    state: "mounted"
+    state: "{{ ceph_mount_state }}"
   loop: "{{ ceph_mounts }}"
   loop_control:
     label: "{{ item.name }} -> {{ item.path }}"
@@ -38,6 +38,7 @@
     mode: "{{ item.mode | default('0755') }}"
     owner: "{{ item.owner | default('root') }}"
     group: "{{ item.group | default('root') }}"
+  when: "ceph_mount_state == 'mounted'"
   loop: "{{ ceph_mounts }}"
   loop_control:
     label: "{{ item.name }}"

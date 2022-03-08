@@ -39,6 +39,11 @@
       tags: services
     #- role: dj-wasabi.telegraf
     #  tags: stats,telegraf
+  post_tasks:
+    - name: Ensure firewalld is not installed
+      yum:
+        name: firewalld
+        state: absent
   tags: initial,system
 
 - name: CVMFS tasks
@@ -87,5 +92,5 @@
 #  become_method: sudo
   roles:
     - galaxyproject.slurm
-    #- slurmscale
+    - slurmscale
   tags: slurm

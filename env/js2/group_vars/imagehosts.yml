@@ -1,0 +1,16 @@
+---
+
+os_image: Featured-RockyLinux8
+os_flavor: m3.small
+os_auto_ip: true
+
+os_security_groups:
+  - default
+  - usegalaxy-control
+
+ceph_mount_state: present
+
+# this will be overwritten on node boot anyway
+slurm_controller_ip: "{{ controller_name }}.js2local"
+
+slurm_start_services: false

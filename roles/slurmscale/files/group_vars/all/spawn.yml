@@ -1,8 +1,9 @@
 ---
 
-image: JS-API-Featured-CentOS7-Latest
-key_name: slurm-kp
+#image: JS-API-Featured-CentOS7-Latest
+image: usegalaxy-node
+key_name: admin-kp
 nics: net-name=usegalaxy
 security_groups: default
 auto_ip: no
-flavor: m1.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}
+flavor: m3.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}

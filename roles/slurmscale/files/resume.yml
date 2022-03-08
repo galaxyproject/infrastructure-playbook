@@ -15,7 +15,8 @@
 
     - name: Create new nodes group
       group_by:
-        key: spawnnodes
+        #key: spawnnodes
+        key: startnodes
       when: openstack is not defined
 
 
@@ -30,17 +31,43 @@
     - name: Instance start block
       block:
 
-        - name: Start instance
-          os_server_action:
+        #- name: Start instance
+        #  os_server_action:
+        #    cloud: "{{ cloud_id }}"
+        #    server: "{{ inventory_hostname }}"
+        #    action: "start"
+        #  delegate_to: localhost
+
+        - name: Spawn new instance
+          os_server:
             cloud: "{{ cloud_id }}"
-            server: "{{ inventory_hostname }}"
-            action: "start"
+            name: "{{ inventory_hostname }}"
+            image: "{{ image }}"
+            flavor: "{{ flavor }}"
+            key_name: "{{ key_name }}"
+            nics: "{{ nics }}"
+            security_groups: "{{ security_groups }}"
+            auto_ip: "{{ auto_ip }}"
+            meta: group=galaxynodes
+            userdata: |
+              #cloud-config
+              package_upgrade: false
+          delegate_to: localhost
+          register: spawned_out
+
+        - name: Update inventory with spawned instance IP
+          set_fact:
+            ansible_host: "{{ spawned_out.server.private_v4 }}"
           delegate_to: localhost
 
         # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
         # task alone will wait up to 600 seconds.
         - name: Wait for instance to become accessible
           wait_for_connection:
+
+        - name: Gather Facts
+          gather_facts:
+          become: true
 
         - name: Copy slurm.conf
           copy:

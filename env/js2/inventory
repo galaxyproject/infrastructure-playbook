@@ -1,15 +1,21 @@
 jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true
+js2image ansible_user=rocky ansible_become=true
 #cvmfs1-iu0.galaxyproject.org ansible_user=centos
 
 [jetstreamhosts]
 jetstream2.galaxyproject.org
 #cvmfs1-iu0.galaxyproject.org
 
+[imagehosts]
+js2image
+
 [baseenv]
 jetstream2.galaxyproject.org
 #cvmfs1-iu0.galaxyproject.org
 
 [sshservers]
+js2image
+
 [sshservers:children]
 baseenv
 
@@ -21,7 +27,11 @@ jetstream2.galaxyproject.org
 jetstream2.galaxyproject.org
 
 [slurmclients]
+js2image
 jetstream2.galaxyproject.org
+
+[slurmexechosts]
+js2image
 
 # CVMFS isn't installed in this env, it's installed in the galaxy env. But the instance is launched here
 [cvmfsservers]
@@ -32,5 +42,7 @@ jetstream2.galaxyproject.org
 controllers
 
 [cvmfsclients]
+js2image
+
 [cvmfsclients:children]
 controllers
