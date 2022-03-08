@@ -145,7 +145,7 @@ slurm_user:
   gid: 40302
   group: slurm
   comment: 'Slurm Workload Manager'
-  home: /var/lib/slurm
+  home: /var/spool/slurm
   shell: /bin/bash
 
 galaxy_cvmfs_repos_enabled: yes

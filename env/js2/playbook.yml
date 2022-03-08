@@ -40,6 +40,9 @@
     #- role: dj-wasabi.telegraf
     #  tags: stats,telegraf
   post_tasks:
+    - name: Disable SELinux
+      selinux:
+        state: disabled
     - name: Ensure firewalld is not installed
       yum:
         name: firewalld
@@ -90,7 +93,15 @@
 #  remote_user: centos
 #  become: yes
 #  become_method: sudo
-  roles:
-    - galaxyproject.slurm
-    - slurmscale
+  tasks:
+    - import_role:
+        name: galaxyproject.slurm
+    - name: Fix /var/spool/slurm perms
+      file:
+        path: /var/spool/slurm
+        owner: slurm
+        group: slurm
+        mode: 0755
+    - import_role:
+        name: slurmscale
   tags: slurm

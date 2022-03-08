@@ -87,6 +87,10 @@
         #    force: yes
         #  loop: "{{ links }}"
 
+        - name: Disable SELinux
+          selinux:
+            state: disabled
+
         - name: Ensure firewalld is not installed
           yum:
             name: firewalld
@@ -107,6 +111,13 @@
         - name: Import Slurm role
           import_role:
             name: galaxyproject.slurm
+
+        - name: Fix /var/spool/slurm perms
+          file:
+            path: /var/spool/slurm
+            owner: slurm
+            group: slurm
+            mode: 0755
 
         # on restarts we want to wait until the playbook copies slurm.conf and starts slurmd itself
         - name: Disable slurmd autostart
@@ -165,10 +176,10 @@
             - /root/.bash_history
             - /etc/hostname
 
-        - name: Touch /.autorelabel
-          file:
-            path: /.autorelabel
-            state: touch
+        #- name: Touch /.autorelabel
+        #  file:
+        #    path: /.autorelabel
+        #    state: touch
 
       #rescue:
       #  - include: _inc_clean.yml

@@ -86,17 +86,16 @@
           delegate_to: localhost
           become: false
 
-        - name: Restart slurmd
+        - name: Start slurmd
           service:
             name: slurmd
-            state: restarted
+            state: started
           become: true
-          when: slurm_conf is changed
 
         # FIXME: should not be doing this most likely
-        - name: Run slurmd -b to signal slurmctld
-          command: /usr/sbin/slurmd -b
-          become: true
+        #- name: Run slurmd -b to signal slurmctld
+        #  command: /usr/sbin/slurmd -b
+        #  become: true
 
       rescue:
 
