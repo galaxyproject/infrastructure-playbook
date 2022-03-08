@@ -134,6 +134,7 @@
         user: "{{ ansible_user }}"
         key: "{% for authorized in os_admin_users %}{{ sshkeys[authorized] ~ '\n' }}{% endfor %}"
         exclusive: "{{ os_admin_users_exclusive | default('yes') }}"
+      when: os_admin_users is defined
 
   always:
 
