@@ -2,6 +2,7 @@
 
 all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
+ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
 
 clouds_yaml: "{{ vault_clouds_yaml }}"
 cloud_id: js2
@@ -34,7 +35,7 @@ all_packages:
 ceph_mounts:
   - name: galaxy-scratch
     path: /jetstream2/scratch
-    key: "{{ vault_ceph_galaxy_scratch_key }}"
+    key: "{{ ceph_galaxy_scratch_key }}"
     src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
     opts: noatime,_netdev
 
