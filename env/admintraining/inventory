@@ -39,6 +39,11 @@ gat-36
 gat-37
 gat-38
 gat-39
+gat-40
+gat-41
+gat-42
+gat-43
+gat-44
 
 [jetstreamhosts:vars]
 ansible_user=ubuntu
