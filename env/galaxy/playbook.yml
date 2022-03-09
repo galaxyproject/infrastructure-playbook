@@ -145,6 +145,7 @@
   vars:
     backupusers:
       - zfsdump-orval
+      - zfsdump-rochefort
   tasks:
     - name: "Set sys_fs_import for backup users"
       lineinfile:
@@ -152,7 +153,7 @@
         backup: "yes"
         line: "{{ item }}::::type=normal;defaultpriv=basic,sys_fs_import"
         regexp: "^{{ item }}:.*"
-      with_items: backupusers
+      loop: "{{ backupusers }}"
 
 - name: Tasks for stats servers
   hosts: statsservers

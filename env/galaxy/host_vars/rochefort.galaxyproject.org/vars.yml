@@ -189,6 +189,9 @@ zfs_admin_permissions:
   - name: data/rochefort/sample-data
     users: zfsdump-rochefort
     permissions: send,snapshot,hold
+  - name: data/rochefort/eggs
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
   - name: data/rochefort/wheels
     users: zfsdump-rochefort
     permissions: send,snapshot,hold
@@ -199,55 +202,24 @@ zfs_admin_permissions:
     users: zfsdump-rochefort
     permissions: send,snapshot,hold
 
-#host_crontabs:
-#  - name: "Backup OpenAFS /vicepa"
-#    id: backup_vicepa
-#    user: zfsdump-rochefort
-#    hour: 0
-#    minute: 0
-#    job: dataset='data/rochefort/vicepa' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup SnpEff data"
-#    id: backup_snpeff_data
-#    user: zfsdump-rochefort
-#    hour: 0
-#    minute: 30
-#    job: dataset='data/rochefort/snpeff-data' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup BioaRchive"
-#    id: backup_bioarchive
-#    user: zfsdump-rochefort
-#    hour: 0
-#    minute: 45
-#    job: dataset='data/rochefort/bioarchive' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup images"
-#    id: backup_images
-#    user: zfsdump-rochefort
-#    hour: 1
-#    minute: 0
-#    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup sample data"
-#    id: backup_sample_data
-#    user: zfsdump-rochefort
-#    hour: 1
-#    minute: 15
-#    job: dataset='data/rochefort/sample-data' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup screencasts"
-#    id: backup_screencast
-#    user: zfsdump-rochefort
-#    hour: 1
-#    minute: 45
-#    job: dataset='data/rochefort/screencast' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup depot"
-#    id: backup_depot
-#    user: zfsdump-rochefort
-#    hour: 2
-#    minute: 0
-#    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#  - name: "Backup depot/singularity"
-#    id: backup_depot_singularity
-#    user: zfsdump-rochefort
-#    hour: 2
-#    minute: 15
-#    job: dataset='data/rochefort/depot/singularity' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+# cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
+host_crontabs:
+  - name: "Backup images"
+    id: backup_images
+    user: zfsdump-rochefort
+    hour: 22
+    minute: 0
+    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+    use_cron_file: false
+  - name: "Backup depot"
+    id: backup_depot
+    user: zfsdump-rochefort
+    hour: 22
+    minute: 15
+    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+    use_cron_file: false
+  # depot/singularity is not backed up since it is mirrored to CVMFS and can be regenerated from the docker containers
+  # in the event that even the CVMFS copy cannot be used to restore depot.
 
 nginx_conf_http:
   server_names_hash_bucket_size: 64

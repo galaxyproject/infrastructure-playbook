@@ -12,6 +12,11 @@ host_users:
     comment: 'ZFS receive orval'
     home: /home/zfsdump-orval
     shell: /bin/bash
+  - name: zfsdump-rochefort
+    group: zfsdump-rochefort
+    comment: 'ZFS receive rochefort'
+    home: /home/zfsdump-rochefort
+    shell: /bin/bash
   - name: zfsdump-radegast
     group: zfsdump-radegast
     comment: 'ZFS receive radegast'
@@ -47,6 +52,9 @@ zfs_filesystems:
   - name: zones/westvleteren/backup/orval
     owner: zfsdump-orval
     group: zfsdump-orval
+  - name: zones/westvleteren/backup/rochefort
+    owner: zfsdump-rochefort
+    group: zfsdump-rochefort
   - name: zones/westvleteren/backup/radegast
     owner: zfsdump-radegast
     group: zfsdump-radegast
@@ -87,6 +95,9 @@ zfs_filesystems:
 zfs_admin_permissions:
   - name: zones/westvleteren/backup/orval
     users: zfsdump-orval
+    permissions: compression,create,mount,receive
+  - name: zones/westvleteren/backup/rochefort
+    users: zfsdump-rochefort
     permissions: compression,create,mount,receive
   - name: zones/westvleteren/backup/radegast
     users: zfsdump-radegast
