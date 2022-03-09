@@ -15,6 +15,9 @@ LIMIT_ARG="--limit=$(LIMIT)"
 endif
 PLAYBOOK := playbook
 
+# this is for openstack cli commands in the usegalaxy-node-image target, which relies on clouds.yaml.
+OS_CLOUD=js2
+
 
 galaxy tacc jsiu jstacc js2:
 	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml --diff $(TAGS_ARG) $(LIMIT_ARG)
