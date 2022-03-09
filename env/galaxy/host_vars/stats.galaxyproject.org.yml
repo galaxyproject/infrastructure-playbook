@@ -25,3 +25,7 @@ host_files:
     content: |
       [Service]
       PrivateTmp=false
+
+host_authorized_key_users:
+  - name: root
+    authorized: "{{ galaxy_admin_users }} + ['kaivan_kamali']"
