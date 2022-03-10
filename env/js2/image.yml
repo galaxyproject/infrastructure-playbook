@@ -1,4 +1,5 @@
 ---
+# To use, your Ansible controller must have openstacksdk and python-openstackclient installed
 
 - name: Spawn instances
   hosts: imagehosts
@@ -6,8 +7,37 @@
   environment:
     OS_CLOUD: "{{ os_cloud_id }}"
     OS_IDENTITY_API_VERSION: '3'
-  roles:
-    - openstack
+  tasks:
+
+    - block:
+
+        - name: Initialize failure fact
+          set_fact:
+            task_failed_successfully: false
+
+        - name: Import openstack role
+          import_role:
+            name: openstack
+
+      rescue:
+
+        - name: Write Openstack secrets
+          import_role:
+            name: openstack_secrets
+
+        - name: Destroy image instance
+          os_server:
+            name: "{{ inventory_hostname }}"
+            state: absent
+          environment:
+            OS_CLOUD: "{{ os_cloud_id }}"
+            OS_IDENTITY_API_VERSION: '3'
+          delegate_to: localhost
+          run_once: true
+
+        - name: Set failure fact to skip additional plays
+          set_fact:
+            task_failed_successfully: true
 
 - name: Configure instance(s)
   hosts: imagehosts
@@ -181,9 +211,71 @@
         #    path: /.autorelabel
         #    state: touch
 
-      #rescue:
-      #  - include: _inc_clean.yml
+      rescue:
 
-# always cleans secrets
-#- name: Include delete play
-#  include: _inc_delete.yml
+        - name: Write Openstack secrets
+          import_role:
+            name: openstack_secrets
+
+        - name: Destroy image instance
+          os_server:
+            name: "{{ inventory_hostname }}"
+            state: absent
+          environment:
+            OS_CLOUD: "{{ os_cloud_id }}"
+            OS_IDENTITY_API_VERSION: '3'
+          delegate_to: localhost
+          run_once: true
+
+        - name: Set failure fact to skip additional plays
+          set_fact:
+            task_failed_successfully: true
+
+      when: not task_failed_successfully
+
+- name: Finalize image
+  hosts: imagehosts
+  gather_facts: no
+  environment:
+    OS_CLOUD: "{{ os_cloud_id }}"
+    OS_IDENTITY_API_VERSION: '3'
+  tasks:
+
+    - block:
+
+        - name: Write Openstack secrets
+          import_role:
+            name: openstack_secrets
+
+        - name: Stop instance
+          os_server_action:
+            cloud: "{{ cloud_id }}"
+            server: "{{ inventory_hostname }}"
+            action: "stop"
+
+        - name: Collect old node image info
+          os_image_info:
+            image: "{{ usegalaxy_node_image_name }}"
+          register: __usegalaxy_node_image
+
+        - name: Rename existing node image
+          os_image:
+            name: "{{ usegalaxy_node_image_name }}"
+            properties:
+              name: "{{ usegalaxy_node_image_name }}-{{ __usegalaxy_node_image.openstack_image.created_at }}"
+          when: __usegalaxy_node_image.openstack_image is not none
+
+        # Can't believe there's no module for this
+        - name: Create an image from the instance
+          command: "openstack server image create --wait --name {{ usegalaxy_node_image_name }} {{ inventory_hostname }}"
+
+      always:
+
+        - name: Destroy image instance
+          os_server:
+            name: "{{ inventory_hostname }}"
+            state: absent
+
+      when: not task_failed_successfully
+      delegate_to: localhost
+      run_once: true

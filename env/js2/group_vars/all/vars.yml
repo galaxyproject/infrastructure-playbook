@@ -1,5 +1,6 @@
 ---
 
+vault_pass: "{{ vault_vault_pass }}"
 all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
@@ -13,6 +14,7 @@ jetstream_local_controller_address: "{{ controller_name }}.js2local"
 jetstream_local_cvmfs_stratum1_address: "cvmfs1-{{ cloud_id[10:] }}0.js2local"
 jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.js2local"
 
+usegalaxy_node_image_name: usegalaxy-node
 #openstack_image: JS-API-Featured-CentOS7-May-11-2018
 
 # Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in

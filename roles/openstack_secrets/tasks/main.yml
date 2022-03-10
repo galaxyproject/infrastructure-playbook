@@ -1,0 +1,27 @@
+---
+# TODO: Make the openstack role use this?
+
+- block:
+
+    - name: Write clouds.yaml
+      copy:
+        content: "{{ os_clouds_yaml | to_nice_yaml }}"
+        dest: "{{ inventory_dir }}/clouds.yaml"
+        mode: "0400"
+      no_log: yes
+
+    - name: Write additional secrets
+      copy:
+        content: "{{ item.content }}"
+        dest: "{{ inventory_dir }}/{{ item.dest }}"
+        mode: "0400"
+      loop: "{{ os_secrets | default([]) }}"
+      loop_control:
+        label: "{{ item.dest }}"
+
+  delegate_to: localhost
+  run_once: true
+
+  notify:
+    - Remove clouds.yaml
+    - Remove additional secrets
