@@ -15,19 +15,11 @@ LIMIT_ARG="--limit=$(LIMIT)"
 endif
 PLAYBOOK := playbook
 
-# this is for openstack cli commands in the usegalaxy-node-image target, which relies on clouds.yaml.
-OS_CLOUD=js2
-
 
 galaxy tacc jsiu jstacc js2:
 	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml --diff $(TAGS_ARG) $(LIMIT_ARG)
 
 usegalaxy-node-image:
 	ansible-playbook -i env/js2/inventory env/js2/image.yml --limit=usegalaxy-node
-	openstack server stop usegalaxy-node
-	openstack image set --name usegalaxy-node-$(shell openstack image show usegalaxy-node -f value -c created_at | cut -d'T' -f 1) usegalaxy-node
-	while [ "$$(openstack server show -f value -c status usegalaxy-node)" != "SHUTOFF" ]; do echo "Waiting for instance shutdown"; sleep 3; done
-	openstack server image create --name usegalaxy-node --wait usegalaxy-node
-	openstack server delete usegalaxy-node
 
 .PHONY: galaxy tacc jsiu jstacc js2 usegalaxy-node-image
