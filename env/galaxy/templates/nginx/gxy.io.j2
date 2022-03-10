@@ -27,6 +27,12 @@ server {
 
     # Train the Trainer discussions
     rewrite ^/ttt/?$ https://docs.google.com/document/d/1E9VcFNh3nWeQq142szEy-NRHkqYIxFQglqbTaqiAXqQ/edit;
+    
+    # GTN
+    rewrite ^/gtn/?$ https://github.com/galaxyproject/training-material/;
+    
+    # Community
+    rewrite ^/coc/?$ https://galaxyproject.org/community/coc/;
 
     return 302 https://galaxyproject.org;
 
