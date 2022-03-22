@@ -2,19 +2,19 @@
 
 #ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ openstack_key_name }}.pem"
 
-os_flavor: m1.medium
+os_image: Featured-RockyLinux8
+os_flavor: m3.quad
 
 os_security_groups:
   - default
   - cvmfs
-  - usegalaxy-control
 
 os_floating_ips:
   - "{{ lookup('dig', inventory_hostname) }}"
 
 os_volumes:
-  - name: "{{ inventory_hostname_short }}-replica"
-    size: 16384
+  - name: "{{ inventory_hostname_short }}-srv"
+    size: 32768
     fstype: ext4
 
 #filesystems: is set automatically by the playbook in os_volume_devices.yml

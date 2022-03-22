@@ -8,7 +8,6 @@ os_flavor: m3.quad
 
 os_security_groups:
   - default
-  #- docker
   - usegalaxy-control
 
 os_floating_ips:

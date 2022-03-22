@@ -11,7 +11,7 @@ controller_name: jetstream2
 controller_ip: "{{ hostvars[groups.controllers[0]]['ansible_default_ipv4']['address'] }}"
 
 jetstream_local_controller_address: "{{ controller_name }}.js2local"
-jetstream_local_cvmfs_stratum1_address: "cvmfs1-{{ cloud_id[10:] }}0.js2local"
+jetstream_local_cvmfs_stratum1_address: "cvmfs1-js2.js2local"
 jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.js2local"
 
 usegalaxy_node_image_name: usegalaxy-node
@@ -92,56 +92,20 @@ os_security_group_rules:
         remote_ip_prefix: 129.114.60.0/24
         port_range_min: 1
         port_range_max: 65535
-  #- name: docker
-  #  rules:
-  #    - protocol: tcp
-  #      remote_ip_prefix: 128.118.0.0/16
-  #      port_range_min: 2377
-  #      port_range_max: 2377
-  #    - protocol: tcp
-  #      remote_ip_prefix: 128.118.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 128.118.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 128.118.0.0/16
-  #      port_range_min: 4789
-  #      port_range_max: 4789
-  #    - protocol: tcp
-  #      remote_ip_prefix: 149.165.0.0/16
-  #      port_range_min: 2377
-  #      port_range_max: 2377
-  #    - protocol: tcp
-  #      remote_ip_prefix: 149.165.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 149.165.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 149.165.0.0/16
-  #      port_range_min: 4789
-  #      port_range_max: 4789
-  #    - protocol: tcp
-  #      remote_ip_prefix: 129.114.0.0/16
-  #      port_range_min: 2377
-  #      port_range_max: 2377
-  #    - protocol: tcp
-  #      remote_ip_prefix: 129.114.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 129.114.0.0/16
-  #      port_range_min: 7946
-  #      port_range_max: 7946
-  #    - protocol: udp
-  #      remote_ip_prefix: 129.114.0.0/16
-  #      port_range_min: 4789
-  #      port_range_max: 4789
+  - name: cvmfs
+    rules:
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 22
+        port_range_max: 22
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 80
+        port_range_max: 80
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 3128
+        port_range_max: 3128
 
 slurm_user:
   uid: 40302

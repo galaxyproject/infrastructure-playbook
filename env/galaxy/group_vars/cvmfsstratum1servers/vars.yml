@@ -1,5 +1,8 @@
 ---
 
+firewalld_state: absent
+selinux_state: disabled
+
 galaxy_cvmfs_repos_enabled: false
 
 cvmfsstratum1servers_group_authorized_key_users:
@@ -12,8 +15,7 @@ cvmfsstratum1servers_group_authorized_key_users:
 
 cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
 
-# in MB (value is 0.825 of 16GB)
-cvmfs_stratum1_cache_mem: 13516
+cvmfs_stratum1_cache_mem: "{{ ansible_memtotal_mb * 0.75 }}"
 
 cvmfsstratum1servers_group_users:
   - name: g2test
@@ -389,12 +391,12 @@ cvmfs_repositories:
     server_options:
       - CVMFS_AUTO_GC=false
     client_options: []
-  - repository: singularity.galaxyproject.org
-    stratum0: cvmfs-stratum0.galaxyproject.eu
-    owner: singularity
-    server_options:
-      - CVMFS_AUTO_GC=false
-    client_options: []
+  #- repository: singularity.galaxyproject.org
+  #  stratum0: cvmfs-stratum0.galaxyproject.eu
+  #  owner: singularity
+  #  server_options:
+  #    - CVMFS_AUTO_GC=false
+  #  client_options: []
   - repository: usegalaxy.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: usegalaxy
