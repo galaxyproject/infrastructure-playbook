@@ -1,7 +1,7 @@
 ---
 
-# 500 GB why not
-cvmfs_quota_limit: 512000
+# nodes have varying size disks these days, so use 60% of /
+cvmfs_quota_limit: "{{ ((ansible_mounts | selectattr('mount', 'eq', '/') | first).size_total * 0.6 / 1024**2) | int }}"
 
 galaxy_cvmfs_repos_enabled: true
 
