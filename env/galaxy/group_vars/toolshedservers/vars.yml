@@ -37,3 +37,11 @@ toolshedservers_group_users:
     home: /home/gxsrc
     shell: /bin/bash
     system: yes
+
+# Apparently telegraf doesn't validate the cert so it's ok if it's not valid for inventory_hostname
+telegraf_plugins_extra:
+  x509_cert:
+    config:
+      - sources = ["https://{{ inventory_hostname }}:443"]
+      # https://github.com/influxdata/telegraf/issues/8809
+      - timeout = "5s"
