@@ -167,6 +167,11 @@ host_groups:
   - name: G-803372
     gid: 803372
 
+docker_daemon_option_list:
+  - -H fd://
+  - --containerd=/run/containerd/containerd.sock
+  - --data-root=/srv/docker
+
 systemd_ssh_tunnel_restart_seconds: 90
 systemd_ssh_tunnels:
   - name: galaxy04
