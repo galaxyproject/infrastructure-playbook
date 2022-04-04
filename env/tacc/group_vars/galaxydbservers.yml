@@ -67,6 +67,8 @@ telegraf_plugins_extra:
       - timeout = "600s"
       - data_format = "influx"
       - interval = "1h"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_jobs_queued:
     plugin: "exec"
     config:
@@ -74,6 +76,8 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_jobs_queued_internal:
     plugin: "exec"
     config:
@@ -81,6 +85,8 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_jobs_queue_overview:
     plugin: "exec"
     config:
@@ -88,6 +94,8 @@ telegraf_plugins_extra:
       - timeout = "30s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_oidc:
     plugin: "exec"
     config:
@@ -95,6 +103,8 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_workflow:
     plugin: "exec"
     config:
@@ -102,6 +112,8 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_workflow_totals:
     plugin: "exec"
     config:
@@ -109,6 +121,8 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
 
 gxadmin_dir: /usr/local/lib/gxadmin
 gxadmin_bin_dir: /usr/local/bin
