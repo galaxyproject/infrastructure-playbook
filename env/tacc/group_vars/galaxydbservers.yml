@@ -14,23 +14,7 @@ galaxydbservers_group_users:
     local: true
     system: true
 
-galaxydbservers_group_templates:
-  - src: templates/stats/galaxy_db_slurp.sh.j2
-    dest: /usr/local/bin/galaxy_db_slurp.sh
-    owner: root
-    group: root
-    mode: '0755'
-
 telegraf_plugins_extra:
-  galaxy_db_slurp:
-    plugin: "exec"
-    config:
-      - commands = ["/usr/local/bin/galaxy_db_slurp.sh"]
-      - timeout = "120s"
-      - data_format = "influx"
-      - interval = "1m"
-      - '[inputs.exec.tags]'
-      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
     config:
@@ -67,6 +51,80 @@ telegraf_plugins_extra:
   #    - interval = "1m"
   #    - '[inputs.exec.tags]'
   #    - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+
+  # Some custom galaxy monitoring stuff
+  galaxy_uploaded:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery upload-gb-in-past-hour"]
+      - timeout = "600s"
+      - data_format = "influx"
+      - interval = "1h"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_jobs_queued:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued"]
+      - timeout = "15s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_jobs_queued_internal:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued-internal-by-handler"]
+      - timeout = "15s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_jobs_queue_overview:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue-overview --short-tool-id"]
+      - timeout = "30s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_oidc:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery users-with-oidc"]
+      - timeout = "15s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_workflow:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-status"]
+      - timeout = "15s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_workflow_totals:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-totals"]
+      - timeout = "15s"
+      - data_format = "influx"
+      - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_disk_usage:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery disk-usage"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
 
 gxadmin_dir: /usr/local/lib/gxadmin
 gxadmin_bin_dir: /usr/local/bin
