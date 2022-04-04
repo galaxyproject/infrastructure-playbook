@@ -14,13 +14,6 @@ galaxydbservers_group_users:
     local: true
     system: true
 
-galaxydbservers_group_templates:
-  - src: templates/stats/galaxy_db_slurp.sh.j2
-    dest: /usr/local/bin/galaxy_db_slurp.sh
-    owner: root
-    group: root
-    mode: '0755'
-
 telegraf_plugins_extra:
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
@@ -121,6 +114,15 @@ telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_disk_usage:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery disk-usage"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "5m"
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
 
