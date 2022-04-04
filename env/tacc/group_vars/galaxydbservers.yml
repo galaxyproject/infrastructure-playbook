@@ -56,7 +56,7 @@ telegraf_plugins_extra:
   galaxy_uploaded:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery upload-gb-in-past-hour"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery upload-gb-in-past-hour'"]
       - timeout = "600s"
       - data_format = "influx"
       - interval = "1h"
@@ -65,7 +65,7 @@ telegraf_plugins_extra:
   galaxy_jobs_queued:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued'"]
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
@@ -74,7 +74,7 @@ telegraf_plugins_extra:
   galaxy_jobs_queued_internal:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued-internal-by-handler"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-queued-internal-by-handler'"]
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
@@ -83,7 +83,7 @@ telegraf_plugins_extra:
   galaxy_jobs_queue_overview:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue-overview --short-tool-id"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue-overview --short-tool-id'"]
       - timeout = "30s"
       - data_format = "influx"
       - interval = "1m"
@@ -92,7 +92,7 @@ telegraf_plugins_extra:
   galaxy_oidc:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery users-with-oidc"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery users-with-oidc'"]
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
@@ -101,7 +101,7 @@ telegraf_plugins_extra:
   galaxy_workflow:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-status"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-status'"]
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
@@ -110,7 +110,7 @@ telegraf_plugins_extra:
   galaxy_workflow_totals:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-totals"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery workflow-invocation-totals'"]
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
@@ -119,7 +119,7 @@ telegraf_plugins_extra:
   galaxy_disk_usage:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery disk-usage"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery disk-usage'"]
       - timeout = "60s"
       - data_format = "influx"
       - interval = "5m"
