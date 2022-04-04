@@ -22,15 +22,6 @@ galaxydbservers_group_templates:
     mode: '0755'
 
 telegraf_plugins_extra:
-  galaxy_db_slurp:
-    plugin: "exec"
-    config:
-      - commands = ["/usr/local/bin/galaxy_db_slurp.sh"]
-      - timeout = "120s"
-      - data_format = "influx"
-      - interval = "1m"
-      - '[inputs.exec.tags]'
-      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
     config:
