@@ -6,6 +6,7 @@ galaxy_cvmfs_server_urls:
     use_geoapi: true
     urls:
       - "http://cvmfs1-js2.js2local/cvmfs/@fqrn@"
+      - "http://cvmfs1-js2.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
       - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
