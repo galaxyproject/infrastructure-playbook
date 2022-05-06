@@ -1,7 +1,7 @@
 ---
 
-# 48 GB
-cvmfs_quota_limit: 49152
+# 32 GB
+cvmfs_quota_limit: 32768
 
 jsgalaxynodes_group_groups:
   - name: G-803372
