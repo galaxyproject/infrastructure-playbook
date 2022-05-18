@@ -62,7 +62,7 @@ slurm_nodes:
     State: CLOUD
     CPUs: 4
     RealMemory: 14996
-  - name: "{{ slurm_cluster_name }}-medium[0-7]"
+  - name: "{{ slurm_cluster_name }}-medium[0-15]"
     State: CLOUD
     CPUs: 8
     RealMemory: 30091
@@ -83,7 +83,7 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: multi
-    Nodes: "{{ slurm_cluster_name }}-medium[0-7]"
+    Nodes: "{{ slurm_cluster_name }}-medium[0-15]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
