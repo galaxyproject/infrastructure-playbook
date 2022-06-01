@@ -9,7 +9,6 @@ slurm_config:
 
   PluginDir: /usr/lib64/slurm
 
-  FastSchedule: 1
   ReturnToService: 1
 
   JobCompLoc: /var/log/slurm/slurm.job.log
@@ -66,6 +65,10 @@ slurm_nodes:
     State: CLOUD
     CPUs: 8
     RealMemory: 30091
+  - name: "{{ slurm_cluster_name }}-large[0-7]"
+    State: CLOUD
+    CPUs: 16
+    RealMemory: 60282
 
 slurm_partitions:
   - name: normal
@@ -89,6 +92,12 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
+  - name: large
+    Nodes: "{{ slurm_cluster_name }}-large[0-7]"
+    DefaultTime: "48:20:00"
+    MaxTime: "96:20:00"
+    MaxNodes: 1
+    State: UP
   #- name: reserved
   #  Nodes: "{{ slurm_cluster_name }}-large[23-26]"
   #  DefaultTime: "48:20:00"
@@ -96,7 +105,6 @@ slurm_partitions:
   #  MaxNodes: 1
   #  State: UP
   #  OverSubscribe: EXCLUSIVE
-  - name: jsmulti
 
 slurm_cgroup_config:
   CgroupAutomount: yes
