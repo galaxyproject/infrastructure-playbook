@@ -165,23 +165,24 @@ telegraf_plugins_default:
       - sources = ["https://{{ inventory_hostname }}:443"]
       # https://github.com/influxdata/telegraf/issues/8809
       - timeout = "5s"
+  # double escape is required for valid TOML
   - plugin: procstat
     config:
-      - pattern = "galaxy-main.*handler0"
+      - pattern = "main\\.py.*handler0"
       - 'user = "{{ galaxy_user }}"'
   - plugin: procstat
     config:
-      - pattern = "galaxy-main.*handler1"
+      - pattern = "main\\.py.*handler1"
       - 'user = "{{ galaxy_user }}"'
   - plugin: procstat
     config:
-      - pattern = "galaxy-main.*handler2"
+      - pattern = "main\\.py.*handler2"
       - 'user = "{{ galaxy_user }}"'
   - plugin: procstat
     config:
-      - pattern = "galaxy-main.*handler3"
+      - pattern = "main\\.py.*handler3"
       - 'user = "{{ galaxy_user }}"'
   - plugin: procstat
     config:
-      - pattern = "galaxy-main.*workflow_scheduler0"
+      - pattern = "main\\.py.*workflow_scheduler0"
       - 'user = "{{ galaxy_user }}"'
