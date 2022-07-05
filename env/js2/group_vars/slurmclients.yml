@@ -69,6 +69,10 @@ slurm_nodes:
     State: CLOUD
     CPUs: 16
     RealMemory: 60282
+  - name: "{{ slurm_cluster_name }}-gpu-small[0-2]"
+    State: CLOUD
+    CPUs: 4
+    RealMemory: 14996
 
 slurm_partitions:
   - name: normal
@@ -96,6 +100,12 @@ slurm_partitions:
     Nodes: "{{ slurm_cluster_name }}-large[0-7]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
+    MaxNodes: 1
+    State: UP
+  - name: gpu-small
+    DefaultTime: "24:20:00"
+    MaxTime: "96:20:00"
+    Nodes: "{{ slurm_cluster_name }}-gpu-small[0-1]"
     MaxNodes: 1
     State: UP
   #- name: reserved

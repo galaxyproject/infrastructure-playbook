@@ -6,4 +6,5 @@ key_name: admin-kp
 nics: net-name=usegalaxy
 security_groups: default
 auto_ip: no
-flavor: m3.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}
+flavor: >-
+  {{ (inventory_hostname | regex_search("^.*-gpu-.*") is none) | ternary("m3", "g3") }}.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}
