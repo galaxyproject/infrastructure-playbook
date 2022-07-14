@@ -12,7 +12,8 @@ SOURCE=
 SOURCE_ROOT='singularity@depot.galaxyproject.org:/srv/nginx/depot.galaxyproject.org/root/singularity/'
 TAG_PREFIX=
 TAG_PREFIX_ROOT='update'
-SLEEP=
+MUTEX="${HOME}/.updaterepo.lock"
+MUTEX_ACQUIRED=false
 
 RSYNC_SSH_OPTS="-o ControlMaster=auto -o ControlPersist=60s -o KbdInteractiveAuthentication=no -o PreferredAuthentications=gssapi-with-mic,gssapi-keyex,hostbased,publickey -o PasswordAuthentication=no -o ConnectTimeout=10 -o ControlPath=${HOME}/makerepo-ssh-control"
 RSYNC_OPTS="-e 'ssh ${RSYNC_SSH_OPTS}'"
@@ -25,7 +26,7 @@ TRANSACTION_OPEN=false
 umask 022
 
 # FIXME:-s and -f are mutually exclusive
-while getopts ":f:s:nrit:" opt; do
+while getopts ":f:s:nri" opt; do
     case "$opt" in
         s)
             SUBSET="$OPTARG"
@@ -47,9 +48,6 @@ while getopts ":f:s:nrit:" opt; do
         i)
             TAG_PREFIX_ROOT='initial'
             ;;
-        t)
-            SLEEP="$OPTARG"
-            ;;
         *)
             echo "usage: $0 [-s subset-prefix] [-n (dry run)] [-r (use rsyncd)] [-t sleep seconds]"
             exit 1
@@ -69,6 +67,7 @@ function trap_handler() {
     { set +x; } 2>/dev/null
     $TRANSACTION_OPEN && abort_transaction
     [ -n "$CHANGELOG" ] && log_exec rm -f "$CHANGELOG"
+    $MUTEX_ACQUIRED && { rmdir "$MUTEX"; log_debug "Cleared $MUTEX"; }
     return 0
 }
 trap "trap_handler" SIGTERM SIGINT ERR EXIT
@@ -103,8 +102,14 @@ function log_exec() {
 
 
 function begin_transaction() {
+    local rc
     log "Opening transaction on $REPO"
-    log_exec cvmfs_server transaction "$REPO"
+    log_exec cvmfs_server transaction "$REPO" || {
+        log_warning "Opening transaction failed, attempting to abort first";
+        abort_transaction;
+        log_warning "Retrying transaction on $REPO";
+        log_exec cvmfs_server transaction "$REPO"
+    }
     TRANSACTION_OPEN=true
 }
 
@@ -226,13 +231,9 @@ function updaterepo() {
 
 
 function main() {
-    if [ -n "$SLEEP" -a "$SLEEP" -gt 0 ]; then
-        while true; do
-            updaterepo
-            log "Sleeping $SLEEP seconds"
-            sleep "$SLEEP"
-        done
-    else
+    if mkdir "$MUTEX"; then
+        MUTEX_ACQUIRED=true
+        log_debug "Acquired $MUTEX"
         updaterepo
         return $?
     fi

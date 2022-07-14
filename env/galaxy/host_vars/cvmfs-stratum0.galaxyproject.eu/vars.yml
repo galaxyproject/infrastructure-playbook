@@ -46,7 +46,7 @@ host_crontabs:
     day: '*'
     month: '*'
     weekday: '*'
-    job: pgrep -U singularity -fx '/bin/bash /home/singularity/bin/updaterepo.sh -r -t 300' >/dev/null || { cvmfs_server abort -f singularity.galaxyproject.org ; $HOME/bin/updaterepo.sh -r -t 300; } 2>&1 >> $HOME/updaterepo.log
+    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
 
 
 galaxy_cvmfs_repos_enabled: false
