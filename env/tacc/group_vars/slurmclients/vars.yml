@@ -1,19 +1,178 @@
 ---
 
-munge_key: "{{ vault_munge_key }}"
-
-slurm_user:
-  uid: 40302
-  gid: 40302
-  comment: 'Slurm Workload Manager'
-  home: /var/lib/slurm
-  shell: /bin/bash
+# FIXME: where is this done now? 
+#slurm_user:
+#  uid: 40302
+#  gid: 40302
+#  comment: 'Slurm Workload Manager'
+#  home: /var/lib/slurm
+#  shell: /bin/bash
 
 slurm_controller_name: galaxy08
 slurm_controller_ip: 129.114.60.125
+slurm_cluster_name: roundup
 slurm_dbd_server_name: galaxy08
-slurm_dbd_server_ip: 129.114.60.125
+#slurm_dbd_server_ip: 129.114.60.125
 slurm_dbd_server_port: 7031
 
-slurmd_spool_dir: /var/lib/slurm/slurmd/slurmd.spool
-slurmctld_state_dir: /var/lib/slurm/slurmctld/slurm.state
+# FIXME: old paths?
+#slurmd_spool_dir: /var/lib/slurm/slurmd/slurmd.spool
+#slurmctld_state_dir: /var/lib/slurm/slurmctld/slurm.state
+
+slurm_munge_key: files/slurm/munge.key
+
+slurm_config:
+  ControlMachine: "{{ slurm_controller_name }}"
+  ControlAddr: "{{ slurm_controller_ip }}"
+  ClusterName: "{{ slurm_cluster_name }}"
+
+  # TODO: still needed?
+  # https://bugs.schedmd.com/show_bug.cgi?id=3941
+  #UnkillableStepTimeout: 300
+
+  PluginDir: /usr/lib64/slurm
+
+  ReturnToService: 1
+  RebootProgram: /usr/sbin/reboot
+
+  JobCompLoc: /var/log/slurm/slurm.job.log
+  JobCompType: jobcomp/filetxt
+  SchedulerType: sched/backfill
+
+  SelectType: select/cons_res
+  SelectTypeParameters: CR_CPU_Memory
+  SwitchType: switch/none
+
+  SlurmctldPort: 7002
+  SlurmctldTimeout: 300
+  SlurmdPort: 7003
+  SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
+  SlurmdTimeout: 300
+  StateSaveLocation: /var/spool/slurm/ctld/slurm.state
+
+  DefaultStorageLoc: /var/log/slurm/slurm_accounting
+  AccountingStorageType: accounting_storage/slurmdbd
+  AccountingStorageHost: "{{ slurm_dbd_server_name }}"
+  AccountingStoragePort: "{{ slurm_dbd_server_port }}"
+
+  JobAcctGatherType: jobacct_gather/cgroup
+  JobAcctGatherFrequency: task=15
+  ProctrackType: proctrack/cgroup
+  TaskPlugin: task/cgroup
+
+  SlurmctldLogFile: /var/log/slurm/slurmctld.log
+  SlurmctldDebug: 4
+  SlurmdLogFile: /var/log/slurm/slurmd.log
+  SlurmdDebug: 4
+
+# Weight is set so that nodes exclusive to a partition will be preferred
+slurm_nodes:
+  # permanent nodes
+  - name: roundup[49-54]
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 0
+  - name: roundup[55-60]
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 10
+  - name: roundup[61-64
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 0
+  # js1 discrentionary allocation nodes
+  - {name: galaxy-1, NodeAddr: 129.114.104.99, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-2, NodeAddr: 129.114.104.89, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-3, NodeAddr: 129.114.104.105, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-4, NodeAddr: 129.114.104.64, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-5, NodeAddr: 129.114.17.246, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-6, NodeAddr: 129.114.104.142, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-7, NodeAddr: 129.114.17.222, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-8, NodeAddr: 129.114.104.120, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-9, NodeAddr: 129.114.104.57, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-10, NodeAddr: 129.114.104.100, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-11, NodeAddr: 129.114.104.52, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-12, NodeAddr: 129.114.104.124, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-13, NodeAddr: 129.114.104.93, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-14, NodeAddr: 129.114.104.130, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-15, NodeAddr: 129.114.104.153, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-16, NodeAddr: 129.114.104.98, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-17, NodeAddr: 129.114.104.126, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-18, NodeAddr: 129.114.104.34, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-19, NodeAddr: 129.114.104.104, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-20, NodeAddr: 129.114.104.96, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-21, NodeAddr: 129.114.19.74, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-22, NodeAddr: 129.114.19.62, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-23, NodeAddr: 129.114.19.64, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-24, NodeAddr: 129.114.19.70, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-25, NodeAddr: 129.114.19.79, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-26, NodeAddr: 129.114.17.227, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-27, NodeAddr: 129.114.19.61, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-28, NodeAddr: 129.114.16.160, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-29, NodeAddr: 129.114.19.101, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-30, NodeAddr: 129.114.19.60, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-31, NodeAddr: 129.114.19.88, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-32, NodeAddr: 129.114.19.71, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-33, NodeAddr: 129.114.19.55, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-34, NodeAddr: 129.114.19.68, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-35, NodeAddr: 129.114.104.221, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-36, NodeAddr: 129.114.19.66, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-37, NodeAddr: 129.114.19.83, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-38, NodeAddr: 129.114.19.94, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-39, NodeAddr: 129.114.104.191, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+  - {name: galaxy-40, NodeAddr: 129.114.19.102, CPUS: 10, RealMemory: 29995, STATE: UNKNOWN, Weight: 10}
+
+# Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
+slurm_partitions:
+  - name: multi
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 5120
+    Nodes: roundup[49-60]
+    LLN: "YES"
+    PriorityTier: 0
+  - name: normal
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 7680
+    Nodes: roundup[55-64]
+    LLN: "YES"
+    Default: "YES"
+    PriorityTier: 10
+  - name: reserved
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 7680
+    Nodes: roundup[49-64]
+    LLN: "YES"
+    PriorityTier: 20
+  - name: jsmulti
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 4990
+    Nodes: galaxy[1-40]
+    LLN: "YES"
+    PriorityTier: 0
+  - name: jsnormal
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 7490
+    Nodes: galaxy[1-40]
+    LLN: "YES"
+    PriorityTier: 10
+  - name: jsreserved
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 7490
+    Nodes: galaxy[1-40]
+    LLN: "YES"
+    PriorityTier: 20

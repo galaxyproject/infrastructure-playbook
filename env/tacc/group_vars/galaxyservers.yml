@@ -25,21 +25,6 @@ galaxyservers_group_directories:
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/config
     owner: gxsrc
     group: gxsrc
-  - path: /srv/galaxy/{{ galaxy_instance_codename }}/nagios
-    owner: gxsrc
-    group: gxsrc
-  - path: /srv/galaxy/{{ galaxy_instance_codename }}/interactive_environments
-    owner: gxsrc
-    group: gxsrc
-  - path: /srv/galaxy/{{ galaxy_instance_codename }}/plugins
-    owner: gxsrc
-    group: gxsrc
-  - path: /srv/galaxy/{{ galaxy_instance_codename }}/proxy
-    owner: gxsrc
-    group: gxsrc
-  - path: /srv/galaxy/{{ galaxy_instance_codename }}/tools
-    owner: gxsrc
-    group: gxsrc
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/log
     owner: "{{ galaxy_user }}"
     group: G-803372
@@ -47,36 +32,13 @@ galaxyservers_group_directories:
     owner: "{{ galaxy_user }}"
     group: G-803372
 
-galaxyservers_group_files:
-  - src: files/monitoring/mailoom.py
-    dest: /root/mailoom.py
-    owner: root
-    group: root
-    state: absent
-
-galaxyservers_group_crontabs:
-  - id: mail_oom_killer
-    name: Mail OOM Killer log messages
-    user: root
-    minute: "0"
-    hour: "8,12,16"
-    weekday: "1-5"
-    job: "/usr/bin/python /root/mailoom.py --oom --mail galaxy-system@lists.galaxyproject.org"
-    state: absent
-
 # node, npm for GIE proxy
 galaxyservers_group_packages:
-  - nodejs
-  - npm
-  - '@development tools' # for npm modules
-  - collectl
+#  - nodejs
+#  - npm
+#  - '@development tools' # for npm modules
+#  - collectl
   - slurm-drmaa
-
-galaxyservers_group_yum_repositories:
-  - name: docker
-    state: absent
-
-docker_service_enabled: no
 
 galaxy_cvmfs_repos_enabled: true
 

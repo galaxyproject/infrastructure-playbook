@@ -17,11 +17,8 @@ roles:
     version: 0.1.1
   - name: galaxyproject.cvmfs
     version: 0.2.14
-  - name: geerlingguy.repo-epel
-    version: 1.2.3
   - name: dj-wasabi.telegraf
-    # Rocky support in the as-yet-unreleased > 0.13.2
-    version: master
+    version: 0.13.2
   - name: galaxyproject.gxadmin
     version: 0.0.8
 

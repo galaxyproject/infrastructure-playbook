@@ -27,17 +27,19 @@ galaxynodes_group_packages:
   - tmpwatch
   - lzo
   - libcgroup-tools
-  - singularity-runtime
+  - singularity
   # packages for older tools
   - perl-Data-Dumper
   # Conda R does not package up all of its X dependencies
   # https://github.com/ContinuumIO/anaconda-issues/issues/4656
-  - xorg-x11-apps
+  #- xorg-x11-apps
+  - libXrender
+  - libXext
   - mesa-libGL
 
 galaxynodes_group_files:
-  - src: system/cleancgroups.py
-    dest: ~root/cleancgroups.py
+  #- src: system/cleancgroups.py
+  #  dest: ~root/cleancgroups.py
   - src: files/admin/tmpwatch-auto
     dest: /usr/local/bin/tmpwatch-auto
     mode: "0755"
@@ -45,11 +47,11 @@ galaxynodes_group_files:
     group: root
 
 galaxynodes_group_crontabs:
-  - id: clean_cgroups
-    name: Clean old cgroups
-    user: root
-    minute: "*/5"
-    job: "python /root/cleancgroups.py >> /var/log/cleancgroups.log 2>&1"
+  #- id: clean_cgroups
+  #  name: Clean old cgroups
+  #  user: root
+  #  minute: "*/5"
+  #  job: "python /root/cleancgroups.py >> /var/log/cleancgroups.log 2>&1"
   # This is likely the actual fix for the semaphore error below
   - id: clean_dev_shm
     name: "Clean /dev/shm"
@@ -62,6 +64,6 @@ galaxynodes_group_crontabs:
 #     sl = self._semlock = _multiprocessing.SemLock(
 #   OSError: [Errno 28] No space left on device
 # these values are from usegalaxy.eu nodes, our default appears to be kernel.sem = 500  64000   64  256
-galaxynodes_group_kernel_params:
-  - name: kernel.sem
-    value: 32000 1024000000 500 32000
+#galaxynodes_group_kernel_params:
+#  - name: kernel.sem
+#    value: 32000 1024000000 500 32000

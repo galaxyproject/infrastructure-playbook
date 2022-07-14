@@ -98,7 +98,7 @@
       # Sets up vhosts for HTTPS redirect and certbot on CVMFS strata that use Apache+Squid for HTTP and Nginx for HTTPS
       # NOTE: Initial Apache install/setup is done by CVMFS in the galaxy env, must be run first
     - role: apache_config
-    - role: geerlingguy.repo-epel
+    #- role: geerlingguy.repo-epel
     - role: galaxyproject.nginx
   tags: nginx
 
@@ -127,7 +127,7 @@
   hosts: cvmfsclients
   remote_user: root
   roles:
-    - role: geerlingguy.repo-epel
+    #- role: geerlingguy.repo-epel
     - role: galaxyproject.cvmfs
   tags: cvmfs
 
@@ -135,7 +135,7 @@
   hosts: slurmservers:slurmclients
   remote_user: root
   roles:
-    - role: slurm
+    - role: galaxyproject.slurm
   tags: slurm
 
 - name: Tasks for slurm exec hosts
