@@ -56,7 +56,7 @@ slurm_nodes:
   - name: "{{ slurm_cluster_name }}-small[0-7]"
     State: CLOUD
     CPUs: 2
-    RealMemory: 5937
+    RealMemory: 5748
   - name: "{{ slurm_cluster_name }}-quad[0-7]"
     State: CLOUD
     CPUs: 4
@@ -64,15 +64,15 @@ slurm_nodes:
   - name: "{{ slurm_cluster_name }}-medium[0-15]"
     State: CLOUD
     CPUs: 8
-    RealMemory: 30091
+    RealMemory: 29938
   - name: "{{ slurm_cluster_name }}-large[0-7]"
     State: CLOUD
     CPUs: 16
-    RealMemory: 60282
+    RealMemory: 60176
   - name: "{{ slurm_cluster_name }}-gpu-small[0-2]"
     State: CLOUD
     CPUs: 4
-    RealMemory: 14996
+    RealMemory: 14819
 
 slurm_partitions:
   - name: normal
