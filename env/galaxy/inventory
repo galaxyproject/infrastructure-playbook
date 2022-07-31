@@ -355,6 +355,9 @@ cvmfs0-psu1.galaxyproject.org
 # lx-brand zone can't use acls
 #cvmfs1-psu0.galaxyproject.org
 #stats.galaxyproject.org
+# OK doing these two myself
+newtrail.galaxyproject.org
+artifact.galaxyproject.org
 
 [nessusagents]
 # Again, just EL machines, Debian are in the BX playbook
@@ -363,6 +366,9 @@ cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 stats.galaxyproject.org
+# OK doing these two myself
+newtrail.galaxyproject.org
+artifact.galaxyproject.org
 
 # for serial console setup
 [x2200s]

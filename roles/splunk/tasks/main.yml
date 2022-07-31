@@ -13,6 +13,11 @@
       paths:
         - ../vars
 
+- name: splunk | install splunk packages (deb)
+  apt:
+    deb: "{{ splunk_deb }}"
+  when: splunk_deb is defined
+
 - name: splunk | install splunk packages
   package:
     name: "{{ splunk_packages }}"

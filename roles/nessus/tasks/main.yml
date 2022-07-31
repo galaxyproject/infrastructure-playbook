@@ -15,6 +15,11 @@
 
 # https://docs.tenable.com/nessusagent/Content/InstallNessusAgentLinux.htm
 
+- name: nessus | install packages (deb)
+  apt:
+    deb: "{{ nessus_deb }}"
+  when: nessus_deb is defined
+
 - name: nessus | install packages
   package:
     name: "{{ nessus_packages }}"
