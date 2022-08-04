@@ -19,8 +19,8 @@
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: requiretty
-    - role: geerlingguy.repo-epel
-      tags: packages
+    #- role: geerlingguy.repo-epel
+    #  tags: packages
     - role: elrepo
       tags: packages
     - role: packages          # Install packages

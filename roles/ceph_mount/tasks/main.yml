@@ -15,7 +15,7 @@
     content: |
       [client.{{ item.name }}]
       key = {{ item.key }}
-    dest: "/etc/ceph/ceph.client.{{ item.name }}.keyring.secret"
+    dest: "/etc/ceph/ceph.client.{{ item.name }}.keyring"
     mode: 0400
   when: "(item.fstype | default('ceph')) == 'fuse.ceph'"
   loop: "{{ ceph_mounts }}"
@@ -32,7 +32,7 @@
       client reconnect stale = true
       debug client = 0/2
       fuse big writes = true
-      mon host = {{ ceph_mounts[0].rsplit(':', 1)[0] }}
+      mon host = {{ ceph_mounts[0].src.rsplit(':', 1)[0] }}
     dest: /etc/ceph/ceph.conf
     mode: 0444
 
@@ -52,6 +52,7 @@
     name: "{{ item.path }}"
     src: "{{ item.src }}"
     fstype: ceph
+    passno: 2
     opts: "name={{ item.name }},secretfile=/etc/ceph/{{ item.name }}.secret{{ ',' ~ item.opts if item.opts else '' }}"
     state: "{{ ceph_mount_state }}"
   when: "(item.fstype | default('ceph')) == 'ceph'"
@@ -64,7 +65,8 @@
     name: "{{ item.path }}"
     src: "none"
     fstype: fuse.ceph
-    opts: "ceph.id={{ item.name }},ceph.conf=/etc/ceph/ceph.conf,client_mountpoint={{ item.src.rsplit(':', 1)[1] }},x-systemd.device-timeout=30,x-systemd.mount-timeout=30,{ ',' ~ item.opts if item.opts else '' }}"
+    passno: 2
+    opts: "ceph.id={{ item.name }},ceph.conf=/etc/ceph/ceph.conf,ceph.client_mountpoint={{ item.src.rsplit(':', 1)[1] }},x-systemd.device-timeout=30,x-systemd.mount-timeout=30,{{ ',' ~ item.opts if item.opts else '' }}"
     state: "{{ ceph_mount_state }}"
   when: "(item.fstype | default('ceph')) == 'fuse.ceph'"
   loop: "{{ ceph_mounts }}"
