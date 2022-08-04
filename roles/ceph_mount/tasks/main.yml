@@ -1,13 +1,40 @@
 ---
 
-- name: Install CephX Keys
+- name: Install CephX Keys (kernel driver)
   copy:
     content: "{{ item.key }}"
     dest: "/etc/ceph/{{ item.name }}.secret"
     mode: 0400
+  when: "(item.fstype | default('ceph')) == 'ceph'"
   loop: "{{ ceph_mounts }}"
   loop_control:
     label: "{{ item.name }}"
+
+- name: Install CephX Keys (FUSE driver)
+  copy:
+    content: |
+      [client.{{ item.name }}]
+      key = {{ item.key }}
+    dest: "/etc/ceph/ceph.client.{{ item.name }}.keyring.secret"
+    mode: 0400
+  when: "(item.fstype | default('ceph')) == 'fuse.ceph'"
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+# WARNING: this only supports a single value for mon host, it wasn't apparently from the docs how to configure multiple
+# sets for multiple client instances/mounts, and is unnecessary for my purposes.
+- name: Install ceph.conf (FUSE driver)
+  copy:
+    content: |
+      [global]
+      admin socket = /var/run/ceph/$cluster-$name-$pid.asok
+      client reconnect stale = true
+      debug client = 0/2
+      fuse big writes = true
+      mon host = {{ ceph_mounts[0].rsplit(':', 1)[0] }}
+    dest: /etc/ceph/ceph.conf
+    mode: 0444
 
 - name: Create Ceph Mountpoints
   file:
@@ -20,13 +47,26 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: Mount Ceph Filesystems
+- name: Mount Ceph Filesystems (kernel driver)
   mount:
     name: "{{ item.path }}"
     src: "{{ item.src }}"
     fstype: ceph
     opts: "name={{ item.name }},secretfile=/etc/ceph/{{ item.name }}.secret{{ ',' ~ item.opts if item.opts else '' }}"
     state: "{{ ceph_mount_state }}"
+  when: "(item.fstype | default('ceph')) == 'ceph'"
+  loop: "{{ ceph_mounts }}"
+  loop_control:
+    label: "{{ item.name }} -> {{ item.path }}"
+
+- name: Mount Ceph Filesystems (FUSE driver)
+  mount:
+    name: "{{ item.path }}"
+    src: "none"
+    fstype: fuse.ceph
+    opts: "ceph.id={{ item.name }},ceph.conf=/etc/ceph/ceph.conf,client_mountpoint={{ item.src.rsplit(':', 1)[1] }},x-systemd.device-timeout=30,x-systemd.mount-timeout=30,{ ',' ~ item.opts if item.opts else '' }}"
+    state: "{{ ceph_mount_state }}"
+  when: "(item.fstype | default('ceph')) == 'fuse.ceph'"
   loop: "{{ ceph_mounts }}"
   loop_control:
     label: "{{ item.name }} -> {{ item.path }}"
