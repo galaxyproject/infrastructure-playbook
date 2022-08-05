@@ -43,7 +43,7 @@ galaxyservers_group_packages:
 galaxy_cvmfs_repos_enabled: true
 
 # override so that the TACC stratum 1 is always first
-cvmfs_server_urls:
+galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org
     use_geoapi: no
     urls:

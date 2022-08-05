@@ -14,6 +14,10 @@ galaxydbservers_group_users:
     local: true
     system: true
 
+galaxydbservers_group_packages:
+  # for gxadmin
+  - make
+
 telegraf_plugins_extra:
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
