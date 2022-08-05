@@ -46,9 +46,11 @@ slurm_config:
   SlurmctldPort: 7002
   SlurmctldTimeout: 300
   SlurmdPort: 7003
-  SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
+  #SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
+  SlurmdSpoolDir: /var/lib/slurm/slurmd/slurmd.spool
   SlurmdTimeout: 300
-  StateSaveLocation: /var/spool/slurm/ctld/slurm.state
+  #StateSaveLocation: /var/spool/slurm/ctld/slurm.state
+  StateSaveLocation: /var/lib/slurm/slurmctld/slurm.state
 
   DefaultStorageLoc: /var/log/slurm/slurm_accounting
   AccountingStorageType: accounting_storage/slurmdbd
@@ -78,7 +80,7 @@ slurm_nodes:
     CPUS: 24
     State: UNKNOWN
     Weight: 10
-  - name: roundup[61-64
+  - name: roundup[61-64]
     RealMemory: 122880
     CPUS: 24
     State: UNKNOWN
