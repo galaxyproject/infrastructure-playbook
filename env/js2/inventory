@@ -1,17 +1,17 @@
 jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true
 usegalaxy-node ansible_user=rocky ansible_become=true
-cvmfs1-js2.galaxyproject.org ansible_user=rocky ansible_become=true
+cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=true
 
 [jetstreamhosts]
 jetstream2.galaxyproject.org
-cvmfs1-js2.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
 
 [imagehosts]
 usegalaxy-node
 
 [baseenv]
 jetstream2.galaxyproject.org
-cvmfs1-js2.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
 
 [sshservers]
 usegalaxy-node
@@ -35,7 +35,7 @@ usegalaxy-node
 
 # CVMFS isn't installed in this env, it's installed in the galaxy env. But the instance is launched here
 [cvmfsservers]
-cvmfs1-js2.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
 
 [cvmfslocalproxies]
 [cvmfslocalproxies:children]
