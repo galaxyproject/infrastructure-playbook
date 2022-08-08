@@ -13,9 +13,10 @@
   replace:
     path: /etc/sysconfig/kernel
     regexp: '^DEFAULTKERNEL=kernel.*'
-    replace: "DEFAULTKERNEL=kernel-ml"
+    replace: "DEFAULTKERNEL={{ default_kernel }}"
 
 - name: Install kernel-ml
   dnf:
     name: kernel-ml
     enablerepo: elrepo-kernel
+  when: default_kernel == 'kernel-ml'
