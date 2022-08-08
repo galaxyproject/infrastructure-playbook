@@ -18,7 +18,7 @@ roles:
   - name: galaxyproject.cvmfs
     version: 0.2.17
   - name: dj-wasabi.telegraf
-    version: 0.13.2
+    version: 0.13.3
   - name: galaxyproject.gxadmin
     version: 0.0.8
 
