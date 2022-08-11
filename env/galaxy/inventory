@@ -14,8 +14,8 @@ westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 jetstream-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 jetstream-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-tacc0.galaxyproject.org ansible_user=root
-cvmfs1-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=yes
+cvmfs1-tacc0.galaxyproject.org ansible_user=root ansible_host=galaxy08.tacc.utexas.edu
 cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs0-psu1.galaxyproject.org ansible_user=root
 cvmfs0-psu2.galaxyproject.org ansible_user=root
@@ -143,6 +143,9 @@ jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
+cvmfs1-iu0.galaxyproject.org
+#cvmfs1-tacc0.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org
 ns-training.galaxyproject.org
 wrx.galaxyproject.org
 sentry.galaxyproject.org
@@ -152,7 +155,6 @@ jenkins0.galaxyproject.org
 [virtual:children]
 ec2hosts
 jetstreamhosts
-cvmfsstratum1servers
 
 [ec2hosts]
 newtrail.galaxyproject.org
@@ -162,7 +164,7 @@ artifact.galaxyproject.org
 # - common Openstack networks and security groups
 [jetstreamhosts]
 cvmfs1-iu0.galaxyproject.org
-cvmfs1-tacc0.galaxyproject.org
+#cvmfs1-tacc0.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 jetstream-tacc0.galaxyproject.org
 
