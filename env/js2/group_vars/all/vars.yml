@@ -63,6 +63,8 @@ os_key_name: admin-kp
 os_nics:
   - net-name: "{{ os_network.name }}"
 
+os_public_network: public
+
 os_network:
   name: "usegalaxy"
   subnet:
@@ -70,7 +72,7 @@ os_network:
     cidr: 10.0.0.0/22
   router:
     name: "usegalaxy"
-    network: public
+    network: "{{ os_public_network }}"
 
 os_security_group_rules:
   - name: usegalaxy-control

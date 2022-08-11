@@ -66,7 +66,7 @@
     src: "none"
     fstype: fuse.ceph
     passno: 2
-    opts: "ceph.id={{ item.name }},ceph.conf=/etc/ceph/ceph.conf,ceph.client_mountpoint={{ item.src.rsplit(':', 1)[1] }},x-systemd.device-timeout=30,x-systemd.mount-timeout=30,{{ ',' ~ item.opts if item.opts else '' }}"
+    opts: "ceph.id={{ item.name }},ceph.conf=/etc/ceph/ceph.conf,ceph.client_mountpoint={{ item.src.rsplit(':', 1)[1] }},x-systemd.device-timeout=30,x-systemd.mount-timeout=30{{ ',' ~ item.opts if item.opts else '' }}"
     state: "{{ ceph_mount_state }}"
   when: "(item.fstype | default('ceph')) == 'fuse.ceph'"
   loop: "{{ ceph_mounts }}"
