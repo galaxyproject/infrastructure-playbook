@@ -15,7 +15,7 @@ cvmfsstratum1servers_group_authorized_key_users:
 
 cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
 
-cvmfs_stratum1_cache_mem: "{{ ansible_memtotal_mb * 0.6 }}"
+cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.6) | int }}"
 
 cvmfsstratum1servers_group_users:
   - name: g2test
