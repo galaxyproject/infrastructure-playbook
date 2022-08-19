@@ -24,12 +24,17 @@
 
 # WARNING: this only supports a single value for mon host, it wasn't apparently from the docs how to configure multiple
 # sets for multiple client instances/mounts, and is unnecessary for my purposes.
+#
+# client_dirsize_rbytes option due to meryl error "tar: read-db.meryl: file changed as we read it", references:
+#   https://ceph-users.ceph.narkive.com/th0JxsKR/cephfs-tar-archiving-immediately-after-writing
+#   https://www.spinics.net/lists/ceph-users/msg25010.html
 - name: Install ceph.conf (FUSE driver)
   copy:
     content: |
       [global]
       admin socket = /var/run/ceph/$cluster-$name-$pid.asok
       client reconnect stale = true
+      client_dirsize_rbytes = false
       debug client = 0/2
       fuse big writes = true
       mon host = {{ ceph_mounts[0].src.rsplit(':', 1)[0] }}
