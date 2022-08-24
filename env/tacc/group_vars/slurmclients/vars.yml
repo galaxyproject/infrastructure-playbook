@@ -25,9 +25,9 @@ slurm_config:
   ControlAddr: "{{ slurm_controller_ip }}"
   ClusterName: "{{ slurm_cluster_name }}"
 
-  # TODO: still needed?
+  # Should help decrease the frequency of nodes draining with "Kill task failed"
   # https://bugs.schedmd.com/show_bug.cgi?id=3941
-  #UnkillableStepTimeout: 300
+  UnkillableStepTimeout: 300
 
   PluginDir: /usr/lib64/slurm
 

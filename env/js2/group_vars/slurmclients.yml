@@ -7,6 +7,8 @@ slurm_config:
   ControlAddr: "{{ slurm_controller_ip }}"
   ClusterName: "{{ slurm_cluster_name }}"
 
+  UnkillableStepTimeout: 300
+
   PluginDir: /usr/lib64/slurm
 
   ReturnToService: 1
