@@ -30,7 +30,9 @@ StorageUser=slurm
 #StorageLoc=slurm_acct_db
 
 # Purge/Archive options
-ArchiveDir=/galaxy-repl/slurm/archive
+# breaks due to root squashing
+#ArchiveDir=/corral4/slurm/archive
+ArchiveDir=/srv/slurm/archive
 ArchiveEvents=yes
 ArchiveJobs=yes
 ArchiveResvs=yes
