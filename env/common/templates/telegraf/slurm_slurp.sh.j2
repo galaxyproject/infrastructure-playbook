@@ -56,7 +56,7 @@ function _normalize_state() {
 # TODO: namerefs require bash 4.3+
 function initialize_jobs_arrays_43() {
     for partition in ${PARTITIONS[@]}; do
-        local name="JOBS_${partition}"
+        local name="JOBS_${partition//-/_}"
         typeset -A "$name"
         typeset -n _jobs="$name"
         for state in ${JOB_STATES[@]}; do
@@ -71,7 +71,7 @@ function initialize_jobs_arrays() {
         JOBS[$state]=0
     done
     for partition in ${PARTITIONS[@]}; do
-        _array_copy JOBS "JOBS_${partition}"
+        _array_copy JOBS "JOBS_${partition//-/_}"
     done
 }
 
@@ -81,14 +81,14 @@ function initialize_nodes_arrays() {
         NODES[$state]=0
     done
     for partition in ${PARTITIONS[@]}; do
-        _array_copy NODES "NODES_${partition}"
+        _array_copy NODES "NODES_${partition//-/_}"
     done
 }
 
 
 function collect_jobs_43() {
     while read partition state; do
-        local name="JOBS_${partition}"
+        local name="JOBS_${partition//-/_}"
         typeset -n _jobs="$name"
         (($_jobs[$state]++))
     done < <(squeue -h -O partition,state)
@@ -101,7 +101,7 @@ function collect_jobs() {
         case "$partition" in
         {% for partition in slurm_slurp_partitions %}
             {{ partition }})
-                JOBS_{{ partition }}[$state]=$((JOBS_{{ partition }}[$state]+1))
+                JOBS_{{ partition | replace('-', '_') }}[$state]=$((JOBS_{{ partition  | replace('-', '_') }}[$state]+1))
                 ;;
         {% endfor %}
         esac
@@ -119,7 +119,7 @@ function collect_nodes() {
         case "$partition" in
         {% for partition in slurm_slurp_partitions %}
             {{ partition }})
-                NODES_{{ partition }}[$state]=$((NODES_{{ partition }}[$state]+1))
+                NODES_{{ partition | replace('-', '_') }}[$state]=$((NODES_{{ partition  | replace('-', '_') }}[$state]+1))
                 ;;
         {% endfor %}
         esac
@@ -140,7 +140,7 @@ function print_jobs() {
     _array_copy TAGS local_tags
     for partition in "${PARTITIONS[@]}"; do
         local_tags[partition]="$partition"
-        print_telegraf slurm_jobs local_tags "JOBS_${partition}"
+        print_telegraf slurm_jobs local_tags "JOBS_${partition//-/_}"
     done
 }
 
@@ -151,7 +151,7 @@ function print_nodes() {
     _array_copy TAGS local_tags
     for partition in "${PARTITIONS[@]}"; do
         local_tags[partition]="$partition"
-        print_telegraf slurm_nodes_by_partition local_tags "NODES_${partition}"
+        print_telegraf slurm_nodes_by_partition local_tags "NODES_${partition//-/_}"
     done
 }
 

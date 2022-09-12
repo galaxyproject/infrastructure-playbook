@@ -37,8 +37,6 @@
       tags: cron
     - role: services          # Manage services
       tags: services
-    #- role: dj-wasabi.telegraf
-    #  tags: stats,telegraf
   post_tasks:
     - name: Disable SELinux
       selinux:
@@ -48,6 +46,13 @@
         name: firewalld
         state: absent
   tags: initial,system
+
+- name: Telegraf tasks
+  # should we make a group for this?
+  hosts: controllers
+  roles:
+    - role: dj-wasabi.telegraf
+  tags: stats,telegraf
 
 - name: CVMFS tasks
   hosts: cvmfsclients

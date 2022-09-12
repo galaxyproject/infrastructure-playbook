@@ -81,6 +81,13 @@ controllers_group_files:
     owner: root
     group: root
 
+controllers_group_templates:
+  - src: templates/telegraf/slurm_slurp.sh.j2
+    dest: /usr/local/bin/slurm_slurp.sh
+    owner: root
+    group: root
+    mode: '0755'
+
 controllers_group_directories:
   #- path: /var/lib/slurm
   #  mode: "0755"
@@ -126,3 +133,20 @@ controllers_group_crontabs:
     job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
 
 telegraf_agent_hostname: "{{ inventory_hostname }}"
+telegraf_plugins_extra:
+  slurm_slurp:
+    plugin: "exec"
+    config:
+      - commands = ["/usr/local/bin/slurm_slurp.sh"]
+      - timeout = "120s"
+      - data_format = "influx"
+      - interval = "1m"
+
+slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
+slurm_slurp_partitions:
+  - normal
+  - quad
+  - multi
+  - large
+  - xl
+  - gpu-small
