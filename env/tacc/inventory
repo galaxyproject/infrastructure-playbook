@@ -128,6 +128,16 @@ dockerclients
 [rabbitmqservers]
 galaxy08.tacc.utexas.edu
 
+# provides
+#   - irods yum repo and icommands package install
+#   - irods config for users listed in group vars
 [irodsclients]
 [irodsclients:children]
+testgalaxyservers
+
+# provides
+#   - kubernetes yum repo and kubectl install
+#   - kube config for users listed in group vars
+[kubeclients]
+[kubeclients:children]
 testgalaxyservers
