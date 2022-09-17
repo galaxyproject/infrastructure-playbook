@@ -3,6 +3,11 @@
 - name: Tasks for "base environment" hosts
   hosts: baseenv
   remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - name: Gather facts
+      setup:
+      tags: always
   roles:
     - role: locale            # Configure default locale
       tags: locale
