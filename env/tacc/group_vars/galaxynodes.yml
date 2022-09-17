@@ -37,6 +37,13 @@ galaxynodes_group_packages:
   - libXext
   - mesa-libGL
 
+galaxynodes_group_templates:
+  - src: templates/slurm/prolog.sh.j2
+    dest: /etc/slurm/prolog.sh
+    mode: "0755"
+    owner: root
+    group: root
+
 galaxynodes_group_files:
   #- src: system/cleancgroups.py
   #  dest: ~root/cleancgroups.py
@@ -58,6 +65,11 @@ galaxynodes_group_crontabs:
     user: root
     minute: 0
     job: "/usr/local/bin/tmpwatch-auto /dev/shm"
+  - id: node_health_check
+    name: "Node health check"
+    user: root
+    minute: "{{ 59 | random(seed=inventory_hostname) }}"
+    job: /bin/bash /etc/slurm/prolog.sh cron 2>&1 | logger -t node-health-check
 
 # attempt to fix the following in medaka_variant:
 #   File "/cvmfs/main.galaxyproject.org/deps/_conda/envs/__medaka@1.3.2/lib/python3.8/multiprocessing/synchronize.py", line 57, in __init__

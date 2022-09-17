@@ -1,0 +1,95 @@
+#!/bin/bash
+set -euo pipefail
+
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# for running from cron
+if [[ -z ${SLURMD_NODENAME:-} ]]; then
+    export SLURMD_NODENAME=$(scontrol show slurmd | grep '^Hostname' | awk '{print $NF}')
+fi
+
+TIMEOUT=60
+KILL_AFTER=60
+
+MODE="${1:-prolog}"
+REPOS=(
+{% for item in slurm_prolog_cvmfs_repos %}
+    {{ item }}
+{% endfor %}
+)
+DIRS=(
+{% for item in slurm_prolog_dirs %}
+    {{ item }}
+{% endfor %}
+)
+USERS=(
+{% for item in slurm_prolog_users %}
+    {{ item }}
+{% endfor %}
+)
+
+
+function node_field() {
+    sinfo -h -O "$1" -n $SLURMD_NODENAME
+}
+
+
+if [[ $MODE == 'cron' ]]; then
+
+    # reexecute with timeout as if we are slurmd
+    timeout --kill-after=$KILL_AFTER $TIMEOUT $BASH ${BASH_SOURCE[0]} prolog && {
+        # node is ok, resume if set to draining due to this script
+        read state reason < <(node_field StateLong,Reason)
+        if [[ $state == 'drain'* ]] && [[ $reason == 'Prolog error' || $reason == 'Cron check'* ]]; then
+            scontrol update NodeName=$SLURMD_NODENAME State=RESUME
+            echo 'node resumed'
+        fi
+        echo 'OK'
+    } || {
+        # node is not ok, set to drain if it's not already
+        rc=$?
+        if [[ $rc -eq 124 || $rc -eq 137 ]]; then
+            reason='timed out'
+        else
+            reason='failed'
+        fi
+        state=$(node_field StateLong)
+        if [[ $state != 'down'* && $state != 'drain'* ]]; then
+            scontrol update NodeName=$SLURMD_NODENAME State=DRAIN Reason="Cron check ${reason}"
+            echo 'node set to drain'
+        fi
+        echo "Check $reason"
+    }
+
+else
+
+    # check /cvmfs repos and remount if crashed
+    for repo in ${REPOS[@]}; do
+        dir="/cvmfs/${repo}"
+        output=$(ls "$dir" 2>&1) || {
+            rc=$?
+            echo "$output"
+            if [[ $output == *'Transport endpoint is not connected' ]]; then
+                /bin/umount "$dir"
+                /bin/ls "$dir" >/dev/null
+                echo "remount succeeded: ${dir}"
+            else
+                exit $rc
+            fi
+        }
+    done
+
+    # check NFS dirs
+    for dir in ${DIRS[@]}; do
+        ls "$dir" >/dev/null
+    done
+
+    # check user existence and restart sssd if needed
+    for user in ${USERS[@]}; do
+        id "$user" >/dev/null || {
+            systemctl restart sssd
+            id "$user" >/dev/null
+        }
+    done
+
+fi
