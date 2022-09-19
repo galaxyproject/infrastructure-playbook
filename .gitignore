@@ -17,3 +17,4 @@ roles/galaxyproject.slurm
 roles/geerlingguy.repo-epel
 roles/usegalaxy_eu.certbot
 roles/galaxyproject.gxadmin
+roles/artis3n.tailscale

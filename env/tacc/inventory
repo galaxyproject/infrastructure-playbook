@@ -141,3 +141,9 @@ testgalaxyservers
 [kubeclients]
 [kubeclients:children]
 testgalaxyservers
+
+# provides
+#   - tailscale_authkey
+#   - access to the tailnet
+[tailscalemachines]
+galaxy07.tacc.utexas.edu

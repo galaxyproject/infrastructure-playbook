@@ -21,6 +21,8 @@ roles:
     version: 0.13.3
   - name: galaxyproject.gxadmin
     version: 0.0.8
+  - name: artis3n.tailscale
+    version: v3.2.3
 
 collections:
   - name: community.grafana
