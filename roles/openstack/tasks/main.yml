@@ -4,4 +4,16 @@
   when: os_jump_host is defined
 
 - import_tasks: secrets.yml
-- import_tasks: spawn.yml
+
+- include_tasks: initialize.yml
+  when:
+    - os_network is defined
+    - os_security_group_rules is defined
+
+- include_tasks: spawn.yml
+  when:
+    - os_image is defined
+    - os_flavor is defined
+    - os_key_name is defined
+    - os_nics is defined
+    - os_security_groups is defined

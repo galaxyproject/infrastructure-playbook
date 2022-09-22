@@ -4,12 +4,17 @@ cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=true
 cvmfs1-tacc0.galaxyproject.org ansible_user=rocky ansible_become=true ansible_host=129.114.39.51
 
 [jetstreamhosts]
+openstackinitialize
 jetstream2.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 cvmfs1-tacc0.galaxyproject.org
 
 [jetstreamtacchosts]
 cvmfs1-tacc0.galaxyproject.org
+
+[openstackinitializer]
+# this is a fake host, all tasks run locally. sets up openstack networks and security groups
+openstackinitialize
 
 [imagehosts]
 usegalaxy-node

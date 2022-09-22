@@ -1,0 +1,55 @@
+---
+
+os_public_network: public
+
+os_network:
+  name: "usegalaxy"
+  subnet:
+    name: "usegalaxy"
+    cidr: 10.0.0.0/22
+  router:
+    name: "usegalaxy"
+    network: "{{ os_public_network }}"
+    interfaces:
+      # the openstack router module will attempt to detach any unlisted subnets, so this needs to be exhaustive even if we don't configure all of these subnets here
+      - "usegalaxy"
+      - "am-it-subnet"
+
+os_security_group_rules:
+  - name: usegalaxy-control
+    rules:
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 22
+        port_range_max: 22
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 80
+        port_range_max: 80
+      - protocol: tcp
+        remote_ip_prefix: 129.114.60.0/24
+        port_range_min: 1
+        port_range_max: 65535
+      - protocol: udp
+        remote_ip_prefix: 129.114.60.0/24
+        port_range_min: 1
+        port_range_max: 65535
+      - protocol: udp
+        remote_ip_prefix: 129.114.60.0/24
+        port_range_min: 1
+        port_range_max: 65535
+  - name: cvmfs
+    rules:
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 22
+        port_range_max: 22
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 80
+        port_range_max: 80
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 3128
+        port_range_max: 3128
+

@@ -22,4 +22,8 @@ galaxy tacc jsiu jstacc js2:
 usegalaxy-node-image:
 	ansible-playbook -i env/js2/inventory env/js2/image.yml --limit=usegalaxy-node
 
+js2-openstack-init:
+	# sets up router, subnets, security groups, etc.
+	ansible-playbook -i env/js2/inventory env/js2/jetstream.yml --limit=openstackinitialize
+
 .PHONY: galaxy tacc jsiu jstacc js2 usegalaxy-node-image
