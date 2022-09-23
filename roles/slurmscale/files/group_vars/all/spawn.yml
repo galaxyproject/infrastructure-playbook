@@ -1,7 +1,7 @@
 ---
 
-#image: JS-API-Featured-CentOS7-Latest
-image: usegalaxy-node
+image: >-
+  {{ (inventory_hostname | regex_search("^.*-gxit-.*") is none) | ternary("usegalaxy-node", "usegalaxy-gxit-node") }}
 key_name: admin-kp
 nics: net-name=usegalaxy
 security_groups: default

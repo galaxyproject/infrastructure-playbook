@@ -4,6 +4,7 @@ vault_pass: "{{ vault_vault_pass }}"
 all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
+slurm_scale_tailscale_authkey: "{{ vault_slurm_scale_tailscale_authkey }}"
 
 default_kernel: kernel-ml
 
@@ -16,8 +17,8 @@ jetstream_local_controller_address: "{{ controller_name }}.js2local"
 jetstream_local_cvmfs_stratum1_address: "cvmfs1-iu0.js2local"
 jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.js2local"
 
-usegalaxy_node_image_name: usegalaxy-node
-#openstack_image: JS-API-Featured-CentOS7-May-11-2018
+# Used by the image generation playbook, instances names match the image name
+usegalaxy_node_image_name: "{{ inventory_hostname }}"
 
 # Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in
 # sshkeys provided by the sshservers group vars)
@@ -44,17 +45,12 @@ ceph_mounts:
     opts: noatime,_netdev
     fstype: fuse.ceph
 
-ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ os_key_name }}.pem"
-
 slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
 slurm_controller_name: "{{ controller_name }}"
 slurm_controller_ip: "{{ controller_ip }}"
 
 os_cloud_id: "{{ cloud_id }}"
 os_clouds_yaml: "{{ clouds_yaml }}"
-os_secrets:
-  - dest: "{{ os_key_name }}.pem"
-    content: "{{ openstack_privatekeys.admin }}"
 
 os_name: "{{ inventory_hostname_short }}"
 
@@ -76,20 +72,18 @@ galaxy_cvmfs_repos_enabled: yes
 all_groups:
   - name: G-803372
     gid: 803372
-  - name: TACC-ACS
-    gid: 814239
 
 all_users:
   - name: g2test
     group: G-803372
-    groups: TACC-ACS
+    groups: docker
     comment: 'Galaxy Test Server'
     uid: 819456
     home: /home/g2test
     shell: /bin/bash
   - name: g2main
     group: G-803372
-    groups: TACC-ACS
+    groups: docker
     comment: 'Galaxy Main Server'
     uid: 819800
     home: /home/g2main

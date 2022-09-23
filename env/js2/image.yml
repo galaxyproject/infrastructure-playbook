@@ -59,6 +59,7 @@
             home: "/home/{{ item.name }}"
             shell: /bin/bash
             group: G-803372
+            groups: docker
             create_home: true
           loop:
             - name: g2main
@@ -74,6 +75,7 @@
               - git
               - libcgroup-tools
               - singularity-runtime
+              - python39
           # sometimes mirrors are broken
           register: packages_installed
           retries: 10
@@ -154,6 +156,33 @@
           service:
             name: slurmd
             enabled: false
+
+        # docker is already installed in the feature image
+        #- name: Install Docker
+        #  import_role:
+        #    name: docker
+
+        #- name: Add Galaxy users to docker group
+        #  user:
+        #    name: "{{ item.name }}"
+        #    groups: docker
+        #    append: true
+        #  loop:
+        #    - name: g2main
+        #    - name: g2test
+
+        - name: Install Tailscale
+          include_role:
+            name: artis3n.tailscale
+          when: inventory_hostname == "usegalaxy-gxit-node"
+
+        - name: Install galaxy-job-execution
+          pip:
+            name: "{{ galaxy_job_execution_pip_name | default('galaxy-job-execution') }}"
+            extra_args: --extra-index-url=https://wheels.galaxyproject.org/
+            virtualenv: /opt/galaxy-job-execution
+            virtualenv_command: /usr/bin/python3.9 -m venv
+          when: inventory_hostname == "usegalaxy-gxit-node"
 
         - name: Stop services for cleaning
           service:

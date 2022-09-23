@@ -79,6 +79,7 @@
   loop:
     - path: group_vars/all/cloud.yml
     - path: group_vars/all/slurm.yml
+    - path: group_vars/all/tailscale.yml
     - path: inventory/openstack.yml
 
 #- name: Create symlinks
@@ -177,6 +178,7 @@
     mode: 0600
   no_log: yes
 
+# FIXME: the playbook writes clouds.yaml and removes it so this should be unnecessary right?
 - name: Write clouds.yaml
   copy:
     content: "{{ clouds_yaml | to_nice_yaml }}"
@@ -201,7 +203,7 @@
       cd "{{ slurm_scale_root }}/etc/infrastructure-playbook"
       while read id name; do
           case "$name" in
-              usegalaxy-node-*)
+              usegalaxy-node-*|usegalaxy-gxit-node-*)
                   echo "Deleting ${name} (${id})"
                   openstack image delete "$id" || echo "WARNING: Image ${id} failed to delete, but this is ok if it is still in use"
                   ;;
@@ -220,7 +222,7 @@
     hour: 0
     minute: 0
     weekday: 0
-    job: ". {{ slurm_scale_root }}/bin/activate && make -C {{ slurm_scale_root }}/etc/infrastructure-playbook usegalaxy-node-image"
+    job: ". {{ slurm_scale_root }}/bin/activate && make -C {{ slurm_scale_root }}/etc/infrastructure-playbook usegalaxy-node-images"
 
 - name: Create image cleanup cron job
   cron:

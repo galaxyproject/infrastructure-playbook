@@ -4,7 +4,7 @@
   yum_repository:
     name: "docker-ce"
     description: "Docker CE Stable - $basearch"
-    baseurl: "https://download.docker.com/linux/centos/7/$basearch/stable"
+    baseurl: "https://download.docker.com/linux/centos/$releasever/$basearch/stable"
     gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Docker-CE"
     gpgcheck: yes
     enabled: yes

@@ -1,5 +1,15 @@
 ---
 
+# FIXME: do this but with a short timeout and ignore all errors
+#- name: Stop instance(s)
+#  hosts: galaxynodes
+#  gather_facts: false
+#  tasks:
+#    - name: Disconnect from tailnet
+#      command: "/usr/bin/tailscale logout"
+#      become: true
+#  when: "inventory_hostname.startswith('js2-gxit-')"
+
 - name: Stop instance(s)
   hosts: galaxynodes
   connection: local
