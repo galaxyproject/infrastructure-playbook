@@ -1,4 +1,8 @@
-jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true
+# If python39 is installed then Ansible automatically uses that, but the Disable SELinux task fails because
+# selinux cannot be imported. The python3-libselinux package exists for 3.6 but there is no python39-libselinux.
+#
+# You should probably set this as the default for all Rocky 8 hosts
+jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true ansible_python_interpreter=/usr/bin/python3.6
 usegalaxy-node ansible_user=rocky ansible_become=true
 usegalaxy-gxit-node ansible_user=rocky ansible_become=true
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=true

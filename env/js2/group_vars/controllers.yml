@@ -133,6 +133,8 @@ controllers_group_crontabs:
     job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
 
 telegraf_agent_hostname: "{{ inventory_hostname }}"
+# not sure why but it's establishing connections very slowly
+telegraf_influxdb_output_timeout: "15s"
 telegraf_plugins_extra:
   slurm_slurp:
     plugin: "exec"
@@ -150,3 +152,4 @@ slurm_slurp_partitions:
   - large
   - xl
   - gpu-small
+  - gxit

@@ -12,6 +12,8 @@ telegraf_agent_output:
     - username = "client"
     - password = "{{ influxdb_client_pass }}"
     - database = "system"
+    # 5s is the default if unset
+    - timeout = "{{ telegraf_influxdb_output_timeout | default('5s') }}"
 
 telegraf_plugins_default:
   - plugin: cpu

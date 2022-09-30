@@ -57,6 +57,8 @@ cvmfs_http_proxies:
 cvmfs_install_setuid_cvmfs_wipecache: no
 cvmfs_install_setuid_cvmfs_remount_sync: yes
 
+teletraf_x509_cert_host: "{{ galaxy_instance_hostname }}"
+
 # log stats to telegraf locally
 #
 # separate db filtering for statsd (Galaxy timing) and system stuff using
@@ -124,7 +126,7 @@ telegraf_plugins_default:
     config:
       # could use the cert file directly, but this way we check the actual cert in use, you just have to filter out the
       # CA cert in grafana
-      - sources = ["https://{{ inventory_hostname }}:443"]
+      - sources = ["https://{{ teletraf_x509_cert_host | default(inventory_hostname) }}:{{ telegraf_x509_cert_port | default(443) }}"]
       # https://github.com/influxdata/telegraf/issues/8809
       - timeout = "5s"
   # double escape is required for valid TOML

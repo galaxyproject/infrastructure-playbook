@@ -42,6 +42,6 @@ toolshedservers_group_users:
 telegraf_plugins_extra:
   x509_cert:
     config:
-      - sources = ["https://{{ inventory_hostname }}:443"]
+      - sources = ["https://{{ telegraf_x509_cert_host | default(inventory_hostname) }}:{{ telegraf_x509_cert_port | default(443) }}"]
       # https://github.com/influxdata/telegraf/issues/8809
       - timeout = "5s"
