@@ -16,6 +16,11 @@
 
 - name: Tasks for "base environment" hosts
   hosts: baseenv
+  gather_facts: false
+  pre_tasks:
+    - name: Gather facts
+      setup:
+      tags: always
   roles:
     - role: requiretty        # Disable requiretty for Ansible ssh pipelining
       tags: requiretty
