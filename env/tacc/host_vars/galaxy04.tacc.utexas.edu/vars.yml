@@ -46,3 +46,5 @@ certbot_redirect_domains:
 
 # NOTE: overrides value from certbotservers group_vars
 certbot_well_known_root: /srv/apache/_well-known_root
+
+telegraf_x509_cert_host: cvmfs0-tacc0.galaxyproject.org
