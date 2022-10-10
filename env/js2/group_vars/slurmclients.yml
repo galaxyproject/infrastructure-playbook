@@ -55,6 +55,10 @@ slurm_config:
   SuspendTimeout: 60   # time between running SuspendProgram and the node being completely down
 
 slurm_nodes:
+  - name: "{{ slurm_cluster_name }}-tiny[0-7]"
+    State: CLOUD
+    CPUs: 1
+    RealMemory: 2984
   - name: "{{ slurm_cluster_name }}-small[0-7]"
     State: CLOUD
     CPUs: 2
@@ -85,8 +89,14 @@ slurm_nodes:
     RealMemory: 5937
 
 slurm_partitions:
+  - name: tpv
+    Nodes: "{{ slurm_cluster_name }}-tiny[0-1],{{ slurm_cluster_name }}-small[0-1],{{ slurm_cluster_name }}-quad[0-1],{{ slurm_cluster_name }}-medium[0-1]"
+    DefaultTime: "06:00:00"
+    MaxTime: "96:00:00"
+    MaxNodes: 1
+    State: UP
   - name: normal
-    Nodes: "{{ slurm_cluster_name }}-small[0-7]"
+    Nodes: "{{ slurm_cluster_name }}-small[2-7]"
     Default: YES
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
@@ -94,13 +104,13 @@ slurm_partitions:
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: quad
-    Nodes: "{{ slurm_cluster_name }}-quad[0-7]"
+    Nodes: "{{ slurm_cluster_name }}-quad[2-7]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
     State: UP
   - name: multi
-    Nodes: "{{ slurm_cluster_name }}-medium[0-47]"
+    Nodes: "{{ slurm_cluster_name }}-medium[2-47]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
