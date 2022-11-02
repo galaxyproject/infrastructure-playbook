@@ -1,3 +1,4 @@
+# the python requirements for running this playbook
 ansible
 dnspython
 openstacksdk
