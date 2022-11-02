@@ -1,0 +1,18 @@
+---
+# galaxyproject.org hosts
+
+all:
+  hosts:
+    claven.galaxyproject.org:
+      ansible_user: ubuntu
+  vars:
+    ansible_user: root
+  children:
+    smartos_hypervisors:
+      hosts:
+        smart5.galaxyproject.org:
+      vars:
+        ansible_python_interpreter: /opt/tools/bin/python3
+    list_servers:
+      hosts:
+        claven.galaxyproject.org:

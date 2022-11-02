@@ -1,0 +1,25 @@
+---
+
+- name: Gather facts if needed
+  setup:
+  when: bootstrap_tasks is not defined
+
+- name: Include bootstrap tasks
+  ansible.builtin.include_tasks:
+    file: "{{ item }}"
+  with_first_found:
+    - files:
+        # for when there are no facts
+        - "{{ bootstrap_tasks | default('__none__') }}.yaml"
+        # ubuntu-jammy, debian-bullseye, centos-core, "smartos-smartos 20221020t001410z x86_64"
+        - "{{ bootstrap_distribution }}-{{ bootstrap_distribution_release }}.yaml"
+        # ubuntu-22, debian-11, centos-7, smartos-__none__
+        - "{{ bootstrap_distribution }}-{{ bootstrap_distribution_major_version }}.yaml"
+        # ubuntu-22.04, debian-11, centos-7, smartos-joyent_20221020t001410z
+        - "{{ bootstrap_distribution }}-{{ bootstrap_distribution_version }}.yaml"
+        # ubuntu, debian, centos, smartos
+        - "{{ bootstrap_distribution }}.yaml"
+        # debian, debian, redhat, solaris
+        - "family-{{ bootstrap_os_family }}.yaml"
+      skip: true
+      errors: ignore

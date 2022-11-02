@@ -1,0 +1,6 @@
+---
+
+- name: SmartOS Hypervisor
+  hosts: smartos_hypervisors
+  roles:
+    - role: usegalaxy_org.smartos_hypervisor

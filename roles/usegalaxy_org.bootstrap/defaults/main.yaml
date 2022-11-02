@@ -1,0 +1,12 @@
+---
+
+bootstrap_role_required_vars:
+  smartos:
+    - smartos_hypervisor_pkgsrc_bootstrap_tar
+    - smartos_hypervisor_pkgsrc_bootstrap_sha
+
+bootstrap_distribution: "{{ (ansible_distribution | default('__none__')) | lower }}"
+bootstrap_distribution_major_version: "{{ (ansible_distribution_major_version | default('__none__')) | lower }}"
+bootstrap_distribution_version: "{{ (ansible_distribution_version | default('__none__')) | lower }}"
+bootstrap_distribution_release: "{{ (ansible_distribution_release | default('__none__')) | lower }}"
+bootstrap_os_family: "{{ (ansible_os_family | default('__none__')) | lower }}"

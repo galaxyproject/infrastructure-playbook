@@ -1,0 +1,29 @@
+---
+
+- name: Ensure required variables are set
+  ansible.builtin.assert:
+    that:
+      - "{{ item }} is defined"
+    fail_msg: "Required var is undefined: {{ item }}"
+    success_msg: "Required var is defined: {{ item }}"
+  loop: "{{ bootstrap_role_required_vars.smartos }}"
+
+- name: Bootstrap GZ pkgsrc tools
+  ansible.builtin.raw: >-
+    bash -c 'test -e /opt/tools/bin/pkgin || (
+    cd /var/tmp &&
+    curl -kO https://pkgsrc.smartos.org/packages/SmartOS/bootstrap/{{ smartos_hypervisor_pkgsrc_bootstrap_tar }} &&
+    [ "{{ smartos_hypervisor_pkgsrc_bootstrap_sha }}" = "$(/bin/digest -a sha1 {{ smartos_hypervisor_pkgsrc_bootstrap_tar }})" ] &&
+    tar -zxpf {{ smartos_hypervisor_pkgsrc_bootstrap_tar }} -C /
+    )'
+  register: __smartos_hypervisor_bootstrap_pkgsrc_result
+  changed_when: __smartos_hypervisor_bootstrap_pkgsrc_result.stdout != ""
+
+- name: Bootstrap Python for Ansible
+  ansible.builtin.raw: >-
+    bash -c 'test -e /opt/tools/bin/python3 || (
+    /opt/tools/bin/pkgin -y update ;
+    /opt/tools/bin/pkgin -y install python39
+    )'
+  register: __smartos_hypervisor_bootstrap_python_result
+  changed_when: __smartos_hypervisor_bootstrap_python_result.stdout != ""

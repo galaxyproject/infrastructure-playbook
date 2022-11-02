@@ -1,6 +1,6 @@
 ---
 
-common_sshkeys: "{{ vault_common_sshkeys }}"
+ssh_public_keys: "{{ vault_ssh_public_keys }}"
 galaxy_team_users: "{{ vault_galaxy_team_users }}"
 galaxy_cloud_team_users: "{{ vault_galaxy_cloud_team_users }}"
 galaxy_admin_users: "{{ vault_galaxy_admin_users }}"

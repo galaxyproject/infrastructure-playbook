@@ -4,7 +4,11 @@ smartos_images:
   # debian-10 20200508 linux zvol
   - uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
     state: present
+  # ubuntu-22.04 20220923 linux lx-dataset
+  - uuid: d0e36a16-1fed-4974-a24e-a29245070445
+    state: present
 
+# authorized keys are only on launch, the playbook manages the keys once run on the guest
 smartos_vms:
   - name: leeroy
     brand: bhyve
@@ -26,7 +30,7 @@ smartos_vms:
         model: virtio
         size: 1048576
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: jenkins0
     brand: bhyve
     ram: 4096
@@ -47,4 +51,25 @@ smartos_vms:
         model: virtio
         size: 524288
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: duvel2
+    brand: lx
+    kernel_version: 5.15.0-52-generic
+    image_uuid: d0e36a16-1fed-4974-a24e-a29245070445
+    hostname: duvel
+    max_physical_memory: 8192
+    quota: 8192
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        #ip: "{{ lookup('dig', 'duvel.galaxyproject.org') }}"
+        ip: 172.18.2.2
+        #netmask: 255.255.255.224
+        netmask: 255.255.255.0
+        #gateway: 128.118.250.1
+        gateway: 172.18.2.1
+        #vlan_id: 306
+        vlan_id: 406
+    delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
