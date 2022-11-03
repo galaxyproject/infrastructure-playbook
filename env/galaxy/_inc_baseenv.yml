@@ -6,8 +6,22 @@
   gather_facts: false
   pre_tasks:
     - name: Gather facts
-      setup:
+      ansible.builtin.setup:
       tags: always
+    # FIXME: upgrade sentry first
+    #- name: Group by distribution
+    #  ansible.builtin.group_by:
+    #    key: "{{ ansible_distribution | lower }}hosts"
+    #- name: Debian block
+    #  block:
+    #    - name: Ensure security repo is enabled
+    #      ansible.builtin.apt_repository:
+    #        repo: "{{ item }}"
+    #      loop:
+    #        # FIXME: main contrib non-free if contrib and non-free are enabled
+    #        - "deb https://deb.debian.org/debian-security/ {{ ansible_distribution_release }} main"
+    #        - "deb-src https://deb.debian.org/debian-security/ {{ ansible_distribution_release }} main"
+    #  when: "'debianhosts' in group_names"
   roles:
     - role: locale            # Configure default locale
       tags: locale
