@@ -13,6 +13,8 @@ server {
     access_log  /var/log/nginx/ask.galaxyproject.org_access.log;
     error_log   /var/log/nginx/ask.galaxyproject.org_error.log;
 
+    rewrite ^/$ /docs/ last;
+
     location / {
         proxy_pass          http://ask_app;
         proxy_buffering     off;
