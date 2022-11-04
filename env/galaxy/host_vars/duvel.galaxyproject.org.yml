@@ -12,9 +12,11 @@ nginx_servers:
 
 nginx_ssl_servers:
   - jenkins
+  - ask
 
 certbot_domains:
   - jenkins.galaxyproject.org
+  - ask.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
 

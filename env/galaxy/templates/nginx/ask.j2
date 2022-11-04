@@ -1,0 +1,25 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+upstream ask_app {
+    server ask-app.galaxyproject.org:8080;
+}
+
+server {
+    listen      *:443 ssl;
+    server_name ask.galaxyproject.org;
+
+    access_log  /var/log/nginx/ask.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/ask.galaxyproject.org_error.log;
+
+    location / {
+        proxy_pass          http://ask_app;
+        proxy_buffering     off;
+        proxy_set_header    X-Forwarded-Host $host;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    X-Forwarded-Proto $scheme;
+    }
+}
+
+# vim: set filetype=nginx
