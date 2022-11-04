@@ -42,7 +42,6 @@ galaxy-web-03.tacc.utexas.edu
 galaxy-web-04.tacc.utexas.edu
 galaxy-web-05.tacc.utexas.edu
 galaxy-web-06.tacc.utexas.edu
-galaxy-rocktest.tacc.utexas.edu
 
 [baseenv:children]
 galaxyservers
