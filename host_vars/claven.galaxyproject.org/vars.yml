@@ -1,0 +1,14 @@
+---
+
+filesystems:
+  - dev: /dev/nvme1n1
+    fstype: xfs
+
+mounts:
+  - name: /var/lib/mailman3
+    src: /dev/nvme1n1
+    fstype: xfs
+
+# These aren't explicitly required for Mailman 3, but they are needed for installing Mailman 3 Python deps on AWS
+# Graviton (arm) instances, which is why they are here and not in group_vars.
+host_packages: [gcc, g++, python3-dev]

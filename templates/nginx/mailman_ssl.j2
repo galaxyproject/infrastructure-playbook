@@ -17,7 +17,7 @@ server {
     server_name {{ domain }};
 
     location /static/ {
-        alias /var/opt/mailman3/web/static/;
+        alias {{ mailman3_django_static_dir }}/;
     }
 
     location / {

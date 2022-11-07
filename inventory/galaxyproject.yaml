@@ -2,17 +2,33 @@
 # galaxyproject.org hosts
 
 all:
+
   hosts:
     claven.galaxyproject.org:
+      # temp
+      #ansible_host: 172.18.2.3
+      ansible_host: 3.19.70.111
       ansible_user: ubuntu
+      ansible_become: true
+
+    #el7:
+    #  ansible_host: 172.18.2.4
+
   vars:
     ansible_user: root
+
   children:
+
     smartos_hypervisors:
       hosts:
         smart5.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
+
     list_servers:
       hosts:
         claven.galaxyproject.org:
+
+    #dbtest:
+    #  hosts:
+    #    el7:

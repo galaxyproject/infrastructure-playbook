@@ -1,0 +1,65 @@
+# FIXME: use certbot_redirect.j2
+#server {
+#    listen 80 default_server;
+#    listen [::]:80 default_server;
+#
+#    server_name {{ inventory_hostname }} {{ mailman3_domains | join(' ') }};
+#
+#    location /.well-known/ {
+#        root {{ certbot_well_known_root }};
+#    }
+#
+#    location / {
+#        return 302 https://$host$request_uri;
+#    }
+#}
+
+# For archiving
+server {
+    listen 127.0.0.1:80;
+    listen [::1]:80;
+
+    server_name localhost;
+
+    client_max_body_size 16M;
+
+    location /static/ {
+        alias {{ mailman3_django_static_dir }}/;
+    }
+
+    location / {
+        proxy_pass       http://unix:/run/mailman3-web@{{ mailman3_domains.0 }}.sock;
+        proxy_redirect   off;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+   }
+}
+
+# FIXME TEST TEST TEST
+{% for domain in mailman3_web_domains | default(mailman3_domains) %}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name {{ domain }} {{ domain }}.127.0.0.1.nip.io {{ domain }}.{{ ansible_ec2_public_ipv4 }}.nip.io;
+
+    client_max_body_size 16M;
+
+    location /static/ {
+        alias {{ mailman3_django_static_dir }}/;
+    }
+
+    location / {
+        proxy_pass       http://unix:{{ mailman3_wsgi_socket | replace('%i', domain) }};
+        proxy_redirect   off;
+        #proxy_set_header Host              $host;
+        proxy_set_header Host              "{{ domain }}";
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+   }
+}
+{% endfor %}

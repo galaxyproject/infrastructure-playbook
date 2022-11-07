@@ -2,7 +2,7 @@
 
 roles:
   - name: galaxyproject.nginx
-    version: 0.6.3
+    version: 0.7.1
   - name: galaxyproject.mailman3
     src: https://github.com/galaxyproject/ansible-mailman3
   - name: galaxyproject.opendkim
@@ -10,7 +10,9 @@ roles:
   - name: galaxyproject.postfix
     version: 0.1.1
   - name: galaxyproject.postgresql
-    version: 1.0.2
+    version: 1.1.1
+  - name: galaxyproject.postgresql_objects
+    version: 1.2.0
   - name: usegalaxy_eu.certbot
     version: 0.1.4
   - name: galaxyproject.slurm
@@ -25,6 +27,8 @@ roles:
     version: v3.2.3
 
 collections:
+  - name: galaxyproject.general
+    version: 1.0.0
   - name: community.grafana
     version: 1.1.0
   - name: community.rabbitmq
