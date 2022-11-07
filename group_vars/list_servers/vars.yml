@@ -1,0 +1,170 @@
+---
+
+#
+# galaxyproject.postgresql_objects
+#
+
+postgresql_objects_users:
+  - name: mailman3-web
+  - name: list
+postgresql_objects_databases:
+  - name: mailman3_web
+    owner: mailman3-web
+  - name: mailman3_core
+    owner: list
+
+# This is only used by the listservers.yml playbook itself to relocate the pgdata dir into the Mailman EBS volume
+#mailman3_pgdata: /var/opt/mailman3/postgresql
+
+#
+# galaxyproject.mailman3
+#
+
+# These vars are in all.yml so that they can be used with MXs:
+# - mailman3_domains
+# - mailman3_distribute_maps_dir
+mailman3_distribute_maps_dir: /var/list
+mailman3_domains:
+  - lists.galaxyproject.org
+  - lists.anvilproject.org
+
+#mailman3_django_superusers: "{{ vault_mailman3_django_superusers }}"
+mailman3_django_superusers:
+  - name: test
+    email: nate@bx.psu.edu
+    pass: test
+#mailman3_core_api_admin_user: "{{ vault_mailman3_core_api_admin_user }}"
+#mailman3_core_api_admin_pass: "{{ vault_mailman3_core_api_admin_pass }}"
+#mailman3_archiver_key: "{{ vault_mailman3_archiver_key }}"
+## this isn't a role var, we just use it in the django config below
+#mailman3_django_secret_key: "{{ vault_mailman3_django_secret_key }}"
+mailman3_django_secret_key: "BORK"
+
+mailman3_config:
+  mailman:
+    site_owner: listmaster@lists.galaxyproject.org
+  mta:
+    # bypass the content filter (amavisd-new) for Mailman messages since they were scanned on the way in
+    smtp_port: 10025
+  database:
+    class: mailman.database.postgresql.PostgreSQLDatabase
+    url: postgres:///mailman3_core?host=/var/run/postgresql
+  arc:
+    enabled: 'yes'
+    privkey: "/etc/dkimkeys/mail.private"
+    selector: mail
+    domain: lists.galaxyproject.org
+    dmarc: 'yes'
+    dkim: 'yes'
+    authserv_id: lists.galaxyproject.org
+    trusted_authserv_ids: lists.galaxyproject.org, lists.anvilproject.org, galaxyproject.org
+
+mailman3_postorius_root: ''
+mailman3_hyperkitty_root: 'archives/'
+
+mailman3_django_config:
+  secret_key: "{{ mailman3_django_secret_key }}"
+  # mostly using django sites instead but FILTER_VHOST uses this
+  use_x_forwarded_host: true
+  # store on the filesystem instead of the database
+  hyperkitty_attachment_folder: "{{ mailman3_web_var_dir }}/attachments"
+  databases:
+    default:
+      ENGINE: django.db.backends.postgresql_psycopg2
+      NAME: mailman3_web
+      HOST: /var/run/postgresql
+  haystack_engine: xapian_backend.XapianEngine
+  # FIXME: testing
+  debug: true
+
+mailman3_extra_packages:
+  - psycopg2-binary
+  - xapian-haystack
+
+## These are set in the distribute maps playbook's inventory file in [vars:all] and on the host
+#mailman3_distribute_maps:
+#  - host: all
+#    mailman3_distribute_maps_dir: "{{ mailman3_distribute_maps_dir }}"
+#    mailman3_postmap_command: /usr/sbin/postmap
+#  - host: artifact.galaxyproject.org
+#  - host: newtrail.galaxyproject.org
+
+#
+# galaxyproject.postfix
+#
+
+postfix_role: mda
+postfix_mailname: "{{ inventory_hostname }}"
+
+# This is set by default in galaxyproject.mailman3, but postfix runs before mailman
+postfix_mailman3_var_dir: /var/lib/mailman3/core
+postfix_config:
+  #proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  transport_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
+  local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
+  relay_domains: hash:{{ postfix_mailman3_var_dir }}/postfix_domains
+
+postfix_amavisd_new_config:
+  '@local_domains_acl': (".$mydomain", "{{ mailman3_domains | join('", "') }}")
+  # don't alter subject
+  $sa_spam_subject_tag: null
+  # always add headers
+  $sa_tag_level_deflt: -9999
+  # add "spam detected" headers at this level
+  $sa_tag2_level_deflt: 6.31
+  # discard viruses, spam, and messages containing banned files
+  $final_virus_destiny: D_DISCARD
+  $final_banned_destiny: D_DISCARD
+  $final_spam_destiny: D_DISCARD
+  $final_bad_header_destiny: D_PASS
+  # FIXME: need spamassassin plugin for mailman
+  # don't check spam bound for Mailman (Mailman does it itself)
+  #'@bypass_spam_checks_acl': @spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})
+  #'@spam_kill_level_maps': ({'lists.galaxyproject.org' => 9999 }, \$sa_kill_level_deflt, )
+
+postfix_aliases:
+  mailer-daemon: postmaster
+  postmaster: root
+  nobody: root
+  hostmaster: root
+  usenet: root
+  news: root
+  webmaster: root
+  www: root
+  ftp: root
+  abuse: root
+  noc: root
+  security: root
+  postorius: root
+  listmaster: root
+  root: root@galaxyproject.org
+
+#
+# galaxyproject.nginx + usegalaxy_eu.certbot
+#
+
+nginx_flavor: core
+nginx_servers:
+  #- cerbot_redirects
+  # localhost access for archiver
+  - mailman
+#nginx_ssl_servers:
+#  - mailman_ssl
+
+#nginx_ssl_role: usegalaxy_eu.certbot
+#nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+#nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
+
+certbot_auto_renew: true
+certbot_auto_renew_cron_file: ansible_certbot_auto_renew
+certbot_auto_renew_user: root
+#certbot_environment: staging
+certbot_auth_method: --webroot
+certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"
+certbot_admin_email: nate@bx.psu.edu
+certbot_agree_tos: --agree-tos
+certbot_well_known_root: /srv/nginx/_well-known_root
+certbot_share_key_users:
+  - www-data
+certbot_post_renewal: |
+  systemctl restart nginx || true

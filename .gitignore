@@ -13,6 +13,7 @@ roles/galaxyproject.nginx
 roles/galaxyproject.opendkim
 roles/galaxyproject.postfix
 roles/galaxyproject.postgresql
+roles/galaxyproject.postgresql_objects
 roles/galaxyproject.slurm
 roles/geerlingguy.repo-epel
 roles/usegalaxy_eu.certbot

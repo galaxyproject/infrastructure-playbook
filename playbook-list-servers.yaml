@@ -1,0 +1,23 @@
+---
+
+- name: List Servers
+  hosts: list_servers
+  roles:
+    - role: galaxyproject.general.virtual
+      tags: [general]
+    - role: galaxyproject.general.packages
+      tags: [general, mailman]
+    - role: galaxyproject.general.paths
+      tags: [general, mailman]
+    - role: galaxyproject.postfix
+      tags: postfix
+    - role: galaxyproject.postgresql
+      tags: postgres
+    - role: galaxyproject.postgresql_objects
+      become: true
+      become_user: postgres
+      tags: postgres
+    - role: galaxyproject.mailman3
+      tags: mailman
+    - role: galaxyproject.nginx
+      tags: nginx
