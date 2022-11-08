@@ -12,7 +12,6 @@ slurm_controller_ip: 129.114.60.125
 slurm_cluster_name: roundup
 slurm_dbd_server_name: galaxy08
 #slurm_dbd_server_ip: 129.114.60.125
-slurm_dbd_server_port: 7031
 
 # FIXME: old paths?
 #slurmd_spool_dir: /var/lib/slurm/slurmd/slurmd.spool
@@ -58,9 +57,7 @@ slurm_config:
   SelectTypeParameters: CR_CPU_Memory
   SwitchType: switch/none
 
-  SlurmctldPort: 7002
   SlurmctldTimeout: 300
-  SlurmdPort: 7003
   #SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
   SlurmdSpoolDir: /var/lib/slurm/slurmd/slurmd.spool
   SlurmdTimeout: 300
@@ -70,7 +67,6 @@ slurm_config:
   DefaultStorageLoc: /var/log/slurm/slurm_accounting
   AccountingStorageType: accounting_storage/slurmdbd
   AccountingStorageHost: "{{ slurm_dbd_server_name }}"
-  AccountingStoragePort: "{{ slurm_dbd_server_port }}"
 
   JobAcctGatherType: jobacct_gather/cgroup
   JobAcctGatherFrequency: task=15

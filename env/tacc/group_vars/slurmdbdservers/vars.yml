@@ -6,7 +6,6 @@ slurmdbd_config:
   AuthType: auth/munge
   DbdAddr: 129.114.60.125
   DbdHost: galaxy08
-  DbdPort: 7031
   DebugLevel: 4
   LogFile: /var/log/slurm/slurmdbd.log
   PidFile: /var/run/slurmdbd.pid
