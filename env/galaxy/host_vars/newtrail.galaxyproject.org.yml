@@ -21,7 +21,6 @@ nginx_servers:
 nginx_ssl_servers:
   - wiki
   - galaxydomains
-  - gxy.io
   - toolshed.tools
   - galaxy.tools
 
@@ -40,7 +39,6 @@ certbot_domains:
   - getgalaxy.org
   - galaxy.training
   - new.galaxyproject.org
-  - gxy.io
   - toolshed.tools
   - galaxy.tools
 

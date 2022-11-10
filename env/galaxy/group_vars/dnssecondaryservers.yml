@@ -26,7 +26,6 @@ dns_bind_views:
       - name: 'galaxyworkbench.org'
       - name: 'galaxy.tools'
       - name: 'toolshed.tools'
-      - name: 'gxy.io'
       - name: 'galaxy.training'
       - name: '0.18.172.in-addr.arpa'
       - name: '2.18.172.in-addr.arpa'
@@ -54,5 +53,4 @@ dns_bind_views:
       - name: 'galaxyworkbench.org'
       - name: 'galaxy.tools'
       - name: 'toolshed.tools'
-      - name: 'gxy.io'
       - name: 'galaxy.training'
