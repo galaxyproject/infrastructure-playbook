@@ -143,6 +143,13 @@ telegraf_plugins_extra:
       - timeout = "120s"
       - data_format = "influx"
       - interval = "1m"
+  http_response:
+    config:
+      # TODO: how does this name get updated in dns?
+      - urls = ["http://cvmfs1-js2.js2local/cvmfs/main.galaxyproject.org/.cvmfspublished"]
+      - http_proxy = "http://localhost:3128"
+      - response_status_code = 200
+      - interface = "lo"
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:

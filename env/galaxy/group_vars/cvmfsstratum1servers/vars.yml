@@ -3,6 +3,15 @@
 firewalld_state: absent
 selinux_state: disabled
 
+telegraf_plugins_extra:
+  http_response:
+    config:
+      - urls = ["http://localhost/cvmfs/main.galaxyproject.org/.cvmfspublished"]
+      - response_status_code = 200
+      - interface = "lo"
+      - '[inputs.http_response.headers]'
+      - '  Host = "{{ inventory_hostname }}"'
+
 galaxy_cvmfs_repos_enabled: false
 
 cvmfsstratum1servers_group_authorized_key_users:

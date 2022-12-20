@@ -1,5 +1,14 @@
 ---
 
+telegraf_plugins_extra:
+  http_response:
+    config:
+      - urls = ["http://localhost/cvmfs/main.galaxyproject.org/.cvmfspublished"]
+      - response_status_code = 200
+      - interface = "lo"
+      - '[inputs.http_response.headers]'
+      - '  Host = "{{ inventory_hostname }}"'
+
 #cvmfs_manage_units_group: docker
 cvmfsstratum0servers_group_packages:
   # for usegalaxy-tools
