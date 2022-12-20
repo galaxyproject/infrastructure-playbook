@@ -146,7 +146,7 @@ telegraf_plugins_extra:
   http_response:
     config:
       # TODO: how does this name get updated in dns?
-      - urls = ["http://cvmfs1-js2.js2local/cvmfs/main.galaxyproject.org/.cvmfspublished"]
+      - urls = ["http://cvmfs1-js2.js2local/cvmfs/info/v1/meta.json"]
       - http_proxy = "http://localhost:3128"
       - response_status_code = 200
       - interface = "lo"
