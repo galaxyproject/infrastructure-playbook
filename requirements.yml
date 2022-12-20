@@ -23,6 +23,8 @@ roles:
     version: 0.0.8
   - name: artis3n.tailscale
     version: v3.2.3
+  - name: galaxyproject.telegraf_cvmfs
+    version: 1.0.0
 
 collections:
   - name: community.grafana

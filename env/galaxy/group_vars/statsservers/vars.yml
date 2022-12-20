@@ -1,5 +1,29 @@
 ---
 
+telegraf_cvmfs_check_servers:
+  hosts:
+    - cvmfs1-tacc0.galaxyproject.org
+    - cvmfs1-iu0.galaxyproject.org
+    - cvmfs1-psu0.galaxyproject.org
+  repos:
+    - test.galaxyproject.org
+    - main.galaxyproject.org
+    - data.galaxyproject.org
+    - singularity.galaxyproject.org
+  combined:
+    - host: cvmfs0-tacc0.galaxyproject.org
+      repos:
+        - main.galaxyproject.org
+    - host: cvmfs0-psu0.galaxyproject.org
+      repos:
+        - data.galaxyproject.org
+    - host: cvmfs0-psu1.galaxyproject.org
+      repos:
+        - test.galaxyproject.org
+    - host: cvmfs-stratum0.galaxyproject.eu
+      repos:
+        - singularity.galaxyproject.org
+
 #stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
 
 #stats_ssl_certs:
