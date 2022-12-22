@@ -215,8 +215,9 @@
     - role: geerlingguy.repo-epel
       when: ansible_os_family == "RedHat"
     - role: galaxyproject.cvmfs
-    - role: docker
-      when: "'cvmfsstratum0servers' in group_names"
+    # FIXME: why was this done? is it still necessary?
+    #- role: docker
+    #  when: "'cvmfsstratum0servers' in group_names"
   post_tasks:
     - name: Allow other access to FUSE mounts
       lineinfile:

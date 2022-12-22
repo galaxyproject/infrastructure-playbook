@@ -35,14 +35,6 @@ cvmfs_repositories:
     server_options:
       - CVMFS_GARBAGE_COLLECTION=true
     client_options: []
-  - repository: singularity.galaxyproject.org
-    stratum0: cvmfs0-psu0.galaxyproject.org
-    owner: singularity
-    server_options:
-      - CVMFS_AUTO_TAG=false
-      - CVMFS_GARBAGE_COLLECTION=true
-      - CVMFS_AUTO_GC=false
-    client_options: []
   - repository: usegalaxy.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: usegalaxy

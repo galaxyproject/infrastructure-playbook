@@ -19,6 +19,10 @@ cvmfs_repositories:
       - CVMFS_VIRTUAL_DIR=true
     client_options:
       - CVMFS_NFILES=4096
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 0
+      hour: 0
 
 
 # old docker repo, docker now installed by the `docker` role
