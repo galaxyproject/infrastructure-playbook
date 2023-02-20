@@ -88,11 +88,13 @@ mailman3_extra_packages:
   - psycopg2-binary
   - xapian-haystack
 
-## These are set in the distribute maps playbook's inventory file in [vars:all] and on the host
-#mailman3_distribute_maps:
-#  - host: all
-#    mailman3_distribute_maps_dir: "{{ mailman3_distribute_maps_dir }}"
-#    mailman3_postmap_command: /usr/sbin/postmap
+# These are set in the distribute maps playbook's inventory file in [vars:all] and on the host
+mailman3_distribute_maps:
+  - host: all
+    mailman3_distribute_maps_dir: "{{ mailman3_distribute_maps_dir }}"
+    mailman3_postmap_command: /usr/sbin/postmap
+  # FIXME:
+  - host: mx1.example.org
 #  - host: artifact.galaxyproject.org
 #  - host: newtrail.galaxyproject.org
 
