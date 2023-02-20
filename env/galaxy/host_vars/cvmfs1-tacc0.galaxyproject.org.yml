@@ -3,9 +3,9 @@
 #cvmfs_srv_device: /dev/sdb
 mounts:
   - path: /srv/cvmfs
-    src: 129.114.52.151:/corral/main/projects/galaxy/cvmfs1-tacc0
+    src: 129.114.52.161:/corral/main/projects/galaxy/cvmfs1-tacc0
     fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.151 0 0
+    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.161 0 0
 
 cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.25) | int }}"
 
