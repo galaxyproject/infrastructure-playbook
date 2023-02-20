@@ -1,0 +1,4 @@
+---
+
+postgresql_relocate_pgdata_src: /var/lib/postgresql
+postgresql_relocate_pgdata_path_component: "{{ postgresql_relocate_pgdata_service_name | replace('postgresql@', '') | replace('-', '/') }}"

@@ -13,6 +13,8 @@
       tags: postfix
     - role: galaxyproject.postgresql
       tags: postgres
+    - role: usegalaxy_org.postgresql_relocate_pgdata
+      tags: postgres
     - role: galaxyproject.postgresql_objects
       become: true
       become_user: postgres

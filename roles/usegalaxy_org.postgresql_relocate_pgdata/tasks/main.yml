@@ -1,0 +1,93 @@
+---
+
+# This is not very generalizable and so not a published role. Also fairly specific to Debian/Ubuntu.
+#
+# Run this in between the postgresql and postgresql_objects roles.
+
+# Warning:
+#
+#  Once {{ postgresql_relocate_pgdata }} exists, this will never run again, so if you attached the volume to another
+#  instance you need to install 75ansible_pgdata.conf yourself.
+#
+# Note to future self:
+#
+#  I played around a bit with making a new cluster but to be safe you'd have to slurp the assigned port out of the new
+#  cluster's postgresql.conf and set it as a fact for use in the django settings template and postgresql_objects and
+#  that just seemed like overkill for a special case like this.
+
+- name: Check for relocated pgdata dir
+  stat:
+    path: "{{ postgresql_relocate_pgdata_dest }}"
+    follow: true
+  register: __postgresql_relocate_pgdata_dest_stat_result
+
+- name: Relocate block
+  block:
+
+    - name: Stop main cluster
+      service:
+        name: "{{ postgresql_relocate_pgdata_service_name }}"
+        state: stopped
+
+    - name: Create relocated pgdata dir
+      file:
+        path: "{{ postgresql_relocate_pgdata_dest }}"
+        state: directory
+        owner: postgres
+        group: postgres
+
+    - name: Copy existing cluster to relocated pgdata dir
+      synchronize:
+        src: "{{ postgresql_relocate_pgdata_src }}/{{ postgresql_relocate_pgdata_path_component }}/"
+        dest: "{{ postgresql_relocate_pgdata_dest }}"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set main cluster data_directory
+      copy:
+        content: |
+          data_directory = '{{ postgresql_relocate_pgdata_dest }}'
+        dest: /etc/postgresql/{{ postgresql_relocate_pgdata_path_component }}/conf.d/75ansible_pgdata.conf
+
+    - name: Slurp systemd service unit
+      slurp:
+        src: /lib/systemd/system/postgresql@.service
+      register: __postgresql_relocate_pgdata_service_unit
+
+    # Default unit contains RequiresMountsFor=/etc/postgresql/%I /var/lib/postgresql/%I
+    # and RequiresMountsFor cannot be overriden: https://github.com/systemd/systemd/issues/7479
+    - name: Set service unit fact
+      set_fact:
+        postgresql_relocate_pgdata_service_unit: >-
+          {{
+            __postgresql_relocate_pgdata_service_unit['content'] | b64decode
+              | replace(postgresql_relocate_pgdata_src ~ '/%I', postgresql_relocate_pgdata_dest )
+          }}
+
+    - name: Override systemd service unit
+      copy:
+        content: |
+          #
+          # This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+          #
+          {{ postgresql_relocate_pgdata_service_unit }}
+        dest: /etc/systemd/system/postgresql@.service
+        mode: "0644"
+      register: __postgresql_relocate_pgdata_service_unit_result
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
+      # because this role essentially only runs once, this will always be changed
+      when: __postgresql_relocate_pgdata_service_unit_result is changed
+
+    - name: Start main cluster
+      service:
+        name: "{{ postgresql_relocate_pgdata_service_name }}"
+        state: started
+
+    - name: Delete old pgdata dir
+      file:
+        path: "{{ postgresql_relocate_pgdata_src }}/{{ postgresql_relocate_pgdata_path_component }}"
+        state: absent
+
+  when: not __postgresql_relocate_pgdata_dest_stat_result.stat.exists

@@ -1,6 +1,16 @@
 ---
 
 #
+# usegalaxy_org.postgresql_relocate_pgdata
+#
+
+# Relocate PostgreSQL data dir on to the EBS volume. If Mailman were to run on a host where another service also needed
+# PostgreSQL, this would not be appropriate. But for Mailman, we want to keep everything contained on one volume that
+# can be easily attached to another instance.
+postgresql_relocate_pgdata_dest: /var/lib/mailman3/postgresql
+postgresql_relocate_pgdata_service_name: postgresql@14-main
+
+#
 # galaxyproject.postgresql_objects
 #
 
@@ -12,9 +22,6 @@ postgresql_objects_databases:
     owner: mailman3-web
   - name: mailman3_core
     owner: list
-
-# This is only used by the listservers.yml playbook itself to relocate the pgdata dir into the Mailman EBS volume
-#mailman3_pgdata: /var/opt/mailman3/postgresql
 
 #
 # galaxyproject.mailman3
