@@ -4,10 +4,7 @@
 all:
 
   hosts:
-    claven.galaxyproject.org:
-      # temp
-      #ansible_host: 172.18.2.3
-      ansible_host: 3.19.70.111
+    llv.galaxyproject.org:
       ansible_user: ubuntu
       ansible_become: true
 
@@ -27,7 +24,7 @@ all:
 
     list_servers:
       hosts:
-        claven.galaxyproject.org:
+        llv.galaxyproject.org:
 
     #dbtest:
     #  hosts:

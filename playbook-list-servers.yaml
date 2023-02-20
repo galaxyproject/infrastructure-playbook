@@ -4,11 +4,14 @@
   hosts: list_servers
   roles:
     - role: galaxyproject.general.virtual
-      tags: [general]
+      # postfix here to get the elastic IP
+      tags: [general, postfix]
     - role: galaxyproject.general.packages
       tags: [general, mailman]
     - role: galaxyproject.general.paths
       tags: [general, mailman]
+    - role: galaxyproject.opendkim
+      tags: [postfix, opendkim]
     - role: galaxyproject.postfix
       tags: postfix
     - role: galaxyproject.postgresql
@@ -23,3 +26,11 @@
       tags: mailman
     - role: galaxyproject.nginx
       tags: nginx
+  post_tasks:
+    - name: Add postfix user to opendkim group
+      user:
+        name: postfix
+        groups: opendkim
+      notify:
+        - restart postfix
+      tags: postfix

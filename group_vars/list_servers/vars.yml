@@ -35,17 +35,12 @@ mailman3_domains:
   - lists.galaxyproject.org
   - lists.anvilproject.org
 
-#mailman3_django_superusers: "{{ vault_mailman3_django_superusers }}"
-mailman3_django_superusers:
-  - name: test
-    email: nate@bx.psu.edu
-    pass: test
-#mailman3_core_api_admin_user: "{{ vault_mailman3_core_api_admin_user }}"
-#mailman3_core_api_admin_pass: "{{ vault_mailman3_core_api_admin_pass }}"
-#mailman3_archiver_key: "{{ vault_mailman3_archiver_key }}"
+mailman3_django_superusers: "{{ vault_mailman3_django_superusers }}"
+mailman3_core_api_admin_user: "{{ vault_mailman3_core_api_admin_user }}"
+mailman3_core_api_admin_pass: "{{ vault_mailman3_core_api_admin_pass }}"
+mailman3_archiver_key: "{{ vault_mailman3_archiver_key }}"
 ## this isn't a role var, we just use it in the django config below
-#mailman3_django_secret_key: "{{ vault_mailman3_django_secret_key }}"
-mailman3_django_secret_key: "BORK"
+mailman3_django_secret_key: "{{ vault_mailman3_django_secret_key }}"
 
 mailman3_config:
   mailman:
@@ -55,7 +50,7 @@ mailman3_config:
     smtp_port: 10025
   database:
     class: mailman.database.postgresql.PostgreSQLDatabase
-    url: postgres:///mailman3_core?host=/var/run/postgresql
+    url: postgresql:///mailman3_core?host=/var/run/postgresql
   arc:
     enabled: 'yes'
     privkey: "/etc/dkimkeys/mail.private"
@@ -82,7 +77,7 @@ mailman3_django_config:
       HOST: /var/run/postgresql
   haystack_engine: xapian_backend.XapianEngine
   # FIXME: testing
-  debug: true
+  #debug: true
 
 mailman3_extra_packages:
   - psycopg2-binary
@@ -105,13 +100,41 @@ mailman3_distribute_maps:
 postfix_role: mda
 postfix_mailname: "{{ inventory_hostname }}"
 
-# This is set by default in galaxyproject.mailman3, but postfix runs before mailman
-postfix_mailman3_var_dir: /var/lib/mailman3/core
+postfix_mailman3_var_dir: /var/lib/mailman3/data
 postfix_config:
-  #proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  compatibility_level: 3.6
+  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
   transport_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   relay_domains: hash:{{ postfix_mailman3_var_dir }}/postfix_domains
+
+postfix_master_config:
+  # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
+  # we create a loop; additionally, sign all mail that passes through amavis.
+  localhost:10025-inet:
+    args: |
+      -o content_filter=
+          -o local_recipient_maps=
+          -o relay_recipient_maps=
+          -o smtpd_restriction_classes=
+          -o smtpd_delay_reject=no
+          -o smtpd_client_restrictions=permit_mynetworks,reject
+          -o smtpd_helo_restrictions=
+          -o smtpd_sender_restrictions=
+          -o smtpd_recipient_restrictions=permit_mynetworks,reject
+          -o smtpd_data_restrictions=reject_unauth_pipelining
+          -o smtpd_end_of_data_restrictions=
+          -o mynetworks=127.0.0.0/8
+          -o smtpd_error_sleep_time=0
+          -o smtpd_soft_error_limit=1001
+          -o smtpd_hard_error_limit=1000
+          -o smtpd_client_connection_count_limit=0
+          -o smtpd_client_connection_rate_limit=0
+          -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+          -o milter_default_action=accept
+          -o milter_protocol=6
+          -o smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+          -o non_smtpd_milters=unix:/var/run/opendkim/opendkim.sock
 
 postfix_amavisd_new_config:
   '@local_domains_acl': (".$mydomain", "{{ mailman3_domains | join('", "') }}")
@@ -149,20 +172,48 @@ postfix_aliases:
   root: root@galaxyproject.org
 
 #
+# galaxyproject.opendkim
+#
+
+opendkim_keys:
+  # NOTE: this is the same key as the primary MXs
+  - selector: mail
+    domain: galaxyproject.org
+    secret: "{{ vault_opendkim_key_mail_secret }}"
+    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzZfThCqxA0wdJY1ku+r+onhkpGiMLOPW8Ou/MpsxhhobXZRNePhyONfYbuc4l/bUdy9SNpSa/jVgwRAwg7UGWjyU6k4kwbRTGD1SwgSAL+xN8e9obbAgqDuj8jxSctmEMZK/dQhQcTUDvfjJ8DX9W6XgmZljqys6eb+YE9mtqrTJ933yuKZkYlXt8b/aPp/MQjhVVqGZ6Hkn8CYb0t7mtmFvkLFwyG40PLYXTwVONDvG+fAlV9XzjJKCmz3cK/qUtmtyo0Gwt7ej/xTxCITRnE+zddmtlBZNAP6VfKn/t9cF82UaFbB+mzZnt0JIzIDlMuWQO9dxJaAJbbYeezdSwIDAQAB"
+
+opendkim_trusted_hosts:
+  - 127.0.0.1
+  - ::1
+  - localhost
+
+opendkim_signing_table:
+  - lists.galaxyproject.org mail._domainkey.galaxyproject.org
+  - lists.anvilyroject.org mail._domainkey.galaxyproject.org
+
+opendkim_config:
+  Syslog: yes
+  SyslogSuccess: yes
+  LogWhy: yes
+  Socket: "local:/var/run/opendkim/opendkim.sock"
+  KeyTable: "file:{{ opendkim_config_dir }}/KeyTable"
+  ExternalIgnoreList: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  InternalHosts: "refile:{{ opendkim_config_dir }}/TrustedHosts"
+  SigningTable: "file:{{ opendkim_config_dir }}/SigningTable"
+
+#
 # galaxyproject.nginx + usegalaxy_eu.certbot
 #
 
 nginx_flavor: core
 nginx_servers:
-  #- cerbot_redirects
-  # localhost access for archiver
+  - cerbot_redirects
+nginx_ssl_servers:
   - mailman
-#nginx_ssl_servers:
-#  - mailman_ssl
 
-#nginx_ssl_role: usegalaxy_eu.certbot
-#nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
-#nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
+nginx_ssl_role: usegalaxy_eu.certbot
+nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
 
 certbot_auto_renew: true
 certbot_auto_renew_cron_file: ansible_certbot_auto_renew
