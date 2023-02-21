@@ -1,3 +1,0 @@
----
-
-sshprivatekeys: "{{ common_sshprivatekeys | combine(vault_sshprivatekeys) }}"

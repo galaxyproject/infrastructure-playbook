@@ -1,0 +1,9 @@
+---
+
+# for galaxyproject.mailman3's distribute_maps feature
+mx_servers_group_authorized_key_users: "{{ vault_mx_servers_group_authorized_key_users }}"
+
+mx_servers_group_users:
+  # ships with the OS but with the nologin shell
+  - name: list
+    shell: /bin/bash

@@ -16,6 +16,16 @@ all:
 
   children:
 
+    ssh_clients:
+      children:
+        # for postfix maps distribution to mxs
+        list_servers:
+
+    ssh_servers:
+      children:
+        # for postfix maps distribution to mxs
+        mx_servers:
+
     smartos_hypervisors:
       hosts:
         smart5.galaxyproject.org:
@@ -25,6 +35,11 @@ all:
     list_servers:
       hosts:
         llv.galaxyproject.org:
+
+    mx_servers:
+      hosts:
+        artifact.galaxyproject.org:
+        newtrail.galaxyproject.org:
 
     #dbtest:
     #  hosts:

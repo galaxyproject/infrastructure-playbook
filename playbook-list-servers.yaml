@@ -10,6 +10,8 @@
       tags: [general, mailman]
     - role: galaxyproject.general.paths
       tags: [general, mailman]
+    - role: galaxyproject.general.users
+      tags: [general, mailman]
     - role: galaxyproject.opendkim
       tags: [postfix, opendkim]
     - role: galaxyproject.postfix
@@ -34,3 +36,9 @@
       notify:
         - restart postfix
       tags: postfix
+
+- name: MX Servers
+  hosts: mx_servers
+  roles:
+    - role: galaxyproject.general.users
+      tags: [general, mailman]
