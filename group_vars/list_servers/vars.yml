@@ -94,6 +94,8 @@ mailman3_distribute_maps:
   - host: artifact.galaxyproject.org
   - host: newtrail.galaxyproject.org
 
+mailman3_distribute_map_frequency: 30
+
 #
 # galaxyproject.postfix
 #
