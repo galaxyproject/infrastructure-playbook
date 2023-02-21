@@ -207,7 +207,7 @@ opendkim_config:
 
 nginx_flavor: core
 nginx_servers:
-  - cerbot_redirects
+  - certbot_redirects
 nginx_ssl_servers:
   - mailman
 
@@ -215,10 +215,11 @@ nginx_ssl_role: usegalaxy_eu.certbot
 nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
 nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
 
+certbot_virtualenv_package_name: python3-venv
+certbot_virtualenv_command: python3 -m venv
 certbot_auto_renew: true
 certbot_auto_renew_cron_file: ansible_certbot_auto_renew
 certbot_auto_renew_user: root
-#certbot_environment: staging
 certbot_auth_method: --webroot
 certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"
 certbot_admin_email: nate@bx.psu.edu
