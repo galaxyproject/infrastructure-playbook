@@ -179,11 +179,14 @@ postfix_aliases:
 #
 
 opendkim_keys:
-  # NOTE: this is the same key as the primary MXs
-  - selector: mail
-    domain: galaxyproject.org
-    secret: "{{ vault_opendkim_key_mail_secret }}"
-    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvzZfThCqxA0wdJY1ku+r+onhkpGiMLOPW8Ou/MpsxhhobXZRNePhyONfYbuc4l/bUdy9SNpSa/jVgwRAwg7UGWjyU6k4kwbRTGD1SwgSAL+xN8e9obbAgqDuj8jxSctmEMZK/dQhQcTUDvfjJ8DX9W6XgmZljqys6eb+YE9mtqrTJ933yuKZkYlXt8b/aPp/MQjhVVqGZ6Hkn8CYb0t7mtmFvkLFwyG40PLYXTwVONDvG+fAlV9XzjJKCmz3cK/qUtmtyo0Gwt7ej/xTxCITRnE+zddmtlBZNAP6VfKn/t9cF82UaFbB+mzZnt0JIzIDlMuWQO9dxJaAJbbYeezdSwIDAQAB"
+  - selector: galaxy-lists
+    domain: lists.galaxyproject.org
+    secret: "{{ vault_opendkim_key_galaxy_lists_secret }}"
+    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwasUVHBL8zMCH/WJRF5CLqbQnvqAhHhQ5/57KJJWz3s61p5dzPYVzILmsCN9Ceidd3eOG4QWpuUfB0ygoJ+Q+IxP+a6egGClUfhLugRqP/iD1g3+D3sa6OyLBwOpMT79KXmiy1+Qk2h2GxeXdK2pM++fvWoXdJ9NHLoL8LbyYrIJlcBtjKJfY84V041Bc6FHZogcrGj7s7JvijziJyUi2H4TfapdFHcKQ9qKEy6p0dqDcHcd1lAKcZxsTYz/OKGDu+WQt4VAHvQDlCLY65sO7G/hav6Oxkjl45gWTZAQfohq3mQGCTv6+mVUVLn3v/fMCqdxrBjluh6Ocszu3NrT+wIDAQAB"
+  - selector: anvil-lists
+    domain: lists.anvilproject.org
+    secret: "{{ vault_opendkim_key_anvil_lists_secret }}"
+    public: "v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm3ZkaXFnp1fCwEogQxWLzSqbMU6MIJ/CmvrycqZwn3KIHpFVNd7HfPT4W9hZbSjhUsn2ZJdEOtljkhqQpB4HCi0WJzKNlrc9EPIrRO+jFYCWoPE1MsRd/aDsebIpY9DIpHLxls2BEJlHVO0BRP19nTCT9b1FHmioh9VJEQt+46O5Q4GQU0Aedrz2wZjIPdg1oQnl602amkYx4/M6efV0BEd7XViWR0wy1GYTpjSJs8rtVn+V2Vb4sBmenKcN37TSVh4zysJmXaGuFeM4JzQEBVAi1sL2E0vopDQ4z8u7DpWi58IRwmtrRnxhOH3HecvTgPbCpUXr+4oEgdLTR6NmWwIDAQAB"
 
 opendkim_trusted_hosts:
   - 127.0.0.1
@@ -191,8 +194,8 @@ opendkim_trusted_hosts:
   - localhost
 
 opendkim_signing_table:
-  - lists.galaxyproject.org mail._domainkey.galaxyproject.org
-  - lists.anvilyroject.org mail._domainkey.galaxyproject.org
+  - lists.galaxyproject.org galaxy-lists._domainkey.lists.galaxyproject.org
+  - lists.anvilproject.org anvil-lists._domainkey.lists.anvilproject.org
 
 opendkim_config:
   Syslog: yes
