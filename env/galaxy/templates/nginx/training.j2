@@ -74,7 +74,7 @@ server {
     location ~ ^/training-material/api/ga4gh/(.*) {
         proxy_http_version     1.1;
         proxy_set_header       Host galaxyproject.github.io;
-        proxy_pass             https://galaxyproject.github.io/training-material/api/ga4gh/\1.json;
+        proxy_pass             https://galaxyproject.github.io/training-material/api/ga4gh/$1.json;
     }
 
     location / {
