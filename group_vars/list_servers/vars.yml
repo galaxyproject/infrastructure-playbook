@@ -211,6 +211,8 @@ opendkim_config:
 # galaxyproject.nginx + usegalaxy_eu.certbot
 #
 
+nginx_conf_http:
+  proxy_read_timeout: "{{ mailman3_web_timeout }}"
 nginx_flavor: core
 nginx_servers:
   - certbot_redirects
