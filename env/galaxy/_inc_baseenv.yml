@@ -22,6 +22,16 @@
     #        - "deb https://deb.debian.org/debian-security/ {{ ansible_distribution_release }} main"
     #        - "deb-src https://deb.debian.org/debian-security/ {{ ansible_distribution_release }} main"
     #  when: "'debianhosts' in group_names"
+    - name: Install unattended-upgrades
+      apt:
+        name: unattended-upgrades
+      when: ansible_os_family == "Debian"
+      tags: packages
+    - name: Install yum-cron
+      yum:
+        name: yum-cron
+      when: ansible_os_family == "RedHat" and ansible_distribution_major_version is version("8", "<") and "tacc" not in inventory_hostname
+      tags: packages
   roles:
     - role: locale            # Configure default locale
       tags: locale
