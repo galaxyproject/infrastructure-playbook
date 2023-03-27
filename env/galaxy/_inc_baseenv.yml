@@ -27,11 +27,25 @@
         name: unattended-upgrades
       when: ansible_os_family == "Debian"
       tags: packages
-    - name: Install yum-cron
-      yum:
-        name: yum-cron
+    - name: EL7 updates block
       when: ansible_os_family == "RedHat" and ansible_distribution_major_version is version("8", "<") and "tacc" not in inventory_hostname
       tags: packages
+      block:
+        - name: Install yum-cron
+          yum:
+            name: yum-cron
+        - name: Configure yum-cron
+          ini_file:
+            path: /etc/yum/yum-cron.conf
+            section: commands
+            option: "{{ item.option }}"
+            value: "{{ item.value }}"
+            mode: "0644"
+          loop:
+            - option: update_cmd
+              value: security
+            - option: apply_updates
+              value: "yes"
   roles:
     - role: locale            # Configure default locale
       tags: locale
