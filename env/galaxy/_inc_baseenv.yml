@@ -43,7 +43,9 @@
             mode: "0644"
           loop:
             - option: update_cmd
-              value: security
+              # doesn't work under CentOS 7
+              #value: security
+              value: default
             - option: apply_updates
               value: "yes"
   roles:
