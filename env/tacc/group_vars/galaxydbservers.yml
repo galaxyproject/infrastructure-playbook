@@ -19,6 +19,15 @@ galaxydbservers_group_packages:
   - make
 
 telegraf_plugins_extra:
+  galaxy_tool_popularity_1m:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery tool-popularity 1 | sed \"s#toolshed.g2.bx.psu.edu/repos/##\"'"]
+      - timeout = "300s"
+      - data_format = "influx"
+      - interval = "30m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
     config:
