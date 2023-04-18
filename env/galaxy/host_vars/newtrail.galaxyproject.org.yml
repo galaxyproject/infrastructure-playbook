@@ -23,6 +23,7 @@ nginx_ssl_servers:
   - galaxydomains
   - toolshed.tools
   - galaxy.tools
+  - my.galaxy.training
 
 certbot_domains:
   - newtrail.galaxyproject.org
@@ -41,6 +42,8 @@ certbot_domains:
   - new.galaxyproject.org
   - toolshed.tools
   - galaxy.tools
+  - my.galaxy.training
+  - my.gat.galaxy.training
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf
