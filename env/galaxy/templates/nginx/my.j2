@@ -1,0 +1,89 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+	listen      *:443 ssl;
+	server_name my.galaxy.training;
+
+	access_log  /var/log/nginx/my.galaxy.training_access.log;
+	error_log   /var/log/nginx/my.galaxy.training_error.log;
+
+	location / {
+		proxy_http_version     1.1;
+		proxy_set_header       Connection "";
+		proxy_set_header       Authorization '';
+		proxy_set_header       Host galaxy-training.s3-website.us-east-1.amazonaws.com;
+		proxy_hide_header      x-amz-id-2;
+		proxy_hide_header      x-amz-request-id;
+		proxy_hide_header      x-amz-meta-server-side-encryption;
+		proxy_hide_header      x-amz-server-side-encryption;
+		proxy_hide_header      Set-Cookie;
+		proxy_ignore_headers   Set-Cookie;
+		add_header             Cache-Control max-age=31536000;
+		add_header             X-Cache-Status $upstream_cache_status;
+	
+		proxy_pass             https://training.galaxyproject.org/training-material/short/galaxy.html;
+	}
+
+	location /training-material/ {
+		proxy_http_version     1.1;
+		proxy_set_header       Connection "";
+		proxy_set_header       Authorization '';
+		proxy_set_header       Host galaxy-training.s3-website.us-east-1.amazonaws.com;
+		proxy_hide_header      x-amz-id-2;
+		proxy_hide_header      x-amz-request-id;
+		proxy_hide_header      x-amz-meta-server-side-encryption;
+		proxy_hide_header      x-amz-server-side-encryption;
+		proxy_hide_header      Set-Cookie;
+		proxy_ignore_headers   Set-Cookie;
+		add_header             Cache-Control max-age=31536000;
+		add_header             X-Cache-Status $upstream_cache_status;
+	
+		proxy_pass             https://training.galaxyproject.org/training-material/;
+	}
+}
+
+server {
+	listen      *:443 ssl;
+	server_name my.gat.galaxy.training;
+
+	access_log  /var/log/nginx/my.galaxy.training_access.log;
+	error_log   /var/log/nginx/my.galaxy.training_error.log;
+
+	location / {
+		proxy_http_version     1.1;
+		proxy_set_header       Connection "";
+		proxy_set_header       Authorization '';
+		proxy_set_header       Host galaxy-training.s3-website.us-east-1.amazonaws.com;
+		proxy_hide_header      x-amz-id-2;
+		proxy_hide_header      x-amz-request-id;
+		proxy_hide_header      x-amz-meta-server-side-encryption;
+		proxy_hide_header      x-amz-server-side-encryption;
+		proxy_hide_header      Set-Cookie;
+		proxy_ignore_headers   Set-Cookie;
+		add_header             Cache-Control max-age=31536000;
+		add_header             X-Cache-Status $upstream_cache_status;
+	
+		proxy_pass             https://training.galaxyproject.org/training-material/short/gat.html;
+	}
+
+	location /training-material/ {
+		proxy_http_version     1.1;
+		proxy_set_header       Connection "";
+		proxy_set_header       Authorization '';
+		proxy_set_header       Host galaxy-training.s3-website.us-east-1.amazonaws.com;
+		proxy_hide_header      x-amz-id-2;
+		proxy_hide_header      x-amz-request-id;
+		proxy_hide_header      x-amz-meta-server-side-encryption;
+		proxy_hide_header      x-amz-server-side-encryption;
+		proxy_hide_header      Set-Cookie;
+		proxy_ignore_headers   Set-Cookie;
+		add_header             Cache-Control max-age=31536000;
+		add_header             X-Cache-Status $upstream_cache_status;
+	
+		proxy_pass             https://training.galaxyproject.org/training-material/;
+	}
+}
+
+# vim: set filetype=nginx
