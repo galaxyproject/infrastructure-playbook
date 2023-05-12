@@ -6,7 +6,20 @@ host_authorized_key_users:
   - name: cloud
     authorized: "{{ galaxy_cloud_team_users + ['usegalaxy_tools_travis_cvmfs0'] }}"
 
-cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
+cvmfs_private_keys:
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.masterkey
+    owner: g2test
+    key: "{{ cvmfs_site_keys.masterkey }}"
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.key
+    owner: g2test
+    key: "{{ vault_cvmfs_private_key_test }}"
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.masterkey
+    owner: g2test
+    key: "{{ cvmfs_site_keys.masterkey }}"
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.key
+    owner: g2test
+    # TODO: this should be regenerated as unique, it should be possible to do without any issues on clients, just run `cvmfs_server resign`
+    key: "{{ vault_cvmfs_private_key_cloud }}"
 
 host_packages:
   # for yarn
@@ -73,16 +86,7 @@ cvmfs_repositories:
 cvmfs_keys:
   - path: /etc/cvmfs/keys/test.galaxyproject.org.pub
     owner: g2test
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtfc5SSX9ALcrukWYcxkI
-      mkLhlkJa5tCP1oZNWFA7GfE4xQW2vcKE5qmbZqhYVfdiy+FHPnhWPJp577hekD2F
-      vMITbApdZ0265AjRC0+EKKxpMF8zZ0q71vCFxvdK0c3DtT/3LmqKrr2wimtJZjQN
-      UAZcQG2ykzeHzFZ46w74IO0o8Fv/w2XEbYI0QqbNFv+0hcp5SruFqaaLsRZdd6Bn
-      3iSylgVRQ5b+h1LfB/EuEpSmH1sDozZ4tU0fpbrBSknK76aad1o/cvWY1X87ToUV
-      helU0HE2Rw/u9EqJDvPFTbUmad3MtspkqbG5Eo7lI+ktzbcD7UTsQ/7noIXIQ5dD
-      PwIDAQAB
-      -----END PUBLIC KEY-----
+    key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/test.galaxyproject.org.crt
     owner: g2test
     key: |
@@ -104,44 +108,12 @@ cvmfs_keys:
       QbKTk0xXXpBChXvEaSD1D5TATVUFbf8fwqHjkDVarhJxAtrv1p0k/EzJGrhbcEh+
       ka2GnWe8NST2zVvhBhnKVErSMJa0ZVSikljy8/ftJ24gfCjDFf6mEg==
       -----END CERTIFICATE-----
-  - path: /etc/cvmfs/keys/main.galaxyproject.org.pub
-    owner: g2main
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6S6Tugcv4kk4C06f574l
-      YCXQdK6lv2m7mqCh60G0zL1+rAkkEBDWna0yMQLBbj+yDsHjcOe0yISzbTfzG6wk
-      KnHZUQ/JOeK7lUAbDMxHqnjkEPAbAl4vXl2Y04MW2lzJtXcDKakmLirvV/dfUYqE
-      gGGx0dc/Z+XmUTf1DvZFJknrBUUxO5+F6m7k/NGrlpAca+e9B0kwCclaE4NyaNWK
-      Jv5rPWCYz5/sDNW4cNvBdBjwGf46etbczmJoTAbl0oM6LLGdebwkJStd0R1wkj+A
-      torRYcoFZICTZqY9e/KsadHUeZnH3RvfMypH5oS1POzsFszoSxBhZIBkZbG3/f9Y
-      OQIDAQAB
-      -----END PUBLIC KEY-----
-  - path: /etc/cvmfs/keys/main.galaxyproject.org.crt
-    owner: g2main
-    key: |
-      -----BEGIN CERTIFICATE-----
-      MIIC9DCCAdwCCQCu1/uoOM2BxjANBgkqhkiG9w0BAQsFADA8MTowOAYDVQQDDDFt
-      YWluLmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxlYXNlIE1hbmFnZXJz
-      MB4XDTE2MDQxMTE1MjkxN1oXDTE3MDQxMTE1MjkxN1owPDE6MDgGA1UEAwwxbWFp
-      bi5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBNYW5hZ2VyczCC
-      ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALsxdKt+ol4QOGsIy3Z49m7s
-      uvfjFVwCXVBJcZMR1iaqIdqpVMn/9h4MQZn6npxwYFZ5zFirVs409kIDbUUNnF9V
-      eD16AEhgHuarXsoiFG7msy6YhXa2ErIoR378b7sF5fSBzcYlcgUJb2DzS3vr17H6
-      ZMxj0IMymdrynBaoUi5GyD7471cWr09onL8LSrO1gxXYVBl4RkLKIEOaRs8Kgf1g
-      trZE2rfJXqseQHUfGUGQH4jP++nNPSBNxQGyHMZxAPJe5OukcHpsp+QvtSJKNTkC
-      A4G1AEEbxw8bi3sER6tpzZEg3HuI8v03jOf5b/3bdHTAz3Au9jxO/h9sPqqszxsC
-      AwEAATANBgkqhkiG9w0BAQsFAAOCAQEAgJoWcG45RwS6VlkT7CDFyb1eVvt/i3aJ
-      XXPod2odg49zKBZ2pidKYkKSgmMfF6BKS3VIWW6Op5kZrw1gNSU22xMwqTHgkvOl
-      c13DZGZbsDlYL2hp7fFg3pLw2KFITY5B31PCOqrXXpgPQPL/uedV2bjGHcIeerPj
-      9GbQbSqSRNZ4Kq8mz4zjMPUC01nJL+S82Dz04JjIVqhT/bmMn67AeFqxBzN3B1wk
-      bAGzbVAm14suDOEoallf/MXSRkeU6J3hEGdWbAS/0HfyTpPzdlytyihvz5R0UDZp
-      3LfKBSCPAcZI4A1CecNIBgCvV3YT4qow68xovCmI9x7YXbdXwAA3Zw==
-      -----END CERTIFICATE-----
   - path: /etc/cvmfs/keys/cloud.galaxyproject.org.pub
     owner: root
     key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/cloud.galaxyproject.org.crt
     owner: root
+    # TODO: this should be regenerated as unique
     key: "{{ cvmfs_site_keys.crt }}"
 
 # FIXME: supplemental groups below don't work the first time

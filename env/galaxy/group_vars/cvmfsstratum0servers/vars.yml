@@ -26,6 +26,8 @@ cvmfs_public_site_keys:
     mAG1ceyBFowj/r3iJTa+Jcif2uAmZxg+cHkZG5KzATykF82UH1ojUzREMMDcPJi2
     dQIDAQAB
     -----END PUBLIC KEY-----
+  # FIXME: this is the per-repo cert and along with the key (not masterkey) should remain unique per repo. Only the
+  # pub (and masterkey) should be common, and only pub needs to be distributed to clients.
   crt: |
     -----BEGIN CERTIFICATE-----
     MIIDBDCCAewCCQDY/xeqeOP2rTANBgkqhkiG9w0BAQsFADBEMUIwQAYDVQQDDDlj
