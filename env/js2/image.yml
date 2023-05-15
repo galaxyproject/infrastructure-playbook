@@ -128,10 +128,6 @@
             name: firewalld
             state: absent
 
-        - name: Configure ELRepo
-          import_role:
-            name: elrepo
-
         - name: Configure Ceph
           import_role:
             name: ceph_mount

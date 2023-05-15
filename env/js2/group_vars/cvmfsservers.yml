@@ -24,5 +24,3 @@ mounts:
   - path: /srv
     src: "{{ filesystems[0].dev }}"
     fstype: "{{ os_volumes[0].fstype }}"
-
-default_kernel: kernel

@@ -6,8 +6,6 @@ openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
 slurm_scale_tailscale_authkey: "{{ vault_slurm_scale_tailscale_authkey }}"
 
-default_kernel: kernel-ml
-
 clouds_yaml: "{{ vault_clouds_yaml }}"
 cloud_id: js2
 controller_name: jetstream2
