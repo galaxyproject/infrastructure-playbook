@@ -76,7 +76,7 @@ slurm_nodes:
     State: CLOUD
     CPUs: 32
     RealMemory: 125000  # 125798 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-gpu-small[0-1]"
+  - name: "{{ slurm_cluster_name }}-gpu-small[0-3]"
     State: CLOUD
     CPUs: 4
     RealMemory: 14800  # 14819 reported by slurmd
@@ -130,9 +130,10 @@ slurm_partitions:
   - name: gpu-small
     DefaultTime: "24:20:00"
     MaxTime: "96:20:00"
-    Nodes: "{{ slurm_cluster_name }}-gpu-small[0-1]"
+    Nodes: "{{ slurm_cluster_name }}-gpu-small[0-3]"
     MaxNodes: 1
     State: UP
+    OverSubscribe: EXCLUSIVE
   - name: gxit
     Nodes: "{{ slurm_cluster_name }}-gxit-small[0-1]"
     DefaultTime: "12:20:00"
