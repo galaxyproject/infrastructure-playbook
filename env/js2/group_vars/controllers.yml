@@ -45,6 +45,8 @@ controllers_group_packages:
   - tmpwatch
   - pdsh
   # Pulsar deps
+  - python39
+  - python39-devel
   - '@development tools'
   #- python-virtualenv
   - libffi-devel
