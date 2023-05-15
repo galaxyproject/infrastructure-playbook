@@ -47,6 +47,11 @@
 
     - block:
 
+        # We got the router blocked somehow, but it's ok since we don't need updates from ELRepo currently (but the
+        # repo config ships in Featured-RockyLinux8 currently)
+        - name: Disable ELRepo
+          command: dnf config-manager --set-disabled ELRepo
+
         - name: Create Galaxy group
           group:
             name: G-803372
@@ -74,7 +79,7 @@
               - lzo
               - git
               - libcgroup-tools
-              - singularity-runtime
+              - apptainer
               - python39
           # sometimes mirrors are broken
           register: packages_installed
@@ -93,31 +98,6 @@
         - name: Log CVMFS cache size
           debug:
             var: cvmfs_quota_limit
-
-        #- name: Create auto.jetstream
-        #  template:
-        #    src: auto.jetstream.j2
-        #    dest: /etc/auto.jetstream
-
-        #- name: Add Jetstream mounts to auto.master
-        #  copy:
-        #    dest: /etc/auto.master.d/auto.ansible_jetstream.autofs
-        #    content: "/jetstream /etc/auto.jetstream --ghost\n"
-
-        #- name: Create directories
-        #  file:
-        #    path: "{{ item.path }}"
-        #    mode: "{{ item.mode | default(omit) }}"
-        #    state: directory
-        #  loop: "{{ directories }}"
-
-        #- name: Create links
-        #  file:
-        #    src: "{{ item.src }}"
-        #    dest: "{{ item.dest }}"
-        #    state: link
-        #    force: yes
-        #  loop: "{{ links }}"
 
         - name: Disable SELinux
           selinux:
