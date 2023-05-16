@@ -39,6 +39,8 @@ server {
         add_header             Cache-Control max-age=31536000;
         add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/archive;
+
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
     }
     
     location /videos/topic {
@@ -63,12 +65,16 @@ server {
         add_header             Cache-Control max-age=31536000;
         add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/videos/topic;
+
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
     }
 
     location /training-material/ {
         proxy_http_version     1.1;
         proxy_set_header       Host galaxyproject.github.io;
         proxy_pass             https://galaxyproject.github.io/training-material/;
+
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
     }
 
     location ~ ^/training-material/api/ga4gh/(.*) {
@@ -82,6 +88,8 @@ server {
         proxy_http_version     1.1;
         proxy_set_header       Host galaxyproject.github.io;
         proxy_pass             https://galaxyproject.github.io/training-material/;
+
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
     }
 
     #return 302 https://galaxyproject.github.io/training-material$request_uri;
