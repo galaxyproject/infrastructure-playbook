@@ -40,7 +40,7 @@ server {
         add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/archive;
 
-        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self unsafe-inline'; script-src 'report-sample' 'self unsafe-inline' https://browser.sentry-cdn.com/7.52.1/bundle.tracing.min.js https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/config/TeX-AMS-MML_HTMLorMML.js https://kit.fontawesome.com/67b3f98409.js https://platform.twitter.com/widgets.js https://plausible.galaxyproject.eu/js/plausible.js https://sidecar.gitter.im/dist/sidecar.v1.js; style-src 'report-sample' 'self unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'self'; connect-src 'self' https://ka-f.fontawesome.com https://plausible.galaxyproject.eu https://sentry.galaxyproject.org; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; frame-src 'self' https://platform.twitter.com https://plausible.galaxyproject.eu https://syndication.twitter.com https://www.youtube-nocookie.com; img-src 'all'; manifest-src 'self'; media-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40; worker-src 'none';";
     }
     
     location /videos/topic {
@@ -66,7 +66,7 @@ server {
         add_header             X-Cache-Status $upstream_cache_status;
         proxy_pass             http://galaxy-training.s3-website.us-east-1.amazonaws.com/videos/topic;
 
-        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self unsafe-inline'; script-src 'report-sample' 'self unsafe-inline' https://browser.sentry-cdn.com/7.52.1/bundle.tracing.min.js https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/config/TeX-AMS-MML_HTMLorMML.js https://kit.fontawesome.com/67b3f98409.js https://platform.twitter.com/widgets.js https://plausible.galaxyproject.eu/js/plausible.js https://sidecar.gitter.im/dist/sidecar.v1.js; style-src 'report-sample' 'self unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'self'; connect-src 'self' https://ka-f.fontawesome.com https://plausible.galaxyproject.eu https://sentry.galaxyproject.org; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; frame-src 'self' https://platform.twitter.com https://plausible.galaxyproject.eu https://syndication.twitter.com https://www.youtube-nocookie.com; img-src 'all'; manifest-src 'self'; media-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40; worker-src 'none';";
     }
 
     location /training-material/ {
@@ -74,7 +74,7 @@ server {
         proxy_set_header       Host galaxyproject.github.io;
         proxy_pass             https://galaxyproject.github.io/training-material/;
 
-        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self unsafe-inline'; script-src 'report-sample' 'self unsafe-inline' https://browser.sentry-cdn.com/7.52.1/bundle.tracing.min.js https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/config/TeX-AMS-MML_HTMLorMML.js https://kit.fontawesome.com/67b3f98409.js https://platform.twitter.com/widgets.js https://plausible.galaxyproject.eu/js/plausible.js https://sidecar.gitter.im/dist/sidecar.v1.js; style-src 'report-sample' 'self unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'self'; connect-src 'self' https://ka-f.fontawesome.com https://plausible.galaxyproject.eu https://sentry.galaxyproject.org; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; frame-src 'self' https://platform.twitter.com https://plausible.galaxyproject.eu https://syndication.twitter.com https://www.youtube-nocookie.com; img-src 'all'; manifest-src 'self'; media-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40; worker-src 'none';";
     }
 
     location ~ ^/training-material/api/ga4gh/(.*) {
@@ -89,7 +89,7 @@ server {
         proxy_set_header       Host galaxyproject.github.io;
         proxy_pass             https://galaxyproject.github.io/training-material/;
 
-        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40";
+        proxy_set_header       Content-Security-Policy-Report-Only "default-src 'self unsafe-inline'; script-src 'report-sample' 'self unsafe-inline' https://browser.sentry-cdn.com/7.52.1/bundle.tracing.min.js https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/config/TeX-AMS-MML_HTMLorMML.js https://kit.fontawesome.com/67b3f98409.js https://platform.twitter.com/widgets.js https://plausible.galaxyproject.eu/js/plausible.js https://sidecar.gitter.im/dist/sidecar.v1.js; style-src 'report-sample' 'self unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'self'; connect-src 'self' https://ka-f.fontawesome.com https://plausible.galaxyproject.eu https://sentry.galaxyproject.org; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; frame-src 'self' https://platform.twitter.com https://plausible.galaxyproject.eu https://syndication.twitter.com https://www.youtube-nocookie.com; img-src 'all'; manifest-src 'self'; media-src 'self'; report-uri https://sentry.galaxyproject.org/api/10/security/?sentry_key=45e0ec6e4373462b92969505df37cf40; worker-src 'none';";
     }
 
     #return 302 https://galaxyproject.github.io/training-material$request_uri;
