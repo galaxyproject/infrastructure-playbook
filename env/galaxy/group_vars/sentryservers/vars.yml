@@ -25,3 +25,11 @@ sentry_github_app_name: galaxyproject-SentryIntegration
 sentry_github_client_id: "{{ vault_sentry_github_client_id }}"
 sentry_github_client_secret: "{{ vault_sentry_github_client_secret }}"
 sentry_github_private_key: "{{ vault_sentry_github_private_key }}"
+
+sentryservers_group_crontabs:
+  - name: "Sentry cleanup"
+    id: sentry_cleanup
+    user: root
+    hour: 22
+    minute: 15
+    job: "(cd /opt/sentry && /usr/local/bin/docker-compose exec -T worker sentry cleanup --days 90 && /usr/local/bin/docker-compose exec -T postgres psql -U postgres -c VACUUM) 2>&1 | logger"
