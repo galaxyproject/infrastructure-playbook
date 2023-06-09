@@ -222,7 +222,7 @@
     hour: 0
     minute: 0
     weekday: 0
-    job: ". {{ slurm_scale_root }}/bin/activate && make -C {{ slurm_scale_root }}/etc/infrastructure-playbook usegalaxy-node-images"
+    job: ". {{ slurm_scale_root }}/bin/activate && make -C {{ slurm_scale_root }}/etc/infrastructure-playbook usegalaxy-node-image"
 
 - name: Create image cleanup cron job
   cron:
