@@ -52,25 +52,35 @@
         - name: Disable ELRepo
           command: dnf config-manager --set-disabled ELRepo
 
-        - name: Create Galaxy group
+        - name: Create groups
           group:
-            name: G-803372
-            gid: 803372
+            name: "{{ item.name }}"
+            gid: "{{ item.gid }}"
+          loop:
+            - name: G-803372
+              gid: 803372
+            - name: idc
+              gid: 808
 
-        - name: Create Galaxy users
+        - name: Create users
           user:
             name: "{{ item.name }}"
             uid: "{{ item.uid }}"
             home: "/home/{{ item.name }}"
             shell: /bin/bash
-            group: G-803372
+            group: "{{ item.group }}"
             groups: docker
             create_home: true
           loop:
             - name: g2main
               uid: 819800
+              group: G-803372
             - name: g2test
               uid: 819456
+              group: G-803372
+            - name: idc
+              uid: 808
+              group: idc
 
         - name: Install Packages
           yum:
