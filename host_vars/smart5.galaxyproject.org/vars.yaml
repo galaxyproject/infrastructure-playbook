@@ -58,6 +58,27 @@ smartos_vms:
         size: 524288
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: jenkins1
+    brand: bhyve
+    ram: 1024
+    vcpus: 1
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'jenkins1.galaxyproject.org') }}"
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+        model: virtio
+    disks:
+      - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+        boot: true
+        model: virtio
+      - boot: false
+        model: virtio
+        size: 32768
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: ask-app
     brand: bhyve
     ram: 4096
