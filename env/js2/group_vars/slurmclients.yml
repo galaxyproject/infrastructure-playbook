@@ -55,7 +55,7 @@ slurm_nodes:
   - name: "{{ slurm_cluster_name }}-tiny[0-7]"
     State: CLOUD
     CPUs: 1
-    RealMemory: 2900  # 2984, then 2919 reported by slurmd
+    RealMemory: 2840  # 2984, then 2919, then 2896 reported by slurmd
   - name: "{{ slurm_cluster_name }}-small[0-7]"
     State: CLOUD
     CPUs: 2
