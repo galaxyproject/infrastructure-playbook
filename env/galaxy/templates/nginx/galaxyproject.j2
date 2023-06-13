@@ -27,6 +27,22 @@ server {
     error_page  404      /404/;
     error_page  403 =404 /404/;
 
+    # create a redirect loop to usegalaxy.eu
+    # During the 11th and 12th of June 2023, visitors
+    # of usegalaxy.eu were redirected to this blog
+    # post, but using a 301 HTTP redirect. This kind
+    # of redirect is cached forever by most browsers.
+    # Those users need now to clear the browser's cache
+    # to access usegalaxy.eu again, but if the news do
+    # not reach them, or they do not know how to clear
+    # the cache, then they will think that uselaxy.eu
+    # is down forever. As a a workaround, this
+    # directive creates a redirection loop, which should
+    # invalidate the cache for most browsers.
+    location ~ ^/news/2023-06-06-eu-maintenance(.*) {
+      return 302 https://usegalaxy.eu/;
+    }
+
     # old static conference pages
     rewrite (?i)^/(dev2010|gcc2011)$ /$1/;
     location ~ (?i)^/(dev2010|gcc2011)/(.*) {
