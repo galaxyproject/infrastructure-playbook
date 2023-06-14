@@ -16,7 +16,7 @@ mounts:
     fstype: auto
     mode: "0755"
 
-jenkinsagents_group_btrfs_subvolumes:
+jenkins_agents_group_btrfs_subvolumes:
   - path: /data/docker
   - path: /data/jenkins
 
@@ -28,37 +28,34 @@ docker_daemon_option_list:
 # End host-level stuff
 
 
-jenkinsagents_group_authorized_key_users: "{{ vault_jenkinsagents_group_authorized_key_users }}"
-jenkinsagents_group_private_key_users: "{{ vault_jenkinsagents_group_private_key_users }}"
+jenkins_agents_group_authorized_key_users: "{{ vault_jenkins_agents_group_authorized_key_users }}"
+jenkins_agents_group_private_key_users: "{{ vault_jenkins_agents_group_private_key_users }}"
 
 # hopefully overrides config-repo in cvmfsclients.yml
 galaxy_cvmfs_repos_enabled: true
 
-#_jenkinsagents_openjdk_version: "{{ '11' if ansible_distribution == 'Debian' and ansible_distribution_major_version == '10' else '8' }}"
-jenkinsagents_group_packages:
+jenkins_agents_group_packages:
+  - gpg
   - btrfs-progs
   - git
-#  - openjdk-{{ _jenkinsagents_openjdk_version }}-jre-headless
   - openjdk-11-jre-headless
-#  - ntp
-#  - ntpdate
   - build-essential
   - curl
-#  - pandoc
   - python3-venv
-  # for usegalaxy-tools
-  #- fuse-overlayfs
+  - python3-dev
+  # for usegalaxy-tools, idc
+  - fuse-overlayfs
   - sudo
   - tree
   - rsync
 
-# Moved to a post-task for order of operations purposes
-#jenkinsagents_group_users:
-#  - name: jenkins
-#    groups: docker
-#    system: true
+jenkins_agents_group_users:
+  - name: jenkins
+    # Moved to a post-task for order of operations purposes
+    #groups: docker
+    system: true
 
-jenkinsagents_group_directories:
+jenkins_agents_group_directories:
   - path: ~jenkins/bin
     owner: jenkins
     group: jenkins
@@ -76,7 +73,7 @@ jenkinsagents_group_directories:
     group: jenkins
     mode: '0755'
 
-jenkinsagents_group_files:
+jenkins_agents_group_files:
   - src: files/jenkins/jenkins_agent_user_ssh_config
     dest: ~jenkins/.ssh/config
     owner: jenkins
@@ -98,14 +95,16 @@ jenkinsagents_group_files:
     group: root
     mode: '0755'
 
-jenkinsagents_group_links:
+jenkins_agents_group_links:
   - path: /usr/local/sbin/jenkins-umount-overlayfs
     src: jenkins-mount-overlayfs
 
-jenkinsagents_group_kernel_params:
+jenkins_agents_group_kernel_params:
   - name: net.ipv4.tcp_keepalive_time
     value: 300
   - name: net.ipv4.tcp_keepalive_intvl
     value: 30
   - name: net.ipv4.tcp_keepalive_probes
     value: 40
+
+postfix_role: "null-client"

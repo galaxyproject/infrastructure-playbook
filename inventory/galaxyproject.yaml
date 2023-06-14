@@ -20,11 +20,8 @@ all:
       children:
         # for postfix maps distribution to mxs
         list_servers:
-
-    ssh_servers:
-      children:
-        # for postfix maps distribution to mxs
-        mx_servers:
+        jenkins_servers:
+        jenkins_agents:
 
     smartos_hypervisors:
       hosts:
@@ -40,6 +37,19 @@ all:
       hosts:
         artifact.galaxyproject.org:
         newtrail.galaxyproject.org:
+
+    jenkins_servers:
+      hosts:
+        leeroy.galaxyproject.org:
+
+    jenkins_agents:
+      hosts:
+        jenkins0.galaxyproject.org:
+        jenkins1.galaxyproject.org:
+
+    cvmfs_clients:
+      children:
+        jenkins_agents:
 
     #dbtest:
     #  hosts:

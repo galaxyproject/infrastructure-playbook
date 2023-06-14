@@ -1,0 +1,58 @@
+---
+
+- name: Jenkins Servers and Agents
+  hosts: jenkins_servers:jenkins_agents
+  roles:
+    - role: galaxyproject.general.virtual
+      tags: general
+    - role: galaxyproject.general.kernel_params
+      tags: general
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.copy
+      tags: general
+    - role: galaxyproject.postfix
+      tags: postfix
+
+- name: Jenkins Servers
+  hosts: jenkins_servers
+  tasks:
+    # this is specific to the Debian package
+    - name: Set $JENKINS_HOME
+      lineinfile:
+        path: /etc/default/jenkins
+        regexp: '^JENKINS_HOME=.*$'
+        line: "JENKINS_HOME={{ jenkins_home }}"
+        backup: true
+      when: jenkins_home is defined
+      notify: Restart Jenkins
+  handlers:
+    - name: Restart Jenkins
+      service:
+        name: jenkins
+        state: restarted
+  tags: jenkins
+
+- name: Jenkins Agents
+  hosts: jenkins_agents
+  roles:
+    - role: docker
+    - role: artis3n.tailscale
+      when: tailscale_authkey is defined and tailscale_authkey is not none
+    - role: galaxyproject.cvmfs
+  post_tasks:
+    - name: Add jenkins user to docker group
+      user:
+        name: jenkins
+        groups: docker
+        system: true
+    - name: Allow other access to FUSE mounts
+      lineinfile:
+        path: /etc/fuse.conf
+        regexp: '^#?user_allow_other$'
+        line: user_allow_other
+  tags: jenkins

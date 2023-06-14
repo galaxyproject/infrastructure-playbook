@@ -1,61 +1,30 @@
 ---
 
-jenkinsservers_group_authorized_key_users: "{{ vault_jenkinsservers_group_authorized_key_users }}"
-jenkinsservers_group_private_key_users: "{{ vault_jenkinsservers_group_private_key_users }}"
+jenkins_servers_group_authorized_key_users: "{{ vault_jenkins_servers_group_authorized_key_users }}"
+jenkins_servers_group_private_key_users: "{{ vault_jenkins_servers_group_private_key_users }}"
 
-jenkinsservers_group_apt_keys:
+jenkins_servers_group_apt_keys:
   - url: 'https://pkg.jenkins.io/debian/jenkins.io.key'
 
-jenkinsservers_group_apt_repositories:
+jenkins_servers_group_apt_repositories:
   # For Debian 10
   #- repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
   - repo: 'deb http://pkg.jenkins-ci.org/debian binary/'
 
-jenkinsservers_group_packages:
+jenkins_servers_group_packages:
   - gpg
   - git
   - rsync
-  #- postgresql
-  #- python-virtualenv
   - jenkins
-  #- npm
-  ## No longer needed on buster
-  ##- nodejs-legacy
-  ## TS packages
-  #- autoconf
-  #- automake
-  #- build-essential
-  #- gfortran
-  #- cmake
-  #- git-core
-  #- libatlas-base-dev
-  #- libblas-dev
-  #- liblapack-dev
-  #- openssl
-  #- python-dev
-  #- python-setuptools
-  #- python-virtualenv
-  #- zlib1g-dev
-  #- libyaml-dev
-  #- subversion
-  #- python-dev
-  #- pkg-config
-  #- unzip
-  #- samtools
-  #- sudo
-  #- curl
-  #- ntp
-  #- ntpdate
   ## for jenkins
   - openjdk-11-jre-headless
 
+postfix_role: "null-client"
+
 jenkins_home: /data/jenkins
 
-#jenkinsservers_group_users:
-#  - name: jenkins
-#    groups: docker
-
-#jenkinsservers_group_crontabs:
+# TODO: we should probably start backing up the jenkins config again
+#jenkins_servers_group_crontabs:
 #  - id: jenkins_backup
 #    name: Jenkins Backup
 #    user: jenkins
@@ -65,13 +34,14 @@ jenkins_home: /data/jenkins
 
 # TODO: generate this file automatically from structured data
 # Maybe this? https://github.com/gaqzi/ansible-ssh-config
-jenkinsservers_group_files:
+jenkins_servers_group_files:
   - src: files/jenkins/jenkins_server_user_ssh_config
     dest: ~jenkins/.ssh/config
     owner: jenkins
     group: jenkins
 
-jenkinsservers_group_kernel_params:
+# Make agent connections more resilient
+jenkins_servers_group_kernel_params:
   - name: net.ipv4.tcp_keepalive_time
     value: 300
   - name: net.ipv4.tcp_keepalive_intvl

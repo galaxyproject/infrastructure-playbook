@@ -1,3 +1,4 @@
 ---
 
+cvmfs_role: client
 galaxy_cvmfs_repos_enabled: true
