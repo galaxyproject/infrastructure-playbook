@@ -83,8 +83,6 @@
   hosts: webservers
   remote_user: root
   roles:
-    - role: geerlingguy.repo-epel
-      when: ansible_os_family == "RedHat"
     - role: galaxyproject.nginx
   tags: nginx
 
@@ -211,9 +209,7 @@
   hosts: cvmfsstratum0servers:cvmfsstratum1servers:cvmfslocalproxies:cvmfsclients
   remote_user: root
   roles:
-    # need epel for the jq package
-    - role: geerlingguy.repo-epel
-      when: ansible_os_family == "RedHat"
+    # need epel for the jq package but I don't know which packages need it
     - role: galaxyproject.cvmfs
     # FIXME: why was this done? is it still necessary?
     #- role: docker
