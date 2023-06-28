@@ -19,6 +19,12 @@ server {
     #error_page  404      /error.html;
     #error_page  403 =404 /error.html;
 
+    location ~ ^/.well-known/webfinger {
+        proxy_http_version     1.1;
+        proxy_set_header       Host galaxyproject.github.io;
+        proxy_pass             https://galaxyproject.github.io/training-material/api/fedi/$query_string.json;
+    }
+
     location /archive {
         proxy_cache            s3_cache;
         proxy_http_version     1.1;
