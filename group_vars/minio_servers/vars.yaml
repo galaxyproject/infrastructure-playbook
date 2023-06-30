@@ -1,0 +1,14 @@
+---
+
+minio_access_key: "{{ vault_minio_access_key }}"
+minio_secret_key: "{{ vault_minio_secret_key }}"
+
+tailscale_authkey: "{{ vault_tailscale_authkey }}"
+
+minio_server_bin: /opt/minio/server
+minio_client_bin: /opt/minio/client
+minio_user: minio
+minio_group: G-803372
+minio_server_addr: ":9001"
+minio_server_datadirs:
+  - /corral4/minio

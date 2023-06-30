@@ -1,0 +1,9 @@
+---
+
+- name: MinIO Servers
+  hosts: minio_servers
+  roles:
+    - role: atosatto.minio
+      tags: minio
+    - role: artis3n.tailscale
+      tags: tailscale

@@ -1,0 +1,13 @@
+---
+# TACC hosts
+
+all:
+
+  vars:
+    ansible_user: root
+
+  children:
+
+    minio_servers:
+      hosts:
+        galaxy-db-02.tacc.utexas.edu:
