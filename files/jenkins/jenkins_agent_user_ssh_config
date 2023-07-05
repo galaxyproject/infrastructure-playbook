@@ -11,5 +11,5 @@ Match User depot Host depot.galaxyproject.org
 Host cvmfs0*.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_usegalaxy_tools_cvmfs
 
-Host idc-build
+Host idc-build idc-build.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_idc_jetstream2_cvmfs
