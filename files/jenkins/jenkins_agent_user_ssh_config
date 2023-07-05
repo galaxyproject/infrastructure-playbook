@@ -8,6 +8,12 @@ HashKnownHosts no
 Match User depot Host depot.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_depot
 
+Match user sandbox Host cvmfs0-psu0.galaxyproject.org
+    IdentityFile ~/.ssh/id_rsa_idc_jetstream2_cvmfs
+
+Match user idc Host cvmfs0-psu0.galaxyproject.org
+    IdentityFile ~/.ssh/id_rsa_idc_jetstream2_cvmfs
+
 Host cvmfs0*.galaxyproject.org
     IdentityFile ~/.ssh/id_rsa_usegalaxy_tools_cvmfs
 
