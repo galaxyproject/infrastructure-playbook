@@ -64,6 +64,11 @@ cvmfsstratum1servers_group_users:
     home: /home/cloud
     shell: /bin/bash
     system: yes
+  - name: idc
+    comment: "Intergalactic Data Commission"
+    home: /home/idc
+    shell: /bin/bash
+    system: yes
 
 cvmfsstratum1servers_group_groups:
   - name: G-803372
@@ -157,6 +162,9 @@ cvmfs_keys:
   - path: /etc/cvmfs/keys/galaxyproject.org/cloud.galaxyproject.org.pub
     owner: root
     key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/galaxyproject.org/idc.galaxyproject.org.pub
+    owner: root
+    key: "{{ cvmfs_site_keys.pub }}"
 
 cvmfs_repositories:
   - repository: test.galaxyproject.org
@@ -218,6 +226,13 @@ cvmfs_repositories:
   - repository: cloud.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
     owner: cloud
+    key_dir: /etc/cvmfs/keys/galaxyproject.org
+    server_options:
+      - CVMFS_AUTO_GC=false
+    client_options: []
+  - repository: idc.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: idc
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
       - CVMFS_AUTO_GC=false
