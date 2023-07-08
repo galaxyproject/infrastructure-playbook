@@ -53,6 +53,15 @@ host_templates:
         'read only': 'yes'
         list: 'yes'
         exclude: '*/tmp/* */work/* bin/*'
+      idc:
+        path: /cvmfs/idc.galaxyproject.org
+        comment: Galaxy Intergalactic Data Commission
+        'use chroot': 'yes'
+        uid: nobody
+        gid: nobody
+        'read only': 'yes'
+        list: 'yes'
+        exclude: '*/tmp/* */work/* bin/*'
 
 host_firewall_rules:
   - service: http
