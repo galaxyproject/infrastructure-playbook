@@ -10,6 +10,7 @@ telegraf_cvmfs_check_servers:
     - main.galaxyproject.org
     - data.galaxyproject.org
     - singularity.galaxyproject.org
+    - idc.galaxyproject.org
   combined:
     - host: cvmfs0-tacc0.galaxyproject.org
       repos:
@@ -23,6 +24,9 @@ telegraf_cvmfs_check_servers:
     - host: cvmfs-stratum0.galaxyproject.eu
       repos:
         - singularity.galaxyproject.org
+    - host: cvmfs0-psu0.galaxyproject.org
+      repos:
+        - idc.galaxyproject.org
 
 #stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
 
