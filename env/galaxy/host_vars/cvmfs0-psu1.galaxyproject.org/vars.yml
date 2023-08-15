@@ -25,6 +25,11 @@ host_packages:
   # for yarn
   - bzip2
 
+host_directories:
+  - path: /srv/galaxy-test-cache
+    owner: g2test
+    mode: "0755"
+
 filesystems:
   - dev: /dev/vdb
     fstype: ext4
