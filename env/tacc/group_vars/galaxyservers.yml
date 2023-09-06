@@ -42,6 +42,9 @@ galaxyservers_group_packages:
 
 galaxy_cvmfs_repos_enabled: true
 
+# use 40% of /
+cvmfs_quota_limit: "{{ ((ansible_mounts | selectattr('mount', 'eq', '/') | first).size_total * 0.4 / 1024**2) | int }}"
+
 # override so that the TACC stratum 1 is always first
 galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org

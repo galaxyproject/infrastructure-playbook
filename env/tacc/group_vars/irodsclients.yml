@@ -7,7 +7,7 @@ irodsclients_group_rpm_keys:
 irodsclients_group_yum_repositories:
   - name: renci-irods
     description: RENCI iRODS Repository
-    baseurl: https://packages.irods.org/yum/pool/centos$releasever/$basearch
+    baseurl: https://packages.irods.org/yum/pool/el$releasever/$basearch
     enabled: 1
     gpgcheck: 1
     repo_gpgcheck: 1
@@ -15,6 +15,8 @@ irodsclients_group_yum_repositories:
 
 irodsclients_group_packages:
   - irods-icommands
+  # irods-icommands missing a dep on this in EL8?
+  - irods-runtime
 
 __irods_environment_json: |
   {
