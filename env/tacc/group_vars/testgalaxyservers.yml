@@ -12,8 +12,11 @@ testgalaxyservers_group_authorized_key_users:
     authorized: "{{ galaxy_team_users }}"
   - name: gxsrc
     authorized: "{{ galaxy_team_users }}"
+  - name: root
+    authorized: "{{ galaxy_admin_users }}"
+    exclusive: false
 
-testgalaxyservers_group_systemd_resource_controls:
-  - name: supervisord
-    real_memory_limit_percent: 70
-    swap_limit_percent: 25
+#testgalaxyservers_group_systemd_resource_controls:
+#  - name: galaxy
+#    real_memory_limit_percent: 70
+#    swap_limit_percent: 25

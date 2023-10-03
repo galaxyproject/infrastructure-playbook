@@ -9,11 +9,14 @@ maingalaxyservers_group_authorized_key_users:
     authorized: "{{ galaxy_team_users }}"
   - name: gxsrc
     authorized: "{{ galaxy_team_users }}"
+  - name: root
+    authorized: "{{ galaxy_admin_users }}"
+    exclusive: false
 
 docker_ssl_client_users:
   - g2main
 
-maingalaxyservers_group_systemd_resource_controls:
-  - name: supervisord
-    real_memory_limit_percent: 85
-    swap_limit_percent: 25
+#maingalaxyservers_group_systemd_resource_controls:
+#  - name: galaxy
+#    real_memory_limit_percent: 85
+#    swap_limit_percent: 25
