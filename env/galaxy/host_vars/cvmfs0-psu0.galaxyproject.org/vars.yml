@@ -216,3 +216,9 @@ host_users:
 host_groups:
   - name: G-803372
     gid: 803372
+
+host_directories:
+  - path: /srv/idc
+    owner: idc
+    group: idc
+    mode: "0755"
