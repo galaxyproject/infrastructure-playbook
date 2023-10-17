@@ -1,0 +1,45 @@
+---
+
+- name: Configure yum repositories
+  ansible.builtin.yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgkey: "{{ item.gpgkey }}"
+    gpgcheck: yes
+    enabled: yes
+    protect: yes
+  loop:
+    # influxdb repo is configured by dj-wasabi.telegraf
+    #- name: influxdb
+    #  description: "InfluxDB Packages"
+    #  baseurl: "https://repos.influxdata.com/rhel/$releasever/$basearch/stable"
+    #  gpgkey: "https://repos.influxdata.com/influxdata-archive_compat.key"
+    - name: grafana
+      description: "Grafana Packages"
+      baseurl: "https://rpm.grafana.com"
+      gpgkey: "https://rpm.grafana.com/gpg.key"
+
+# the new influxd-system-start.sh health checks are fairly broken
+- name: Install InfluxDB systemd service unit
+  copy:
+    src: redhat/influxdb.service
+    dest: /etc/systemd/system/influxdb.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: __influxdb_service_unit_result
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+  when: __influxdb_service_unit_result is changed
+
+- name: Install packages
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: "{{ 'latest' if stats_upgrade else 'present' }}"
+    update_cache: true
+  loop:
+    - influxdb
+    - grafana

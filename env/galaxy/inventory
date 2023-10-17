@@ -23,19 +23,9 @@ cvmfs1-psu0.galaxyproject.org ansible_user=root
 cvmfs-stratum0.galaxyproject.eu ansible_user=centos ansible_become=yes
 wrx.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 
-# Installs Python 2.6 from SCL and automatically sets ansible_python_interpreter
-# TODO: not currently working: `yum` module is incompatible with Python 3 and there is no python36-dnf module
-[usepython3_el]
-#stats.galaxyproject.org
-
-[usepython3_el:vars]
-ansible_python_interpreter = /opt/rh/rh-python36/root/bin/python3
-
 [smartosglobalzones]
 smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
-smart3.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
-smart5.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
 westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
@@ -67,7 +57,6 @@ duvel.galaxyproject.org
 #radegast.galaxyproject.org
 rochefort.galaxyproject.org
 westvleteren.galaxyproject.org
-stats.galaxyproject.org
 sentry.galaxyproject.org
 jeltz.galaxyproject.org
 leeroy.galaxyproject.org
@@ -101,11 +90,6 @@ cvmfs1-psu0.galaxyproject.org
 radegast.galaxyproject.org
 eddie.galaxyproject.org
 
-# For things that need access to sslkeys and the "PKI"
-[sslservers]
-[sslservers:children]
-statsservers
-
 # These get everything in baseenv + LDAP and Kerberos+Auth, but not NFS
 [liteenv]
 radegast.galaxyproject.org
@@ -138,7 +122,6 @@ duvel.galaxyproject.org
 radegast.galaxyproject.org
 eddie.galaxyproject.org
 duvel.galaxyproject.org
-stats.galaxyproject.org
 jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org

@@ -1,0 +1,22 @@
+---
+
+- name: Stats Servers
+  hosts: stats_servers
+  roles:
+    - role: galaxyproject.general.virtual
+      tags: general
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.copy
+      tags: general
+    - role: dj-wasabi.telegraf
+    # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
+    # the config
+    - role: usegalaxy_org.stats
+  tags:
+    - stats
+

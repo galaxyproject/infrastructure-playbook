@@ -1,92 +1,79 @@
 ---
 
-#stats_ssl_ca_passphrase: "{{ vault_stats_ssl_ca_passphrase }}"
-
-#stats_ssl_certs:
-#  - name: influxdb
-#    ca: stats
-#    per_host: yes
-#    owner: influxdb
-#    group: influxdb
-#    paths:
-#      - cert: "{{ stats_influxdb_conf_dir }}/influxdb.crt"
-#        key: "{{ stats_influxdb_conf_dir }}/influxdb.key"
-#        ca_cert: "{{ stats_influxdb_conf_dir }}/ca.crt"
-
 certbot_domains:
  - "{{ inventory_hostname }}"
- - infrastats.galaxyproject.org
 
 nginx_default_redirect_uri: https://stats.galaxyproject.org/
 nginx_servers:
-  - certbot_redirects
-nginx_ssl_servers:
+  #- certbot_redirects
   - stats
+nginx_ssl_servers:
+  #- stats
 
 stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
 
-statsservers_group_packages:
+stats_servers_group_packages: []
   # for influxdb_user module
-  - python-requests
-  - python-pip
+  #- python-requests
+  #- python-pip
   # for grafana-image-renderer
-  - libXcomposite
-  - libXdamage
-  - libXtst
-  - cups
-  - libXScrnSaver
-  - pango
-  - atk
-  - adwaita-cursor-theme
-  - adwaita-icon-theme
-  - at
-  - at-spi2-atk
-  - at-spi2-core
-  - cairo-gobject
-  - colord-libs
-  - dconf
-  - desktop-file-utils
-  - ed
-  - emacs-filesystem
-  - gdk-pixbuf2
-  - glib-networking
-  - gnutls
-  - gsettings-desktop-schemas
-  - gtk-update-icon-cache
-  - gtk3
-  - hicolor-icon-theme
-  - jasper-libs
-  - json-glib
-  - libappindicator-gtk3
-  - libdbusmenu
-  - libdbusmenu-gtk3
-  - libepoxy
-  - liberation-fonts
-  - liberation-narrow-fonts
-  - liberation-sans-fonts
-  - liberation-serif-fonts
-  - libgusb
-  - libindicator-gtk3
-  - libmodman
-  - libproxy
-  - libsoup
-  - libwayland-cursor
-  - libwayland-egl
-  - libxkbcommon
-  - m4
-  - mailx
-  - nettle
-  - patch
-  - psmisc
-  - redhat-lsb-core
-  - redhat-lsb-submod-security
-  - rest
-  - spax
-  - time
-  - trousers
-  - xdg-utils
-  - xkeyboard-config
-  - alsa-lib
+  #- libXcomposite
+  #- libXdamage
+  #- libXtst
+  #- cups
+  #- libXScrnSaver
+  #- pango
+  #- atk
+  #- adwaita-cursor-theme
+  #- adwaita-icon-theme
+  #- at
+  #- at-spi2-atk
+  #- at-spi2-core
+  #- cairo-gobject
+  #- colord-libs
+  #- dconf
+  #- desktop-file-utils
+  #- ed
+  #- emacs-filesystem
+  #- gdk-pixbuf2
+  #- glib-networking
+  #- gnutls
+  #- gsettings-desktop-schemas
+  #- gtk-update-icon-cache
+  #- gtk3
+  #- hicolor-icon-theme
+  #- jasper-libs
+  #- json-glib
+  #- libappindicator-gtk3
+  #- libdbusmenu
+  #- libdbusmenu-gtk3
+  #- libepoxy
+  #- liberation-fonts
+  #- liberation-narrow-fonts
+  #- liberation-sans-fonts
+  #- liberation-serif-fonts
+  #- libgusb
+  #- libindicator-gtk3
+  #- libmodman
+  #- libproxy
+  #- libsoup
+  #- libwayland-cursor
+  #- libwayland-egl
+  #- libxkbcommon
+  #- m4
+  #- mailx
+  #- nettle
+  #- patch
+  #- psmisc
+  #- redhat-lsb-core
+  #- redhat-lsb-submod-security
+  #- rest
+  #- spax
+  #- time
+  #- trousers
+  #- xdg-utils
+  #- xkeyboard-config
+  #- alsa-lib
 
 grafana_admin_user: "{{ vault_grafana_admin_user }}"
 grafana_admin_pass: "{{ vault_grafana_admin_pass }}"

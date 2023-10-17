@@ -1,0 +1,26 @@
+---
+
+# stats is a smartos lx-branded zone
+
+smartos_vm_id: 073856ec-6360-42f4-b5eb-b1e0581962ad
+
+zfs_filesystems:
+  - name: zones/{{ smartos_vm_id }}/data/influxdb
+    owner: influxdb
+    group: influxdb
+
+stats_influxdb_var_dir: "/zones/{{ smartos_vm_id }}/data/influxdb"
+
+# TODO: need to systemctl daemon-reload
+#host_directories:
+#  - path: /etc/systemd/system/nginx.service.d
+#
+#host_files:
+#  - dest: /etc/systemd/system/nginx.service.d/disable_private_temp.conf
+#    content: |
+#      [Service]
+#      PrivateTmp=false
+#
+#host_authorized_key_users:
+#  - name: root
+#    authorized: "{{ galaxy_admin_users }} + ['kaivan_kamali']"

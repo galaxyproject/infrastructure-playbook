@@ -1,15 +1,5 @@
 ---
 
-- name: Bootstrap Python 3 for Ansible
-  hosts: usepython3_el
-  remote_user: root
-  gather_facts: false
-  tasks:
-    - name: Bootstrap Python 3 for Ansible
-      raw: bash -c "test -e /opt/rh/rh-python36/root/bin/python3|| (yum install -y dnf centos-release-scl && yum install -y rh-python36)"
-      register: output
-      changed_when: output.stdout != ""
-
 - name: Get EC2 Facts
   hosts: ec2hosts
   remote_user: root
@@ -154,18 +144,6 @@
         line: "{{ item }}::::type=normal;defaultpriv=basic,sys_fs_import"
         regexp: "^{{ item }}:.*"
       loop: "{{ backupusers }}"
-
-- name: Tasks for stats servers
-  hosts: statsservers
-  remote_user: root
-  roles:
-    # TODO: install on other stuff
-    - role: dj-wasabi.telegraf
-    - role: stats
-  # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
-  # the config
-  tags:
-    - stats
 
 - name: Tasks for sentry servers
   hosts: sentryservers

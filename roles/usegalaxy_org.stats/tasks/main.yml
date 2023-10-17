@@ -5,93 +5,60 @@
 # Telegraf is managed by dj-wasabi.telegraf
 
 - name: Include OS vars
-  include_vars: "{{ ansible_os_family | lower }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yml"
 
 - name: Include install tasks (RedHat)
-  include_tasks: redhat.yml
+  ansible.builtin.include_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Create stats config directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ stats_user }}"
     group: "{{ stats_user }}"
+    mode: "0750"
   with_items:
     - "{{ stats_influxdb_conf_dir }}"
     - "{{ stats_grafana_conf_dir }}"
   # if stats_user is defined, we assume non-standard dir paths
   when: stats_user is defined
 
-- name: Create stats directories
-  file:
+- name: Create stats run directories
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ stats_user }}"
-    group: "{{ stats_user }}"  # was nginx, does it need to be?
-    #mode: 0750
+    group: "{{ stats_user }}"
+    mode: "0750"
   with_items:
     - "{{ stats_influxdb_var_dir }}"
     - "{{ stats_grafana_data_dir }}"
     - "{{ stats_grafana_log_dir }}"
   when: stats_user is defined
 
-- name: Include SSL role to create/distribute SSL certs
-  include_role:
-    name: ssl
-  vars:
-    ssl_role_certs: "{{ stats_ssl_certs }}"
-  when: stats_ssl_certs is defined
-  #notify:
-  #  - restart influxdb
-
 - name: Copy influxdb configs
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ stats_influxdb_conf_dir }}/{{ item }}"
-    backup: true
-  with_items:
+    mode: "0644"
+    backup: "{{ stats_backup_configs }}"
+  loop:
     - influxdb.conf
   notify:
-    - supervisorctl restart influxdb
-    - service restart influxdb
+    - restart influxdb
 
 - name: Copy grafana configs
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ stats_grafana_conf_dir }}/{{ item }}"
     group: "{{ stats_grafana_group | default(omit) }}"
-    mode: 0640
-    backup: true
-  with_items:
+    mode: "0640"
+    backup: "{{ stats_backup_configs }}"
+  loop:
     - grafana.ini
   notify:
-    - supervisorctl restart grafana
-    - service restart grafana
-
-- name: Create stats slurp virtualenv
-  pip:
-    name: "{{ item }}"
-    virtualenv: "{{ statslurp_venv_dir }}"
-    state: latest
-  with_items:
-    - pip
-    - setuptools
-    - influxdb
-    - psycopg2-binary
-  when: stats_slurp is defined and stats_slurp
-
-- name: Copy stats slurp scripts
-  template:
-    src: "{{ item }}.j2"
-    dest: "{{ statslurp_venv_dir }}/bin/{{ item }}"
-    mode: 0750
-    owner: root
-    group: stats
-  with_items:
-    - galaxy_slurp.py
-    - galaxy_services_slurp.py
-  when: stats_slurp is defined and stats_slurp
+    - restart grafana
 
 # Force a restart in case connection params have changed
 - name: Flush handlers
@@ -99,16 +66,16 @@
 
 - name: Include service tasks
   include_tasks: service.yml
-  when: not stats_use_supervisor
 
-- block:
+- name: InfluxDB user management
+  block:
 
     - name: Install influxdb python module
       pip:
         name: influxdb
 
     - name: Create InfluxDB users
-      influxdb_user:
+      community.general.influxdb_user:
         admin: "{{ item.admin | default(omit) }}"
         user_name: "{{ item.user_name | default(omit) }}"
         user_password: "{{ item.user_password | default(omit) }}"
@@ -116,7 +83,7 @@
         # error here since auth would be required but no users would exist.
         login_username: "{{ stats_influxdb_users[0].user_name }}"
         login_password: "{{ stats_influxdb_users[0].user_password }}"
-      with_items: "{{ stats_influxdb_users | default([]) }}"
+      loop: "{{ stats_influxdb_users | default([]) }}"
       loop_control:
         label: "{{ item.user_name }}"
 

@@ -8,8 +8,11 @@ all:
       ansible_user: ubuntu
       ansible_become: true
 
-    #el7:
-    #  ansible_host: 172.18.2.4
+    # FIXME FIXME TEMP TEMP TEMP
+    stats.galaxyproject.org:
+      ansible_host: 172.18.2.223
+      # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
+      hostname_strategy: file
 
   vars:
     ansible_user: root
@@ -29,6 +32,15 @@ all:
         smart5.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
+
+    web_servers:
+      children:
+        stats_servers:
+
+    certbot_servers:
+      children:
+        # FIXME FIXME TEMP TEMP TEMP
+        #stats_servers:
 
     list_servers:
       hosts:
@@ -52,6 +64,6 @@ all:
       children:
         jenkins_agents:
 
-    #dbtest:
-    #  hosts:
-    #    el7:
+    stats_servers:
+      hosts:
+        stats.galaxyproject.org:

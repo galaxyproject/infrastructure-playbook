@@ -1,0 +1,13 @@
+---
+
+- name: Ensure InfluxDB is started and running
+  service:
+    name: "{{ influxdb_service_name }}"
+    state: started
+    enabled: yes
+
+- name: Ensure Grafana is started and running
+  service:
+    name: "{{ grafana_service_name }}"
+    state: started
+    enabled: yes
