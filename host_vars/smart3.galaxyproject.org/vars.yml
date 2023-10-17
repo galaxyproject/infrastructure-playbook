@@ -1,14 +1,6 @@
 ---
 
-# Tried a community Debian 10 LX image but unfortunately it's broken (ldconfig segfaults), so back to full virt we go
-# https://smartos.topicbox.com/groups/smartos-discuss/T926769842daee99c-Me1ce46716a424b2d570f76e8
-
 smartos_images:
-  #- source: https://dsapid.root1.ass.de/
-  #  state: present
-  # ass-debian-10 20190810 linux lx-dataset
-  #- uuid: 55bcd862-bb70-11e9-9991-7b9a40d4e95f
-  #  state: present
   # ubuntu-certified-18.04 20190627.1.1 linux zvol
   - uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
     state: present
@@ -18,25 +10,11 @@ smartos_images:
   # centos-7 20180323 linux lx-dataset
   - uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
     state: present
+  # rocky-9 20230721 linux lx-dataset
+  - uuid: c33082a0-f1f6-4a2d-bb43-6d5e6e80c028
+    state: present
 
 smartos_vms:
-  #- name: duvel
-  #  brand: lx
-  #  kernel_version: 4.19.0-5-amd64
-  #  image_uuid: 55bcd862-bb70-11e9-9991-7b9a40d4e95f
-  #  hostname: duvel
-  #  max_physical_memory: 2048
-  #  quota: 16384
-  #  resolvers: "{{ smartos_resolvers }}"
-  #  nics:
-  #    - nic_tag: external
-  #      ip: 128.118.250.7
-  #      netmask: 255.255.255.224
-  #      gateway: 128.118.250.1
-  #      vlan_id: 306
-  #  delegate_dataset: true
-  #  customer_metadata:
-  #    root_authorized_keys: "{{ sshkeys.nate_coraor }}"
   - name: duvel
     brand: bhyve
     ram: 4096
@@ -54,7 +32,7 @@ smartos_vms:
         boot: true
         model: virtio
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: cvmfs0-psu1
     brand: bhyve
     ram: 8192
@@ -80,7 +58,7 @@ smartos_vms:
         model: virtio
         size: 262144
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: ns-training
     brand: lx
     kernel_version: 3.10.0-1062.1.2.el7.x86_64
@@ -97,13 +75,13 @@ smartos_vms:
         vlan_id: 306
     delegate_dataset: false
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: stats
     brand: lx
     kernel_version: 3.10.0-1062.1.2.el7.x86_64
     image_uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
     hostname: stats
-    max_physical_memory: 8192
+    max_physical_memory: 12288
     # TODO: how was this set and how is it not breaking things?
     quota: 256
     resolvers: "{{ smartos_resolvers }}"
@@ -115,4 +93,21 @@ smartos_vms:
         vlan_id: 306
     delegate_dataset: true
     customer_metadata:
-      root_authorized_keys: "{{ sshkeys.nate_coraor }}"
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: stats2
+    brand: lx
+    kernel_version: 5.14.0-284.11.1.el9.x86_64
+    image_uuid: c33082a0-f1f6-4a2d-bb43-6d5e6e80c028
+    max_physical_memory: 12288
+    quota: 256
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        #ip: "{{ lookup('dig', 'stats.galaxyproject.org') }}"
+        ip: 172.18.2.223
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+    delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

@@ -25,6 +25,7 @@ all:
 
     smartos_hypervisors:
       hosts:
+        smart3.galaxyproject.org:
         smart5.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
