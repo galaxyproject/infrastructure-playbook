@@ -12,8 +12,9 @@ nginx_ssl_servers:
 
 stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
 
-stats_servers_group_packages: []
+stats_servers_group_packages:
   # for influxdb_user module
+  - python3-pip
   #- python-requests
   #- python-pip
   # for grafana-image-renderer
