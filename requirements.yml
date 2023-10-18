@@ -14,7 +14,7 @@ roles:
   - name: galaxyproject.postgresql_objects
     version: 1.2.0
   - name: usegalaxy_eu.certbot
-    version: 0.1.4
+    version: 0.1.11
   - name: galaxyproject.slurm
     version: 1.0.1
   - name: galaxyproject.cvmfs

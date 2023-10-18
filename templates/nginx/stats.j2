@@ -11,8 +11,7 @@ upstream influxdb_app {
 }
 
 server {
-    listen *:80;
-    #listen *:443 ssl;
+    listen *:443 ssl;
     server_name stats.galaxyproject.org;
 
     access_log  syslog:server=unix:/dev/log;

@@ -76,14 +76,13 @@ smartos_vms:
     delegate_dataset: false
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  # grafana was segfaulting after the latest update on a centos-7 lx zone, so I figured we'd try a rockylinux-9 zone,
+  # but got the same thing. the core doesn't load in gdb even on a real Linux host (probably due to lx but I'm not going
+  # to take the time to figure out the exact issue and whether it can be fixed) so moving to bhyve
   - name: stats
-    brand: lx
-    kernel_version: 3.10.0-1062.1.2.el7.x86_64
-    image_uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
-    hostname: stats
-    max_physical_memory: 12288
-    # TODO: how was this set and how is it not breaking things?
-    quota: 256
+    brand: bhyve
+    ram: 12288
+    vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
@@ -91,44 +90,6 @@ smartos_vms:
         netmask: 255.255.255.224
         gateway: 128.118.250.1
         vlan_id: 306
-    delegate_dataset: true
-    customer_metadata:
-      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  # grafana was segfaulting after the latest update on a centos-7 lx zone, so I figured we'd try a rockylinux-9 zone,
-  # but got the same thing. the core doesn't load in gdb even on a real Linux host (probably due to lx but I'm not going
-  # to take the time to figure out the exact issue and whether it can be fixed) so moving to bhyve
-  #- name: stats2
-  #  brand: lx
-  #  kernel_version: 5.14.0-284.11.1.el9.x86_64
-  #  image_uuid: c33082a0-f1f6-4a2d-bb43-6d5e6e80c028
-  #  max_physical_memory: 12288
-  #  quota: 256
-  #  resolvers: "{{ smartos_resolvers }}"
-  #  nics:
-  #    - nic_tag: external
-  #      #ip: "{{ lookup('dig', 'stats.galaxyproject.org') }}"
-  #      ip: 172.18.2.223
-  #      netmask: 255.255.255.0
-  #      gateway: 172.18.2.1
-  #      vlan_id: 406
-  #  delegate_dataset: true
-  #  customer_metadata:
-  #    root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: stats3
-    brand: bhyve
-    ram: 12288
-    vcpus: 2
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        #ip: "{{ lookup('dig', 'cvmfs0-psu1.galaxyproject.org') }}"
-        #netmask: 255.255.255.224
-        #gateway: 128.118.250.1
-        #vlan_id: 306
-        ip: 172.18.2.224
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
         model: virtio
     disks:
       - image_uuid: 1e34ba45-9683-400a-9f99-571765962f94

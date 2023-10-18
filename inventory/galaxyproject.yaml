@@ -8,9 +8,8 @@ all:
       ansible_user: ubuntu
       ansible_become: true
 
-    # FIXME FIXME TEMP TEMP TEMP
-    stats.galaxyproject.org:
-      ansible_host: 172.18.2.224
+    # for lx-brand zones, use:
+    #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
       #hostname_strategy: file
 
@@ -39,8 +38,7 @@ all:
 
     certbot_servers:
       children:
-        # FIXME FIXME TEMP TEMP TEMP
-        #stats_servers:
+        stats_servers:
 
     list_servers:
       hosts:

@@ -5,10 +5,9 @@ certbot_domains:
 
 nginx_default_redirect_uri: https://stats.galaxyproject.org/
 nginx_servers:
-  #- certbot_redirects
-  - stats
+  - certbot_redirects
 nginx_ssl_servers:
-  #- stats
+  - stats
 
 stats_influxdb_users: "{{ vault_stats_influxdb_users }}"
 
