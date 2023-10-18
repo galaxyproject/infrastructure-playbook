@@ -10,9 +10,9 @@ all:
 
     # FIXME FIXME TEMP TEMP TEMP
     stats.galaxyproject.org:
-      ansible_host: 172.18.2.223
+      ansible_host: 172.18.2.224
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
-      hostname_strategy: file
+      #hostname_strategy: file
 
   vars:
     ansible_user: root

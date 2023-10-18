@@ -2,14 +2,20 @@
 
 # stats is a smartos lx-branded zone
 
-smartos_vm_id: 073856ec-6360-42f4-b5eb-b1e0581962ad
+#smartos_vm_id: 073856ec-6360-42f4-b5eb-b1e0581962ad
+#
+#zfs_filesystems:
+#  - name: zones/{{ smartos_vm_id }}/data/influxdb
+#    owner: influxdb
+#    group: influxdb
+#
+#stats_influxdb_var_dir: "/zones/{{ smartos_vm_id }}/data/influxdb"
 
-zfs_filesystems:
-  - name: zones/{{ smartos_vm_id }}/data/influxdb
-    owner: influxdb
-    group: influxdb
-
-stats_influxdb_var_dir: "/zones/{{ smartos_vm_id }}/data/influxdb"
+# SmartOS formats ext4 and mounts on /data, you have to manually unmount it, remove it from fstab, and mkfs.xfs it
+mounts:
+  - src: /dev/vdb
+    path: /var/lib/influxdb
+    fstype: xfs
 
 # TODO: need to systemctl daemon-reload
 #host_directories:
