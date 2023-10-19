@@ -160,6 +160,7 @@ client_secret = {{ stats_grafana_conf_auth_github_client_secret | default("some_
 ;api_url = https://api.github.com/user
 team_ids = {{ stats_grafana_conf_auth_github_team_ids | default([]) | join(",") }}
 allowed_organizations = {{ stats_grafana_conf_auth_github_allowed_organizations | default([]) | join(" ") }}
+skip_org_role_sync = true
 
 #################################### Google Auth ##########################
 [auth.google]
