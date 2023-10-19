@@ -1,0 +1,18 @@
+---
+
+# this is used by a variety of galaxyproject.* roles
+pip_virtualenv_command: python3 -m venv
+
+# override in group or host vars to disable
+install_epel: true
+
+# remember, these package names need to be valid across all versions of Debian/Ubuntu/EL/pkgsrc
+all_packages:
+  - zsh
+  - git
+  - tmux
+  - vim
+  - htop
+  # this is for apt_key in the telegraf role; technically Debian only needs gpg, but gnupg2 - which is the EL package
+  # name - exists on Debian and depends on gnupg, which depends on gpg)
+  #- gnupg2
