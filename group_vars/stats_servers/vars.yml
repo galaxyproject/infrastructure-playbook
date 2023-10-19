@@ -91,7 +91,8 @@ stats_grafana_conf_auth_github: true
 stats_grafana_conf_auth_github_allowed_organizations:
   - galaxyproject
 
-stats_conf_email_host: 'localhost:25'
+#stats_conf_email_host: 'localhost:25'
+stats_conf_email_host: 'smtp.psu.edu:25'
 stats_conf_email_from: 'stats@stats.galaxyproject.org'
 
 stats_influxdb_http_bind_address: "127.0.0.1:8086"
