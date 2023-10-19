@@ -81,7 +81,7 @@ smartos_vms:
   # to take the time to figure out the exact issue and whether it can be fixed) so moving to bhyve
   - name: stats
     brand: bhyve
-    ram: 12288
+    ram: 16384
     vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
