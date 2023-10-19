@@ -93,15 +93,16 @@ telegraf_plugins_extra:
       - interval = "1m"
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
-  galaxy_jobs_queue_overview:
-    plugin: "exec"
-    config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue-overview --short-tool-id | sed \"s/=,/=unknown,/\"'"]
-      - timeout = "30s"
-      - data_format = "influx"
-      - interval = "1m"
-      - '[inputs.exec.tags]'
-      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  # this creates massive series cardinality because it includes user ids
+  #galaxy_jobs_queue_overview:
+  #  plugin: "exec"
+  #  config:
+  #    - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue-overview --short-tool-id | sed \"s/=,/=unknown,/\"'"]
+  #    - timeout = "30s"
+  #    - data_format = "influx"
+  #    - interval = "1m"
+  #    - '[inputs.exec.tags]'
+  #    - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_oidc:
     plugin: "exec"
     config:
