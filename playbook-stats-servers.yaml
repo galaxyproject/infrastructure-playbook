@@ -7,6 +7,16 @@
     - name: Gathering Facts
       setup:
       tags: always
+    - name: Allow nginx to bind to InfluxDB port
+      community.general.seport:
+        ports: 8086
+        proto: tcp
+        setype: http_port_t
+    - name: Allow nginx to make proxy connections
+      ansible.posix.seboolean:
+         name: httpd_can_network_connect
+         state: true
+         persistent: true
   roles:
     - role: galaxyproject.general.virtual
       tags: general
