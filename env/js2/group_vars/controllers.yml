@@ -162,3 +162,5 @@ slurm_slurp_partitions:
   - xl
   - gpu-small
   - gxit
+  - tpv
+  - vgp
