@@ -106,7 +106,7 @@ slurm_partitions:
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-3],{{ slurm_cluster_name }}-large[2-3],{{ slurm_cluster_name }}-xl[2-3]"
+    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-3],{{ slurm_cluster_name }}-large[2-3],{{ slurm_cluster_name }}-xl[2-7]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
@@ -120,13 +120,6 @@ slurm_partitions:
     OverSubscribe: EXCLUSIVE
   - name: large
     Nodes: "{{ slurm_cluster_name }}-large[4-7]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
-  - name: xl
-    Nodes: "{{ slurm_cluster_name }}-xl[4-7]"
     DefaultTime: "48:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
