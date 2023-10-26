@@ -54,38 +54,47 @@ slurm_config:
 slurm_nodes:
   - name: "{{ slurm_cluster_name }}-tiny[0-7]"
     State: CLOUD
+    Weight: 10
     CPUs: 1
     RealMemory: 2840  # 2984, then 2919, then 2896 reported by slurmd
   - name: "{{ slurm_cluster_name }}-small[0-7]"
     State: CLOUD
+    Weight: 20
     CPUs: 2
     RealMemory: 5900  # 5937 reported by slurmd
   - name: "{{ slurm_cluster_name }}-quad[0-7]"
     State: CLOUD
+    Weight: 30
     CPUs: 4
     RealMemory: 14800  # 14819 reported by slurmd
   - name: "{{ slurm_cluster_name }}-medium[0-47]"
     State: CLOUD
+    Weight: 40
     CPUs: 8
     RealMemory: 29900  # 29938 reported by slurmd
   - name: "{{ slurm_cluster_name }}-large[0-7]"
     State: CLOUD
+    Weight: 50
     CPUs: 16
     RealMemory: 60100  # 60176 reported by slurmd
   - name: "{{ slurm_cluster_name }}-xl[0-7]"
     State: CLOUD
+    Weight: 60
     CPUs: 32
     RealMemory: 125000  # 125798 reported by slurmd
   - name: "{{ slurm_cluster_name }}-2xl[0-1]"
     State: CLOUD
+    Weight: 70
     CPUs: 64
     RealMemory: 250000  # 251678 reported by slurmd
   - name: "{{ slurm_cluster_name }}-mem-large[0-1]"
     State: CLOUD
+    Weight: 80
     CPUs: 64
     RealMemory: 502000  # 503677 reported by slurmd
   - name: "{{ slurm_cluster_name }}-mem-xl[0-1]"
     State: CLOUD
+    Weight: 90
     CPUs: 128
     RealMemory: 1004000  # 1007851 reported by slurmd
   - name: "{{ slurm_cluster_name }}-gpu-small[0-3]"
