@@ -72,12 +72,12 @@ slurm_nodes:
     Weight: 40
     CPUs: 8
     RealMemory: 29900  # 29938 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-large[0-7]"
+  - name: "{{ slurm_cluster_name }}-large[0-15]"
     State: CLOUD
     Weight: 50
     CPUs: 16
     RealMemory: 60100  # 60176 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-xl[0-7]"
+  - name: "{{ slurm_cluster_name }}-xl[0-15]"
     State: CLOUD
     Weight: 60
     CPUs: 32
@@ -115,7 +115,7 @@ slurm_partitions:
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-3],{{ slurm_cluster_name }}-large[2-3],{{ slurm_cluster_name }}-xl[2-7]"
+    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-47],{{ slurm_cluster_name }}-large[2-15],{{ slurm_cluster_name }}-xl[2-15]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
