@@ -83,17 +83,17 @@ slurm_nodes:
   # permanent nodes
   - name: roundup[49-54]
     RealMemory: 122880
-    CPUS: 24
+    CPUS: 20
     State: UNKNOWN
     Weight: 0
   - name: roundup[55-60]
     RealMemory: 122880
-    CPUS: 24
+    CPUS: 20
     State: UNKNOWN
     Weight: 10
   - name: roundup[61-64]
     RealMemory: 122880
-    CPUS: 24
+    CPUS: 20
     State: UNKNOWN
     Weight: 0
 
