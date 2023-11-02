@@ -69,6 +69,14 @@
           gather_facts:
           become: true
 
+        - name: Set CVMFS cache size for instance
+          lineinfile:
+            path: /etc/cvmfs/default.local
+            regexp: '^CVMFS_QUOTA_LIMIT=.*'
+            line: 'CVMFS_QUOTA_LIMIT="{{ (0.6 * ((ansible_mounts | selectattr("mount", "==", "/") | first).size_available) / 1024**2) | int }}"'
+            mode: "0644"
+          become: true
+
         - name: Connect to tailnet
           command: "/usr/bin/tailscale up --auth-key {{ slurm_scale_tailscale_authkey | quote }}"
           become: true
