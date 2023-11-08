@@ -152,6 +152,13 @@ telegraf_plugins_extra:
       - http_proxy = "http://localhost:3128"
       - response_status_code = 200
       - interface = "lo"
+  tmpwatch_auto_runtime:
+    plugin: "exec"
+    config:
+      - commands = ["bash -c 'echo tmpwatch_auto_mutex age=$(($(date +%s) - $(stat -c %Y /run/tmpwatch-auto.lock 2>/dev/null || date +%s)))'"]
+      - timeout = "10s"
+      - data_format = "influx"
+      - interval = "30s"
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:

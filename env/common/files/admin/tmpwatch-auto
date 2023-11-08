@@ -6,7 +6,7 @@ set -euo pipefail
 
 DIR="$1"
 PERCENT=
-MUTEX="${HOME}/.tmpwatch-auto.lock"
+MUTEX="/run/tmpwatch-auto.lock"
 MUTEX_ACQUIRED=false
 declare -a EXCLUDE_ARGS
 
