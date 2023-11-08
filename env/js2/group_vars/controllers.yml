@@ -155,7 +155,7 @@ telegraf_plugins_extra:
   tmpwatch_auto_runtime:
     plugin: "exec"
     config:
-      - commands = ["bash -c 'echo tmpwatch_auto_mutex age=$(($(date +%s) - $(stat -c %Y /run/tmpwatch-auto.lock 2>/dev/null || date +%s)))'"]
+      - commands = ["bash -c 'echo tmpwatch_auto_mutex age=$(($(date +%s) - $(stat -c %Y /tmp/tmpwatch-auto-g2main.lock 2>/dev/null || date +%s)))'"]
       - timeout = "10s"
       - data_format = "influx"
       - interval = "30s"

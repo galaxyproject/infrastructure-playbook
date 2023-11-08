@@ -6,7 +6,8 @@ set -euo pipefail
 
 DIR="$1"
 PERCENT=
-MUTEX="/run/tmpwatch-auto.lock"
+# FIXME: shouldn't be in /tmp, but needs to be readable by telegraf
+MUTEX="/tmp/tmpwatch-auto-$(id -un).lock"
 MUTEX_ACQUIRED=false
 declare -a EXCLUDE_ARGS
 
