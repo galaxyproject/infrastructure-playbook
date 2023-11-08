@@ -6,6 +6,8 @@ set -euo pipefail
 
 DIR="$1"
 PERCENT=
+MUTEX="${HOME}/.tmpwatch-auto.lock"
+MUTEX_ACQUIRED=false
 declare -a EXCLUDE_ARGS
 
 case "$DIR" in
@@ -19,6 +21,13 @@ esac
 
 
 : ${DEBUG:=false}
+
+
+function trap_handler() {
+    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    return 0
+}
+trap "trap_handler" SIGTERM SIGINT ERR EXIT
 
 
 function isintorempty() {
@@ -100,7 +109,10 @@ function clean() {
 function main() {
     [ -n "$DIR" ] || { echo "usage: $0 <dir>"; exit 2; }
     [ -d "$DIR" ] || error "Invalid directory: $DIR"
-    clean
+    if mkdir "$MUTEX"; then
+        MUTEX_ACQUIRED=true
+        clean
+    fi
 }
 
 
