@@ -41,7 +41,7 @@ ceph_mounts:
     key: "{{ ceph_galaxy_scratch_key }}"
     src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
     opts: noatime,_netdev
-    fstype: fuse.ceph
+    fstype: ceph
 
 slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
 slurm_controller_name: "{{ controller_name }}"
@@ -52,6 +52,7 @@ os_clouds_yaml: "{{ clouds_yaml }}"
 
 os_name: "{{ inventory_hostname_short }}"
 
+# FIXME: this doesn't work when launching the controller itself, I used my own key
 os_key_name: admin-kp
 
 os_nics:
