@@ -52,6 +52,15 @@
         - name: Disable ELRepo
           command: dnf config-manager --set-disabled ELRepo
 
+        - name: Disable cgroupsv2
+          lineinfile:
+            path: /etc/default/grub
+            regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+            line: GRUB_CMDLINE_LINUX_DEFAULT="systemd.unified_cgroup_hierarchy=0"
+
+        - name: Update grub
+          command: grub2-mkconfig -o /boot/grub2/grub.cfg
+
         - name: Create groups
           group:
             name: "{{ item.name }}"
@@ -88,7 +97,6 @@
               #- autofs
               - lzo
               - git
-              - libcgroup-tools
               - apptainer
               - python39
           # sometimes mirrors are broken
