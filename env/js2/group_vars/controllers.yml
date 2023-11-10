@@ -39,7 +39,7 @@ controllers_group_packages:
   - openssl-devel
   #- slurm-drmaa
   # this probably won't work until after Slurm is installed
-  - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el8.x86_64.rpm
+  - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
 
 
 controllers_group_files:

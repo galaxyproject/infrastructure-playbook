@@ -74,7 +74,8 @@
 
     - name: Update inventory with spawned instance IP
       set_fact:
-        ansible_host: "{{ __spawn_result.server.public_v4 or __spawn_result.server.private_v4 }}"
+        # access_ipv4 is blank on JS2 for some reason
+        ansible_host: "{{ __spawn_result.server.access_ipv4 or __spawn_result.server.addresses[os_nics[0]['net-name']][0].addr }}"
       #delegate_to: localhost
 
     - name: Log IP addresses

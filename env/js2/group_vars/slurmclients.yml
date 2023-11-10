@@ -26,7 +26,6 @@ slurm_config:
   SlurmdTimeout: 300
   StateSaveLocation: /var/spool/slurm/ctld/slurm.state
 
-  DefaultStorageLoc: /var/log/slurm/slurm_accounting
   AccountingStorageType: accounting_storage/slurmdbd
   AccountingStorageHost: galaxy08.tacc.utexas.edu
 

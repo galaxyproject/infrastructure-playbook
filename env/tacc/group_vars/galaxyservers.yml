@@ -33,12 +33,13 @@ galaxyservers_group_directories:
     group: G-803372
 
 # node, npm for GIE proxy
-galaxyservers_group_packages:
+galaxyservers_group_packages: []
 #  - nodejs
 #  - npm
 #  - '@development tools' # for npm modules
 #  - collectl
-  - slurm-drmaa
+#  - slurm-drmaa
+#   - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.3/slurm-drmaa-1.1.3-20.11.el8.x86_64.rpm
 
 galaxy_cvmfs_repos_enabled: true
 
