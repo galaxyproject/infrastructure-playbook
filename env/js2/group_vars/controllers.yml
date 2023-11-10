@@ -91,6 +91,18 @@ controllers_group_crontabs:
     user: g2main
     minute: 00,15,30,45
     job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
+  - id: clean_amqp_consume
+    name: Clean Test AMQP consume dir
+    user: g2test
+    minute: "0"
+    hour: "2"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/test/var/persisted_data/amqp_ack-jetstream2/consume"
+  - id: clean_amqp_consume
+    name: Clean Main AMQP consume dir
+    user: g2main
+    minute: "30"
+    hour: "2"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/persisted_data/amqp_ack-jetstream2/consume"
 
 telegraf_agent_hostname: "{{ inventory_hostname }}"
 # not sure why but it's establishing connections very slowly
