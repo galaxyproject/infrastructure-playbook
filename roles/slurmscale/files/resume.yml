@@ -57,7 +57,7 @@
 
         - name: Update inventory with spawned instance IP
           set_fact:
-            ansible_host: "{{ spawned_out.server.private_v4 }}"
+            ansible_host: "{{ spawned_out.server.access_ipv4 or spawned_out.server.addresses[nics[0]['net-name']][0].addr }}"
           delegate_to: localhost
 
         # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this

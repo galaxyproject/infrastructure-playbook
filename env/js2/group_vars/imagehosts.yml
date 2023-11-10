@@ -6,7 +6,7 @@ os_secrets:
     content: "{{ openstack_privatekeys.admin }}"
 ansible_ssh_private_key_file: "{{ inventory_dir }}/{{ os_key_name }}.pem"
 
-os_image: Featured-RockyLinux8
+os_image: Featured-RockyLinux9
 os_flavor: m3.small
 os_auto_ip: false
 
