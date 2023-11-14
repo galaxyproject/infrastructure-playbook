@@ -66,17 +66,18 @@ slurm_nodes:
     Weight: 30
     CPUs: 4
     RealMemory: 14800  # 14819 reported by slurmd
+  # TODO: [32-47] are not in a partition and should be dropped once all jobs have drained from them
   - name: "{{ slurm_cluster_name }}-medium[0-47]"
     State: CLOUD
     Weight: 40
     CPUs: 8
     RealMemory: 29900  # 29938 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-large[0-15]"
+  - name: "{{ slurm_cluster_name }}-large[0-19]"
     State: CLOUD
     Weight: 50
     CPUs: 16
     RealMemory: 60100  # 60176 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-xl[0-15]"
+  - name: "{{ slurm_cluster_name }}-xl[0-19]"
     State: CLOUD
     Weight: 60
     CPUs: 32
@@ -114,25 +115,11 @@ slurm_partitions:
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-47],{{ slurm_cluster_name }}-large[2-15],{{ slurm_cluster_name }}-xl[2-15]"
+    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-31],{{ slurm_cluster_name }}-large[2-19],{{ slurm_cluster_name }}-xl[2-19]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
-  - name: multi
-    Nodes: "{{ slurm_cluster_name }}-medium[4-47]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
-  - name: large
-    Nodes: "{{ slurm_cluster_name }}-large[4-7]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
   - name: gpu-small
     DefaultTime: "24:20:00"
     MaxTime: "96:20:00"
