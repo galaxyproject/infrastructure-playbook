@@ -129,6 +129,14 @@ telegraf_plugins_extra:
       - timeout = "10s"
       - data_format = "influx"
       - interval = "30s"
+  pulsar_staging_fds:
+    plugin: "file"
+    config:
+      # via the manual rocky@jetstream2 crontab:
+      # * * * * * umask 022; sudo lsof -p $(pgrep -u g2main pulsar-main) | grep /jetstream2/scratch | awk '{print $4}' | tr -d '0-9' | sort | uniq -c | awk '{print $2"="$1}' | xargs echo pulsar_staging_fds > /tmp/pulsar-staging-fds-g2main.txt
+      - files = ["/tmp/pulsar-staging-fds-g2main.txt"]
+      - data_format = "influx"
+      - interval = "1m"
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:
