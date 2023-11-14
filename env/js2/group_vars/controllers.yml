@@ -53,6 +53,16 @@ controllers_group_files:
     mode: "0755"
     owner: root
     group: root
+  - src: files/slurm/prolog.bash
+    dest: /jetstream2/scratch/slurm/prolog.bash
+    mode: "0755"
+    owner: root
+    group: root
+  - src: files/slurm/epilog.bash
+    dest: /jetstream2/scratch/slurm/epilog.bash
+    mode: "0755"
+    owner: root
+    group: root
 
 controllers_group_templates:
   - src: templates/telegraf/slurm_slurp.sh.j2
@@ -76,6 +86,10 @@ controllers_group_directories:
   - path: /srv/pulsar/main/log
     owner: g2main
     group: G-803372
+  - path: /jetstream2/scratch/slurm
+    owner: root
+    group: root
+    mode: "0755"
   # see comment in links
   #- path: /galaxy-repl
   #- path: /galaxy-repl/main

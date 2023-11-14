@@ -16,6 +16,11 @@ slurm_config:
   JobCompLoc: /var/log/slurm/slurm.job.log
   JobCompType: jobcomp/filetxt
   SchedulerType: sched/backfill
+  #SchedulerParameters: nohold_on_prolog_fail
+
+  Prolog: /jetstream2/scratch/slurm/prolog.bash
+  Epilog: /jetstream2/scratch/slurm/epilog.bash
+  PrologEpilogTimeout: 90
 
   SelectType: select/cons_res
   SelectTypeParameters: CR_CPU_Memory
@@ -87,7 +92,7 @@ slurm_nodes:
     Weight: 70
     CPUs: 64
     RealMemory: 250000  # 251678 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-mem-large[0-1]"
+  - name: "{{ slurm_cluster_name }}-mem-large[0-3]"
     State: CLOUD
     Weight: 80
     CPUs: 64
@@ -120,6 +125,13 @@ slurm_partitions:
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
+  - name: resize-shm
+    Nodes: "{{ slurm_cluster_name }}-mem-large[2-3]"
+    DefaultTime: "06:00:00"
+    MaxTime: "96:00:00"
+    MaxNodes: 1
+    State: UP
+    OverSubscribe: EXCLUSIVE
   - name: gpu-small
     DefaultTime: "24:20:00"
     MaxTime: "96:20:00"
