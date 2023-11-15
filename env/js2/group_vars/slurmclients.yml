@@ -19,7 +19,6 @@ slurm_config:
   #SchedulerParameters: nohold_on_prolog_fail
 
   Prolog: /jetstream2/scratch/slurm/prolog.bash
-  Epilog: /jetstream2/scratch/slurm/epilog.bash
   PrologEpilogTimeout: 90
 
   SelectType: select/cons_res
