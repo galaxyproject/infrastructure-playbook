@@ -82,12 +82,16 @@
           become: true
           when: "inventory_hostname.startswith('js2-gxit-')"
 
-        - name: Copy slurm.conf
+        - name: Copy slurm config files
           copy:
-            src: /etc/slurm/slurm.conf
-            dest: /etc/slurm/slurm.conf
+            src: "{{ item.path }}"
+            dest: "{{ item.path }}"
+            mode: "{{ item.mode | default('0644') }}"
           become: true
-          register: slurm_conf
+          loop:
+            - path: /etc/slurm/slurm.conf
+            - path: /etc/slurm/prolog.bash
+              mode: "0755"
 
         - name: Log IP address
           debug:

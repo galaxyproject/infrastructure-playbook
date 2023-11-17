@@ -54,7 +54,7 @@ controllers_group_files:
     owner: root
     group: root
   - src: files/slurm/prolog.bash
-    dest: /jetstream2/scratch/slurm/prolog.bash
+    dest: /etc/slurm/prolog.bash
     mode: "0755"
     owner: root
     group: root
