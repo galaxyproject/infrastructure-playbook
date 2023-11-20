@@ -70,13 +70,12 @@ slurm_nodes:
     Weight: 30
     CPUs: 4
     RealMemory: 14800  # 14819 reported by slurmd
-  # TODO: [32-47] are not in a partition and should be dropped once all jobs have drained from them
-  - name: "{{ slurm_cluster_name }}-medium[0-47]"
+  - name: "{{ slurm_cluster_name }}-medium[0-23]"
     State: CLOUD
     Weight: 40
     CPUs: 8
     RealMemory: 29900  # 29938 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-large[0-19]"
+  - name: "{{ slurm_cluster_name }}-large[0-23]"
     State: CLOUD
     Weight: 50
     CPUs: 16
@@ -119,7 +118,7 @@ slurm_partitions:
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-31],{{ slurm_cluster_name }}-large[2-19],{{ slurm_cluster_name }}-xl[2-19]"
+    Nodes: "{{ slurm_cluster_name }}-tiny[2-7],{{ slurm_cluster_name }}-small[2-7],{{ slurm_cluster_name }}-quad[2-7],{{ slurm_cluster_name }}-medium[2-23],{{ slurm_cluster_name }}-large[2-23],{{ slurm_cluster_name }}-xl[2-19]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
