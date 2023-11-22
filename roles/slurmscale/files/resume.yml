@@ -92,6 +92,8 @@
             - path: /etc/slurm/slurm.conf
             - path: /etc/slurm/prolog.bash
               mode: "0755"
+            - path: /etc/slurm/prolog.sh
+              mode: "0755"
 
         - name: Log IP address
           debug:

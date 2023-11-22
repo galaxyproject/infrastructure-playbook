@@ -65,6 +65,11 @@ controllers_group_templates:
     owner: root
     group: root
     mode: '0755'
+  - src: templates/slurm/prolog.sh.j2
+    dest: /etc/slurm/prolog.sh
+    mode: "0755"
+    owner: root
+    group: root
 
 controllers_group_directories:
   #- path: /var/lib/slurm

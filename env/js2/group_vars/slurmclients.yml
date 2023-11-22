@@ -2,6 +2,18 @@
 
 slurm_munge_key: files/slurm/munge.key
 
+# what mounts/dirs/users the prolog script will check
+slurm_prolog_cvmfs_repos:
+  - main.galaxyproject.org
+  - data.galaxyproject.org
+  - singularity.galaxyproject.org
+
+slurm_prolog_dirs:
+  - /jetstream2/scratch
+
+slurm_prolog_users:
+  - g2main
+
 slurm_config:
   ControlMachine: "{{ slurm_controller_name }}"
   ControlAddr: "{{ slurm_controller_ip }}"
@@ -18,7 +30,7 @@ slurm_config:
   SchedulerType: sched/backfill
   #SchedulerParameters: nohold_on_prolog_fail
 
-  Prolog: /etc/slurm/prolog.bash
+  Prolog: /etc/slurm/prolog.sh
   PrologEpilogTimeout: 90
 
   SelectType: select/cons_res
