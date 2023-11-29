@@ -30,7 +30,7 @@ slurm_config:
   SchedulerType: sched/backfill
   #SchedulerParameters: nohold_on_prolog_fail
 
-  Prolog: /etc/slurm/prolog.sh
+  Prolog: /etc/slurm/prolog.*
   PrologEpilogTimeout: 90
 
   SelectType: select/cons_res
