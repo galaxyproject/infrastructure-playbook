@@ -95,16 +95,17 @@ controllers_group_directories:
   #- path: /galaxy-repl/main
 
 controllers_group_crontabs:
-  - id: clean_scratch
-    name: Clean Test Scratch
-    user: g2test
-    minute: 05,20,35,50
-    job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/test/jobs
-  - id: clean_scratch
-    name: Clean Main Scratch
-    user: g2main
-    minute: 00,15,30,45
-    job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
+  # FIXME: running scratchclean manually configured in rocky crontab
+  #- id: clean_scratch
+  #  name: Clean Test Scratch
+  #  user: g2test
+  #  minute: 05,20,35,50
+  #  job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/test/jobs
+  #- id: clean_scratch
+  #  name: Clean Main Scratch
+  #  user: g2main
+  #  minute: 00,15,30,45
+  #  job: /usr/local/bin/tmpwatch-auto /jetstream2/scratch/main/jobs
   - id: clean_amqp_consume
     name: Clean Test AMQP consume dir
     user: g2test
