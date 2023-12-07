@@ -1,5 +1,14 @@
 ---
 
+# TEMP going to try fuse again
+ceph_mounts:
+  - name: galaxy-scratch
+    path: /jetstream2/scratch
+    key: "{{ ceph_galaxy_scratch_key }}"
+    src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
+    opts: noatime,_netdev
+    fstype: fuse.ceph
+
 slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
