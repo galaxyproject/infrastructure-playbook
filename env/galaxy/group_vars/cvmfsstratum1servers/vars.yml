@@ -22,6 +22,18 @@ cvmfsstratum1servers_group_authorized_key_users:
   - name: cloud
     authorized: "{{ galaxy_cloud_team_users }}"
 
+cvmfsstratum1servers_group_files:
+  - src: files/logrotate/squid
+    dest: /etc/logrotate.d/squid
+    mode: "0644"
+    owner: root
+    group: root
+  - src: files/logrotate/httpd
+    dest: /etc/logrotate.d/httpd
+    mode: "0644"
+    owner: root
+    group: root
+
 cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
 
 cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.6) | int }}"
