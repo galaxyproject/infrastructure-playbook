@@ -118,7 +118,7 @@ slurm_partitions:
     LLN: "YES"
     Default: "YES"
     PriorityTier: 10
-  - name: reserved
+  - name: priority
     State: UP
     MaxTime: 8-00:00:00
     MaxNodes: 1
