@@ -158,3 +158,4 @@ slurm_slurp_partitions:
   - gxit
   - tpv
   - vgp
+  - priority

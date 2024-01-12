@@ -11,7 +11,7 @@ slurm_slurp_cluster_name: roundup
 slurm_slurp_partitions:
   - normal
   - multi
-  - reserved
+  - priority
 
 telegraf_plugins_extra:
   slurm_slurp:
