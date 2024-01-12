@@ -92,12 +92,12 @@ slurm_nodes:
     Weight: 50
     CPUs: 16
     RealMemory: 60100  # 60176 reported by slurmd
-  - name: "js2-xl[0-19]"
+  - name: "js2-xl[0-23]"
     State: CLOUD
     Weight: 60
     CPUs: 32
     RealMemory: 125000  # 125798 reported by slurmd
-  - name: "js2-2xl[0-3]"
+  - name: "js2-2xl[0-15]"
     State: CLOUD
     Weight: 70
     CPUs: 64
@@ -129,14 +129,14 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: priority
-    Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-3],js2-xl[2-3],js2-2xl[2-3]"
+    Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-7],js2-xl[2-7],js2-2xl[2-15]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[4-23],js2-xl[4-19]"
+    Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-23]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
