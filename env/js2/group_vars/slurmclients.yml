@@ -28,7 +28,7 @@ slurm_config:
   JobCompLoc: /var/log/slurm/slurm.job.log
   JobCompType: jobcomp/filetxt
   SchedulerType: sched/backfill
-  #SchedulerParameters: nohold_on_prolog_fail
+  SchedulerParameters: nohold_on_prolog_fail
 
   Prolog: /etc/slurm/prolog.*
   PrologEpilogTimeout: 90
