@@ -42,8 +42,9 @@ slurm_config:
   SlurmdTimeout: 300
   StateSaveLocation: /var/spool/slurm/ctld/slurm.state
 
-  AccountingStorageType: accounting_storage/slurmdbd
-  AccountingStorageHost: galaxy08.tacc.utexas.edu
+  # TODO: disabled until TACC slurm is upgraded
+  #AccountingStorageType: accounting_storage/slurmdbd
+  #AccountingStorageHost: galaxy08.tacc.utexas.edu
 
   JobAcctGatherType: jobacct_gather/cgroup
   JobAcctGatherFrequency: task=15
