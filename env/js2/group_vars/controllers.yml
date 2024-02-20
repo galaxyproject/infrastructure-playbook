@@ -3,8 +3,11 @@
 slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
-os_image: Featured-RockyLinux9
+#os_image: Featured-RockyLinux9
+os_image: usegalaxy-controller-rocky9-ephemeral-to-vbi
 os_flavor: m3.quad
+os_boot_from_volume: true
+os_volume_size: 60
 
 os_security_groups:
   - default
