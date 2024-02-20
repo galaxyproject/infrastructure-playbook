@@ -1,0 +1,178 @@
+#!/bin/bash
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+set -euo pipefail
+
+PERCENT=
+WARN_HOURS=72
+DRY_RUN=false
+MUTEX="$HOME/pulsar-clean-jobs.lock"
+MUTEX_ACQUIRED=false
+declare -a ACTIVE_IDS
+ACTIVE_IDS_SET=false
+
+function usage() {
+    echo "usage: $0 [-hn] DIR"
+    if [ "${1:-}" = 'help' ]; then
+        cat <<EOF
+    -h  print help
+    -n  dry run
+    DIR path of pulsar jobs dir to clean
+EOF
+    fi
+}
+
+while getopts ":hn" opt; do
+    case "$opt" in
+        h)
+            usage help
+            exit 0
+            ;;
+        n)
+            DRY_RUN=true
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+DIR="${1:-}"
+[ -n "$DIR" ] || { usage; exit 2; }
+
+# FIXME: JS2-specific hack
+case "$DIR" in
+    */main/*)
+        PULSAR_PERSISTED_DATA='/srv/pulsar/main/var/persisted_data'
+        ;;
+    */test/*)
+        PULSAR_PERSISTED_DATA='/srv/pulsar/test/var/persisted_data'
+        ;;
+esac
+
+
+function trap_handler() {
+    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    return 0
+}
+trap "trap_handler" SIGTERM SIGINT ERR EXIT
+
+
+function isintorempty() {
+    # if the value referenced by the var *name* passed in $1 is:
+    #   an integer: return 0
+    #   empty: return 1
+    #   not an integer: return 2
+    local name=${2:-"\$$1"}
+    [ -n "${!1}" ] || return 1
+    [ "${!1}" -eq "${!1}" ] 2>/dev/null || { rc=$?; [ $rc -ne 2 ] || { echo "ERROR: invalid non-integer value for $name: ${!1}"; }; return $rc; }
+    return 0
+}
+
+
+function isint() {
+    local name=${2:-"\$$1"}
+    if isintorempty $1 $name; then
+        return 0
+    else
+        [ $? -ne 1 ] || echo "ERROR: $name value cannot be empty string"
+        return 1
+    fi
+}
+
+
+function log() {
+    [ -t 0 ] && echo -e '\033[1;32mINFO: ' "$@" '\033[0m' || echo 'INFO:' "$@"
+}
+
+
+function log_warning() {
+    [ -t 0 ] && echo -e '\033[1;33mWARNING:' "$@" '\033[0m' || echo 'WARNING:' "$@"
+}
+
+
+function log_error() {
+    [ -t 0 ] && echo -e '\033[1;31mERROR:' "$@" '\033[0m' || echo 'ERROR:' "$@" >&2
+}
+
+
+function error() {
+    log_error "$@"
+    exit 1
+}
+
+
+function percent_full() {
+    df --output=pcent "$DIR" | tail -n 1 | tr -d %' '
+}
+
+
+function hours() {
+    isint PERCENT || exit 1
+    if [[ $PERCENT -ge 98 ]]; then
+        echo 1
+    elif [[ $PERCENT -ge 95 ]]; then
+        echo 6
+    elif [[ $PERCENT -ge 90 ]]; then
+        echo 12
+    elif [[ $PERCENT -ge 80 ]]; then
+        echo 24
+    elif [[ $PERCENT -ge 70 ]]; then
+        echo 36
+    elif [[ $PERCENT -ge 60 ]]; then
+        echo 48
+    elif [[ $PERCENT -ge 40 ]]; then
+        echo 72
+    else
+        echo 96
+    fi
+}
+
+
+function is_active() {
+    local id="$1"
+    local active_id
+    if ! $ACTIVE_IDS_SET; then
+        ACTIVE_IDS=($(find ${PULSAR_PERSISTED_DATA}/*jetstream2-{active,preprocessing}-jobs -maxdepth 1 -type f -printf "%f\n"))
+        ACTIVE_IDS_SET=true
+    fi
+    for active_id in "${ACTIVE_IDS[@]}"; do
+        if [[ $active_id == $id ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+
+function clean() {
+    PERCENT=$(percent_full)
+    local ctime id dir
+    local hours=$(hours)
+    local min_ctime=$(date --date="$hours hours ago" '+%s')
+    local now=$(date '+%s')
+    log "at $(date), $DIR is ${PERCENT}% full; scratch dirs older than $(date --date="$hours hours ago") ($hours hours) will be removed"
+    while read ctime id; do
+        if is_active "$id"; then
+            log "ignoring active: $id"
+            if [[ $(($now - $ctime)) -gt $(($WARN_HOURS * 60 * 60)) ]]; then
+                log_warning "supposedly active job dir older than $WARN_HOURS hours: $id"
+	    fi
+        else
+	    dir="${DIR}/${id}"
+            log "removing: $dir"
+            $DRY_RUN || rm -rf "$dir"
+        fi
+    done < <(ls -lrct --time-style=+%s "$DIR" | tail -n +2 | awk "\$6 < $min_ctime {print \$6, \$7}")
+}
+
+
+function main() {
+    [ -d "$DIR" ] || error "Invalid directory: $DIR"
+    if mkdir "$MUTEX"; then
+        MUTEX_ACQUIRED=true
+        clean
+    fi
+}
+
+
+main

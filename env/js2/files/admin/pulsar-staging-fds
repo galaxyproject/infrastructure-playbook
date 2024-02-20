@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+MUTEX="$HOME/pulsar-staging-fds.lock"
+MUTEX_ACQUIRED=false
+OUTPUT='/tmp/pulsar-staging-fds-g2main.txt'
+
+function trap_handler() {
+    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    return 0
+}
+trap "trap_handler" SIGTERM SIGINT ERR EXIT
+
+if mkdir "$MUTEX"; then
+    MUTEX_ACQUIRED=true
+    umask 022
+    echo pulsar_staging_fds $(sudo lsof -p $(pgrep -u g2main pulsar-main) | grep /jetstream2/scratch | awk '{print $4}' | tr -d '0-9' | sort | uniq -c | awk '{print $2"="$1}' | xargs echo | tr ' ' ,) > "$OUTPUT"
+fi
