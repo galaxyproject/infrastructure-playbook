@@ -1,0 +1,14 @@
+---
+
+os_image: Featured-RockyLinux9
+os_flavor: m3.small
+os_key_name: nate-treehouse
+#os_boot_from_volume: true
+#os_volume_size: 60
+
+os_security_groups:
+  - default
+  - usegalaxy-control
+
+os_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
