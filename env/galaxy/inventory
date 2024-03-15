@@ -343,9 +343,11 @@ sentry.galaxyproject.org
 jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
-# lx-brand zone can't use acls
-#cvmfs1-psu0.galaxyproject.org
+cvmfs1-psu0.galaxyproject.org
+# Isn't on the report
 #stats.galaxyproject.org
+eddie.galaxyproject.org
+radegast.galaxyproject.org
 # OK doing these two myself
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
