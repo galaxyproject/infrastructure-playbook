@@ -14,6 +14,7 @@ roles/galaxyproject.opendkim
 roles/galaxyproject.postfix
 roles/galaxyproject.postgresql
 roles/galaxyproject.slurm
+roles/galaxyproject.telegraf_cvmfs
 roles/geerlingguy.repo-epel
 roles/usegalaxy_eu.certbot
 roles/galaxyproject.gxadmin
