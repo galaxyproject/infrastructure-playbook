@@ -1,0 +1,18 @@
+---
+
+# mdatp = Microsoft Defender Advanced Threat Protection
+
+mdatp_root: /etc/opt/microsoft/mdatp
+
+mdatp_onboard_json_dest: "{{ mdatp_root }}/mdatp_onboard.json"
+mdatp_managed_json_dest: "{{ mdatp_root }}/managed/mdatp_managed.json"
+
+mdatp_apt_key_url: https://packages.microsoft.com/keys/microsoft.asc
+
+mdatp_apt_repo_distro: "{{ ansible_distribution|lower }}"
+mdatp_apt_repo_version: "{{ ansible_distribution_version }}"
+mdatp_apt_repo_channel: "{{ ansible_distribution_release }}"
+mdatp_apt_repo_url: "https://packages.microsoft.com/{{ mdatp_apt_repo_distro }}/{{ mdatp_apt_repo_version }}/prod"
+
+mdatp_packages:
+  - mdatp

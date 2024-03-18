@@ -1,0 +1,16 @@
+---
+
+mdatp_root: /etc/opt/microsoft/mdatp
+
+mdatp_onboard_json_dest: "{{ mdatp_root }}/mdatp_onboard.json"
+mdatp_managed_json_dest: "{{ mdatp_root }}/managed/mdatp_managed.json"
+
+mdatp_yum_repo: microsoft-rhelprod
+mdatp_yum_repo_description: Microsoft RHEL prod Repo
+mdatp_yum_repo_baseurl: https://packages.microsoft.com/rhel/$releasever/prod/
+mdatp_yum_repo_gpgcheck: false
+mdatp_yum_repo_repo_gpgcheck: false
+mdatp_yum_repo_gpgkey: https://packages.microsoft.com/rhel/$releasever/repodata/repomd.xml.key
+
+mdatp_packages:
+  - mdatp

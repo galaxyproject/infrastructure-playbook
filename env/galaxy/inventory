@@ -344,7 +344,7 @@ jeltz.galaxyproject.org
 cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
-# Isn't on the report
+# not on the list
 #stats.galaxyproject.org
 eddie.galaxyproject.org
 radegast.galaxyproject.org
@@ -362,6 +362,21 @@ stats.galaxyproject.org
 # OK doing these two myself
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
+
+[defenderagents]
+jeltz.galaxyproject.org
+cvmfs0-psu0.galaxyproject.org
+cvmfs0-psu1.galaxyproject.org
+# LX-brand don't work because mdatp appears to rely on /proc/self/smaps{,_rollup}, which do not exist under LX
+#cvmfs1-psu0.galaxyproject.org
+#eddie.galaxyproject.org
+#radegast.galaxyproject.org
+sentry.galaxyproject.org
+duvel.galaxyproject.org
+# not on the list
+#stats.galaxyproject.org
+#newtrail.galaxyproject.org
+#artifact.galaxyproject.org
 
 # for serial console setup
 #[x2200s]

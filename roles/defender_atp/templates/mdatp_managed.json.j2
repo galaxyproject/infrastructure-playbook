@@ -1,0 +1,128 @@
+{
+  "antivirusEngine": {
+    "enforcementLevel": "real_time",
+    "scanAfterDefinitionUpdate": true,
+    "scanArchives": true,
+    "maximumOnDemandScanThreads": 1,
+    "exclusionsMergePolicy": "merge",
+    "exclusions": [
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/opt/nessus_agent/lib/nessus/"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/nessus_agent/bin/nasl"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/nessus_agent/sbin/nessuscli"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/nessus_agent/sbin/nessusd"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/nessus_agent/sbin/nessus-service"
+      },
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/opt/splunkforwarder/lib/"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/btool"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/btprobe"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/bzip2"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/classify"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/fill_test"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/openssl"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/splunk"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/splunkd"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/splunkmon"
+      },
+      {
+        "$type": "excludedFileName",
+        "name": "/opt/splunkforwarder/bin/srm"
+      },
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/cvmfs/"
+      },
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/srv/"
+      },
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/var/lib/"
+      },
+      {
+        "$type": "excludedPath",
+        "isDirectory": true,
+        "path": "/var/cache/"
+      }
+    ],
+    "allowedThreats": [],
+    "disallowedThreatActions": [
+      "allow",
+      "restore"
+    ],
+    "threatTypeSettingsMergePolicy": "merge",
+    "threatTypeSettings": [
+      {
+        "key": "potentially_unwanted_application",
+        "value": "block"
+      },
+      {
+        "key": "archive_bomb",
+        "value": "audit"
+      }
+    ]
+  },
+  "cloudService": {
+    "enabled": true,
+    "diagnosticLevel": "required",
+    "automaticSampleSubmissionConsent": "safe",
+    "automaticDefinitionUpdateEnabled": true
+  },
+  "edr": {
+    "groupIds": "C8",
+    "tags": [
+      {
+        "key": "GROUP",
+        "value": "C8"
+      }
+    ]
+  }
+}

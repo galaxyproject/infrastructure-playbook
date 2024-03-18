@@ -237,6 +237,13 @@
     - role: nessus
   tags: nessus
 
+- name: Tasks for Microsoft Defender agents
+  hosts: defenderagents
+  remote_user: root
+  roles:
+    - role: defender_atp
+  tags: mdatp,defender
+
 # This is for ns-training, the regular nameservers are set up through the core playbook
 - name: Tasks for training DNS servers
   hosts: ns-training.galaxyproject.org

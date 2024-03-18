@@ -1,0 +1,90 @@
+---
+# tasks file for defender_atp
+
+# mdatp = Microsoft Defender Advanced Threat Protection
+
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - ../vars
+
+- block:
+
+  - name: mdatp | create directories
+    file:
+      path: "{{ mdatp_root }}"
+      state: directory
+      mode: u=rwx,g=rx,o=rx,u-s,g-s,o-t
+      owner: root
+      group: root
+
+  - name: mdatp | install standard onboarding file
+    template:
+      src: mdatp_onboard.json.j2
+      dest: "{{ mdatp_onboard_json_dest }}"
+      owner: root
+      group: root
+      mode: u=rw,g=,o=,u-s,g-s,o-t
+    diff: false
+
+  - name: Debian block
+    block:
+
+      - name: mdatp | add microsoft apt key
+        apt_key:
+          url: "{{ mdatp_apt_key_url }}"
+
+      - name: mdatp | add microsoft apt repo
+        apt_repository:
+          repo: "deb {{ mdatp_apt_repo_url }} {{ mdatp_apt_repo_channel }} main"
+          filename: "microsoft-{{ mdatp_apt_repo_channel }}"
+
+    when: ansible_os_family == "Debian"
+
+  - name: Redhat block
+    block:
+
+      - name: mdatp | add mdatp yum repository
+        yum_repository:
+          name: "{{ mdatp_yum_repo }}"
+          description: "{{ mdatp_yum_repo_description }}"
+          baseurl: "{{ mdatp_yum_repo_baseurl }}"
+          repo_gpgcheck: "{{ mdatp_yum_repo_gpgcheck }}"
+          gpgcheck: "{{ mdatp_yum_repo_repo_gpgcheck }}"
+          gpgkey: "{{ mdatp_yum_repo_gpgkey }}"
+          includepkgs:
+            - mdatp
+            - mde-netfilter
+
+    when: ansible_os_family == "RedHat"
+
+  - name: mdatp | install mdatp packages
+    package:
+      name: "{{ mdatp_packages }}"
+      state: latest
+
+  - name: mdatp | install managed file
+    template:
+      src: mdatp_managed.json.j2
+      dest: "{{ mdatp_managed_json_dest }}"
+      owner: root
+      group: root
+      mode: u=rw,g=,o=,u-s,g-s,o-t
+    notify:
+      - restart mdatp
+
+  - name: mdatp | ensure mdatp is enabled and started
+    systemd:
+      name: mdatp
+      enabled: true
+      state: started
+
+  when: mdatp_packages is defined
