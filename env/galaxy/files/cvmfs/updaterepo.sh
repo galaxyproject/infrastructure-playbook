@@ -314,7 +314,7 @@ function fix_links() {
 function updaterepo() {
     log "Begin $(date)"
     if detect_changes; then
-        #begin_transaction
+        begin_transaction
         if $UNPACK; then
             mirror_unpacked
         elif $FIX_LINKS; then
