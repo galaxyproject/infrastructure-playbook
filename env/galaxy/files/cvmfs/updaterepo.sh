@@ -6,6 +6,7 @@ FIX_LINKS=true
 
 REPO='singularity.galaxyproject.org'
 ROOT="/cvmfs/${REPO}"
+SCRATCH_ROOT="/vols/vdb/scratch"
 SUBSET=
 FROM=
 SOURCE=
@@ -15,18 +16,24 @@ TAG_PREFIX_ROOT='update'
 MUTEX="${HOME}/.updaterepo.lock"
 MUTEX_ACQUIRED=false
 
+UNPACK=false
+
 RSYNC_SSH_OPTS="-o ControlMaster=auto -o ControlPersist=60s -o KbdInteractiveAuthentication=no -o PreferredAuthentications=gssapi-with-mic,gssapi-keyex,hostbased,publickey -o PasswordAuthentication=no -o ConnectTimeout=10 -o ControlPath=${HOME}/makerepo-ssh-control"
 RSYNC_OPTS="-e 'ssh ${RSYNC_SSH_OPTS}'"
 
 CHANGELOG=
+SCRATCH=
 
 DRY_RUN=false
 TRANSACTION_OPEN=false
 
 umask 022
 
+declare -A local_times remote_times
+declare -a new_images updated_images
+
 # FIXME:-s and -f are mutually exclusive
-while getopts ":f:s:nri" opt; do
+while getopts ":f:s:nriu" opt; do
     case "$opt" in
         s)
             SUBSET="$OPTARG"
@@ -43,10 +50,13 @@ while getopts ":f:s:nri" opt; do
         r)
             RSYNC_OPTS=
             SOURCE_ROOT='rsync://depot.galaxyproject.org/singularity/'
-            #SOURCE_ROOT='rsync://it01.pulsar.galaxyproject.eu:12000/singularity/all/'
             ;;
         i)
             TAG_PREFIX_ROOT='initial'
+            ;;
+        u)
+            # pulling the actual image from http when converting is much simpler
+            UNPACK=true
             ;;
         *)
             echo "usage: $0 [-s subset-prefix] [-n (dry run)] [-r (use rsyncd)] [-t sleep seconds]"
@@ -67,6 +77,7 @@ function trap_handler() {
     { set +x; } 2>/dev/null
     $TRANSACTION_OPEN && abort_transaction
     [ -n "$CHANGELOG" ] && log_exec rm -f "$CHANGELOG"
+    [ -n "$SCRATCH" ] && log_exec rm -rf "$SCRATCH"
     $MUTEX_ACQUIRED && { rmdir "$MUTEX"; log_debug "Cleared $MUTEX"; }
     return 0
 }
@@ -138,15 +149,100 @@ function publish_transaction() {
 
 function detect_changes() {
     log "Checking for changes"
-    output=$(log_exec rsync -dtL --out-format='%o %n' --exclude '.*' --delete --dry-run $RSYNC_OPTS $FROM "$SOURCE" "${ROOT}/all")
-    if [ -n "$output" ]; then
+    local r=1
+    if $UNPACK; then
+        local image date time local_time remote_time
+        log_debug "Collecting local modification times"
+        pushd "${ROOT}/all" >/dev/null
+            while read image date time; do
+                local_times[$image]="${date}T${time%%.*}"
+            done < <(log_exec ls -F1 --color=none | grep -v '/$' | sed 's/@$//' | xargs --no-run-if-empty stat -c '%n %y')
+        popd >/dev/null
+        # does not handle deletion, perhaps not neccesarry
+        log_debug "Collecting remote modification times"
+        while read image date; do
+            date_arr=(${date//-/ })
+            local_time="${local_times[$image]:-none}"
+            remote_time="${date_arr[0]//\//-}T${date_arr[1]}"
+            if [[ $local_time == 'none' ]]; then
+                log_debug "$image: new!"
+                new_images+=($image)
+                remote_times[$image]="$remote_time"
+                r=0
+            elif [[ $local_time != $remote_time ]]; then
+                log_debug "$image: update; local=$local_time, remote=$remote_time"
+                updated_images+=($image)
+                remote_times[$image]="$remote_time"
+                r=0
+            fi
+        done < <(log_exec rsync -tL --out-format='%f %M' --exclude '.*' --dry-run $RSYNC_OPTS $FROM "$SOURCE" /fake/path/ | grep -v '^skipping')
+        # wild, even in bash 5.1, ${#foo[@]} on an empty declared array yields "unbound variable"
+        #[[ ${#remote_times[@]} -eq 0 ]] || r=0
+    else
+        output=$(log_exec rsync -dtL --out-format='%o %n' --exclude '.*' --delete --dry-run $RSYNC_OPTS $FROM "$SOURCE" "${ROOT}/all")
+        [[ -z "$output" ]] || r=0
+    fi
+    if [[ $r -eq 0 ]]; then
         log "New/removed images found on depot, sync will proceed"
-        return 0
     else
         log "No new/removed images found on depot, sync will be skipped"
-        return 1
     fi
+    return $r
     
+}
+
+
+function name_hash() {
+    # always returns at least 2 levels, mulled-v2 and bioconductor will return 3. the first chracter must be
+    # alphanumeric, if the second is not alphanumeric then it is replaced with an underscore.
+    local image="$1"
+    local recurse="${2:-true}"
+    if $recurse; then
+        case "$image" in
+            mulled-v2-*)
+                echo "mulled-v2/$(name_hash "${image/mulled-v2-/}" false)"
+                return
+                ;;
+            bioconductor-*)
+                echo "bioconductor/$(name_hash "${image/bioconductor-/}" false)"
+                return
+                ;;
+        esac
+    fi
+    if [[ -z $image ]] || [[ ${image:0:1} =~ [^a-zA-Z0-9] ]]; then
+        log_error "invalid image name: ${image}"
+        exit 1
+    elif [[ -z ${image:1:1} ]] || [[ ${image:1:1} =~ [^a-zA-Z0-9] ]]; then
+        echo "${image:0:1}/_"
+    else
+        echo "${image:0:1}/${image:1:1}"
+    fi
+}
+
+
+function mirror_unpacked() {
+    local image hash
+    SCRATCH=$(mktemp -d -p $SCRATCH_ROOT -t updaterepo-scratch-XXXXXX)
+    export SINGULARITY_TMPDIR="$SCRATCH"
+    # also rm -rf both paths first
+    log "Cleaning contents of updated images"
+    for image in "${updated_images[@]}"; do
+        hash="$(name_hash "$image")"
+        log_exec rm -rf "${ROOT}/${hash}/${image}"
+        log_exec rm "${ROOT}/all/${image}"
+    done
+    log "Finished cleaning contents of updated images"
+    log "Converting images"
+    for image in "${updated_images[@]}" "${new_images[@]}"; do
+        hash="$(name_hash "$image")"
+        log_exec rsync -tLvP $RSYNC_OPTS "${SOURCE}/${image}" "${SCRATCH}"
+        [ -d "${ROOT}/${hash}" ] || mkdir -p "${ROOT}/${hash}"
+        log_exec singularity build --sandbox "${ROOT}/${hash}/${image}/" "${SCRATCH}/${image}"
+        log_exec ln -s "../${hash}/${image}" "${ROOT}/all/${image}"
+        log_exec touch --no-dereference --date="${remote_times[$image]}" "${ROOT}/all/${image}"
+        log_exec rm -f "${SCRATCH}/${image}"
+    done
+    log "Finished converting images"
 }
 
 
@@ -174,6 +270,7 @@ function fix_links() {
 
     while read op file; do
         [ "${file:(-1):1}" != '/' ] || continue  # should only be updated dirmtime
+        # does not use name_hash for backwards compatibility, but if you ever used this again it probably should
     	hash="${file:0:1}/${file:1:1}"
     	case $op in
           recv)
@@ -217,8 +314,10 @@ function fix_links() {
 function updaterepo() {
     log "Begin $(date)"
     if detect_changes; then
-        begin_transaction
-        if $FIX_LINKS; then
+        #begin_transaction
+        if $UNPACK; then
+            mirror_unpacked
+        elif $FIX_LINKS; then
             mirror_for_links
             fix_links
         else
