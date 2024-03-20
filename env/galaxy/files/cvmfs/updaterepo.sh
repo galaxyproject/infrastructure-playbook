@@ -30,7 +30,10 @@ TRANSACTION_OPEN=false
 umask 022
 
 declare -A local_times remote_times
-declare -a new_images updated_images
+
+# ${#foo[@]} on an empty indexed array declared like this does not yield "unbound variable"
+new_images=()
+updated_images=()
 
 # FIXME:-s and -f are mutually exclusive
 while getopts ":f:s:nriu" opt; do
@@ -55,7 +58,6 @@ while getopts ":f:s:nriu" opt; do
             TAG_PREFIX_ROOT='initial'
             ;;
         u)
-            # pulling the actual image from http when converting is much simpler
             UNPACK=true
             ;;
         *)
@@ -175,7 +177,7 @@ function detect_changes() {
                 remote_times[$image]="$remote_time"
                 r=0
             fi
-        done < <(log_exec rsync -tL --out-format='%f %M' --exclude '.*' --dry-run $RSYNC_OPTS $FROM "$SOURCE" /fake/path/ | grep -v '^skipping')
+        done < <(log_exec rsync -tL --out-format='%f %M' --exclude '.*' --dry-run $RSYNC_OPTS $FROM "$SOURCE"'*' /fake/path/ | grep -v '^skipping')
         # wild, even in bash 5.1, ${#foo[@]} on an empty declared array yields "unbound variable"
         #[[ ${#remote_times[@]} -eq 0 ]] || r=0
     else
@@ -243,6 +245,9 @@ function mirror_unpacked() {
         log_exec rm -f "${SCRATCH}/${image}"
     done
     log "Finished converting images"
+    local message="${#new_images[@]} new and ${#updated_images[@]} updated"
+    log "Publishing update: $message"
+    publish_transaction "$message"
 }
 
 
