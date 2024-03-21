@@ -46,7 +46,7 @@ host_crontabs:
     day: '*'
     month: '*'
     weekday: '*'
-    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
+    job: $HOME/bin/updaterepo.sh -r -u 2>&1 >> $HOME/updaterepo.log
 
 
 galaxy_cvmfs_repos_enabled: false
