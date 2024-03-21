@@ -18,7 +18,7 @@ host_crontabs:
     name: Clean Main VGP Pulsar Jobs
     user: g2main
     minute: 30
-    job: /usr/local/bin/pulsar-clean-jobs main-vgp >> /srv/pulsar/main/log/cleanup-jobs.log
+    job: /usr/local/bin/pulsar-clean-jobs main-vgp 2>&1 >> /srv/pulsar/main/log/cleanup-jobs.log
   - id: clean_amqp_consume
     name: Clean Main AMQP consume dir
     user: g2main
