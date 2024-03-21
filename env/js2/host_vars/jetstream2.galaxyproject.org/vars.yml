@@ -1,0 +1,29 @@
+---
+
+host_crontabs:
+  - id: pulsar_clean_jobs
+    name: Clean Test Pulsar Jobs
+    user: g2test
+    minute: 45
+    job: /usr/local/bin/pulsar-clean-jobs test >> /srv/pulsar/test/log/cleanup-jobs.log
+  - id: pulsar_clean_jobs
+    name: Clean Main Pulsar Jobs
+    user: g2main
+    minute: 00
+    job: /usr/local/bin/pulsar-clean-jobs main >> /srv/pulsar/main/log/cleanup-jobs.log
+  - id: clean_amqp_consume
+    name: Clean Test AMQP consume dir
+    user: g2test
+    minute: "0"
+    hour: "2"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/test/var/persisted_data/amqp_ack-jetstream2/consume"
+  - id: clean_amqp_consume
+    name: Clean Main AMQP consume dir
+    user: g2main
+    minute: "30"
+    hour: "2"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/persisted_data/amqp_ack-jetstream2/consume"
+  - id: pulsar_staging_fds
+    name: Collecting Pulsar staging file descriptor counts
+    user: rocky
+    job: "/usr/local/bin/pulsar-staging-fds 2>&1 >> /tmp/pulsar-collect-fds.log"
