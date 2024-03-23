@@ -1,0 +1,5 @@
+---
+# This is included for Galaxy Main hosts to provide Main-specific values
+
+# Variables used by other group vars
+galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"

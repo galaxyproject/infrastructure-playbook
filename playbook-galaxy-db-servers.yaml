@@ -1,0 +1,11 @@
+---
+
+- name: Galaxy DB Servers
+  hosts: galaxy_db_servers
+  roles:
+    - role: galaxyproject.general.packages
+    - role: galaxyproject.general.paths
+    # postgresql before users so that the postgres user exists for the group mod in users
+    - role: galaxyproject.postgresql
+    - role: galaxyproject.general.users
+    - role: galaxyproject.gxadmin

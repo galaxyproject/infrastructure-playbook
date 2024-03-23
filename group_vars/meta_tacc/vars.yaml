@@ -1,0 +1,20 @@
+---
+
+tacc_root_users: "{{ vault_tacc_root_users }}"
+
+meta_tacc_group_authorized_key_users:
+  #- name: g2main
+  #  authorized: "{{ galaxy_team_users }}"
+  #- name: gxsrc
+  #  authorized: "{{ galaxy_team_users }}"
+  - name: root
+    authorized: "{{ tacc_root_users }}"
+    exclusive: false
+
+meta_tacc_group_mounts:
+  - src: 129.114.52.151:/corral/main/projects/galaxy/
+    path: /corral4
+    fstype: nfs
+    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.151
+    owner: ndc
+    group: G-803372

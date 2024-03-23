@@ -167,10 +167,3 @@
   roles:
     - role: docker
   tags: docker
-
-- name: Tasks for Galaxy DB servers
-  hosts: galaxydbservers
-  remote_user: root
-  roles:
-    - role: galaxyproject.gxadmin
-  tags: gxadmin

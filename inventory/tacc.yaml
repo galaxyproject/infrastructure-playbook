@@ -8,6 +8,27 @@ all:
 
   children:
 
+    # Provides TACC-specific values for group vars
+    meta_tacc:
+      hosts:
+        galaxy-db.tacc.utexas.edu:
+
+    # Provides Main-specific values for group vars
+    meta_galaxy_main:
+      hosts:
+        galaxy-db.tacc.utexas.edu:
+
+    # Deploys MinIO and Tailscale
     minio_servers:
       hosts:
         galaxy-db-02.tacc.utexas.edu:
+
+    # Deploys PostgreSQL and gxadmin
+    galaxy_db_servers:
+      hosts:
+        galaxy-db.tacc.utexas.edu:
+
+    # Deploys CVMFS and configures as a client
+    cvmfs_clients:
+      hosts:
+        galaxy-db.tacc.utexas.edu:

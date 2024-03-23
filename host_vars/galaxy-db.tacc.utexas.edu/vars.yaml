@@ -1,0 +1,9 @@
+---
+
+_var_lib_pgsql:
+  dev: /dev/nvme1n1
+  src: /dev/nvme1n1
+  path: /var/lib/pgsql
+  fstype: xfs
+filesystems: ["{{ _var_lib_pgsql }}"]
+host_mounts: ["{{ _var_lib_pgsql }}"]
