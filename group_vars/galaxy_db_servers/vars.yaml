@@ -171,6 +171,8 @@ postgresql_conf:
   temp_buffers: 64MB
   max_prepared_transactions: 100
   log_checkpoints: "on"
+  # prevent threads on less frequently hit handlers (e.g. VGP) from losing their connection after long quiet periods
+  tcp_keepalives_idle: 300
 
   # DB Version: 16
   # # OS Type: linux
