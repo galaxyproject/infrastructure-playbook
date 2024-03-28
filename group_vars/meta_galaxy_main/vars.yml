@@ -3,3 +3,14 @@
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
+galaxy_instance_codename: main
+
+stats_slurp:
+  db_name: galaxy_main
+  galaxy_handlers:
+    - main_w3_handler0
+    - main_w3_handler1
+    - main_w3_handler2
+    - main_w4_handler0
+    - main_w4_handler1
+    - main_w4_handler2

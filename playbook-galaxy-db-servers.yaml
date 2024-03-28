@@ -9,3 +9,4 @@
     - role: galaxyproject.postgresql
     - role: galaxyproject.general.users
     - role: galaxyproject.gxadmin
+    - role: dj-wasabi.telegraf

@@ -5,7 +5,7 @@ influxdb_client_pass: "{{ vault_influxdb_client_pass }}"
 # run telegraf on everything
 telegraf_agent_package_state: latest
 
-telegraf_agent_output:
+_default_telegraf_agent_output:
   - type: influxdb
     config:
     - urls = ["https://stats.galaxyproject.org:8086"]
@@ -15,6 +15,8 @@ telegraf_agent_output:
     # 5s is the default if unset
     - timeout = "{{ telegraf_influxdb_output_timeout | default('5s') }}"
 
+telegraf_agent_output: "{{ _override_telegraf_agent_output | default(_default_telegraf_agent_output) }}"
+
 telegraf_plugins_default:
   - plugin: cpu
     config:
@@ -22,7 +24,7 @@ telegraf_plugins_default:
   - plugin: disk
   - plugin: kernel
   - plugin: processes
-  - plugin: io
+  - plugin: diskio
   - plugin: mem
   - plugin: system
   - plugin: swap

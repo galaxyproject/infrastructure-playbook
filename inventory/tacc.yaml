@@ -18,6 +18,11 @@ all:
       hosts:
         galaxy-db.tacc.utexas.edu:
 
+    # Deploys and configures telegraf
+    telegraf_agents:
+      hosts:
+        galaxy-db.tacc.utexas.edu:
+
     # Deploys MinIO and Tailscale
     minio_servers:
       hosts:
