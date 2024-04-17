@@ -30,3 +30,14 @@
   notify:
     - reload systemd
     - restart changed systemd services
+
+- name: Create persistent journald directory
+  file:
+    path: /var/log/journal
+    state: directory
+    owner: root
+    group: systemd-journal
+    mode: "2755"
+  when: "{{ systemd_journald_persistent | default(false) }}"
+  notify:
+    - reload journald

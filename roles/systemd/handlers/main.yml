@@ -8,6 +8,11 @@
     name: systemd-udevd.service
     state: started
 
+- name: reload journald
+  systemd:
+    name: systemd-journald.service
+    state: restarted
+
 - name: restart changed systemd services
   service:
     name: "{{ item.item.name }}.service"

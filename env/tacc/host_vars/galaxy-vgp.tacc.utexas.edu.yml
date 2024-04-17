@@ -1,5 +1,7 @@
 ---
 
+systemd_journald_persistent: true
+
 mounts:
   - src: 129.114.52.152:/corral/main/projects/galaxy/
     path: /corral4
