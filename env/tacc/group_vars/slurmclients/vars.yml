@@ -64,7 +64,6 @@ slurm_config:
   #StateSaveLocation: /var/spool/slurm/ctld/slurm.state
   StateSaveLocation: /var/lib/slurm/slurmctld/slurm.state
 
-  DefaultStorageLoc: /var/log/slurm/slurm_accounting
   AccountingStorageType: accounting_storage/slurmdbd
   AccountingStorageHost: "{{ slurm_dbd_server_name }}"
 
