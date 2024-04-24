@@ -11,10 +11,177 @@ meta_tacc_group_authorized_key_users:
     authorized: "{{ tacc_root_users }}"
     exclusive: false
 
+tacc_corral_gateway_address_default: "129.114.52.151"
+
 meta_tacc_group_mounts:
-  - src: 129.114.52.151:/corral/main/projects/galaxy/
+  - src: "{{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}:/corral/main/projects/galaxy/"
     path: /corral4
     fstype: nfs
-    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.151
+    opts: "rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr={{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}"
     owner: ndc
     group: G-803372
+
+postfix_config:
+  compatibility_level: 2
+  relayhost: "[relay02.tacc.utexas.edu]"
+
+slurm_user:
+  uid: 40302
+  gid: 40302
+  comment: 'Slurm Workload Manager'
+  home: /var/lib/slurm
+  shell: /bin/bash
+
+slurm_controller_name: galaxy08
+slurm_controller_ip: 129.114.60.125
+slurm_cluster_name: roundup
+slurm_dbd_server_name: galaxy08
+
+slurm_cgroup_config:
+  CgroupAutomount: yes
+  ConstrainCores: yes
+  ConstrainRAMSpace: yes
+  ConstrainSwapSpace: yes
+
+slurm_config:
+  ControlMachine: "{{ slurm_controller_name }}"
+  ControlAddr: "{{ slurm_controller_ip }}"
+  ClusterName: "{{ slurm_cluster_name }}"
+
+  # Should help decrease the frequency of nodes draining with "Kill task failed"
+  # https://bugs.schedmd.com/show_bug.cgi?id=3941
+  UnkillableStepTimeout: 300
+
+  PluginDir: /usr/lib64/slurm
+
+  ReturnToService: 1
+  RebootProgram: /usr/sbin/reboot
+
+  JobCompLoc: /var/log/slurm/slurm.job.log
+  JobCompType: jobcomp/filetxt
+  SchedulerType: sched/backfill
+  SchedulerParameters: nohold_on_prolog_fail
+
+  Prolog: /etc/slurm/prolog.sh
+  PrologEpilogTimeout: 90
+
+  SelectType: select/cons_res
+  SelectTypeParameters: CR_CPU_Memory
+  SwitchType: switch/none
+
+  SlurmctldTimeout: 300
+  SlurmdSpoolDir: /var/lib/slurm/slurmd/slurmd.spool
+  SlurmdTimeout: 300
+  StateSaveLocation: /var/lib/slurm/slurmctld/slurm.state
+
+  AccountingStorageType: accounting_storage/slurmdbd
+  AccountingStorageHost: "{{ slurm_dbd_server_name }}"
+
+  JobAcctGatherType: jobacct_gather/cgroup
+  JobAcctGatherFrequency: task=15
+  ProctrackType: proctrack/cgroup
+  TaskPlugin: task/cgroup
+
+  SlurmctldLogFile: /var/log/slurm/slurmctld.log
+  SlurmctldDebug: 4
+  SlurmdLogFile: /var/log/slurm/slurmd.log
+  SlurmdDebug: 4
+
+# Weight is set so that nodes exclusive to a partition will be preferred
+slurm_nodes:
+  # permanent nodes
+  - name: roundup[49-54]
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 0
+  - name: roundup[55-60]
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 10
+  - name: roundup[61-64]
+    RealMemory: 122880
+    CPUS: 24
+    State: UNKNOWN
+    Weight: 0
+  # actual mem of cyclone instances as reported by slurmd -C: 60562
+  - name: galaxy-main-set02-1
+    NodeAddr: 129.114.55.31
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-2
+    NodeAddr: 129.114.55.21
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-3
+    NodeAddr: 129.114.55.46
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-4
+    NodeAddr: 129.114.55.27
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-5
+    NodeAddr: 129.114.55.23
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-6
+    NodeAddr: 129.114.55.47
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-7
+    NodeAddr: 129.114.55.51
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set02-8
+    NodeAddr: 129.114.55.57
+    RealMemory: 60000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+
+# Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
+slurm_partitions:
+  - name: multi
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    DefMemPerCPU: 5120
+    MaxCPUsPerNode: 20
+    Nodes: roundup[49-60]
+    LLN: "YES"
+    PriorityTier: 0
+  - name: normal
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    MaxCPUsPerNode: 20
+    DefMemPerCPU: 7680
+    Nodes: roundup[55-64]
+    LLN: "YES"
+    Default: "YES"
+    PriorityTier: 10
+  - name: priority
+    State: UP
+    MaxTime: 8-00:00:00
+    MaxNodes: 1
+    MaxCPUsPerNode: 20
+    DefMemPerCPU: 7680
+    Nodes: roundup[49-64],galaxy-main-set02-[1-8]
+    LLN: "YES"
+    PriorityTier: 20

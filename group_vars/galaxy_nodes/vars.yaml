@@ -1,0 +1,61 @@
+---
+
+galaxy_nodes_group_authorized_key_users:
+  - name: g2test
+    authorized: "{{ galaxy_team_users }}"
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
+
+galaxy_nodes_group_templates:
+  - src: templates/slurm/prolog.sh.j2
+    dest: /etc/slurm/prolog.sh
+    mode: "0755"
+    owner: root
+    group: root
+
+galaxy_nodes_group_packages:
+  - apptainer
+
+# use 60% of /
+cvmfs_quota_limit: "{{ ((ansible_mounts | selectattr('mount', 'eq', '/') | first).size_total * 0.6 / 1024**2) | int }}"
+
+galaxy_cvmfs_repos_enabled: true
+
+# override so that the TACC stratum 1 is always first
+galaxy_cvmfs_server_urls:
+  - domain: galaxyproject.org
+    use_geoapi: no
+    urls:
+      - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+# TODO: a proxy would be good probably
+cvmfs_http_proxies:
+  - "DIRECT"
+
+slurm_roles: [exec]
+slurm_munge_key: files/slurm/munge.key
+
+slurm_prolog_cvmfs_repos:
+  - main.galaxyproject.org
+  - data.galaxyproject.org
+  - singularity.galaxyproject.org
+
+slurm_prolog_dirs:
+  - /corral4/main
+
+slurm_prolog_users:
+  - g2main
+
+galaxy_nodes_group_crontabs:
+  #- id: clean_dev_shm
+  #  name: "Clean /dev/shm"
+  #  user: root
+  #  minute: 0
+  #  job: "/usr/local/bin/tmpwatch-auto /dev/shm"
+  - id: node_health_check
+    name: "Node health check"
+    user: root
+    minute: "{{ 59 | random(seed=inventory_hostname) }}"
+    job: /bin/bash /etc/slurm/prolog.sh cron 2>&1 | logger -t node-health-check

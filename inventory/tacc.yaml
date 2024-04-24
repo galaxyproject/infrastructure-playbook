@@ -12,6 +12,8 @@ all:
     meta_tacc:
       hosts:
         galaxy-db.tacc.utexas.edu:
+      children:
+        cyclone_nodes:
 
     # Provides Main-specific values for group vars
     meta_galaxy_main:
@@ -37,3 +39,22 @@ all:
     cvmfs_clients:
       hosts:
         galaxy-db.tacc.utexas.edu:
+      children:
+        galaxy_nodes:
+
+    # Configures as a cluster node
+    galaxy_nodes:
+      children:
+        cyclone_nodes:
+
+    # Galaxy nodes from the Cyclone cloud
+    cyclone_nodes:
+      hosts:
+        galaxy-main-set02-1: {ansible_host: 129.114.55.31}
+        galaxy-main-set02-2: {ansible_host: 129.114.55.21}
+        galaxy-main-set02-3: {ansible_host: 129.114.55.46}
+        galaxy-main-set02-4: {ansible_host: 129.114.55.27}
+        galaxy-main-set02-5: {ansible_host: 129.114.55.23}
+        galaxy-main-set02-6: {ansible_host: 129.114.55.47}
+        galaxy-main-set02-7: {ansible_host: 129.114.55.51}
+        galaxy-main-set02-8: {ansible_host: 129.114.55.57}
