@@ -168,7 +168,7 @@ telegraf_plugins_extra:
 
 postgresql_version: 16
 postgresql_create_backup_dir: false
-#postgresql_backup_dir: /corral4/backup/pgsql/{{ inventory_hostname }}
+postgresql_backup_dir: /corral4/backup/pgsql/{{ inventory_hostname }}
 
 postgresql_archive_wal_rsync_args: '--ignore-existing -pt --info=skip1'
 postgresql_backup_rsync_backup_opts: '-rpt --chown=postgres:G-803372'

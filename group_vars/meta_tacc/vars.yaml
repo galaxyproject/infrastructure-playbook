@@ -163,7 +163,7 @@ slurm_partitions:
     MaxNodes: 1
     DefMemPerCPU: 5120
     MaxCPUsPerNode: 20
-    Nodes: roundup[49-60]
+    Nodes: roundup[49-60],galaxy-main-set02-[1-8]
     LLN: "YES"
     PriorityTier: 0
   - name: normal

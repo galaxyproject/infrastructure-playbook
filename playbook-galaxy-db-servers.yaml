@@ -5,8 +5,14 @@
   roles:
     - role: galaxyproject.general.packages
     - role: galaxyproject.general.paths
+    - role: galaxyproject.postfix
     # postgresql before users so that the postgres user exists for the group mod in users
     - role: galaxyproject.postgresql
     - role: galaxyproject.general.users
     - role: galaxyproject.gxadmin
     - role: dj-wasabi.telegraf
+    - role: galaxyproject.cvmfs
+  post_tasks:
+    - name: Install PostgreSQL contrib package for pgcrypto
+      dnf:
+        name: "postgresql{{ __postgresql_version_dotless }}-contrib"

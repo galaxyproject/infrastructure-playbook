@@ -16,3 +16,12 @@ all_packages:
   # this is for apt_key in the telegraf role; technically Debian only needs gpg, but gnupg2 - which is the EL package
   # name - exists on Debian and depends on gnupg, which depends on gpg)
   #- gnupg2
+
+postfix_role: null-client
+
+postfix_aliases:
+  mailer-daemon: postmaster
+  postmaster: root
+  nobody: root
+  postgres: root
+  root: root@galaxyproject.org
