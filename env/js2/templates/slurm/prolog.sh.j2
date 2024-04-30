@@ -89,4 +89,11 @@ else
         id "$user" >/dev/null
     done
 
+    case "${SLURM_JOB_PARTITION:-}" in
+        gpu-*)
+            modprobe -r nouveau || true
+            nvidia-modprobe -u -c=0
+            ;;
+    esac
+
 fi
