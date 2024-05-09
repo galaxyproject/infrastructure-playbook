@@ -1,0 +1,27 @@
+---
+
+smartos_images:
+  # rocky-9 20231127 linux zvol
+  - uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
+    state: present
+
+smartos_vms:
+  - name: cvmfs0-psu0
+    brand: bhyve
+    ram: 16384
+    vcpus: 4
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 128.118.250.25
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
+        boot: true
+        model: virtio
+        size: 24576
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

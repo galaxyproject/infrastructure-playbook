@@ -2,8 +2,8 @@
 
 smartos_hypervisor_root_authorized_keys: "{{ vault_smartos_root_authorized_keys }}"
 
-smartos_hypervisor_pkgsrc_bootstrap_tar: bootstrap-trunk-tools-20220706.tar.gz
-smartos_hypervisor_pkgsrc_bootstrap_sha: c15932a7cc791b8c5f7a0137a7521c28c503b453
+smartos_hypervisor_pkgsrc_bootstrap_tar: bootstrap-trunk-tools-20240116.tar.gz
+smartos_hypervisor_pkgsrc_bootstrap_sha: 8c104974605e7404edd9d10b9429bdf1d9b3bb60
 
 bootstrap_tasks: smartos
 
