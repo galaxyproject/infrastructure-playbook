@@ -13,6 +13,10 @@ list_servers_group_users:
 list_servers_group_groups:
   - "{{ galaxyproject_groups.michelle }}"
 
+list_servers_group_authorized_key_users:
+  - name: michelle
+    authorized: [michelle_savage]
+
 #
 # usegalaxy_org.postgresql_relocate_pgdata
 #
