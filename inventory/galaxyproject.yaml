@@ -64,6 +64,10 @@ all:
         jenkins0.galaxyproject.org:
         jenkins1.galaxyproject.org:
 
+    cvmfs_stratum0_servers:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+
     cvmfs_clients:
       children:
         jenkins_agents:

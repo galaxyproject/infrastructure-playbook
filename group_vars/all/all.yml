@@ -12,6 +12,7 @@ all_packages:
   - git
   - tmux
   - vim
+  # NOTE: htop is in EPEL
   - htop
   # this is for apt_key in the telegraf role; technically Debian only needs gpg, but gnupg2 - which is the EL package
   # name - exists on Debian and depends on gnupg, which depends on gpg)
