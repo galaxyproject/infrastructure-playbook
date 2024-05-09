@@ -20,10 +20,18 @@
     deb: "{{ nessus_deb }}"
   when: nessus_deb is defined
 
-- name: nessus | install packages
-  package:
+- name: nessus | install packages (apt)
+  apt:
     name: "{{ nessus_packages }}"
     state: present
+  when: ansible_os_family == "Debian"
+
+- name: nessus | install packages (dnf)
+  dnf:
+    name: "{{ nessus_packages }}"
+    disable_gpg_check: "{{ nessus_disable_gpg_check | default(omit) }}"
+    state: present
+  when: ansible_os_family == "RedHat"
 
 - name: nessus | get agent status
   command:

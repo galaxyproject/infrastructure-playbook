@@ -1,0 +1,29 @@
+---
+
+- name: Tasks for Automatic Update hosts
+  hosts: auto_update_hosts
+  roles:
+    - role: auto_update
+  tags: auto_update
+
+- name: Tasks for Splunk agents
+  hosts: splunk_agents
+  roles:
+    - role: galaxyproject.general.users
+    - role: splunk
+  tags: splunk
+
+- name: Tasks for Nessus agents
+  hosts: nessus_agents
+  remote_user: root
+  roles:
+    - role: nessus
+  tags: nessus
+
+- name: Tasks for Microsoft Defender agents
+  hosts: defender_agents
+  remote_user: root
+  roles:
+    - role: defender_atp
+  tags: [mdatp, defender]
+

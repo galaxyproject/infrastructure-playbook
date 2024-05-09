@@ -1,0 +1,25 @@
+---
+
+- name: Install dnf-automatic
+  dnf:
+    name: dnf-automatic
+    state: present
+
+- name: Configure dnf-automatic
+  ini_file:
+    path: /etc/dnf/automatic.conf
+    section: commands
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: "0644"
+  loop:
+    - option: upgrade_type
+      value: security
+    - option: apply_updates
+      value: "yes"
+
+- name: Enable dnf-automatic timer
+  systemd_service:
+    name: dnf-automatic.timer
+    state: started
+    enabled: true

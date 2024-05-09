@@ -1,0 +1,14 @@
+---
+
+# TODO: if necessary /native/usr/bin/chmod A+user:splunk:r:allow /var/log/foo does work but there's no Ansible module I
+# can find for setting NFSv4 ACLs with chmod (and checking their state with ls -v), and chmod A+ isn't idempotent.
+_splunk_lx_brand: "{{ ansible_system == 'Linux' and 'zone' in ansible_virtualization_tech_guest }}"
+splunk_chown_cgroups: "{{ not _splunk_lx_brand }}"
+splunk_set_acls: "{{ not _splunk_lx_brand }}"
+
+splunk_agents_group_users:
+  - name: splunk
+    comment: "Splunk Server"
+    home: /opt/splunkforwarder
+    shell: /bin/bash
+    system: yes

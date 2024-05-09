@@ -1,8 +1,0 @@
----
-
-splunkagents_group_users:
-  - name: splunk
-    comment: "Splunk Agent"
-    home: /home/splunk
-    shell: /bin/bash
-    system: yes

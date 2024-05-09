@@ -23,6 +23,22 @@ all:
       hosts:
         llv.galaxyproject.org:
 
+    auto_update_hosts:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+
+    splunk_agents:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+
+    nessus_agents:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+
+    defender_agents:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+
     ssh_clients:
       children:
         # for postfix maps distribution to mxs

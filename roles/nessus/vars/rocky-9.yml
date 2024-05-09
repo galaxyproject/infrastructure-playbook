@@ -1,0 +1,5 @@
+---
+
+nessus_packages:
+  - https://admin.bx.psu.edu/nessus/NessusAgent-10.6.3-el9.x86_64.rpm
+nessus_disable_gpg_check: true

@@ -1,0 +1,21 @@
+---
+
+- name: Install yum-cron
+  dnf:
+    name: yum-cron
+    state: present
+
+- name: Configure yum-cron
+  ini_file:
+    path: /etc/yum/yum-cron.conf
+    section: commands
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: "0644"
+  loop:
+    - option: update_cmd
+      # doesn't work under CentOS 7
+      #value: security
+      value: default
+    - option: apply_updates
+      value: "yes"

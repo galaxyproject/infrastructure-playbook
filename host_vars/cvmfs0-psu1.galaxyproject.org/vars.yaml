@@ -1,0 +1,5 @@
+---
+
+host_packages:
+  # for usegalaxy-tools
+  - tree

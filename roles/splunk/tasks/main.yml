@@ -18,10 +18,18 @@
     deb: "{{ splunk_deb }}"
   when: splunk_deb is defined
 
-- name: splunk | install splunk packages
-  package:
+- name: splunk | install splunk packages (apt)
+  apt:
     name: "{{ splunk_packages }}"
     state: present
+  when: ansible_os_family == "Debian"
+
+- name: splunk | install splunk packages (dnf)
+  dnf:
+    name: "{{ splunk_packages }}"
+    disable_gpg_check: "{{ splunk_disable_gpg_check | default(omit) }}"
+    state: present
+  when: ansible_os_family == "RedHat"
 
 ## TODO: Check files under /opt/splunkforwarder/etc/apps/999_uf-output_to-idx_ssl
 
@@ -82,7 +90,7 @@
 - name: splunk | set splunk_acl_dirs
   set_fact:
     splunk_acl_dirs: "{{ splunk_var_log_dirs.files|map(attribute='path')|list|union(['/var/log']) }}"
-  when: splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
+  when: (splunk_set_acls | default(true)) and splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
 
 - block:
   - name: splunk | set default directory acls
@@ -120,7 +128,7 @@
 - name: splunk | set splunk_acl_files
   set_fact:
     splunk_acl_files: "{{ splunk_var_log_files.files|map(attribute='path')|list|union(['/root/.bash_history']) }}"
-  when: splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
+  when: (splunk_set_acls | default(true)) and splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
 
 - name: splunk | set file acls
   acl:
