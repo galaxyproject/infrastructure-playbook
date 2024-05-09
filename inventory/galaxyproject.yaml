@@ -18,6 +18,11 @@ all:
 
   children:
 
+    # Provides galaxyproject-specific values for group vars
+    meta_galaxyproject:
+      hosts:
+        llv.galaxyproject.org:
+
     ssh_clients:
       children:
         # for postfix maps distribution to mxs

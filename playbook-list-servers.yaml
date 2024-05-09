@@ -11,7 +11,7 @@
     - role: galaxyproject.general.paths
       tags: [general, mailman]
     - role: galaxyproject.general.users
-      tags: [general, mailman]
+      tags: [general, mailman, users]
     - role: galaxyproject.opendkim
       tags: [postfix, opendkim]
     - role: galaxyproject.postfix

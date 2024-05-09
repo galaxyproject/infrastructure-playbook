@@ -1,0 +1,5 @@
+---
+
+# For the eventual decommissioning of LDAP
+galaxyproject_users: "{{ vault_galaxyproject_users }}"
+galaxyproject_groups: "{{ vault_galaxyproject_groups }}"

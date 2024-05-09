@@ -4,6 +4,16 @@
 list_servers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
 
 #
+# galaxyproject.general.users
+#
+
+list_servers_group_users:
+  - "{{ galaxyproject_users.michelle }}"
+
+list_servers_group_groups:
+  - "{{ galaxyproject_groups.michelle }}"
+
+#
 # usegalaxy_org.postgresql_relocate_pgdata
 #
 
@@ -20,11 +30,22 @@ postgresql_relocate_pgdata_service_name: postgresql@14-main
 postgresql_objects_users:
   - name: mailman3-web
   - name: list
+  - name: michelle
 postgresql_objects_databases:
   - name: mailman3_web
     owner: mailman3-web
   - name: mailman3_core
     owner: list
+postgresql_objects_privileges:
+  - database: mailman3_web
+    objs: ALL_IN_SCHEMA
+    roles: michelle
+    privs: SELECT
+  - database: mailman3_web
+    objs: ALL_IN_SCHEMA
+    roles: michelle
+    privs: SELECT
+    type: sequence
 
 #
 # galaxyproject.mailman3
