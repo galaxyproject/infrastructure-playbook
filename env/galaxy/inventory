@@ -11,10 +11,8 @@ duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 rochefort.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
-cvmfs0-tacc0.galaxyproject.org ansible_user=root
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=yes
 cvmfs1-tacc0.galaxyproject.org ansible_user=root ansible_host=galaxy08.tacc.utexas.edu
-cvmfs0-psu1.galaxyproject.org ansible_user=root
 cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 cvmfs-stratum0.galaxyproject.eu ansible_user=centos ansible_become=yes
@@ -76,7 +74,6 @@ sshtunnels
 
 # For hosts that create outbound ssh tunnels
 [sshtunnels]
-cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [toolshedservers]
@@ -116,7 +113,6 @@ radegast.galaxyproject.org
 eddie.galaxyproject.org
 duvel.galaxyproject.org
 jeltz.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 #cvmfs1-tacc0.galaxyproject.org
@@ -273,8 +269,6 @@ cvmfsstratum0servers
 cvmfsstratum1servers
 
 [cvmfsstratum0servers]
-cvmfs0-tacc0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 cvmfs-stratum0.galaxyproject.eu
 
@@ -320,7 +314,6 @@ sentry.galaxyproject.org
 [splunkagents]
 # Just EL machines running webservers - Rico put the Debian-based ones in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 # lx-brand zone can't use acls
 #cvmfs1-psu0.galaxyproject.org
 #stats.galaxyproject.org
@@ -331,7 +324,6 @@ artifact.galaxyproject.org
 [nessusagents]
 # Again, just EL machines, Debian are in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 stats.galaxyproject.org
 # OK doing these two myself
