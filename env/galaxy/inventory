@@ -11,23 +11,18 @@ duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 rochefort.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
-jetstream-tacc0.galaxyproject.org ansible_user=centos ansible_become=yes
-jetstream-iu0.galaxyproject.org ansible_user=centos ansible_become=yes
 cvmfs0-tacc0.galaxyproject.org ansible_user=root
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=yes
 cvmfs1-tacc0.galaxyproject.org ansible_user=root ansible_host=galaxy08.tacc.utexas.edu
-cvmfs0-psu0.galaxyproject.org ansible_user=root
 cvmfs0-psu1.galaxyproject.org ansible_user=root
 cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 cvmfs-stratum0.galaxyproject.eu ansible_user=centos ansible_become=yes
-wrx.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 
 [smartosglobalzones]
 smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
-westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 
 # These get all the common roles. Additionally:
@@ -35,7 +30,6 @@ rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/
 [baseenv]
 #toolshed.galaxyproject.org
 ns-training.galaxyproject.org
-wrx.galaxyproject.org
 
 [baseenv:children]
 galaxyenv
@@ -46,7 +40,6 @@ cvmfsservers
 # baseenv hosts not to install telegraf on
 [baseenv_no_telegraf]
 cvmfs-stratum0.galaxyproject.eu
-wrx.galaxyproject.org
 
 # Everything in baseenv + adds postfix, resolv.conf config
 [galaxyenv]
@@ -123,14 +116,12 @@ radegast.galaxyproject.org
 eddie.galaxyproject.org
 duvel.galaxyproject.org
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 #cvmfs1-tacc0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 ns-training.galaxyproject.org
-wrx.galaxyproject.org
 sentry.galaxyproject.org
 leeroy.galaxyproject.org
 jenkins0.galaxyproject.org
@@ -148,8 +139,6 @@ artifact.galaxyproject.org
 [jetstreamhosts]
 cvmfs1-iu0.galaxyproject.org
 #cvmfs1-tacc0.galaxyproject.org
-jetstream-iu0.galaxyproject.org
-jetstream-tacc0.galaxyproject.org
 
 [authkeyhosts]
 [authkeyhosts:children]
@@ -285,7 +274,6 @@ cvmfsstratum1servers
 
 [cvmfsstratum0servers]
 cvmfs0-tacc0.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 cvmfs-stratum0.galaxyproject.eu
@@ -332,7 +320,6 @@ sentry.galaxyproject.org
 [splunkagents]
 # Just EL machines running webservers - Rico put the Debian-based ones in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 # lx-brand zone can't use acls
 #cvmfs1-psu0.galaxyproject.org
@@ -344,7 +331,6 @@ artifact.galaxyproject.org
 [nessusagents]
 # Again, just EL machines, Debian are in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
 cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 stats.galaxyproject.org
