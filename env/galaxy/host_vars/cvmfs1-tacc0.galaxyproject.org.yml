@@ -28,7 +28,7 @@ cvmfs_repositories:
       - CVMFS_AUTO_GC=false
     client_options: []
   - repository: main.galaxyproject.org
-    stratum0: cvmfs0-tacc0.galaxyproject.org
+    stratum0: cvmfs0-psu1.galaxyproject.org
     owner: g2test
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
