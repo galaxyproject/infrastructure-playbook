@@ -11,11 +11,8 @@ duvel.galaxyproject.org ansible_user=ubuntu ansible_become=yes
 #status.usegalaxy.org ansible_python_interpreter=/usr/bin/python3
 rochefort.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
 westvleteren.galaxyproject.org ansible_python_interpreter=/opt/local/bin/python
-cvmfs0-tacc0.galaxyproject.org ansible_user=root
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=yes
 cvmfs1-tacc0.galaxyproject.org ansible_user=root ansible_host=galaxy08.tacc.utexas.edu
-cvmfs0-psu0.galaxyproject.org ansible_user=root
-cvmfs0-psu1.galaxyproject.org ansible_user=root
 #cvmfs0-psu2.galaxyproject.org ansible_user=root
 cvmfs1-psu0.galaxyproject.org ansible_user=root
 cvmfs-stratum0.galaxyproject.eu ansible_user=centos ansible_become=yes
@@ -31,10 +28,7 @@ ansible_python_interpreter = /opt/rh/rh-python36/root/bin/python3
 [smartosglobalzones]
 smart1.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 smart2.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
-smart3.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
-smart5.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 thumper.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python3
-westvleteren.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/local/bin/python
 rochefort.p.galaxyproject.org ansible_user=root ansible_python_interpreter=/opt/tools/bin/python
 
 # These get all the common roles. Additionally:
@@ -66,7 +60,6 @@ stats.galaxyproject.org
 sentry.galaxyproject.org
 jeltz.galaxyproject.org
 leeroy.galaxyproject.org
-jenkins0.galaxyproject.org
 
 # For things that need access to common_sshkeys and env-specific sshkeys
 [sshservers]
@@ -89,7 +82,6 @@ sshtunnels
 
 # For hosts that create outbound ssh tunnels
 [sshtunnels]
-cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [toolshedservers]
@@ -136,8 +128,6 @@ eddie.galaxyproject.org
 duvel.galaxyproject.org
 stats.galaxyproject.org
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 #cvmfs0-psu2.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 #cvmfs1-tacc0.galaxyproject.org
@@ -145,7 +135,6 @@ cvmfs1-psu0.galaxyproject.org
 ns-training.galaxyproject.org
 sentry.galaxyproject.org
 leeroy.galaxyproject.org
-jenkins0.galaxyproject.org
 
 [virtual:children]
 ec2hosts
@@ -294,9 +283,6 @@ cvmfsstratum0servers
 cvmfsstratum1servers
 
 [cvmfsstratum0servers]
-cvmfs0-tacc0.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 #cvmfs0-psu2.galaxyproject.org
 cvmfs-stratum0.galaxyproject.eu
 
@@ -325,7 +311,6 @@ sentryservers
 leeroy.galaxyproject.org
 
 [jenkinsagents]
-jenkins0.galaxyproject.org
 
 # Other stuff
 
@@ -341,8 +326,6 @@ sentry.galaxyproject.org
 [splunkagents]
 # Just EL machines running webservers - Rico put the Debian-based ones in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 # not on the list
 #stats.galaxyproject.org
@@ -355,8 +338,6 @@ artifact.galaxyproject.org
 [nessusagents]
 # Again, just EL machines, Debian are in the BX playbook
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 stats.galaxyproject.org
 # OK doing these two myself
@@ -365,8 +346,6 @@ artifact.galaxyproject.org
 
 [defenderagents]
 jeltz.galaxyproject.org
-cvmfs0-psu0.galaxyproject.org
-cvmfs0-psu1.galaxyproject.org
 # LX-brand don't work because mdatp appears to rely on /proc/self/smaps{,_rollup}, which do not exist under LX
 #cvmfs1-psu0.galaxyproject.org
 #eddie.galaxyproject.org
