@@ -23,21 +23,34 @@ all:
       hosts:
         llv.galaxyproject.org:
 
+    telegraf_agents:
+      children:
+        cvmfs_stratum0_servers:
+
+    virtual_hosts:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
+
     auto_update_hosts:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     splunk_agents:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     nessus_agents:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     defender_agents:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     ssh_clients:
       children:
@@ -45,6 +58,11 @@ all:
         list_servers:
         jenkins_servers:
         jenkins_agents:
+        ssh_tunnel_servers:
+
+    ssh_tunnel_servers:
+      hosts:
+        cvmfs0-psu1.galaxyproject.org:
 
     smartos_hypervisors:
       hosts:
@@ -83,6 +101,7 @@ all:
     cvmfs_stratum0_servers:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     cvmfs_clients:
       children:

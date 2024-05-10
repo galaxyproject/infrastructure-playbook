@@ -1,3 +1,6 @@
 ---
 
-ssh_private_keys: "{{ vault_sshprivatekeys }}"
+ssh_private_keys: "{{ vault_ssh_private_keys }}"
+
+ssh_host_keys:
+  galaxy04.tacc.utexas.edu: galaxy04.tacc.utexas.edu,129.114.60.176 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBATkn2kkYnIK0WvQ7V1vtoAo+39S2CP4VtFJ8S1OrQg4lCixgF4cdYhf4Na018RUgWfaj5cYSEnkRAoICBUEcAQ=

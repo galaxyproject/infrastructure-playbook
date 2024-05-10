@@ -5,6 +5,7 @@
   roles:
     - role: galaxyproject.general.virtual
       tags: general
+      when: "'virtual_hosts' in group_names"
     - role: galaxyproject.general.packages
       tags: general
     - role: galaxyproject.general.users
@@ -16,4 +17,10 @@
     - role: galaxyproject.cvmfs
       tags: cvmfs
     - role: dj-wasabi.telegraf
-      tags: general
+      tags: telegraf
+
+- name: SSH Tunnel Servers
+  hosts: ssh_tunnel_servers
+  roles:
+    - role: systemd_ssh_tunnel
+  tags: ssh_tunnel

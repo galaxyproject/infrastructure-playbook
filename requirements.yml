@@ -18,7 +18,7 @@ roles:
   - name: galaxyproject.slurm
     version: 1.0.1
   - name: galaxyproject.cvmfs
-    version: 0.2.21
+    version: 0.2.22
   - name: galaxyproject.telegraf_cvmfs
     version: 1.0.0
   - name: dj-wasabi.telegraf

@@ -14,9 +14,15 @@ mounts:
   - src: /dev/vdb
     path: /var/spool/cvmfs
     fstype: ext4
+    mode: "0755"
+    owner: root
+    group: root
   - src: /dev/vdc
     path: /srv
     fstype: ext4
+    mode: "0755"
+    owner: root
+    group: root
 
 host_users:
   - name: data
