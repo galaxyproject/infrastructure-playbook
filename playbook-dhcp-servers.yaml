@@ -1,0 +1,25 @@
+---
+
+# NOTE: Currently this just deploys dhcpd.conf, the DHCP server was half deployed by hand and needs replaced
+
+- name: DHCP Servers
+  hosts: dhcp_servers
+  handlers:
+    - name: Validate dhcpd.conf
+      command: dhcpd -t
+    - name: Restart dhcpd
+      service:
+        name: isc-dhcp-server
+        state: restarted
+  tasks:
+    # Originally used an include in dhcpd.conf for hosts but apparmor prevents reading it and I don't feel like adjusting apparmor
+    - name: Deploy dhcpd.conf
+      template:
+        src: templates/dhcp/dhcpd.conf.j2
+        dest: /etc/dhcp/dhcpd.conf
+        mode: "0644"
+        owner: root
+        group: root
+      notify:
+        - Validate dhcpd.conf
+        - Restart dhcpd

@@ -1,0 +1,70 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+authoritative;
+ddns-update-style none;
+default-lease-time 43200;
+filename "/pxelinux.0";
+max-lease-time 86400;
+next-server 128.118.250.2;
+
+option space smartos;
+
+option domain-name-servers 3.14.178.173, 3.136.94.7, 128.118.250.8;
+option domain-search-order code 119 = string;
+
+option grub-menu code 150 = text;
+option ldap-server code 95 = text;
+option site-local-128 code 128 = string;
+option site-local-129 code 129 = string;
+option smartos-encapsulation code 130 = encapsulate smartos;
+option smartos.console code 2 = string;
+option smartos.console-baud code 3 = unsigned integer 32;
+option smartos.enable-mpxio code 4 = boolean;
+option smartos.version code 1 = string;
+
+subnet 172.18.2.0 netmask 255.255.255.0 {
+    option broadcast-address 172.18.2.255;
+    option domain-name "galaxyproject.org";
+    option domain-search-order "galaxyproject.org p.galaxyproject.org";
+    option interface-mtu 9000;
+    option routers 172.18.2.1;
+}
+
+subnet 172.18.3.0 netmask 255.255.255.0 {
+    option broadcast-address 172.18.3.255;
+    option domain-name "m.galaxyproject.org";
+    option domain-search-order "m.galaxyproject.org galaxyproject.org";
+    option routers 172.18.3.1;
+}
+
+subnet 128.118.250.0 netmask 255.255.255.224 {
+    option domain-name "galaxyproject.org";
+    option routers 128.118.250.1;
+    option broadcast-address 128.118.250.31;
+}
+{% for group in dhcpd_groups %}
+
+group {
+{% for param in group.params | default([]) %}
+    {{ param }}{{ ';' if not param.endswith('}') else '' }}
+{% endfor %}
+{% for host in group.hosts %}
+{% if host.params is defined or host.options is defined %}
+    host {{ host.name }} {
+        hardware ethernet {{ host.ethernet }};
+        fixed-address {{ host['fixed-address'] | default(host.name ~ '.' ~ dhcpd_domain) }};
+{% for param in host.params | default([]) %}
+        {{ param }};
+{% endfor %}
+{% for option in host.options | default([]) %}
+        option {{ option }};
+{% endfor %}
+    }
+{% else %}
+    host {{ host.name }} { hardware ethernet {{ host.ethernet }}; fixed-address {{ host['fixed-address'] | default(host.name ~ '.' ~ dhcpd_domain) }}; }
+{% endif %}
+{% endfor %}
+}
+{% endfor %}

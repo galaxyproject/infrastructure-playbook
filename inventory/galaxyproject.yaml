@@ -110,3 +110,7 @@ all:
     stats_servers:
       hosts:
         stats.galaxyproject.org:
+
+    dhcp_servers:
+      hosts:
+        rodenbach.galaxyproject.org:

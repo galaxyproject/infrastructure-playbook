@@ -1,0 +1,58 @@
+---
+
+# TODO: half is hardcoded in the template, stuff meant to be regularly updated is here instead
+
+# hosts should not set 'hardware ethernet' or 'fixed-address' in params, these should be set on top level keys
+# 'ethernet' and 'fixed-address' instead. 'fixed-address' is optional and defaults to {{ name }}.{{ dhcpd_domain }}
+
+dhcpd_domain: galaxyproject.org
+dhcpd_groups:
+  # basic
+  - params:
+      - 'filename "/pxelinux.0"'
+      - 'next-server 128.118.250.2'
+    hosts:
+      - name: smart5.m
+        ethernet: 18:66:da:59:13:e5
+      - name: westvleteren.m
+        ethernet: 00:1d:09:c0:ff:ef
+  # SmartOS iPXE
+  - params:
+      - 'if exists user-class and option user-class = "iPXE" { filename "menu.ipxe"; } else { filename "undionly.kpxe"; }'
+      - 'next-server 128.118.250.2'
+    hosts:
+      - name: smart1
+        ethernet: bc:30:5b:f2:5f:e4
+        options:
+          - 'smartos.console "ttya"'
+          - 'smartos.version "20231005T000607Z"'
+      - name: smart2
+        ethernet: bc:30:5b:f2:81:8c
+        options:
+          - 'smartos.console "ttya"'
+          - 'smartos.version "20200910T013122Z"'
+      - name: smart3
+        ethernet: bc:30:5b:f2:9a:2c
+        options:
+          - 'smartos.console "ttya"'
+          - 'smartos.version "20231005T000607Z"'
+      - name: smart5
+        ethernet: 18:66:da:59:13:e2
+        options:
+          - 'smartos.console "ttyb"'
+          - 'smartos.version "20221020T001410Z"'
+      - name: thumper.p
+        ethernet: 00:14:4f:f2:b5:24
+        options:
+          - 'smartos.console "ttya"'
+          - 'smartos.version "20240502T000615Z"'
+      - name: rochefort.p
+        ethernet: 78:2b:cb:1b:1b:b8
+        options:
+          - 'smartos.console "ttyb"'
+          - 'smartos.version "20231005T000607Z"'
+      - name: westvleteren.p
+        ethernet: 00:25:90:95:76:fa
+        options:
+          - 'smartos.console "ttyb"'
+          - 'smartos.version "20240502T000615Z"'
