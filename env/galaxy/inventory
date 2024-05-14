@@ -49,7 +49,6 @@ duvel.galaxyproject.org
 rochefort.galaxyproject.org
 westvleteren.galaxyproject.org
 sentry.galaxyproject.org
-jeltz.galaxyproject.org
 leeroy.galaxyproject.org
 jenkins0.galaxyproject.org
 
@@ -112,7 +111,6 @@ duvel.galaxyproject.org
 radegast.galaxyproject.org
 eddie.galaxyproject.org
 duvel.galaxyproject.org
-jeltz.galaxyproject.org
 cvmfs0-psu2.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 #cvmfs1-tacc0.galaxyproject.org
@@ -193,7 +191,6 @@ rochefort.galaxyproject.org
 newtrail.galaxyproject.org
 artifact.galaxyproject.org
 duvel.galaxyproject.org
-jeltz.galaxyproject.org
 #status.usegalaxy.org
 
 [webservers:children]
@@ -278,7 +275,6 @@ cvmfs1-iu0.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 
 [cvmfsclients]
-jeltz.galaxyproject.org
 jetstream-iu0.galaxyproject.org
 
 [cvmfsclients:children]
@@ -313,7 +309,6 @@ sentry.galaxyproject.org
 
 [splunkagents]
 # Just EL machines running webservers - Rico put the Debian-based ones in the BX playbook
-jeltz.galaxyproject.org
 # lx-brand zone can't use acls
 #cvmfs1-psu0.galaxyproject.org
 #stats.galaxyproject.org
@@ -323,7 +318,6 @@ artifact.galaxyproject.org
 
 [nessusagents]
 # Again, just EL machines, Debian are in the BX playbook
-jeltz.galaxyproject.org
 cvmfs1-psu0.galaxyproject.org
 stats.galaxyproject.org
 # OK doing these two myself

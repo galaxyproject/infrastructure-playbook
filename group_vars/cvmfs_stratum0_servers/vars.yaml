@@ -1,6 +1,5 @@
 ---
 
-install_epel: true
 selinux_state: disabled
 
 telegraf_plugins_extra:

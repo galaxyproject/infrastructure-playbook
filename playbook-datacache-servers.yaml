@@ -1,0 +1,21 @@
+---
+
+- name: Datacache Servers
+  hosts: datacache_servers
+  roles:
+    - role: galaxyproject.general.virtual
+      tags: general
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.copy
+      tags: general
+    - role: galaxyproject.cvmfs
+      tags: cvmfs
+    - role: galaxyproject.general.services
+      tags: general
+    - role: galaxyproject.general.firewall
+      tags: general
+    - role: galaxyproject.nginx
+      tags: nginx

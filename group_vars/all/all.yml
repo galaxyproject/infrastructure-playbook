@@ -3,8 +3,8 @@
 # This is used by a variety of galaxyproject.* roles
 pip_virtualenv_command: python3 -m venv
 
-# Override in group or host vars to enable
-install_epel: false
+# Override in group or host vars to disable
+install_epel: true
 
 # Remember, these package names need to be valid across all versions of Debian/Ubuntu/EL/pkgsrc and all inventories
 all_packages:

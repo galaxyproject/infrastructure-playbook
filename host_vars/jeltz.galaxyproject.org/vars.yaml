@@ -1,5 +1,7 @@
 ---
 
+selinux_state: disabled
+
 host_directories:
   - path: /srv/nginx/datacache.galaxyproject.org/root
 
@@ -8,12 +10,12 @@ host_files:
     dest: /srv/nginx/datacache.galaxyproject.org/root/index.html
 
 host_packages:
-  - rsync
+  - rsync-daemon
 
 host_services:
   - name: rsyncd
     state: started
-    enabled: 'yes'
+    enabled: true
 
 host_templates:
   - dest: /etc/rsyncd.conf
@@ -53,53 +55,25 @@ host_templates:
         'read only': 'yes'
         list: 'yes'
         exclude: '*/tmp/* */work/* bin/*'
+      idc:
+        path: /cvmfs/idc.galaxyproject.org
+        comment: Galaxy Intergalactic Data Commission
+        'use chroot': 'yes'
+        uid: nobody
+        gid: nobody
+        'read only': 'yes'
+        list: 'yes'
+        exclude: '*/tmp/* */work/* bin/*'
 
-host_firewall_rules:
-  - service: http
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - service: rsyncd
-    state: enabled
-    permanent: yes
-    immediate: yes
-
-  # FIXME: technically these aren't right but as Swarm is being decommissioned it's not critical
-  - source: 129.114.17.191/32
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - source: 149.165.168.157/32
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 2377/tcp
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/tcp
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/tcp
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 7946/udp
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
-  - port: 4789/udp
-    zone: public
-    state: enabled
-    permanent: yes
-    immediate: yes
+#host_firewall_rules:
+#  - service: http
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
+#  - service: rsyncd
+#    state: enabled
+#    permanent: yes
+#    immediate: yes
 
 # datacache.galaxyproject.org
 nginx_enable_default_server: false
