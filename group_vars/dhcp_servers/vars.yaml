@@ -56,3 +56,8 @@ dhcpd_groups:
         options:
           - 'smartos.console "ttyb"'
           - 'smartos.version "20240502T000615Z"'
+      - name: voyager.p
+        ethernet: 00:21:28:25:69:e1
+        options:
+          - 'smartos.console "ttya"'
+          - 'smartos.version "20240502T000615Z"'
