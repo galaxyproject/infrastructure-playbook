@@ -8,6 +8,9 @@ all:
       ansible_user: ubuntu
       ansible_become: true
 
+    cvmfs1-psu0.galaxyproject.org:
+      hostname_strategy: file
+
     # for lx-brand zones, use:
     #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
@@ -26,32 +29,37 @@ all:
     telegraf_agents:
       children:
         cvmfs_stratum0_servers:
+        cvmfs_stratum1_servers:
         certbot_servers:
 
     virtual_hosts:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
 
     auto_update_hosts:
-      hosts:
-        cvmfs0-psu0.galaxyproject.org:
-        cvmfs0-psu1.galaxyproject.org:
-        jeltz.galaxyproject.org:
+      children:
+        psu_public_hosts:
 
     splunk_agents:
       hosts:
-        cvmfs0-psu0.galaxyproject.org:
-        cvmfs0-psu1.galaxyproject.org:
-        jeltz.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
+      children:
+        psu_public_hosts:
 
     nessus_agents:
       hosts:
-        cvmfs0-psu0.galaxyproject.org:
-        cvmfs0-psu1.galaxyproject.org:
-        jeltz.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
+      children:
+        psu_public_hosts:
 
     defender_agents:
+      # LX brand zones can't run Defender
+      children:
+        psu_public_hosts:
+
+    psu_public_hosts:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
@@ -68,13 +76,16 @@ all:
     ssh_tunnel_servers:
       hosts:
         cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
 
     smartos_hypervisors:
       hosts:
         smart1.galaxyproject.org:
         smart3.galaxyproject.org:
         smart5.galaxyproject.org:
+        thumper.p.galaxyproject.org:
         westvleteren.p.galaxyproject.org:
+        voyager.p.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
 
@@ -109,6 +120,10 @@ all:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
+
+    cvmfs_stratum1_servers:
+      hosts:
+        cvmfs1-psu0.galaxyproject.org:
 
     cvmfs_clients:
       children:

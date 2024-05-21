@@ -3,9 +3,16 @@
 firewalld_state: absent
 selinux_state: disabled
 
-galaxy_cvmfs_repos_enabled: false
+telegraf_plugins_extra:
+  http_response:
+    config:
+      - urls = ["http://localhost/cvmfs/info/v1/meta.json"]
+      - response_status_code = 200
+      - interface = "lo"
+      - '[inputs.http_response.headers]'
+      - '  Host = "{{ inventory_hostname }}"'
 
-cvmfsstratum1servers_group_authorized_key_users:
+cvmfs_stratum1_servers_group_authorized_key_users:
   - name: g2test
     authorized: "{{ galaxy_team_users }}"
   - name: g2main
@@ -13,11 +20,49 @@ cvmfsstratum1servers_group_authorized_key_users:
   - name: cloud
     authorized: "{{ galaxy_cloud_team_users }}"
 
-cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
-
-cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.6) | int }}"
-
-cvmfsstratum1servers_group_users:
+cvmfs_stratum1_servers_group_users:
+  - name: data
+    uid: 8000
+    group: data
+    comment: "Galaxy Data"
+    home: /home/data
+    shell: /bin/bash
+  - name: sandbox
+    uid: 8001
+    group: sandbox
+    comment: "CVMFS Sandbox"
+    home: /home/sandbox
+    shell: /bin/bash
+  - name: singularity
+    uid: 8002
+    group: singularity
+    comment: "Singularity Images"
+    home: /home/singularity
+    shell: /bin/bash
+  - name: usegalaxy
+    uid: 8003
+    group: usegalaxy
+    comment: "UseGalaxy Common Data"
+    home: /home/usegalaxy
+    shell: /bin/bash
+  - name: refgenie
+    uid: 8004
+    group: refgenie
+    comment: "refgenie-managed data"
+    home: /home/refgenie
+    shell: /bin/bash
+  - name: idc
+    uid: 8005
+    group: idc
+    comment: "Intergalactic Data Commission"
+    home: /home/idc
+    shell: /bin/bash
+  - name: cloud
+    uid: 8006
+    group: cloud
+    comment: "CVMFS Cloud Repo"
+    home: /home/cloud
+    shell: /bin/bash
   - name: g2test
     uid: 819456
     group: G-803372
@@ -30,52 +75,64 @@ cvmfsstratum1servers_group_users:
     comment: "Galaxy Main"
     home: /home/g2main
     shell: /bin/bash
-  - name: sandbox
-    comment: "CVMFS Sandbox"
-    home: /home/sandbox
-    shell: /bin/bash
-    system: yes
-  - name: singularity
-    comment: "Singularity Images"
-    home: /home/singularity
-    shell: /bin/bash
-    system: yes
-  - name: usegalaxy
-    comment: "UseGalaxy Common Data"
-    home: /home/usegalaxy
-    shell: /bin/bash
-    system: yes
-  - name: refgenie
-    comment: "refgenie-managed reference data"
-    home: /home/refgenie
-    shell: /bin/bash
-    system: yes
-  - name: cloud
-    comment: "CVMFS Cloud Repo"
-    home: /home/cloud
-    shell: /bin/bash
-    system: yes
 
-cvmfsstratum1servers_group_groups:
+cvmfs_stratum1_servers_group_groups:
+  - name: data
+    gid: 8000
+  - name: sandbox
+    gid: 8001
+  - name: singularity
+    gid: 8002
+  - name: usegalaxy
+    gid: 8003
+  - name: refgenie
+    gid: 8004
+  - name: idc
+    gid: 8005
+  - name: cloud
+    gid: 8006
   - name: G-803372
     gid: 803372
 
-cvmfs_manage_units_group: G-803372
+cvmfs_stratum1_servers_group_files:
+  - src: files/logrotate/squid
+    dest: /etc/logrotate.d/squid
+    mode: "0644"
+    owner: root
+    group: root
+  - src: files/logrotate/httpd
+    dest: /etc/logrotate.d/httpd
+    mode: "0644"
+    owner: root
+    group: root
+
+cvmfs_role: stratum1
+
+galaxy_cvmfs_repos_enabled: false
+cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
+cvmfs_geo_account_id: "{{ vault_cvmfs_geo_account_id }}"
+cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.6) | int }}"
+
+# FIXME: update
+#cvmfs_manage_units_group: G-803372
+
+cvmfs_site_keys:
+  pub: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJZTWTY3/dBfspFKifv8
+    TWuuT2Zzoo1cAskKpKu5gsUAyDFbZfYBEy91qbLPC3TuUm2zdPNsjCQbbq1Liufk
+    uNPZJ8Ubn5PR6kndwrdD13NVHZpXVml1+ooTSF5CL3x/KUkYiyRz94sAr9trVoSx
+    THW2buV7ADUYivX7ofCvBu5T6YngbPZNIxDB4mh7cEal/UDtxV683A/5RL4wIYvt
+    S5SVemmu6Yb8GkGwLGmMVLYXutuaHdMFyKzWm+qFlG5JRz4okUWERvtJ2QAJPOzL
+    mAG1ceyBFowj/r3iJTa+Jcif2uAmZxg+cHkZG5KzATykF82UH1ojUzREMMDcPJi2
+    dQIDAQAB
+    -----END PUBLIC KEY-----
 
 cvmfs_keys_dir: /etc/cvmfs/keys/galaxyproject.org
 cvmfs_keys:
   - path: /etc/cvmfs/keys/galaxyproject.org/test.galaxyproject.org.pub
     owner: g2test
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtfc5SSX9ALcrukWYcxkI
-      mkLhlkJa5tCP1oZNWFA7GfE4xQW2vcKE5qmbZqhYVfdiy+FHPnhWPJp577hekD2F
-      vMITbApdZ0265AjRC0+EKKxpMF8zZ0q71vCFxvdK0c3DtT/3LmqKrr2wimtJZjQN
-      UAZcQG2ykzeHzFZ46w74IO0o8Fv/w2XEbYI0QqbNFv+0hcp5SruFqaaLsRZdd6Bn
-      3iSylgVRQ5b+h1LfB/EuEpSmH1sDozZ4tU0fpbrBSknK76aad1o/cvWY1X87ToUV
-      helU0HE2Rw/u9EqJDvPFTbUmad3MtspkqbG5Eo7lI+ktzbcD7UTsQ/7noIXIQ5dD
-      PwIDAQAB
-      -----END PUBLIC KEY-----
+    key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/galaxyproject.org/data.galaxyproject.org.pub
     owner: g2test
     key: |
@@ -114,16 +171,7 @@ cvmfs_keys:
       -----END PUBLIC KEY-----
   - path: /etc/cvmfs/keys/galaxyproject.org/singularity.galaxyproject.org.pub
     owner: root
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJZTWTY3/dBfspFKifv8
-      TWuuT2Zzoo1cAskKpKu5gsUAyDFbZfYBEy91qbLPC3TuUm2zdPNsjCQbbq1Liufk
-      uNPZJ8Ubn5PR6kndwrdD13NVHZpXVml1+ooTSF5CL3x/KUkYiyRz94sAr9trVoSx
-      THW2buV7ADUYivX7ofCvBu5T6YngbPZNIxDB4mh7cEal/UDtxV683A/5RL4wIYvt
-      S5SVemmu6Yb8GkGwLGmMVLYXutuaHdMFyKzWm+qFlG5JRz4okUWERvtJ2QAJPOzL
-      mAG1ceyBFowj/r3iJTa+Jcif2uAmZxg+cHkZG5KzATykF82UH1ojUzREMMDcPJi2
-      dQIDAQAB
-      -----END PUBLIC KEY-----
+    key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/galaxyproject.org/usegalaxy.galaxyproject.org.pub
     owner: root
     key: |
@@ -138,16 +186,7 @@ cvmfs_keys:
       -----END PUBLIC KEY-----
   - path: /etc/cvmfs/keys/galaxyproject.org/cvmfs-config.galaxyproject.org.pub
     owner: root
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJZTWTY3/dBfspFKifv8
-      TWuuT2Zzoo1cAskKpKu5gsUAyDFbZfYBEy91qbLPC3TuUm2zdPNsjCQbbq1Liufk
-      uNPZJ8Ubn5PR6kndwrdD13NVHZpXVml1+ooTSF5CL3x/KUkYiyRz94sAr9trVoSx
-      THW2buV7ADUYivX7ofCvBu5T6YngbPZNIxDB4mh7cEal/UDtxV683A/5RL4wIYvt
-      S5SVemmu6Yb8GkGwLGmMVLYXutuaHdMFyKzWm+qFlG5JRz4okUWERvtJ2QAJPOzL
-      mAG1ceyBFowj/r3iJTa+Jcif2uAmZxg+cHkZG5KzATykF82UH1ojUzREMMDcPJi2
-      dQIDAQAB
-      -----END PUBLIC KEY-----
+    key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/galaxyproject.org/refgenomes-databio.galaxyproject.org.pub
     owner: root
     key: |
@@ -162,16 +201,10 @@ cvmfs_keys:
       -----END PUBLIC KEY-----
   - path: /etc/cvmfs/keys/galaxyproject.org/cloud.galaxyproject.org.pub
     owner: root
-    key: |
-      -----BEGIN PUBLIC KEY-----
-      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuJZTWTY3/dBfspFKifv8
-      TWuuT2Zzoo1cAskKpKu5gsUAyDFbZfYBEy91qbLPC3TuUm2zdPNsjCQbbq1Liufk
-      uNPZJ8Ubn5PR6kndwrdD13NVHZpXVml1+ooTSF5CL3x/KUkYiyRz94sAr9trVoSx
-      THW2buV7ADUYivX7ofCvBu5T6YngbPZNIxDB4mh7cEal/UDtxV683A/5RL4wIYvt
-      S5SVemmu6Yb8GkGwLGmMVLYXutuaHdMFyKzWm+qFlG5JRz4okUWERvtJ2QAJPOzL
-      mAG1ceyBFowj/r3iJTa+Jcif2uAmZxg+cHkZG5KzATykF82UH1ojUzREMMDcPJi2
-      dQIDAQAB
-      -----END PUBLIC KEY-----
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/galaxyproject.org/idc.galaxyproject.org.pub
+    owner: root
+    key: "{{ cvmfs_site_keys.pub }}"
 
 cvmfs_repositories:
   - repository: test.galaxyproject.org
@@ -190,7 +223,7 @@ cvmfs_repositories:
     client_options: []
   - repository: data.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
-    owner: g2test
+    owner: data
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
       - CVMFS_AUTO_GC=false
@@ -233,6 +266,13 @@ cvmfs_repositories:
   - repository: cloud.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
     owner: cloud
+    key_dir: /etc/cvmfs/keys/galaxyproject.org
+    server_options:
+      - CVMFS_AUTO_GC=false
+    client_options: []
+  - repository: idc.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: idc
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
       - CVMFS_AUTO_GC=false

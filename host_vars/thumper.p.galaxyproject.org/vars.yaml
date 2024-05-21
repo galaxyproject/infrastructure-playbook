@@ -1,0 +1,30 @@
+---
+
+# hardware does not support bhyve or KVM, and the rocky-9 lx dataset does not provision
+
+smartos_images:
+  # rocky-8 20231121 linux lx-dataset 2023-11-21
+  - uuid: e00830e1-cfc4-48d8-a4de-2eb4d1e241b6
+    state: present
+  # rocky-9 20231121 linux lx-dataset 2023-11-21
+  #- uuid: a49b11ff-8b43-4833-aebf-a2d79cf3cd4a
+  #  state: present
+
+smartos_vms:
+  - alias: cvmfs1-psu0
+    brand: lx
+    kernel_version: 5.14.0-427.16.1.el9_4.x86_64
+    image_uuid: e00830e1-cfc4-48d8-a4de-2eb4d1e241b6
+    hostname: cvmfs1-psu0
+    max_physical_memory: 8192
+    quota: 32768
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: admin
+        ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+    delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

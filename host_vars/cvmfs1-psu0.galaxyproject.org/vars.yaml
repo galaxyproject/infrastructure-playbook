@@ -1,0 +1,76 @@
+---
+
+host_packages:
+  - 'dnf-command(versionlock)'
+
+zone_id: eb7bd220-b75f-43a7-92da-0062a3ac6d6b
+
+zfs_filesystems:
+  - name: zones/{{ zone_id }}/data/srv-cvmfs
+    mountpoint: /srv/cvmfs
+    atime: "off"
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/test.galaxyproject.org
+    mountpoint: /srv/cvmfs/test.galaxyproject.org
+    owner: g2test
+    group: G-803372
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/main.galaxyproject.org
+    mountpoint: /srv/cvmfs/main.galaxyproject.org
+    owner: g2main
+    group: G-803372
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/data.galaxyproject.org
+    mountpoint: /srv/cvmfs/data.galaxyproject.org
+    owner: data
+    group: data
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/refgenomes-databio.galaxyproject.org
+    mountpoint: /srv/cvmfs/refgenomes-databio.galaxyproject.org
+    owner: refgenie
+    group: refgenie
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/sandbox.galaxyproject.org
+    mountpoint: /srv/cvmfs/sandbox.galaxyproject.org
+    owner: sandbox
+    group: sandbox
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/singularity.galaxyproject.org
+    mountpoint: /srv/cvmfs/singularity.galaxyproject.org
+    owner: singularity
+    group: singularity
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/usegalaxy.galaxyproject.org
+    mountpoint: /srv/cvmfs/usegalaxy.galaxyproject.org
+    owner: usegalaxy
+    group: usegalaxy
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/cvmfs-config.galaxyproject.org
+    mountpoint: /srv/cvmfs/cvmfs-config.galaxyproject.org
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/cloud.galaxyproject.org
+    mountpoint: /srv/cvmfs/cloud.galaxyproject.org
+    owner: cloud
+    group: cloud
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/idc.galaxyproject.org
+    mountpoint: /srv/cvmfs/idc.galaxyproject.org
+    owner: idc
+    group: idc
+
+cvmfs_stratum1_squid_enabled: false
+
+cvmfs_stratum1_cache_mem: 2048
+cvmfs_quota_limit: 1024
+#cvmfs_x509_cert_bundle: /etc/pki/tls/cert.pem
+
+#cvmfs_srv_device: /dev/vdb
+
+# What was this for????
+#cvmfs_server_urls:
+#  - domain: galaxyproject.org
+#    use_geoapi: no
+#    urls:
+#      - "http://localhost/cvmfs/@fqrn@"
+#      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+#      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+systemd_ssh_tunnel_restart_seconds: 90
+systemd_ssh_tunnels:
+  - name: galaxy04
+    remote_host: galaxy04.tacc.utexas.edu
+    remote_user: g2test
+    remote_port: 2322
+    key_name: id_rsa_galaxy04
+    key: "{{ ssh_private_keys['sshtunnel_cvmfs1-psu0_g2test_galaxy04'] }}"
+    host_key: "{{ ssh_host_keys['galaxy04.tacc.utexas.edu'] }}"

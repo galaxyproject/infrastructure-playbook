@@ -45,7 +45,9 @@ dhcpd_groups:
         ethernet: 00:14:4f:f2:b5:24
         options:
           - 'smartos.console "ttya"'
-          - 'smartos.version "20240502T000615Z"'
+          # network refuses to pass traffic with this version so skipping for now, will hopefully be fixed at some point
+          #- 'smartos.version "20240502T000615Z"'
+          - 'smartos.version "20231005T000607Z"'
       - name: rochefort.p
         ethernet: 78:2b:cb:1b:1b:b8
         options:

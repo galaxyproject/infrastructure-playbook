@@ -13,11 +13,19 @@
     - role: galaxyproject.general.paths
       tags: general
     - role: galaxyproject.general.firewall
+      when: ansible_kernel_version != "BrandZ virtual linux"
       tags: general
     - role: galaxyproject.cvmfs
       tags: cvmfs
     - role: dj-wasabi.telegraf
       tags: telegraf
+  post_tasks:
+    # some kind of file operation on the catalog fails under >= 2.11 on LX currently
+    - name: Lock CVMFS version
+      community.general.dnf_versionlock:
+        name: [cvmfs-server, cvmfs-libs]
+        state: present
+      when: ansible_kernel_version == "BrandZ virtual linux"
 
 - name: SSH Tunnel Servers
   hosts: ssh_tunnel_servers
