@@ -30,37 +30,14 @@ mounts:
     owner: root
     group: root
 
-# NOTE: supplemental groups below don't work the first time, but aren't needed unless using build-on-stratum0
 host_users:
-  - name: g2test
-    uid: 819456
-    group: G-803372
-    comment: "Galaxy Test"
-    home: /home/g2test
-    shell: /bin/bash
-    #groups: docker
-  - name: g2main
-    uid: 819800
-    group: G-803372
-    comment: "Galaxy Main"
-    home: /home/g2main
-    shell: /bin/bash
-    #groups: docker
-  - name: cloud
-    #uid: 995
-    uid: 8006
-    group: cloud
-    comment: "CVMFS Cloud Repo"
-    home: /home/cloud
-    shell: /bin/bash
-    #groups: docker
+  - "{{ galaxyproject_users.cloud }}"
+  - "{{ galaxyproject_users.g2test }}"
+  - "{{ galaxyproject_users.g2main }}"
 
 host_groups:
-  - name: G-803372
-    gid: 803372
-  - name: cloud
-    #gid: 991
-    gid: 8006
+  - "{{ galaxyproject_groups.cloud }}"
+  - "{{ galaxyproject_groups.G-803372 }}"
 
 cvmfs_manage_firewall: false
 galaxy_cvmfs_repos_enabled: false

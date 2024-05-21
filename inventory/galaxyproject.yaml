@@ -21,11 +21,17 @@ all:
 
   children:
 
-    # Provides galaxyproject-specific values for group vars
+    # Provides galaxyproject-specific values for group vars, including:
+    # - galaxyproject_users, galaxyproject_groups
     meta_galaxyproject:
       hosts:
         llv.galaxyproject.org:
+        cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
+        #cvmfs1-iu0.galaxyproject.org:
 
+    # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
       children:
         cvmfs_stratum0_servers:

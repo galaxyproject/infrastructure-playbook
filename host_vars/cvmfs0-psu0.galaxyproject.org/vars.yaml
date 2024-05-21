@@ -25,56 +25,20 @@ mounts:
     group: root
 
 host_users:
-  - name: data
-    uid: 8000
-    group: data
-    comment: "Galaxy Data"
-    home: /home/data
-    shell: /bin/bash
-  - name: sandbox
-    uid: 8001
-    group: sandbox
-    comment: "CVMFS Sandbox"
-    home: /home/sandbox
-    shell: /bin/bash
-  - name: singularity
-    uid: 8002
-    group: singularity
-    comment: "Singularity Images"
-    home: /home/singularity
-    shell: /bin/bash
-  - name: usegalaxy
-    uid: 8003
-    group: usegalaxy
-    comment: "UseGalaxy Common Data"
-    home: /home/usegalaxy
-    shell: /bin/bash
-  - name: refgenie
-    uid: 8004
-    group: refgenie
-    comment: "refgenie-managed data"
-    home: /home/refgenie
-    shell: /bin/bash
-  - name: idc
-    uid: 8005
-    group: idc
-    comment: "Intergalactic Data Commission"
-    home: /home/idc
-    shell: /bin/bash
+  - "{{ galaxyproject_users.data }}"
+  - "{{ galaxyproject_users.sandbox }}"
+  - "{{ galaxyproject_users.singularity }}"
+  - "{{ galaxyproject_users.usegalaxy }}"
+  - "{{ galaxyproject_users.refgenie }}"
+  - "{{ galaxyproject_users.idc }}"
 
 host_groups:
-  - name: data
-    gid: 8000
-  - name: sandbox
-    gid: 8001
-  - name: singularity
-    gid: 8002
-  - name: usegalaxy
-    gid: 8003
-  - name: refgenie
-    gid: 8004
-  - name: idc
-    gid: 8005
+  - "{{ galaxyproject_groups.data }}"
+  - "{{ galaxyproject_groups.sandbox }}"
+  - "{{ galaxyproject_groups.singularity }}"
+  - "{{ galaxyproject_groups.usegalaxy }}"
+  - "{{ galaxyproject_groups.refgenie }}"
+  - "{{ galaxyproject_groups.idc }}"
 
 host_directories:
   - path: /srv/idc
