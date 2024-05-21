@@ -1,7 +1,6 @@
 ---
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
-cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 
 # for usegalaxy-tools, if using build-on-stratum0 mode
 #host_packages:
@@ -104,6 +103,27 @@ cvmfs_repositories:
     client_options:
       - CVMFS_NFILES=4096
 
+cvmfs_private_keys:
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.masterkey
+    owner: g2test
+    key: "{{ cvmfs_site_keys.masterkey }}"
+  - path: /etc/cvmfs/keys/test.galaxyproject.org.key
+    owner: g2test
+    key: "{{ vault_cvmfs_private_key_test }}"
+  - path: /etc/cvmfs/keys/main.galaxyproject.org.masterkey
+    owner: g2main
+    key: "{{ vault_cvmfs_master_key_main }}"
+  - path: /etc/cvmfs/keys/main.galaxyproject.org.key
+    owner: g2main
+    key: "{{ vault_cvmfs_private_key_main }}"
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.masterkey
+    owner: cloud
+    key: "{{ cvmfs_site_keys.masterkey }}"
+  - path: /etc/cvmfs/keys/cloud.galaxyproject.org.key
+    owner: cloud
+    # TODO: this should be regenerated as unique, it should be possible to do without any issues on clients, just run `cvmfs_server resign`
+    key: "{{ vault_cvmfs_private_key_cloud }}"
+
 cvmfs_keys:
   - path: /etc/cvmfs/keys/test.galaxyproject.org.pub
     owner: g2test
@@ -176,6 +196,7 @@ cvmfs_keys:
     key: "{{ cvmfs_site_keys.pub }}"
   - path: /etc/cvmfs/keys/cloud.galaxyproject.org.crt
     owner: root
+    # TODO: this should be regenerated as unique
     key: "{{ cvmfs_site_keys.crt }}"
 
 # only needed for build-on-stratum0
