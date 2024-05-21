@@ -23,6 +23,9 @@ smartos_images:
   # rocky-9 20231127 linux zvol
   - uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
     state: present
+  # debian-12 20231127 linux zvol 2023-11-27
+  - uuid: d89041d8-41b9-481d-918a-722be4598dd1
+    state: present
 
 smartos_vms:
   - name: jeltz
@@ -42,6 +45,37 @@ smartos_vms:
         boot: true
         model: virtio
         size: 16384
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: new-eddie
+    brand: bhyve
+    ram: 8192
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        #ip: "{{ lookup('dig', 'eddie.galaxyproject.org') }}"
+        #netmask: 255.255.255.224
+        #gateway: 128.118.250.1
+        #vlan_id: 306
+        ip: 172.18.2.211
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+        model: virtio
+    disks:
+      - image_uuid: d89041d8-41b9-481d-918a-722be4598dd1
+        boot: true
+        model: virtio
+        size: 24576
+      # postgres
+      - boot: false
+        model: virtio
+        size: 24576
+      # srv
+      - boot: false
+        model: virtio
+        size: 131072
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: eddie

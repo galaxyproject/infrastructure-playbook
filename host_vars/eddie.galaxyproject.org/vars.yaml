@@ -1,0 +1,46 @@
+---
+
+host_packages:
+  - xfsprogs
+
+filesystems:
+  - dev: /dev/vdb
+    fstype: xfs
+  - dev: /dev/vdc
+    fstype: xfs
+
+mounts:
+  - src: /dev/vdb
+    path: /var/lib/postgresql
+    fstype: xfs
+    mode: "0755"
+    #owner: root
+    #group: root
+  - src: /dev/vdc
+    path: /srv
+    fstype: xfs
+    mode: "0755"
+    owner: root
+    group: root
+
+# DB Version: 16
+# OS Type: linux
+# DB Type: web
+# Total Memory (RAM): 8 GB
+# CPUs num: 2
+# Connections num: 100
+# Data Storage: hdd
+postgresql_conf:
+  max_connections: 100
+  shared_buffers: 2GB
+  effective_cache_size: 6GB
+  maintenance_work_mem: 512MB
+  checkpoint_completion_target: 0.9
+  wal_buffers: 16MB
+  default_statistics_target: 100
+  random_page_cost: 4
+  effective_io_concurrency: 2
+  work_mem: 10485kB
+  huge_pages: "off"
+  min_wal_size: 1GB
+  max_wal_size: 4GB

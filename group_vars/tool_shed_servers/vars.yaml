@@ -1,0 +1,36 @@
+---
+
+tool_shed_servers_group_users:
+  - "{{ galaxyproject_users.shed }}"
+
+tool_shed_servers_group_groups:
+  - "{{ galaxyproject_groups.shed }}"
+
+tool_shed_servers_group_authorized_key_users:
+  - name: shed
+    authorized: "{{ galaxy_team_users }}"
+
+tool_shed_servers_directories:
+  - path: /srv/toolshed
+    owner: shed
+    group: shed
+    mode: "0755"
+
+postgresql_flavor: pgdg
+postgresql_version: 16
+#postgresql_create_backup_dir: false
+#postgresql_backup_dir: /corral4/backup/pgsql/{{ inventory_hostname }}
+
+#postgresql_archive_wal_rsync_args: '--ignore-existing -pt --info=skip1'
+#postgresql_backup_rsync_backup_opts: '-rpt --chown=postgres:G-803372'
+#postgresql_backup_hour: 7
+#postgresql_backup_command: >-
+#  /usr/bin/sg G-803372 -c
+#  "{{ postgresql_backup_local_dir | quote }}/bin/backup.py
+#  {{ '--rsync-connect-opts ' ~ (postgresql_backup_rsync_connect_opts | quote) if postgresql_backup_rsync_connect_opts else '' }}
+#  --rsync-backup-opts {{ postgresql_backup_rsync_backup_opts | quote }}
+#  --keep {{ postgresql_backup_keep | quote }}
+#  {{ '--pg-bin-dir ' ~ __postgresql_pgdg_bin_dir if ansible_os_family == 'RedHat' else '' }}
+#  --backup --clean-archive {{ postgresql_backup_dir | quote }}"
+
+# postgresql_conf is tuned for the VM and therefore found in host_vars

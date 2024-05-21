@@ -1,0 +1,25 @@
+---
+
+- name: Tool Shed Servers
+  hosts: tool_shed_servers
+  pre_tasks:
+    # The SmartOS Debian image has the locale set to en_US.UTF-8 but has only generated en_US.ISO-8859-1
+    - name: Generate en_US.UTF-8
+      community.general.locale_gen:
+        name: en_US.UTF-8
+      tags: general
+  roles:
+    - role: galaxyproject.general.virtual
+      tags: general
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.postfix
+      tags: postfix
+    - role: galaxyproject.postgresql
+      tags: postgres
+    #- role: dj-wasabi.telegraf
+    #  tags: telegraf

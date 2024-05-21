@@ -8,6 +8,10 @@ all:
       ansible_user: ubuntu
       ansible_become: true
 
+    # TEMP TEMP TEMP
+    eddie.galaxyproject.org:
+      ansible_host: 172.18.2.211
+
     cvmfs1-psu0.galaxyproject.org:
       hostname_strategy: file
 
@@ -30,6 +34,7 @@ all:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
         #cvmfs1-iu0.galaxyproject.org:
+        eddie.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -43,6 +48,7 @@ all:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
+        eddie.galaxyproject.org:
 
     auto_update_hosts:
       children:
@@ -70,6 +76,7 @@ all:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         jeltz.galaxyproject.org:
+        eddie.galaxyproject.org:
 
     ssh_clients:
       children:
@@ -99,10 +106,12 @@ all:
       children:
         stats_servers:
         datacache_servers:
+        tool_shed_servers:
 
     certbot_servers:
       children:
         stats_servers:
+        tool_shed_servers:
 
     list_servers:
       hosts:
@@ -147,3 +156,7 @@ all:
     datacache_servers:
       hosts:
         jeltz.galaxyproject.org:
+
+    tool_shed_servers:
+      hosts:
+        eddie.galaxyproject.org:
