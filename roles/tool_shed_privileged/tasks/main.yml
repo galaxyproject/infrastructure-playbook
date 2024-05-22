@@ -1,0 +1,183 @@
+---
+
+- name: Update Tool Shed
+  ansible.builtin.git:
+    dest: "{{ tool_shed_server_dir }}"
+    force: "{{ tool_shed_force_checkout }}"
+    depth: "{{ tool_shed_clone_depth | default(omit) }}"
+    repo: "{{ tool_shed_repo }}"
+    version: "{{ tool_shed_version }}"
+    executable: "{{ git_executable | default(omit) }}"
+  diff: false
+  register: __tool_shed_git_update_result
+  notify:
+    - Restart Tool Shed
+  tags: update
+
+- name: Create Tool Shed virtualenv
+  ansible.builtin.pip:
+    name: pip
+    virtualenv: "{{ tool_shed_venv_dir }}"
+    extra_args: "{{ pip_extra_args | default(omit) }}"
+    virtualenv_command: "{{ tool_shed_virtualenv_command | default(pip_virtualenv_command | default(omit)) }}"
+    virtualenv_python: "{{ tool_shed_virtualenv_python | default(omit) }}"
+  environment:
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+  tags: update
+
+- name: Ensure pip is the desired release
+  ansible.builtin.pip:
+    name:
+      - pip
+    state: "{{ tool_shed_pip_version | default('latest') }}"
+    extra_args: "{{ pip_extra_args | default('') }}"
+    virtualenv: "{{ tool_shed_venv_dir }}"
+    virtualenv_command: "{{ tool_shed_virtualenv_command | default(pip_virtualenv_command | default(omit)) }}"
+  environment:
+    PYTHONPATH: null
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+  tags: update
+
+- name: Remove orphaned .pyc files and compile bytecode
+  ansible.builtin.script: "makepyc.py {{ tool_shed_server_dir }}/lib"
+  environment:
+    PATH: "{{ tool_shed_venv_dir }}/bin"
+  when: __tool_shed_git_update_result is changed
+  tags: update
+
+- name: Create Tool Shed config dir
+  ansible.builtin.file:
+    state: directory
+    path: "{{ tool_shed_config_dir }}"
+    owner: "{{ tool_shed_privileged_user }}"
+    group: "{{ tool_shed_privileged_group }}"
+    mode: "0755"
+  tags: config
+
+- name: Install additional Tool Shed config files (static)
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ tool_shed_config_file_mode | default(omit) }}"
+  with_items: "{{ tool_shed_config_files }}"
+  tags: config
+
+- name: Install additional Tool Shed config files (template)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ tool_shed_config_file_mode | default(omit) }}"
+  with_items: "{{ tool_shed_config_templates }}"
+  tags: config
+
+- name: Create Tool Shed configuration file
+  ansible.builtin.template:
+    src: tool_shed.yml.j2
+    dest: "{{ tool_shed_config_file }}"
+    mode: "{{ tool_shed_config_file_mode | default(omit) }}"
+  notify:
+    - Restart Tool Shed
+  tags: config
+
+- name: Install Tool Shed base dependencies
+  ansible.builtin.pip:
+    requirements: "{{ tool_shed_requirements_file }}"
+    extra_args: "--index-url https://wheels.galaxyproject.org/simple/ --extra-index-url https://pypi.python.org/simple {{ pip_extra_args | default('') }}"
+    virtualenv: "{{ tool_shed_venv_dir }}"
+    virtualenv_command: "{{ tool_shed_virtualenv_command | default(pip_virtualenv_command | default(omit)) }}"
+  environment:
+    PYTHONPATH: null
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+  tags: update
+
+- name: Install Tool Shed additional packages
+  ansible.builtin.pip:
+    name: "{{ tool_shed_additional_venv_packages }}"
+    virtualenv: "{{ tool_shed_venv_dir }}"
+    virtualenv_command: "{{ tool_shed_virtualenv_command | default(pip_virtualenv_command | default(omit)) }}"
+  environment:
+    PYTHONPATH: null
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+  when: tool_shed_additional_venv_packages
+  tags: update
+
+- name: Collect Tool Shed Node.js version file
+  ansible.builtin.slurp:
+    src: "{{ tool_shed_server_dir }}/client/.node_version"
+  register: __tool_shed_node_version_file
+  tags: update
+
+- name: Set Tool Shed Node.js version fact
+  ansible.builtin.set_fact:
+    tool_shed_node_version: "{{ __tool_shed_node_version_file['content'] | b64decode | trim }}"
+  tags: update
+
+- name: Check if node is installed
+  ansible.builtin.stat:
+    path: "{{ tool_shed_venv_dir }}/bin/node"
+  register: __tool_shed_node_is_installed
+  tags: update
+
+- name: Collect installed node version
+  ansible.builtin.command: "{{ tool_shed_venv_dir }}/bin/node --version"
+  when: __tool_shed_node_is_installed.stat.exists
+  changed_when: false
+  register: __tool_shed_installed_node_version
+  tags: update
+
+- name: Remove node_modules directory when upgrading node
+  ansible.builtin.file:
+    path: "{{ tool_shed_venv_dir }}/lib/node_modules"
+    state: absent
+  when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
+
+- name: Install or upgrade node
+  ansible.builtin.command: "nodeenv -n {{ tool_shed_node_version }} -p"
+  environment:
+    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+  when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
+
+- name: Install yarn
+  ansible.builtin.npm:
+    executable: "{{ tool_shed_venv_dir }}/bin/npm"
+    name: yarn
+    global: yes
+  environment:
+    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+
+- name: Tool Shed v2 Block
+  block:
+
+    #- name: Build Tool Shed v2 Client
+    #  community.general.yarn:
+    #    path: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
+    #  environment:
+    #    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+    #    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+
+    - name: Build Tool Shed v2 Client
+      ansible.builtin.command: yarn build
+      args:
+        chdir: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+      when: __tool_shed_git_update_result is changed
+
+    - name: Create hgweb dir
+      ansible.builtin.file:
+        path: "{{ tool_shed_hgweb_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Distribute hgweb.py
+      ansible.builtin.template:
+        src: "templates/hgweb.py.j2"
+        dest: "{{ tool_shed_hgweb_dir }}/hgweb.py"
+      notify:
+        - Restart hgweb
+
+  when: tool_shed_api_version == "v2"
+  tags: update

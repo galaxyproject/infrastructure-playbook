@@ -1,0 +1,40 @@
+---
+
+tool_shed_venv_dir: "{{ tool_shed_root }}/venv"
+tool_shed_config_dir: "{{ tool_shed_root }}/config"
+tool_shed_mutable_data_dir: "{{ tool_shed_root }}/var"
+tool_shed_mutable_config_dir: "{{ tool_shed_mutable_data_dir }}/config"
+tool_shed_requirements_file: "{{ tool_shed_server_dir }}/lib/galaxy/dependencies/pinned-requirements.txt"
+
+tool_shed_config_file: "{{ tool_shed_config_dir }}/tool_shed.yml"
+
+tool_shed_force_checkout: true
+tool_shed_repo: https://github.com/galaxyproject/galaxy.git
+tool_shed_version: stable
+tool_shed_api_version: v1
+
+tool_shed_additional_venv_packages: []
+
+tool_shed_config_default:
+  tool_shed:
+    hgweb_config_dir: "{{ tool_shed_mutable_config_dir }}/hgweb_config_dir"
+    file_path: "{{ tool_shed_mutable_data_dir }}/tool_shed_files"
+    new_file_path: "{{ tool_shed_mutable_data_dir }}/tool_shed_tmp"
+    template_cache_path: "{{ tool_shed_mutable_data_dir }}/tool_shed_template_cache"
+    whoosh_index_dir: "{{ tool_shed_mutable_data_dir }}/tool_shed_whoosh_cache"
+    openid_consumer_cache_path: "{{ tool_shed_mutable_data_dir }}/tool_shed_openid_consumer_cache"
+    citation_cache_data_dir: "{{ tool_shed_mutable_data_dir }}/tool_shed_citations/data"
+    citation_cache_lock_dir: "{{ tool_shed_mutable_data_dir }}/tool_shed_citations/locks"
+
+tool_shed_config_merged: "{{ tool_shed_config_default | combine(tool_shed_config | default({}), recursive=True) }}"
+
+# Automatically instantiate mutable config files if they don't exist (dest will not be overwritten if it exists)
+tool_shed_mutable_configs: []
+
+# These are lists of hashes in the same format as galaxy_mutable_configs that can be used to cause extra files and
+# templates to be installed on the managed host.
+tool_shed_config_files: []
+tool_shed_config_templates: []
+
+# API v2 standalone hgweb path
+tool_shed_hgweb_prefix: "/repos"

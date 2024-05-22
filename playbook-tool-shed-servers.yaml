@@ -2,24 +2,43 @@
 
 - name: Tool Shed Servers
   hosts: tool_shed_servers
-  pre_tasks:
-    # The SmartOS Debian image has the locale set to en_US.UTF-8 but has only generated en_US.ISO-8859-1
-    - name: Generate en_US.UTF-8
-      community.general.locale_gen:
-        name: en_US.UTF-8
-      tags: general
   roles:
+    - role: tool_shed_defaults
+      tags: general
     - role: galaxyproject.general.virtual
+      tags: general
+    - role: galaxyproject.general.locale
       tags: general
     - role: galaxyproject.general.packages
       tags: general
-    - role: galaxyproject.general.paths
-      tags: general
     - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
       tags: general
     - role: galaxyproject.postfix
       tags: postfix
     - role: galaxyproject.postgresql
       tags: postgres
-    #- role: dj-wasabi.telegraf
-    #  tags: telegraf
+    - role: galaxyproject.postgresql
+      tags: postgres
+    - role: galaxyproject.postgresql_objects
+      become: true
+      become_user: postgres
+      tags: postgres
+    - role: tool_shed_privileged
+      become: true
+      become_user: "{{ tool_shed_privileged_user }}"
+      tags: shed
+    # TODO: uncomment after bug is fixed where toolshed_db.py is not reading database_connection
+    #- role: tool_shed_unprivileged
+    #  become: true
+    #  become_user: "{{ tool_shed_user }}"
+    #  tags: shed
+    - role: tool_shed_root
+      tags: shed
+    - role: galaxyproject.nginx
+      tags: nginx
+    - role: error_pages
+      tags: nginx
+    - role: dj-wasabi.telegraf
+      tags: telegraf

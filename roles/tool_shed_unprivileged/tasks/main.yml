@@ -1,0 +1,40 @@
+---
+
+- name: Set hgweb archive types
+  ansible.builtin.ini_file:
+    dest: ~/.hgrc
+    section: web
+    option: allow_archive
+    value: "bz2, gz, zip"
+
+- name: Get current Tool Shed DB version
+  command: "{{ tool_shed_venv_dir }}/bin/python {{ tool_shed_server_dir }}/scripts/toolshed_db.py -c {{ tool_shed_config_file }} dbversion"
+  args:
+    chdir: "{{ tool_shed_server_dir }}"
+  register: current_db_version
+  changed_when: no
+  failed_when:
+    - current_db_version.rc != 0
+    - "'migrate.exceptions.DatabaseNotControlledError' not in current_db_version.stderr"
+    - "'galaxy.model.migrations.NoVersionTableError' not in current_db_version.stderr"
+    - "'galaxy.model.migrations.exceptions.NoVersionTableError' not in current_db_version.stderr"
+  when: not ansible_check_mode
+
+- name: Get maximum Tool Shed DB version
+  command: "{{ tool_shed_venv_dir }}/bin/python {{ tool_shed_server_dir }}/scripts/toolshed_db.py -c {{ tool_shed_config_file }} version"
+  args:
+    chdir: "{{ tool_shed_server_dir }}"
+  register: max_db_version
+  changed_when: no
+  when: not ansible_check_mode
+
+- name: Upgrade Tool Shed DB
+  command: "{{ tool_shed_venv_dir }}/bin/python {{ tool_shed_server_dir }}/scripts/toolshed_db.py -c {{ tool_shed_config_file }} upgrade"
+  args:
+    chdir: "{{ tool_shed_server_dir }}"
+  when:
+    - not ansible_check_mode
+    - current_db_version.stdout != max_db_version.stdout
+    - "'migrate.exceptions.DatabaseNotControlledError' not in current_db_version.stderr"
+    - "'galaxy.model.migrations.NoVersionTableError' not in current_db_version.stderr"
+    - "'galaxy.model.migrations.exceptions.NoVersionTableError' not in current_db_version.stderr"

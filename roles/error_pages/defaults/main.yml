@@ -1,0 +1,4 @@
+---
+
+error_pages_root: "{{ nginx_srv }}/error_pages"
+error_pages_prefix: "/error"

@@ -1,0 +1,28 @@
+[Unit]
+Description=hgweb
+After=network.target
+After=time-sync.target
+
+[Service]
+UMask=022
+Type=simple
+User={{ tool_shed_user }}
+Group={{ tool_shed_group }}
+WorkingDirectory={{ tool_shed_hgweb_dir }}
+ExecStart={{ tool_shed_venv_dir }}/bin/gunicorn hgweb:application --workers {{ tool_shed_hgweb_gunicorn_workers }} --bind={{ tool_shed_hgweb_gunicorn_bind }} --max-requests {{ tool_shed_hgweb_max_requests }} --max-requests-jitter {{ tool_shed_hgweb_max_requests_jitter }}
+
+Environment=HOME=/home/{{ tool_shed_user }}
+Environment=VIRTUAL_ENV={{ tool_shed_venv_dir }}
+Environment=PATH={{ tool_shed_venv_dir }}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
+{% if tool_shed_hgweb_prefix is defined %}
+Environment=SCRIPT_NAME={{ tool_shed_hgweb_prefix }}
+{% endif %}
+MemoryMax={{ tool_shed_hgweb_memory_limit }}
+Restart=always
+
+MemoryAccounting=yes
+CPUAccounting=yes
+BlockIOAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

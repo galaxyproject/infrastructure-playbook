@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+    <title>{{ error_pages_title }}</title>
+    <link href="{{ error_pages_prefix }}/style.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td class="masthead"><div class="pageTitle"><a target="_blank" href="{{ error_pages_masthead_url }}">{{ error_pages_title }}</a></div></td>
+    </tr>
+    <tr>
+        <td class="content">
+            <h2>{{ error_pages_server_name }} could not be reached</h2>
+            <p>
+            {% if error_pages_message_502 is defined -%}
+            {{ error_pages_message_502 }}
+            {% else %}
+                You are seeing this message because a request to {{ error_pages_server_name }} timed out or was refused. This may be a temporary issue which could be resolved by retrying the operation you were performing. If you receive this message repeatedly or for an extended amount of time, please
+                {%- if error_pages_mailto is defined or error_pages_support_url is defined -%}
+                {%- if error_pages_mailto is defined %}
+                report it to the server administrator at
+                <a href='mailto:{{ error_pages_mailto }}'>{{ error_pages_mailto }}</a>
+                {%- if error_pages_support_url is defined %}
+                or
+                {%- endif -%}
+                {%- endif -%}
+                {%- if error_pages_support_url is defined %}
+                check the <a href='{{ error_pages_support_url }}'>server support page</a>
+                {%- endif -%}
+                {%- else %}
+                contact an administrator
+                {%- endif -%}.
+            {% endif %}
+            </p>
+        </td>
+    </tr>
+</table>
+
+</body>
+
+</html>

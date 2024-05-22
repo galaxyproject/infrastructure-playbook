@@ -8,10 +8,6 @@ all:
       ansible_user: ubuntu
       ansible_become: true
 
-    # TEMP TEMP TEMP
-    eddie.galaxyproject.org:
-      ansible_host: 172.18.2.211
-
     cvmfs1-psu0.galaxyproject.org:
       hostname_strategy: file
 
@@ -42,6 +38,7 @@ all:
         cvmfs_stratum0_servers:
         cvmfs_stratum1_servers:
         certbot_servers:
+        tool_shed_servers:
 
     virtual_hosts:
       hosts:

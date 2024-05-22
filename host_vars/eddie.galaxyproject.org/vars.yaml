@@ -1,5 +1,11 @@
 ---
 
+tool_shed_config_admin_users: "{{ vault_tool_shed_config_admin_users }}"
+tool_shed_config_id_secret: "{{ vault_tool_shed_config_id_secret }}"
+tool_shed_config_sentry_dsn: "{{ vault_tool_shed_config_sentry_dsn }}"
+
+default_locale: en_US.UTF-8
+
 host_packages:
   - xfsprogs
 
@@ -44,3 +50,13 @@ postgresql_conf:
   huge_pages: "off"
   min_wal_size: 1GB
   max_wal_size: 4GB
+
+tool_shed_dbname: tool_shed_test
+tool_shed_instance_codename: test
+tool_shed_instance_hostname: testtoolshed.g2.bx.psu.edu
+#tool_shed_version: dev
+tool_shed_version: d1ee4b0bd6a4c08af6f105a92e46761fd31c41ff
+tool_shed_config_ga_code: "UA-45719423-8"
+tool_shed_api_version: v2
+tool_shed_gunicorn_memory_limit: 10G
+tool_shed_hgweb_memory_limit: 2G

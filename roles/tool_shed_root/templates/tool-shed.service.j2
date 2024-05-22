@@ -1,0 +1,38 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+[Unit]
+Description=Tool Shed
+After=network.target
+After=time-sync.target
+
+[Service]
+UMask=022
+Type=simple
+User={{ tool_shed_user }}
+Group={{ tool_shed_group }}
+WorkingDirectory={{ tool_shed_server_dir }}
+{% if tool_shed_api_version == "v2" %}
+ExecStart={{ tool_shed_venv_dir }}/bin/gunicorn 'tool_shed.webapp.fast_factory:factory()' --pythonpath lib -k uvicorn.workers.UvicornWorker --workers {{ tool_shed_gunicorn_workers }} --bind={{ tool_shed_gunicorn_bind }} --timeout 900 --max-requests {{ tool_shed_gunicorn_max_requests }} --max-requests-jitter {{ tool_shed_gunicorn_max_requests_jitter }}
+Environment=TOOL_SHED_CONFIG_FILE={{ tool_shed_config_file }}
+Environment=TOOL_SHED_API_VERSION=v2
+{% else %}
+ExecStart={{ tool_shed_venv_dir }}/bin/uwsgi --emperor {{ tool_shed_config_dir }}/vassals --emperor-wrapper {{ tool_shed_venv_dir }}/bin/uwsgi
+ExecReload={{ tool_shed_venv_dir }}/bin/uwsgi --yaml {{ tool_shed_config_dir }}/vassals/zergling.yml
+{% endif %}
+
+Environment=HOME=/home/{{ tool_shed_user }}
+Environment=VIRTUAL_ENV={{ tool_shed_venv_dir }}
+Environment=PATH={{ tool_shed_venv_dir }}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
+Environment=TMPDIR={{ tool_shed_tmp_dir }}
+
+MemoryMax={{ tool_shed_gunicorn_memory_limit }}
+Restart=always
+
+MemoryAccounting=yes
+CPUAccounting=yes
+BlockIOAccounting=yes
+
+[Install]
+WantedBy=multi-user.target

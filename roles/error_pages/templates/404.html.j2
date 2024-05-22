@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+
+<head>
+    <title>{{ error_pages_title }}</title>
+    <link href="{{ error_pages_prefix }}/style.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td class="masthead"><div class="pageTitle"><a target="_blank" href="{{ error_pages_masthead_url }}">{{ error_pages_title }}</a></div></td>
+    </tr>
+    <tr>
+        <td class="content">
+            <h2>Not Found.</h2>
+            <p>
+            {% if error_pages_message_404 is defined -%}
+            {{ error_pages_message_404 }}
+            {% else %}
+            The requested page could not be found.
+            {% endif %}
+            </p>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

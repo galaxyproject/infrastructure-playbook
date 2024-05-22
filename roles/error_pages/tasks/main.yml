@@ -1,0 +1,28 @@
+---
+
+- name: Create error pages root
+  ansible.builtin.file:
+    path: "{{ error_pages_root }}"
+    mode: "0755"
+    state: directory
+
+- name: Install error pages static files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ error_pages_root }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - content_bg.png
+    - error_message_icon.png
+    - masthead_bg.png
+
+- name: Install error pages templates
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ error_pages_root }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - 404.html
+    - 413.html
+    - 502.html
+    - style.css
