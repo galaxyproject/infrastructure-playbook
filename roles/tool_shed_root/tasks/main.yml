@@ -34,3 +34,22 @@
     state: started
     enabled: true
   when: tool_shed_api_version == "v2"
+
+- name: Schedule Tool Shed cron jobs
+  ansible.builtin.cron:
+    name: "{{ item.name }}"
+    cron_file: ansible_tool_shed
+    user: "{{ item.user }}"
+    hour: "{{ item.hour | default(omit) }}"
+    minute: "{{ item.minute | default(omit)}}"
+    job: "{{ item.job }}"
+  loop:
+    - name: "Clean Tool Shed $TMPDIR"
+      user: root
+      hour: 23
+      minute: 5
+      job: "/usr/sbin/tmpreaper --mtime --mtime-dir 5d {{ tool_shed_tmp_dir | quote }} >>{{ tool_shed_log_dir }}/clean_tmpdir.log 2>&1"
+    - name: "Rebuild Tool Shed Whoosh Index"
+      user: "{{ tool_shed_user }}"
+      minute: 0
+      job: "if mkdir $HOME/.build_ts_whoosh_index; then date; {{ tool_shed_venv_dir }}/bin/python {{ tool_shed_server_dir }}/scripts/tool_shed/build_ts_whoosh_index.py -c {{ tool_shed_config_file }} --config-section tool_shed -d; rmdir $HOME/.build_ts_whoosh_index; fi >>{{ tool_shed_log_dir }}/build_ts_whoosh_index.log 2>&1"

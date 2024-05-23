@@ -3,6 +3,7 @@
 tool_shed_servers_group_packages:
   - rsync
   - python3-venv
+  - tmpreaper
 
 tool_shed_servers_group_users:
   - "{{ galaxyproject_users.shed }}"
@@ -42,19 +43,27 @@ tool_shed_servers_group_directories:
 postgresql_flavor: pgdg
 postgresql_version: 16
 #postgresql_create_backup_dir: false
-#postgresql_backup_dir: /corral4/backup/pgsql/{{ inventory_hostname }}
+postgresql_backup_dir: thumper.galaxyproject.org:/zones/thumper/backup/tool-shed-{{ tool_shed_instance_codename }}/postgresql
 
 #postgresql_archive_wal_rsync_args: '--ignore-existing -pt --info=skip1'
 #postgresql_backup_rsync_backup_opts: '-rpt --chown=postgres:G-803372'
-#postgresql_backup_hour: 7
-#postgresql_backup_command: >-
-#  /usr/bin/sg G-803372 -c
-#  "{{ postgresql_backup_local_dir | quote }}/bin/backup.py
-#  {{ '--rsync-connect-opts ' ~ (postgresql_backup_rsync_connect_opts | quote) if postgresql_backup_rsync_connect_opts else '' }}
-#  --rsync-backup-opts {{ postgresql_backup_rsync_backup_opts | quote }}
-#  --keep {{ postgresql_backup_keep | quote }}
-#  {{ '--pg-bin-dir ' ~ __postgresql_pgdg_bin_dir if ansible_os_family == 'RedHat' else '' }}
-#  --backup --clean-archive {{ postgresql_backup_dir | quote }}"
+postgresql_backup_hour: 1
+
+# TODO: the only change here is to call with python3 since python (in the shebang) does not exist, you should fix this
+# upstream in the role
+# FIXME: --clean-archive not supported with remote =(
+# FIXME: lol the wal archive script makes the dir locally
+postgresql_backup_command: >-
+  python3 {{ postgresql_backup_local_dir | quote }}/bin/backup.py
+  {{ '--rsync-connect-opts ' ~ (postgresql_backup_rsync_connect_opts | quote) if postgresql_backup_rsync_connect_opts else '' }}
+  --rsync-backup-opts {{ postgresql_backup_rsync_backup_opts | regex_replace('^-', '\-') | quote }}
+  --keep {{ postgresql_backup_keep | quote }}
+  {{ '--pg-bin-dir ' ~ __postgresql_pgdg_bin_dir if ansible_os_family == 'RedHat' else '' }}
+  --backup {{ postgresql_backup_dir | quote }}
+postgresql_backup_post_command: ssh -T thumper.galaxyproject.org -- /usr/sbin/zfs snapshot zones/thumper/backup/tool-shed-{{ tool_shed_instance_codename }}/postgresql@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+
+# snapshots mean the actual number kept is much greater
+postgresql_backup_keep: 7
 
 # postgresql_conf is tuned for the VM and therefore found in host_vars
 
