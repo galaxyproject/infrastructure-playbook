@@ -1,0 +1,20 @@
+---
+
+- name: ZFS Backup Servers
+  hosts: zfs_backup_servers
+  roles:
+    # what created /etc/nodename?
+    #- role: galaxyproject.general.virtual
+    #  tags: general
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.copy
+      tags: general
+    - role: galaxyproject.general.cron
+      tags: general
+    - role: zfs_backup
+      tags: backup

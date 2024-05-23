@@ -1,0 +1,10 @@
+---
+
+- name: Bootstrap Python for Ansible
+  ansible.builtin.raw: >-
+    bash -c 'test -e /opt/local/bin/python3 || (
+    /opt/local/bin/pkgin -y update ;
+    /opt/local/bin/pkgin -y install python39
+    )'
+  register: __smartos_hypervisor_bootstrap_python_result
+  changed_when: __smartos_hypervisor_bootstrap_python_result.stdout != ""

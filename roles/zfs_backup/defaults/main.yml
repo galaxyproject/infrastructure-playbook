@@ -1,0 +1,4 @@
+---
+
+rrsync_path: /usr/local/bin/rrsync
+zfs_snapshot_path: /usr/local/bin/zfs-snapshot

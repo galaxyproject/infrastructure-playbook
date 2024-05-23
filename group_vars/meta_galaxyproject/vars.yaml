@@ -3,3 +3,10 @@
 # For the eventual decommissioning of LDAP
 galaxyproject_users: "{{ vault_galaxyproject_users }}"
 galaxyproject_groups: "{{ vault_galaxyproject_groups }}"
+
+# Backup vars needed by both the client and server, these could also go in a more specific group
+zfs_backup:
+  tts:
+    user: backup-tts
+    server: thumper.galaxyproject.org
+    dataset: zones/thumper/backup/tool-shed-test

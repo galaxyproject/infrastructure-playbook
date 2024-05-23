@@ -1,0 +1,23 @@
+---
+
+# This only needed for zfs recv
+- name: Set sys_fs_import for backup users
+  ansible.builtin.lineinfile:
+    dest: /etc/user_attr
+    backup: "yes"
+    line: "{{ item }}::::type=normal;defaultpriv=basic,sys_fs_import"
+    regexp: "^{{ item }}:.*"
+  loop: "{{ zfs_backup_users | default([]) }}"
+
+- name: Fetch rrsync
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/RsyncProject/rsync/v3.3.0/support/rrsync
+    checksum: sha1:a421157138ebc319e4a7e62f61fb209e178372a3
+    dest: "{{ rrsync_path }}"
+    mode: "0755"
+
+- name: Deploy zfs-snapshot.py
+  ansible.builtin.copy:
+    src: zfs-snapshot.py
+    dest: "{{ zfs_snapshot_path }}"
+    mode: "0755"

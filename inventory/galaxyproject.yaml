@@ -31,6 +31,7 @@ all:
         cvmfs1-psu0.galaxyproject.org:
         #cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
+        thumper.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -75,6 +76,7 @@ all:
         jeltz.galaxyproject.org:
         eddie.galaxyproject.org:
 
+    # Grants access to ssh private keys
     ssh_clients:
       children:
         # for postfix maps distribution to mxs
@@ -82,6 +84,7 @@ all:
         jenkins_servers:
         jenkins_agents:
         ssh_tunnel_servers:
+        tool_shed_servers:
 
     ssh_tunnel_servers:
       hosts:
@@ -98,6 +101,12 @@ all:
         voyager.p.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
+
+    smartos_os_zones:
+      hosts:
+        thumper.galaxyproject.org:
+      vars:
+        ansible_python_interpreter: /opt/local/bin/python3
 
     web_servers:
       children:
@@ -157,3 +166,7 @@ all:
     tool_shed_servers:
       hosts:
         eddie.galaxyproject.org:
+
+    zfs_backup_servers:
+      hosts:
+        thumper.galaxyproject.org:

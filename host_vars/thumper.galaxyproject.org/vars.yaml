@@ -1,0 +1,57 @@
+---
+
+zfs_filesystems:
+  - name: zones/thumper/backup
+    exec: "off"
+    setuid: "off"
+  - name: zones/thumper/backup/tool-shed-test
+    compression: lz4
+  - name: zones/thumper/backup/tool-shed-test/postgresql
+    owner: backup-tts
+    group: backup-tts
+  - name: zones/thumper/backup/tool-shed-test/repos
+    owner: backup-tts
+    group: backup-tts
+
+host_packages:
+  # galaxyproject.postgresql backup can't clean the archive when it's remote, but pg_archivecleanup can run directly on
+  # the backup server without DB access
+  - postgresql16-client
+
+host_users:
+  - "{{ galaxyproject_users.backup_tts }}"
+  #- "{{ galaxyproject_users.backup_mts }}"
+
+host_groups:
+  - "{{ galaxyproject_groups.backup_tts }}"
+  #- "{{ galaxyproject_groups.backup_mts }}"
+
+host_authorized_key_users:
+  - name: backup-tts
+    authorized:
+      - backup_tts_rsync
+      - backup_tts_zfs
+  #- name: backup-mts
+  #  authorized:
+  #    - backup_mts_rsync
+  #    - backup_mts_zfs
+
+host_files:
+  - src: roles/galaxyproject.postgresql/files/backup.py
+    dest: /usr/local/bin/ansible-postgresql-backup.py
+    mode: "0755"
+
+# cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
+host_crontabs:
+  - id: clean_tts_postgresql_wal_archives
+    name: Clean Test Tool Shed PostgreSQL WAL Archives
+    use_cron_file: false
+    user: "{{ zfs_backup.tts.user }}"
+    hour: 20
+    minute: 0
+    job: /opt/local/bin/python3.11 /usr/local/bin/ansible-postgresql-backup.py -v --clean-archive /{{ zfs_backup.tts.dataset }}/postgresql
+
+zfs_admin_permissions:
+  - name: zones/thumper/backup/tool-shed-test
+    users: backup-tts
+    permissions: snapshot

@@ -40,27 +40,23 @@ tool_shed_servers_group_directories:
     owner: "{{ tool_shed_user }}"
     group: "{{ tool_shed_group }}"
 
+tool_shed_servers_group_crontabs:
+  - id: tool_shed_repos_backup
+    name: Tool Shed repos backup
+    user: "{{ tool_shed_user }}"
+    hour: 0
+    minute: 0
+    job: rsync -av --delete -e "ssh -i $HOME/.ssh/id_backup_rsync" {{ tool_shed_repos_dir }}/ {{ tool_shed_hgweb_config_dir }}/hgweb.config {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:repos && ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- repos@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+
 postgresql_flavor: pgdg
 postgresql_version: 16
-#postgresql_create_backup_dir: false
-postgresql_backup_dir: thumper.galaxyproject.org:/zones/thumper/backup/tool-shed-{{ tool_shed_instance_codename }}/postgresql
+postgresql_backup_dir: "{{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:postgresql"
+postgresql_backup_python_executable: python3
 
-#postgresql_archive_wal_rsync_args: '--ignore-existing -pt --info=skip1'
-#postgresql_backup_rsync_backup_opts: '-rpt --chown=postgres:G-803372'
 postgresql_backup_hour: 1
 
-# TODO: the only change here is to call with python3 since python (in the shebang) does not exist, you should fix this
-# upstream in the role
-# FIXME: --clean-archive not supported with remote =(
-# FIXME: lol the wal archive script makes the dir locally
-postgresql_backup_command: >-
-  python3 {{ postgresql_backup_local_dir | quote }}/bin/backup.py
-  {{ '--rsync-connect-opts ' ~ (postgresql_backup_rsync_connect_opts | quote) if postgresql_backup_rsync_connect_opts else '' }}
-  --rsync-backup-opts {{ postgresql_backup_rsync_backup_opts | regex_replace('^-', '\-') | quote }}
-  --keep {{ postgresql_backup_keep | quote }}
-  {{ '--pg-bin-dir ' ~ __postgresql_pgdg_bin_dir if ansible_os_family == 'RedHat' else '' }}
-  --backup {{ postgresql_backup_dir | quote }}
-postgresql_backup_post_command: ssh -T thumper.galaxyproject.org -- /usr/sbin/zfs snapshot zones/thumper/backup/tool-shed-{{ tool_shed_instance_codename }}/postgresql@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+postgresql_backup_rsync_connect_opts: '-e "ssh -i /var/lib/postgresql/.ssh/id_backup_rsync"'
+postgresql_backup_post_command: ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- postgresql@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
 
 # snapshots mean the actual number kept is much greater
 postgresql_backup_keep: 7
@@ -79,6 +75,7 @@ tool_shed_root: "/srv/toolshed/{{ tool_shed_instance_codename }}"
 tool_shed_tmp_dir: "{{ tool_shed_mutable_data_dir }}/tmp"
 tool_shed_server_dir: "{{ tool_shed_root }}/server"
 tool_shed_log_dir: "{{ tool_shed_root }}/log"
+tool_shed_repos_dir: "{{ tool_shed_mutable_data_dir }}/repos"
 
 ## used by: systemd templates
 tool_shed_gunicorn_workers: 2
@@ -114,8 +111,8 @@ tool_shed_config:
 
     # paths
 
-    file_path: "{{ tool_shed_mutable_data_dir }}/repos"
-    new_file_path: "{{ tool_shed_mutable_data_dir }}/tmp"
+    file_path: "{{ tool_shed_repos_dir }}"
+    new_file_path: "{{ tool_shed_tmp_dir }}"
     tool_data_path: "{{ tool_shed_mutable_data_dir }}/tool-data"
     hgweb_config_dir: "{{ tool_shed_hgweb_config_dir }}"
 

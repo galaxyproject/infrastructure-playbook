@@ -9,6 +9,9 @@ smartos_images:
   # rocky-9 20231121 linux lx-dataset 2023-11-21
   #- uuid: a49b11ff-8b43-4833-aebf-a2d79cf3cd4a
   #  state: present
+  # base-64-lts 23.4.0 smartos zone-dataset 2024-01-06
+  - uuid: 8adac45a-aca7-11ee-b53e-00151714048c
+    state: present
 
 smartos_vms:
   - alias: cvmfs1-psu0
@@ -26,5 +29,22 @@ smartos_vms:
         gateway: 128.118.250.1
         vlan_id: 306
     delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - alias: thumper
+    brand: joyent
+    image_uuid: 8adac45a-aca7-11ee-b53e-00151714048c
+    hostname: thumper
+    max_physical_memory: 8192
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: admin
+        ip: "{{ lookup('dig', 'thumper.galaxyproject.org') }}"
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        # untagged on 406 and the hp doesn't support dual mode
+        #vlan_id: 406
+    # named dataset added by hand with zonecfg
+    #delegate_dataset: true
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
