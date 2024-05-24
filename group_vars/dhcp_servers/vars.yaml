@@ -30,7 +30,7 @@ dhcpd_groups:
         ethernet: bc:30:5b:f2:81:8c
         options:
           - 'smartos.console "ttya"'
-          - 'smartos.version "20200910T013122Z"'
+          - 'smartos.version "20231005T000607Z"'
       - name: smart3
         ethernet: bc:30:5b:f2:9a:2c
         options:
