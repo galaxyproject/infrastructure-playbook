@@ -4,6 +4,8 @@ tool_shed_servers_group_packages:
   - rsync
   - python3-venv
   - tmpreaper
+  # for v1 client, not needed for v2
+  - make
 
 tool_shed_servers_group_users:
   - "{{ galaxyproject_users.shed }}"
@@ -44,7 +46,7 @@ tool_shed_servers_group_crontabs:
   - id: tool_shed_repos_backup
     name: Tool Shed repos backup
     user: "{{ tool_shed_user }}"
-    hour: 0
+    hour: "{{ tool_shed_backup_hour }}"
     minute: 0
     job: rsync -av --delete -e "ssh -i $HOME/.ssh/id_backup_rsync" {{ tool_shed_repos_dir }}/ {{ tool_shed_hgweb_config_dir }}/hgweb.config {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:repos && ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- repos@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
 
@@ -52,8 +54,6 @@ postgresql_flavor: pgdg
 postgresql_version: 16
 postgresql_backup_dir: "{{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:postgresql"
 postgresql_backup_python_executable: python3
-
-postgresql_backup_hour: 1
 
 postgresql_backup_rsync_connect_opts: '-e "ssh -i /var/lib/postgresql/.ssh/id_backup_rsync"'
 postgresql_backup_post_command: ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- postgresql@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
@@ -102,7 +102,6 @@ tool_shed_additional_venv_packages:
 
 tool_shed_config_file_mode: "0644"
 tool_shed_config:
-  uwsgi: "{{ tool_shed_config_uwsgi | default(none) }}"
   tool_shed:
     # secrets
 
@@ -125,7 +124,6 @@ tool_shed_config:
     support_url: "https://galaxyproject.org/support"
     smtp_server: "smtp.psu.edu"
     email_from: "galaxy-no-reply@toolshed.g2.bx.psu.edu"
-    brand: '(sandbox for testing)'
     sentry_dsn: "{{ tool_shed_config_sentry_dsn }}"
 
     # stuff that shouldn't be here but maybe has to
@@ -184,7 +182,5 @@ certbot_domains:
   - "{{ tool_shed_instance_hostname }}"
 
 ## used by: error_pages
-error_pages_title: "Galaxy Tool Shed (sandbox for testing)"
-error_pages_server_name: "The Galaxy Test Tool Shed"
 error_pages_support_url: "https://status.galaxyproject.org/"
 error_pages_masthead_url: "https://galaxyproject.org/"

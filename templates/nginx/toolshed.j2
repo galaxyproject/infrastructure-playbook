@@ -40,7 +40,7 @@ server {
     }
 {% else %}
     location /static {
-        alias {{ tool_shed_server_dir }}/server/static;
+        alias {{ tool_shed_server_dir }}/static;
         expires 24h;
     }
 {% endif %}

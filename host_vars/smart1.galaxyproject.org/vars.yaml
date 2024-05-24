@@ -47,21 +47,17 @@ smartos_vms:
         size: 16384
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: new-eddie
+  - name: eddie
     brand: bhyve
-    ram: 8192
+    ram: 12288
     vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
-        #ip: "{{ lookup('dig', 'eddie.galaxyproject.org') }}"
-        #netmask: 255.255.255.224
-        #gateway: 128.118.250.1
-        #vlan_id: 306
-        ip: 172.18.2.211
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
+        ip: "{{ lookup('dig', 'eddie.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
         model: virtio
     disks:
       - image_uuid: d89041d8-41b9-481d-918a-722be4598dd1
@@ -76,23 +72,6 @@ smartos_vms:
       - boot: false
         model: virtio
         size: 131072
-    customer_metadata:
-      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: eddie
-    brand: lx
-    kernel_version: 5.4.0-26-generic
-    image_uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
-    hostname: eddie
-    max_physical_memory: 8192
-    quota: 8192
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        ip: 128.118.250.11
-        netmask: 255.255.255.224
-        gateway: 128.118.250.1
-        vlan_id: 306
-    delegate_dataset: true
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: sentry

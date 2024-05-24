@@ -23,3 +23,14 @@ postfix_aliases:
   nobody: root
   postgres: root
   root: root@galaxyproject.org
+
+# dataset is used in ssh_public_keys which is why this needs to be in all
+zfs_backup:
+  tts:
+    user: backup-tts
+    server: thumper.galaxyproject.org
+    dataset: zones/thumper/backup/tool-shed-test
+  mts:
+    user: backup-mts
+    server: thumper.galaxyproject.org
+    dataset: zones/thumper/backup/tool-shed-main

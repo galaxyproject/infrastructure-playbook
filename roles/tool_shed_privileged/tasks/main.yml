@@ -147,6 +147,34 @@
     PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
     VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
 
+- name: Tool Shed v1 Block
+  block:
+
+    - name: Build Tool Shed v1 Client
+      ansible.builtin.command: make client-production-maps
+      args:
+        chdir: "{{ tool_shed_server_dir }}"
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+      when: __tool_shed_git_update_result is changed
+
+    - name: Create hgweb dir
+      ansible.builtin.file:
+        path: "{{ tool_shed_hgweb_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Distribute hgweb.py
+      ansible.builtin.template:
+        src: "templates/hgweb.py.j2"
+        dest: "{{ tool_shed_hgweb_dir }}/hgweb.py"
+      notify:
+        - Restart hgweb
+
+  when: tool_shed_api_version == "v1"
+  tags: update
+
 - name: Tool Shed v2 Block
   block:
 

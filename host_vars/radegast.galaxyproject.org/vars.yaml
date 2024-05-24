@@ -34,15 +34,15 @@ mounts:
 host_private_key_users:
   - name: postgres
     keys:
-      - key: backup_tts_rsync
+      - key: backup_mts_rsync
         file: id_backup_rsync
-      - key: backup_tts_zfs
+      - key: backup_mts_zfs
         file: id_backup_zfs
   - name: shed
     keys:
-      - key: backup_tts_rsync
+      - key: backup_mts_rsync
         file: id_backup_rsync
-      - key: backup_tts_zfs
+      - key: backup_mts_zfs
         file: id_backup_zfs
 
 host_lines:
@@ -62,41 +62,47 @@ host_lines:
 # DB Version: 16
 # OS Type: linux
 # DB Type: web
-# Total Memory (RAM): 8 GB
-# CPUs num: 2
+# Total Memory (RAM): 12 GB
+# CPUs num: 4
 # Connections num: 100
 # Data Storage: hdd
 postgresql_conf:
   max_connections: 100
-  shared_buffers: 2GB
-  effective_cache_size: 6GB
-  maintenance_work_mem: 512MB
+  shared_buffers: 3GB
+  effective_cache_size: 9GB
+  maintenance_work_mem: 768MB
   checkpoint_completion_target: 0.9
   wal_buffers: 16MB
   default_statistics_target: 100
   random_page_cost: 4
   effective_io_concurrency: 2
-  work_mem: 10485kB
+  work_mem: 15728kB
   huge_pages: "off"
   min_wal_size: 1GB
   max_wal_size: 4GB
+  max_worker_processes: 4
+  max_parallel_workers_per_gather: 2
+  max_parallel_workers: 4
+  max_parallel_maintenance_workers: 2
 
-postgresql_backup_hour: 1
+postgresql_backup_hour: 3
 
-zfs_backup_profile: "{{ zfs_backup.tts }}"
-tool_shed_backup_hour: 0
+zfs_backup_profile: "{{ zfs_backup.mts }}"
+tool_shed_backup_hour: 2
 
-tool_shed_dbname: tool_shed_test
-tool_shed_instance_codename: test
-tool_shed_instance_hostname: testtoolshed.g2.bx.psu.edu
-# FIXME: the next time you update to dev, uncomment the tool_shed_unprivileged tasks in playbook-tool-shed-servers.yaml
-#tool_shed_version: dev
-tool_shed_version: d1ee4b0bd6a4c08af6f105a92e46761fd31c41ff
-tool_shed_config_ga_code: "UA-45719423-8"
-tool_shed_api_version: v2
+tool_shed_dbname: tool_shed_main
+tool_shed_instance_codename: main
+tool_shed_instance_hostname: toolshed.g2.bx.psu.edu
+tool_shed_version: release_23.1
+#tool_shed_version: d4e0d3dc4cfb7560c31eefddf565fa0948f7df61
+tool_shed_config_ga_code: "UA-45719423-12"
+#tool_shed_api_version: v2
+tool_shed_systemd_units:
+  - tool-shed.service
+  #- hgweb.service
 tool_shed_gunicorn_memory_limit: 10G
-tool_shed_hgweb_memory_limit: 2G
+#tool_shed_hgweb_memory_limit: 2G
 
 ## used by: error_pages
-error_pages_title: "Galaxy Tool Shed (sandbox for testing)"
-error_pages_server_name: "The Galaxy Test Tool Shed"
+error_pages_title: "Galaxy Tool Shed"
+error_pages_server_name: "The Galaxy Tool Shed"

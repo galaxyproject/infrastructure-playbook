@@ -31,6 +31,7 @@ all:
         cvmfs1-psu0.galaxyproject.org:
         #cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
+        radegast.galaxyproject.org:
         thumper.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
@@ -47,6 +48,7 @@ all:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
         eddie.galaxyproject.org:
+        radegast.galaxyproject.org:
 
     auto_update_hosts:
       children:
@@ -75,6 +77,7 @@ all:
         cvmfs0-psu1.galaxyproject.org:
         jeltz.galaxyproject.org:
         eddie.galaxyproject.org:
+        radegast.galaxyproject.org:
 
     # Grants access to ssh private keys
     ssh_clients:
@@ -94,6 +97,7 @@ all:
     smartos_hypervisors:
       hosts:
         smart1.galaxyproject.org:
+        smart2.galaxyproject.org:
         smart3.galaxyproject.org:
         smart5.galaxyproject.org:
         thumper.p.galaxyproject.org:
@@ -166,6 +170,7 @@ all:
     tool_shed_servers:
       hosts:
         eddie.galaxyproject.org:
+        radegast.galaxyproject.org:
 
     zfs_backup_servers:
       hosts:

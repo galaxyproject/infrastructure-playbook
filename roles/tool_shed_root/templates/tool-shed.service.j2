@@ -13,13 +13,10 @@ Type=simple
 User={{ tool_shed_user }}
 Group={{ tool_shed_group }}
 WorkingDirectory={{ tool_shed_server_dir }}
-{% if tool_shed_api_version == "v2" %}
 ExecStart={{ tool_shed_venv_dir }}/bin/gunicorn 'tool_shed.webapp.fast_factory:factory()' --pythonpath lib -k uvicorn.workers.UvicornWorker --workers {{ tool_shed_gunicorn_workers }} --bind={{ tool_shed_gunicorn_bind }} --timeout 900 --max-requests {{ tool_shed_gunicorn_max_requests }} --max-requests-jitter {{ tool_shed_gunicorn_max_requests_jitter }}
 Environment=TOOL_SHED_CONFIG_FILE={{ tool_shed_config_file }}
+{% if tool_shed_api_version == "v2" %}
 Environment=TOOL_SHED_API_VERSION=v2
-{% else %}
-ExecStart={{ tool_shed_venv_dir }}/bin/uwsgi --emperor {{ tool_shed_config_dir }}/vassals --emperor-wrapper {{ tool_shed_venv_dir }}/bin/uwsgi
-ExecReload={{ tool_shed_venv_dir }}/bin/uwsgi --yaml {{ tool_shed_config_dir }}/vassals/zergling.yml
 {% endif %}
 
 Environment=HOME=/home/{{ tool_shed_user }}

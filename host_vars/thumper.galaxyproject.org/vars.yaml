@@ -12,6 +12,26 @@ zfs_filesystems:
   - name: zones/thumper/backup/tool-shed-test/repos
     owner: backup-tts
     group: backup-tts
+  - name: zones/thumper/backup/tool-shed-main
+    compression: lz4
+  - name: zones/thumper/backup/tool-shed-main/postgresql
+    owner: backup-mts
+    group: backup-mts
+  - name: zones/thumper/backup/tool-shed-main/repos
+    owner: backup-mts
+    group: backup-mts
+
+# FIXME: the wal_archive dir should be created by the backup script but there's a bug when it's remote and it's created
+# as a file, fix upstream
+host_directories:
+  - path: /zones/thumper/backup/tool-shed-test/postgresql/wal_archive
+    owner: backup-tts
+    group: backup-tts
+    mode: "0755"
+  - path: /zones/thumper/backup/tool-shed-main/postgresql/wal_archive
+    owner: backup-mts
+    group: backup-mts
+    mode: "0755"
 
 host_packages:
   # galaxyproject.postgresql backup can't clean the archive when it's remote, but pg_archivecleanup can run directly on
@@ -20,21 +40,21 @@ host_packages:
 
 host_users:
   - "{{ galaxyproject_users.backup_tts }}"
-  #- "{{ galaxyproject_users.backup_mts }}"
+  - "{{ galaxyproject_users.backup_mts }}"
 
 host_groups:
   - "{{ galaxyproject_groups.backup_tts }}"
-  #- "{{ galaxyproject_groups.backup_mts }}"
+  - "{{ galaxyproject_groups.backup_mts }}"
 
 host_authorized_key_users:
   - name: backup-tts
     authorized:
       - backup_tts_rsync
       - backup_tts_zfs
-  #- name: backup-mts
-  #  authorized:
-  #    - backup_mts_rsync
-  #    - backup_mts_zfs
+  - name: backup-mts
+    authorized:
+      - backup_mts_rsync
+      - backup_mts_zfs
 
 host_files:
   - src: roles/galaxyproject.postgresql/files/backup.py
@@ -50,8 +70,19 @@ host_crontabs:
     hour: 20
     minute: 0
     job: /opt/local/bin/python3.11 /usr/local/bin/ansible-postgresql-backup.py -v --clean-archive /{{ zfs_backup.tts.dataset }}/postgresql
+  - id: clean_mts_postgresql_wal_archives
+    name: Clean Main Tool Shed PostgreSQL WAL Archives
+    use_cron_file: false
+    user: "{{ zfs_backup.mts.user }}"
+    hour: 21
+    minute: 0
+    job: /opt/local/bin/python3.11 /usr/local/bin/ansible-postgresql-backup.py -v --clean-archive /{{ zfs_backup.mts.dataset }}/postgresql
+
 
 zfs_admin_permissions:
-  - name: zones/thumper/backup/tool-shed-test
-    users: backup-tts
+  - name: "{{ zfs_backup.tts.dataset }}"
+    users: "{{ zfs_backup.tts.user }}"
+    permissions: snapshot
+  - name: "{{ zfs_backup.mts.dataset }}"
+    users: "{{ zfs_backup.mts.user }}"
     permissions: snapshot

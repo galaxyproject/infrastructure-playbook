@@ -7,10 +7,12 @@
       tags: general
     - role: galaxyproject.general.virtual
       tags: general
-    - role: galaxyproject.general.locale
-      tags: general
     - role: galaxyproject.general.packages
       tags: general
+    - role: galaxyproject.general.locale
+      tags: general
+    # FIXME: on a fresh deploy, this precreates the postgres user with the wrong uid/gid and homedir if run before
+    # postgres, in order to deploy ssh keys
     - role: galaxyproject.general.users
       tags: general
     - role: galaxyproject.general.paths
