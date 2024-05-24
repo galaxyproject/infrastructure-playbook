@@ -10,3 +10,7 @@ zfs_backup:
     user: backup-tts
     server: thumper.galaxyproject.org
     dataset: zones/thumper/backup/tool-shed-test
+
+# hosts inside the UEN can't make SMTP connections outside I guess
+postfix_config:
+  relayhost: "[smtp.psu.edu]"
