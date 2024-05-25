@@ -6,7 +6,7 @@ smartos_images:
     state: present
 
 smartos_vms:
-  - name: new-radegast
+  - name: radegast
     brand: bhyve
     ram: 12288
     vcpus: 4
