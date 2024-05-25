@@ -38,6 +38,10 @@
   - name: Debian block
     block:
 
+      - name: mdatp | install gpg
+        apt:
+          name: gnupg
+
       - name: mdatp | add microsoft apt key
         apt_key:
           url: "{{ mdatp_apt_key_url }}"
