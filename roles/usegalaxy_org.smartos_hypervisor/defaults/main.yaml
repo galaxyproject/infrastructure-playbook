@@ -4,3 +4,5 @@ smartos_hypervisor_role_required_vars:
   - smartos_hypervisor_root_authorized_keys
 
 smartos_hypervisor_root_authorized_keys_file: root_authorized_keys
+
+smartos_hypervisor_zones_compression: lz4

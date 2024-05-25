@@ -35,6 +35,29 @@
       {{ ssh_public_keys[user] }}
       {% endfor %}
 
+- name: Enable compression on zones
+  community.general.zfs:
+    name: zones
+    state: present
+    extra_zfs_properties:
+      compression: "{{ smartos_hypervisor_zones_compression }}"
+  when: smartos_hypervisor_zones_compression
+
+- name: Disable compression on zones block
+  when: not smartos_hypervisor_zones_compression
+  block:
+
+    - name: Collect compression property
+      community.general.zfs_facts:
+        name: zones
+        type: filesystem
+        properties: compression
+
+    # there's no `zfs inherit` functionaly in a module
+    - name: Disable compression on zones
+      ansible.builtin.command: /usr/sbin/zfs inherit compression zones
+      when: ansible_zfs_datasets[0].compression != "off"
+
 - name: Perform imgadm commands
   community.general.imgadm:
     force: "{{ item.force | default(omit) }}"
