@@ -1,11 +1,11 @@
-#!/opt/local/bin/bash
+#!/usr/bin/env bash
 ##
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 set -e
 #set -xv
 
-MUTEX='/var/run/prunesnaps.pid'
+MUTEX='/var/run/zfs-prunesnaps.pid'
 
 base=$(basename $0)
 USAGE1="usage:
@@ -44,7 +44,7 @@ Examples:
   Delete all snapshots of tank/scratch and tank/scratch2:
   # $base -r0 tank/scratch tank/scratch2"
 
-: ${PRUNESNAPSRC:="/etc/prunesnaps/prunesnaps.conf"}
+: ${PRUNESNAPSRC:="/etc/zfs-prunesnaps/zfs-prunesnaps.conf"}
 
 DATASETS=()
 DRYRUN=0
@@ -173,7 +173,7 @@ function setopts() {
     done
     shift "$((OPTIND - 1))"
     _DATASETS=("$@")
-    [ -z "$_DATASETS" ] || DATASETS=$_DATASETS
+    [ -z "$_DATASETS" ] || DATASETS=("${_DATASETS[@]}")
     checkarr DATASETS || exit=2
     [ -z "$exit" ] || { echo "$USAGE1"; exit $exit; } >&2
 }

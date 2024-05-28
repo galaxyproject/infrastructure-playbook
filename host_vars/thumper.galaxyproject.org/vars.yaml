@@ -86,3 +86,9 @@ zfs_admin_permissions:
   - name: "{{ zfs_backup.mts.dataset }}"
     users: "{{ zfs_backup.mts.user }}"
     permissions: snapshot
+
+zfs_prunesnaps_datasets:
+  - zones/thumper/backup/tool-shed-test/postgresql
+  - zones/thumper/backup/tool-shed-test/repos
+  - zones/thumper/backup/tool-shed-main/postgresql
+  - zones/thumper/backup/tool-shed-main/repos
