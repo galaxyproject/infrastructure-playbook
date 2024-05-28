@@ -1,0 +1,17 @@
+---
+
+- name: Depot Servers
+  hosts: depot_servers
+  roles:
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.copy
+      tags: general
+    - role: galaxyproject.general.services
+      tags: general
+    - role: galaxyproject.nginx
+      tags: nginx

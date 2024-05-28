@@ -23,6 +23,7 @@ mounts:
 # uids and gids were auto-generated on old rochefort (except nate's) which is the
 # reason for the uid/gid mess
 
+# TODO: unify with galaxyproject_users
 host_users:
   - name: sites
     uid: 1000
@@ -39,13 +40,6 @@ host_users:
     gid: 2053
     group: depot
     comment: 'Galaxy Depot'
-  - name: nate
-    uid: 2048
-    gid: 2048
-    group: nate
-    comment: Nate Coraor
-    home: /home/nate
-    shell: /bin/bash
   - name: zfsdump-rochefort
     uid: 2051
     gid: 2052
@@ -80,8 +74,8 @@ zfs_filesystems:
     mountpoint: /srv/nginx/snpeff-data.galaxyproject.org/root
     exec: "off"
     setuid: "off"
-    owner: nate
-    group: nate
+    owner: root
+    group: root
   - name: data/rochefort/bioarchive
     mountpoint: /srv/nginx/bioarchive.galaxyproject.org/root
     exec: "off"
@@ -166,7 +160,7 @@ host_templates:
         dont compress: '*.tgz *.zip *.gz *.bz2 *.bam *.2bit *.lzo'
 
 host_service_configurations:
-  - src: files/rochefort/rsyncd.xml
+  - src: files/smf/rsyncd.xml
 
 host_services:
   - name: network/rsyncd
@@ -226,6 +220,7 @@ nginx_conf_http:
 
 nginx_conf_ssl_protocols:
   - TLSv1.2
+  - TLSv1.3
 
 nginx_servers:
   - certbot_redirects
@@ -244,7 +239,7 @@ nginx_ssl_servers:
 # needs cffi, which needs gcc, which isn't installed
 #certbot_virtualenv_package_name: py37-virtualenv
 certbot_install_method: package
-certbot_package: py37-certbot
+certbot_package: py311-certbot
 certbot_script: /opt/local/bin/certbot
 certbot_letsencrypt_dir: /opt/local/etc/letsencrypt
 certbot_post_renewal: |

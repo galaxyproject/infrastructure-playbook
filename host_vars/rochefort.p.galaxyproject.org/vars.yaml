@@ -1,0 +1,30 @@
+---
+
+smartos_images:
+  # base-64-lts 20.4.0 smartos zone-dataset 2021-01-11
+  - uuid: 1d05e788-5409-11eb-b12f-037bd7fee4ee
+    state: present
+  # base-64-lts 23.4.0 smartos zone-dataset 2024-01-06
+  - uuid: 8adac45a-aca7-11ee-b53e-00151714048c
+    state: present
+
+
+smartos_vms:
+  - name: rochefort
+    brand: joyent
+    image_uuid: 8adac45a-aca7-11ee-b53e-00151714048c
+    hostname: rochefort
+    max_physical_memory: 8192
+    quota: 16384
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'rochefort.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+    # data/rochefort is added by hand with zonecfg
+    #delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys ; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"

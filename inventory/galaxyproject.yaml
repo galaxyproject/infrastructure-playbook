@@ -33,6 +33,7 @@ all:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
         thumper.galaxyproject.org:
+        rochefort.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -81,6 +82,8 @@ all:
 
     # Grants access to ssh private keys
     ssh_clients:
+      hosts:
+        rochefort.galaxyproject.org:
       children:
         # for postfix maps distribution to mxs
         list_servers:
@@ -101,6 +104,7 @@ all:
         smart3.galaxyproject.org:
         smart5.galaxyproject.org:
         thumper.p.galaxyproject.org:
+        rochefort.p.galaxyproject.org:
         westvleteren.p.galaxyproject.org:
         voyager.p.galaxyproject.org:
       vars:
@@ -109,6 +113,7 @@ all:
     smartos_os_zones:
       hosts:
         thumper.galaxyproject.org:
+        rochefort.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/local/bin/python3
 
@@ -117,11 +122,13 @@ all:
         stats_servers:
         datacache_servers:
         tool_shed_servers:
+        depot_servers:
 
     certbot_servers:
       children:
         stats_servers:
         tool_shed_servers:
+        depot_servers:
 
     list_servers:
       hosts:
@@ -166,6 +173,10 @@ all:
     datacache_servers:
       hosts:
         jeltz.galaxyproject.org:
+
+    depot_servers:
+      hosts:
+        rochefort.galaxyproject.org:
 
     tool_shed_servers:
       hosts:
