@@ -48,6 +48,23 @@ zfs_filesystems:
     owner: idc
     group: idc
 
+# This foreground-only setup worked on the older EL7 LX zone, where squid can't bind port 80 when run in standard
+# daemon/forking mode (and iptables and setcap aren't possible in LX, and systemd-socket-proxyd yields a strange arp
+# error in squid). The EL8 zone exhibits the same bind issue but squid further fails with:
+#   2024/05/25 04:31:00| assertion failed: peer_digest.cc:418: "fetch->pd && receivedData.data"
+# It looks kind of like this bug, except that's on 6.x and EL8 runs 4.15:
+#   https://forum.opnsense.org/index.php?topic=37128.0
+#   https://bugs.squid-cache.org/show_bug.cgi?id=5318
+# If this was working you would probably also want to set `eui_lookup off` to avoid:
+#   2024/05/25 04:23:00| ARP query 127.0.0.1 failed: eth0: (95) Operation not supported
+# I am not entirely sure what is to be gained from squid on a stratum 1 anyway (see
+# https://github.com/galaxyproject/ansible-cvmfs/pull/68) so am just leaving it disabled and we can revisit if it
+# becomes a problem.
+#host_files:
+#  - src: files/cvmfs/squid-foreground.service
+#    dest: /etc/systemd/system/squid.service
+#    state: absent
+
 cvmfs_stratum1_squid_enabled: false
 
 cvmfs_stratum1_cache_mem: 2048

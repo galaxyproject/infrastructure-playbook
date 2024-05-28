@@ -12,6 +12,9 @@
       tags: general
     - role: galaxyproject.general.paths
       tags: general
+    # see squid-foreground comments in host_vars/cvmfs1-psu0
+    #- role: galaxyproject.general.copy
+    #  tags: general
     - role: galaxyproject.general.firewall
       when: ansible_kernel_version != "BrandZ virtual linux"
       tags: general

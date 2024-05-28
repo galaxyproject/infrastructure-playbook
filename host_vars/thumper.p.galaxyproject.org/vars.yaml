@@ -48,3 +48,4 @@ smartos_vms:
     #delegate_dataset: true
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys ; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
