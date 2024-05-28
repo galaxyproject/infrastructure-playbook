@@ -37,7 +37,7 @@ host_users:
 
 host_groups:
   - "{{ galaxyproject_groups.cloud }}"
-  - "{{ galaxyproject_groups.G-803372 }}"
+  - "{{ galaxyproject_groups.G_803372 }}"
 
 cvmfs_manage_firewall: false
 galaxy_cvmfs_repos_enabled: false

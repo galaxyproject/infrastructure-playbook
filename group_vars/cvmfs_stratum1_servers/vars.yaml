@@ -39,7 +39,7 @@ cvmfs_stratum1_servers_group_groups:
   - "{{ galaxyproject_groups.refgenie }}"
   - "{{ galaxyproject_groups.idc }}"
   - "{{ galaxyproject_groups.cloud }}"
-  - "{{ galaxyproject_groups.G-803372 }}"
+  - "{{ galaxyproject_groups.G_803372 }}"
 
 cvmfs_stratum1_servers_group_files:
   - src: files/logrotate/squid
