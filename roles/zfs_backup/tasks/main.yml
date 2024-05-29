@@ -86,5 +86,5 @@
   ansible.builtin.cron:
     name: Prune sanoid snapshots
     minute: 0
-    hour: 6
+    hour: 20
     job: "{{ sanoid_prune_path }}"
