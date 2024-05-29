@@ -1,0 +1,11 @@
+
+# default config for console
+#config * {
+#	master	CONSERVER_MASTERlocalhostlocalhost;
+#	port	CONSERVER_PORT31093109;
+#}
+
+config * {
+	master	localhost;
+	port	3109;
+}

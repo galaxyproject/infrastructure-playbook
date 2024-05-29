@@ -1,0 +1,3 @@
+---
+
+console_servers_ipmi_password: "{{ vault_console_servers_ipmi_password }}"

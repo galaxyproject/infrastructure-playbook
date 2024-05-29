@@ -1,0 +1,68 @@
+---
+
+# NOTE: Currently this just deploys dhcpd.conf, the DHCP server was half deployed by hand and needs replaced
+# Also the conserver config
+
+- name: DHCP Servers
+  hosts: dhcp_servers
+  handlers:
+    - name: Validate dhcpd.conf
+      command: dhcpd -t
+    - name: Restart dhcpd
+      service:
+        name: isc-dhcp-server
+        state: restarted
+  tasks:
+    # Originally used an include in dhcpd.conf for hosts but apparmor prevents reading it and I don't feel like adjusting apparmor
+    - name: Deploy dhcpd.conf
+      template:
+        src: templates/dhcp/dhcpd.conf.j2
+        dest: /etc/dhcp/dhcpd.conf
+        mode: "0644"
+        owner: root
+        group: root
+      notify:
+        - Validate dhcpd.conf
+        - Restart dhcpd
+  tags: dhcp
+
+- name: Console Servers
+  hosts: console_servers
+  handlers:
+    - name: Validate conserver.cf
+      command: conserver -S
+    - name: Reload conserver
+      service:
+        name: conserver
+        state: reloaded
+  tasks:
+    - name: Deploy conserver.cf
+      copy:
+        src: files/conserver/conserver.cf
+        dest: /etc/conserver/conserver.cf
+        mode: "0644"
+        owner: root
+        group: root
+      notify:
+        - Validate conserver.cf
+        - Reload conserver
+    - name: Deploy console.cf
+      copy:
+        src: files/conserver/console.cf
+        dest: /etc/conserver/console.cf
+        mode: "0644"
+        owner: root
+        group: root
+      notify:
+        - Validate conserver.cf
+        - Reload conserver
+    - name: Deploy ipmi.passwd
+      copy:
+        content: "{{ console_servers_ipmi_password }}"
+        dest: /etc/conserver/ipmi.password
+        mode: "0600"
+        owner: conservr
+        group: root
+      notify:
+        - Reload conserver
+  tags: console

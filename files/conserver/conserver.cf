@@ -1,0 +1,140 @@
+# The character '&' in logfile names are substituted with the console
+# name.
+#
+
+#config * {
+#	defaultaccess rejected;
+#	primaryport 782;
+#}
+
+default full {
+	rw *;
+}
+
+default * {
+	logfile /var/log/conserver/&.log;
+	timestamp "";
+	include full;
+}
+
+##
+## list of consoles we serve
+##
+#console tweety {
+#	master localhost;
+#	type host;
+#	host ts1;
+#	port 2002;
+#}
+#console bambam {
+#	master localhost;
+#	type host;
+#	host ts1;
+#	port 2003;
+#}
+#console shell {
+#	master localhost;
+#	logfile /dev/null;
+#	type exec;
+#	exec "";
+#}
+#console telnet {
+#	master localhost;
+#	logfile /dev/null;
+#	type exec;
+#	exec telnet host;
+#}
+#console ttya {
+#	master localhost;
+#	type device;
+#	device /dev/ttya;
+#	baud 9600;
+#	parity none;
+#}
+
+##
+## list of clients we allow
+##
+access * {
+	trusted 127.0.0.1;
+	#allowed 128.118.250.0/27 172.18.2.0/24;
+	#admin @admin,root;
+	admin root;
+}
+
+#group admin {
+#	users root,nate,nate@GALAXYPROJECT.ORG,rico,rico@GALAXYPROJECT.ORG;
+#}
+
+default simple {
+	master localhost;
+	type exec;
+	rw admin;
+	logfilemax 10m;
+}
+
+default ipmisol {
+	include simple;
+	type exec;
+	execsubst Z=hs;
+	exec /usr/bin/ipmitool -I lanplus -H Z -U root -f /etc/conserver/ipmi.password sol activate;
+	idletimeout 24h;
+}
+
+console thumper {
+	include simple;
+	type device;
+	device /dev/ttyS0;
+	baud 115200;
+	parity none;
+}
+
+console westvleteren {
+	include ipmisol;
+	host westvleteren.m.galaxyproject.org;
+}
+
+#console scofield {
+#    include ipmisol;
+#    host scofield.m.galaxyproject.org;
+#}
+
+console smart1 {
+    include ipmisol;
+    host smart1.m.galaxyproject.org;
+}
+
+console smart2 {
+    include ipmisol;
+    host smart2.m.galaxyproject.org;
+}
+
+console smart3 {
+    include ipmisol;
+    host smart3.m.galaxyproject.org;
+}
+
+console smart5 {
+    include ipmisol;
+    host smart5.m.galaxyproject.org;
+}
+
+# console smart6 {
+#     include ipmisol;
+#     host smart6.m.galaxyproject.org;
+# }
+
+#console nn0 {
+#    include ipmisol;
+#    host nn0.m.galaxyproject.org;
+#}
+
+#console orval {
+#    include ipmisol;
+#    host orval.m.galaxyproject.org;
+#}
+
+console rochefort {
+    include ipmisol;
+    host rochefort.m.galaxyproject.org;
+}

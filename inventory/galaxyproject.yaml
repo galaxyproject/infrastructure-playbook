@@ -170,6 +170,10 @@ all:
       hosts:
         rodenbach.galaxyproject.org:
 
+    console_servers:
+      hosts:
+        rodenbach.galaxyproject.org:
+
     datacache_servers:
       hosts:
         jeltz.galaxyproject.org:
