@@ -21,19 +21,20 @@ server {
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
     }
+{% if tool_shed_hgweb_gunicorn_bind is defined %}
 
-{% if tool_shed_api_version == "v2" %}
-{% if tool_shed_hgweb_prefix is defined %}
-    location {{ tool_shed_hgweb_prefix }} {
+    location {{ tool_shed_hgweb_prefix.rstrip("/") }}/ {
         proxy_pass         http://{{ tool_shed_hgweb_gunicorn_bind }};
         proxy_redirect     off;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   SCRIPT_NAME       {{ tool_shed_hgweb_prefix }};
     }
 {% endif %}
 
+{% if tool_shed_api_version == "v2" %}
     location /static {
         alias {{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend/dist;
         expires 24h;

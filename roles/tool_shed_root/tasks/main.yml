@@ -17,7 +17,7 @@
   notify:
     - Reload systemd daemon
     - Restart hgweb
-  when: tool_shed_api_version == "v2"
+  when: tool_shed_hgweb_gunicorn_bind is defined
 
 - name: Flush handlers
   meta: flush_handlers
@@ -33,7 +33,7 @@
     name: hgweb
     state: started
     enabled: true
-  when: tool_shed_api_version == "v2"
+  when: tool_shed_hgweb_gunicorn_bind is defined
 
 - name: Schedule Tool Shed cron jobs
   ansible.builtin.cron:

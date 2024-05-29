@@ -93,15 +93,13 @@ tool_shed_backup_hour: 2
 tool_shed_dbname: tool_shed_main
 tool_shed_instance_codename: main
 tool_shed_instance_hostname: toolshed.g2.bx.psu.edu
-tool_shed_version: release_23.1
-#tool_shed_version: d4e0d3dc4cfb7560c31eefddf565fa0948f7df61
+tool_shed_repo: https://github.com/mvdbeek/galaxy.git
+tool_shed_version: server_external_hgweb
+#tool_shed_version: release_23.1
 tool_shed_config_ga_code: "UA-45719423-12"
 #tool_shed_api_version: v2
-tool_shed_systemd_units:
-  - tool-shed.service
-  #- hgweb.service
 tool_shed_gunicorn_memory_limit: 10G
-#tool_shed_hgweb_memory_limit: 2G
+tool_shed_hgweb_memory_limit: 2G
 
 ## used by: error_pages
 error_pages_title: "Galaxy Tool Shed"

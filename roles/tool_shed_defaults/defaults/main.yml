@@ -36,5 +36,5 @@ tool_shed_mutable_configs: []
 tool_shed_config_files: []
 tool_shed_config_templates: []
 
-# API v2 standalone hgweb path
+# standalone hgweb
 tool_shed_hgweb_prefix: "/repos"

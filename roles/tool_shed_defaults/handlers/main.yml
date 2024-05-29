@@ -10,6 +10,7 @@
     name: hgweb
     state: restarted
   become_user: root
+  when: tool_shed_hgweb_gunicorn_bind is defined
 
 - name: Restart Tool Shed
   ansible.builtin.systemd_service:

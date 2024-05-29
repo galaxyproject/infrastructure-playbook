@@ -10,10 +10,12 @@ tool_shed_servers_group_packages:
 tool_shed_servers_group_users:
   - "{{ galaxyproject_users.shed }}"
   - "{{ galaxyproject_users.shedsrc }}"
+  - "{{ galaxyproject_users.shedweb }}"
 
 tool_shed_servers_group_groups:
   - "{{ galaxyproject_groups.shed }}"
   - "{{ galaxyproject_groups.shedsrc }}"
+  - "{{ galaxyproject_groups.shedweb }}"
 
 tool_shed_servers_group_authorized_key_users:
   - name: root
@@ -85,6 +87,8 @@ tool_shed_gunicorn_bind: "127.0.0.1:9009"
 tool_shed_gunicorn_max_requests: 50000
 tool_shed_gunicorn_max_requests_jitter: 5000
 tool_shed_hgweb_dir: "{{ tool_shed_root }}/hgweb"
+tool_shed_hgweb_user: shedweb
+tool_shed_hgweb_group: shed
 tool_shed_hgweb_gunicorn_workers: 2
 tool_shed_hgweb_gunicorn_bind: "127.0.0.1:3003"
 tool_shed_hgweb_max_requests: 500
@@ -127,6 +131,8 @@ tool_shed_config:
     smtp_server: "smtp.psu.edu"
     email_from: "galaxy-no-reply@toolshed.g2.bx.psu.edu"
     sentry_dsn: "{{ tool_shed_config_sentry_dsn }}"
+    # prevent writing "repos/" to hgweb.config
+    hgweb_repo_prefix: ""
 
     # stuff that shouldn't be here but maybe has to
     conda_auto_init: false
