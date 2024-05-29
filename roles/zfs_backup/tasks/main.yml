@@ -16,33 +16,75 @@
     dest: "{{ rrsync_path }}"
     mode: "0755"
 
-- name: Deploy zfs-snapshot.py
-  ansible.builtin.copy:
-    src: zfs-snapshot.py
-    dest: "{{ zfs_snapshot_path }}"
-    mode: "0755"
+#- name: Deploy zfs-snapshot.py
+#  ansible.builtin.copy:
+#    src: zfs-snapshot.py
+#    dest: "{{ zfs_snapshot_path }}"
+#    mode: "0755"
 
-- name: Deploy zfs-prunesnaps.bash
-  ansible.builtin.copy:
-    src: zfs-prunesnaps.bash
-    dest: "{{ zfs_prunesnaps_path }}"
-    mode: "0755"
+- name: Install sanoid dependencies
+  ansible.builtin.package:
+    name: "{{ sanoid_dependency_packages }}"
+    state: present
 
-- name: Create zfs-prunesnaps.conf directory
+- name: Install sanoid
+  ansible.builtin.git:
+    dest: "{{ sanoid_path }}/src"
+    repo: "{{ sanoid_repo }}"
+    version: "{{ sanoid_version }}"
+  diff: false
+
+- name: Create sanoid bin directory
   ansible.builtin.file:
-    path: "{{ zfs_prunesnaps_config_path | dirname }}"
+    path: "{{ sanoid_path }}/bin"
     state: directory
 
-- name: Deploy zfs-prunesnaps.conf
-  ansible.builtin.template:
-    src: zfs-prunesnaps.conf.j2
-    dest: "{{ zfs_prunesnaps_config_path }}"
-    mode: "0644"
+- name: Create sanoid links
+  ansible.builtin.file:
+    src: "{{ sanoid_path }}/src/{{ item }}"
+    dest: "{{ sanoid_path }}/bin/{{ item }}"
+    state: link
+  loop:
+    - findoid
+    - sanoid
+    - syncoid
 
-- name: Configure zfs-prunesnaps logging
-  ansible.builtin.lineinfile:
-    path: /opt/local/etc/rsyslog.conf
-    line: "local0.debug	/var/log/prunesnaps.log"
-    backup: true
-  notify:
-    - Reload syslog
+- name: Create sanoid config directories
+  ansible.builtin.file:
+    path: "/etc/sanoid/{{ item }}"
+    state: directory
+  loop: "{{ sanoid_configs.keys() }}"
+
+- name: Link sanoid config defaults
+  ansible.builtin.file:
+    src: "{{ sanoid_path }}/src/sanoid.defaults.conf"
+    dest: "/etc/sanoid/{{ item }}/sanoid.defaults.conf"
+    state: link
+  loop: "{{ sanoid_configs.keys() }}"
+
+- name: Deploy sanoid configs
+  ansible.builtin.template:
+    src: sanoid.conf.j2
+    dest: "/etc/sanoid/{{ item }}/sanoid.conf"
+  vars:
+    sanoid_datasets: "{{ sanoid_configs[item] }}"
+  loop: "{{ sanoid_configs.keys() }}"
+
+- name: Deploy sanoid-snapshot.py
+  ansible.builtin.copy:
+    src: sanoid-snapshot.py
+    dest: "{{ sanoid_snapshot_path }}"
+    mode: "0755"
+
+- name: Deploy sanoid-prune.py
+  ansible.builtin.copy:
+    src: sanoid-prune.py
+    dest: "{{ sanoid_prune_path }}"
+    mode: "0755"
+
+- name: Schedule sanoid pruning
+  ansible.builtin.cron:
+    name: Prune sanoid snapshots
+    minute: 0
+    hour: 6
+    job: "{{ sanoid_prune_path }}"

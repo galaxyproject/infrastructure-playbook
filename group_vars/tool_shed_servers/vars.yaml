@@ -52,7 +52,7 @@ tool_shed_servers_group_crontabs:
     user: "{{ tool_shed_user }}"
     hour: "{{ tool_shed_backup_hour }}"
     minute: 0
-    job: rsync -av --delete -e "ssh -i $HOME/.ssh/id_backup_rsync" {{ tool_shed_repos_dir }}/ {{ tool_shed_hgweb_config_dir }}/hgweb.config {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:repos && ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- repos@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+    job: rsync -av --delete -e "ssh -i $HOME/.ssh/id_backup_rsync" {{ tool_shed_repos_dir }}/ {{ tool_shed_hgweb_config_dir }}/hgweb.config {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:repos && ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- {{ zfs_backup_profile.sanoid_configs.repos }}
 
 postgresql_flavor: pgdg
 postgresql_version: 16
@@ -60,7 +60,7 @@ postgresql_backup_dir: "{{ zfs_backup_profile.user }}@{{ zfs_backup_profile.serv
 postgresql_backup_python_executable: python3
 
 postgresql_backup_rsync_connect_opts: '-e "ssh -i /var/lib/postgresql/.ssh/id_backup_rsync"'
-postgresql_backup_post_command: ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- postgresql@`date -u +\%Y\%m\%dT\%H\%M\%SZ`
+postgresql_backup_post_command: ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- {{ zfs_backup_profile.sanoid_configs.postgresql }}
 
 # snapshots mean the actual number kept is much greater
 postgresql_backup_keep: 7

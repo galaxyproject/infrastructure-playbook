@@ -25,12 +25,19 @@ postfix_aliases:
   root: root@galaxyproject.org
 
 # dataset is used in ssh_public_keys which is why this needs to be in all
+# sanoid_config values should match keys in sanoid_configs
 zfs_backup:
   tts:
     user: backup-tts
     server: thumper.galaxyproject.org
     dataset: zones/thumper/backup/tool-shed-test
+    sanoid_configs:
+      repos: tts-repos
+      postgresql: tts-postgresql
   mts:
     user: backup-mts
     server: thumper.galaxyproject.org
     dataset: zones/thumper/backup/tool-shed-main
+    sanoid_configs:
+      repos: mts-repos
+      postgresql: mts-postgresql

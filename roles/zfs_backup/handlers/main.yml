@@ -1,6 +1,0 @@
----
-
-- name: Reload syslog
-  ansible.builtin.service:
-    name: svc:/pkgsrc/rsyslog
-    state: reloaded

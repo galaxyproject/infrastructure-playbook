@@ -3,14 +3,14 @@
 rrsync_path: /usr/local/bin/rrsync
 zfs_snapshot_path: /usr/local/bin/zfs-snapshot
 
-zfs_prunesnaps_path: /usr/local/sbin/zfs-prunesnaps
-zfs_prunesnaps_config_path: /etc/zfs-prunesnaps/zfs-prunesnaps.conf
-zfs_prunesnaps_syslog_facility: local0
-zfs_prunesnaps_datasets: []
-zfs_prunesnaps_default_policy:
-  r: 24
-  d: 30
-  w: 8
-  m: 12
-  y: -1
-zfs_prunesnaps_overrides: {}
+sanoid_dependency_packages:
+  - p5-Config-IniFiles
+  - p5-Capture-Tiny
+  - pv
+  - mbuffer
+  - lzop
+sanoid_path: /opt/sanoid
+sanoid_repo: https://github.com/jimsalterjrs/sanoid
+sanoid_version: v2.2.0
+sanoid_snapshot_path: /usr/local/bin/sanoid-snapshot
+sanoid_prune_path: /usr/local/sbin/sanoid-prune

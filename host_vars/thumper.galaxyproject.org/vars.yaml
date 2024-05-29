@@ -87,8 +87,27 @@ zfs_admin_permissions:
     users: "{{ zfs_backup.mts.user }}"
     permissions: snapshot
 
-zfs_prunesnaps_datasets:
-  - zones/thumper/backup/tool-shed-test/postgresql
-  - zones/thumper/backup/tool-shed-test/repos
-  - zones/thumper/backup/tool-shed-main/postgresql
-  - zones/thumper/backup/tool-shed-main/repos
+sanoid_configs:
+  "tts-postgresql":
+    zones/thumper/backup/tool-shed-test/postgresql:
+      use_template: daily
+  "tts-repos":
+    zones/thumper/backup/tool-shed-test/repos:
+      use_template: daily
+  "mts-postgresql":
+    zones/thumper/backup/tool-shed-main/postgresql:
+      use_template: daily
+  "mts-repos":
+    zones/thumper/backup/tool-shed-main/repos:
+      use_template: daily
+
+sanoid_templates:
+  daily:
+    frequently: 0
+    hourly: 0
+    daily: 30
+    weekly: 8
+    monthly: 24
+    yearly: 4
+    autosnap: "yes"
+    autoprune: "yes"

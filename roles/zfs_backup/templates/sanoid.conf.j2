@@ -1,0 +1,21 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# Dataset configuration
+{% for dataset, config in sanoid_datasets.items() %}
+
+[{{ dataset }}]
+{% for name, value in config.items() %}
+	{{ name }} = {{ value }}
+{% endfor %}
+{% endfor %}
+
+# Template configuration
+{% for name, config in sanoid_templates.items() %}
+
+[template_{{ name }}]
+{% for name, value in config.items() %}
+	{{ name }} = {{ value }}
+{% endfor %}
+{% endfor %}
