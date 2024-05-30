@@ -1,3 +1,0 @@
-[submodule "common_roles"]
-	path = common_roles
-	url = https://github.com/galaxyproject/ansible-common-roles
