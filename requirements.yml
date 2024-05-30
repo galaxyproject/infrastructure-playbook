@@ -29,6 +29,8 @@ roles:
     version: v3.2.3
   - name: atosatto.minio
     version: v1.1.0
+  - name: geerlingguy.redis
+    version: 1.8.0
 
 collections:
   - name: galaxyproject.general

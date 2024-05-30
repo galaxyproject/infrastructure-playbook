@@ -7,3 +7,6 @@ _var_lib_pgsql:
   fstype: xfs
 filesystems: ["{{ _var_lib_pgsql }}"]
 host_mounts: ["{{ _var_lib_pgsql }}"]
+
+redis_requirepass: "{{ vault_redis_requirepass }}"
+redis_bind_interface: 0.0.0.0

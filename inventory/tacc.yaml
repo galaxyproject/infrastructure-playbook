@@ -35,6 +35,12 @@ all:
       hosts:
         galaxy-db.tacc.utexas.edu:
 
+    # Deploys redis
+    galaxy_redis_servers:
+      hosts:
+        galaxy07.tacc.utexas.edu:
+        galaxy-db.tacc.utexas.edu:
+
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
       hosts:

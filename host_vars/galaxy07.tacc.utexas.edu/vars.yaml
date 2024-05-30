@@ -1,0 +1,4 @@
+---
+
+redis_requirepass: "{{ vault_redis_requirepass }}"
+redis_bind_interface: 127.0.0.1

@@ -17,6 +17,7 @@ roles/galaxyproject.postgresql_objects
 roles/galaxyproject.slurm
 roles/galaxyproject.telegraf_cvmfs
 roles/geerlingguy.repo-epel
+roles/geerlingguy.redis
 roles/usegalaxy_eu.certbot
 roles/usegalaxy_eu.gxadmin
 roles/galaxyproject.gxadmin

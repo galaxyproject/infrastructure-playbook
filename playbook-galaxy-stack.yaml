@@ -16,3 +16,10 @@
     - name: Install PostgreSQL contrib package for pgcrypto
       dnf:
         name: "postgresql{{ __postgresql_version_dotless }}-contrib"
+  tags: postgres
+
+- name: Galaxy Redis Servers
+  hosts: galaxy_redis_servers
+  roles:
+    - geerlingguy.redis
+  tags: redis
