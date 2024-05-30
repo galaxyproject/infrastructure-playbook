@@ -3,6 +3,10 @@
 - name: MinIO Servers
   hosts: minio_servers
   roles:
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
     - role: atosatto.minio
       tags: minio
     - role: artis3n.tailscale

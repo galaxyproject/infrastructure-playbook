@@ -1,5 +1,21 @@
 ---
 
+# as usual, should just write our own role...
+# does create the user but not with a specified uid
+
+minio_servers_group_users:
+  - name: "{{ minio_user }}"
+    uid: 40304
+    group: "{{ minio_group }}"
+    comment: "MinIO Server"
+    home: /home/minio
+    shell: /bin/bash
+
+# does not precreate dir
+minio_servers_group_directories:
+  - path: /opt/minio
+    mode: "0755"
+
 minio_access_key: "{{ vault_minio_access_key }}"
 minio_secret_key: "{{ vault_minio_secret_key }}"
 

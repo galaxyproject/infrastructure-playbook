@@ -28,7 +28,7 @@ all:
     # Deploys MinIO and Tailscale
     minio_servers:
       hosts:
-        galaxy-db-02.tacc.utexas.edu:
+        galaxy-db.tacc.utexas.edu:
 
     # Deploys PostgreSQL and gxadmin
     galaxy_db_servers:
