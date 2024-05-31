@@ -24,6 +24,8 @@ all:
     telegraf_agents:
       hosts:
         galaxy-db.tacc.utexas.edu:
+      children:
+        galaxy_nodes:
 
     # Deploys MinIO and Tailscale
     minio_servers:
@@ -64,3 +66,11 @@ all:
         galaxy-main-set02-6: {ansible_host: 129.114.55.47}
         galaxy-main-set02-7: {ansible_host: 129.114.55.51}
         galaxy-main-set02-8: {ansible_host: 129.114.55.57}
+        galaxy-main-set04-1: {ansible_host: 129.114.55.18}
+        galaxy-main-set04-2: {ansible_host: 129.114.55.39}
+        galaxy-main-set04-3: {ansible_host: 129.114.55.56}
+        galaxy-main-set04-4: {ansible_host: 129.114.55.26}
+        galaxy-main-set04-5: {ansible_host: 129.114.55.58}
+        galaxy-main-set04-6: {ansible_host: 129.114.55.8}
+        galaxy-main-set04-7: {ansible_host: 129.114.55.52}
+        galaxy-main-set04-8: {ansible_host: 129.114.55.32}

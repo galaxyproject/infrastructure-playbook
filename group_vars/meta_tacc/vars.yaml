@@ -105,7 +105,7 @@ slurm_nodes:
     CPUS: 24
     State: UNKNOWN
     Weight: 0
-  # actual mem of cyclone instances as reported by slurmd -C: 60562
+  # actual mem of cyclone set02 instances as reported by slurmd -C: 60562
   - name: galaxy-main-set02-1
     NodeAddr: 129.114.55.31
     RealMemory: 60000
@@ -154,6 +154,55 @@ slurm_nodes:
     CPUS: 23
     State: UNKNOWN
     Weight: 0
+  # actual mem of cyclone set04 instances as reported by slurmd -C: 90810
+  - name: galaxy-main-set04-1
+    NodeAddr: 129.114.55.18
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-2
+    NodeAddr: 129.114.55.39
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-3
+    NodeAddr: 129.114.55.56
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-4
+    NodeAddr: 129.114.55.26
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-5
+    NodeAddr: 129.114.55.58
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-6
+    NodeAddr: 129.114.55.8
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-7
+    NodeAddr: 129.114.55.52
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+  - name: galaxy-main-set04-8
+    NodeAddr: 129.114.55.32
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
 
 # Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
 slurm_partitions:
@@ -163,7 +212,7 @@ slurm_partitions:
     MaxNodes: 1
     DefMemPerCPU: 5120
     MaxCPUsPerNode: 20
-    Nodes: roundup[49-60],galaxy-main-set02-[1-8]
+    Nodes: roundup[49-60],galaxy-main-set02-[1-8],galaxy-main-set04-[1-8]
     LLN: "YES"
     PriorityTier: 0
   - name: normal
@@ -182,6 +231,6 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 7680
-    Nodes: roundup[49-64],galaxy-main-set02-[1-8]
+    Nodes: roundup[49-64],galaxy-main-set02-[1-8],galaxy-main-set04-[1-8]
     LLN: "YES"
     PriorityTier: 20

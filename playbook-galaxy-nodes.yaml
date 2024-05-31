@@ -2,6 +2,17 @@
 
 - name: Galaxy Nodes
   hosts: galaxy_nodes
+  pre_tasks:
+    # Not sure why this is set but it breaks LDAP
+    - name: Ensure invalid ldap_tls_cacertdir is not set in /etc/sssd/sssd.conf
+      ansible.builtin.lineinfile:
+        path: /etc/sssd/sssd.conf
+        regexp: "^ldap_tls_cacertdir = /etc/openldap/cacerts$"
+        state: absent
+      notify:
+        - Restart sssd
+    - name: Flush handlers
+      meta: flush_handlers
   roles:
     - role: galaxyproject.general.packages
     - role: galaxyproject.general.paths
@@ -16,3 +27,8 @@
         path: /var/lib/slurm
         state: directory
         mode: "0755"
+  handlers:
+    - name: Restart sssd
+      ansible.builtin.systemd:
+        name: sssd
+        state: restarted
