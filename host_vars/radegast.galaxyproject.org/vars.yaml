@@ -90,6 +90,24 @@ postgresql_backup_hour: 3
 zfs_backup_profile: "{{ zfs_backup.mts }}"
 tool_shed_backup_hour: 2
 
+# When running under the OS Python 3.11, the TS encounters a GPF any time the iuc account attempts to load the UI (after
+# login):
+#   kernel: traps: gunicorn[370889] general protection fault ip:5001f7 sp:7fa2371fbd00 error:0 in python3.11[41f000+2b3000]
+# Originally I thought it was this:
+#   https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1050843
+# But the issue still occurs after that upgrade. So just switching to 3.9 for now, we can revisit if 3.11 doesn't work
+# for TSv2.
+#
+# NOTE: I actually installed miniforge by hand, not via ansible, this is just in case everything blows up
+miniconda_prefix: /srv/toolshed/main/conda
+miniconda_version: 24.3.0
+miniconda_conda_environments:
+  python@3.9:
+    channels:
+      - conda-forge
+    packages:
+      - python=3.9
+
 tool_shed_dbname: tool_shed_main
 tool_shed_instance_codename: main
 tool_shed_instance_hostname: toolshed.g2.bx.psu.edu

@@ -29,6 +29,10 @@
       become: true
       become_user: postgres
       tags: postgres
+    - role: galaxyproject.miniconda
+      become: true
+      become_user: "{{ tool_shed_privileged_user }}"
+      tags: conda
     - role: tool_shed_privileged
       become: true
       become_user: "{{ tool_shed_privileged_user }}"

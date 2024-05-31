@@ -9,6 +9,7 @@ roles/dj-wasabi.telegraf
 roles/galaxyproject.cvmfs
 roles/galaxyproject.galaxy
 roles/galaxyproject.mailman3
+roles/galaxyproject.miniconda
 roles/galaxyproject.nginx
 roles/galaxyproject.opendkim
 roles/galaxyproject.postfix
