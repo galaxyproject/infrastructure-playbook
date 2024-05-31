@@ -107,6 +107,7 @@ miniconda_conda_environments:
       - conda-forge
     packages:
       - python=3.9
+tool_shed_virtualenv_command: "{{ miniconda_prefix }}/envs/python@3.9/bin/python3 -m venv"
 
 tool_shed_dbname: tool_shed_main
 tool_shed_instance_codename: main
