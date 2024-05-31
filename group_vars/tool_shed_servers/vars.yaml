@@ -1,11 +1,17 @@
 ---
 
+# TODO: this is temporary until this package fix is in at least bookworm-updates:
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1050843
+tool_shed_servers_group_apt_repositories:
+  - repo: deb http://deb.debian.org/debian bookworm-proposed-updates main
+
 tool_shed_servers_group_packages:
   - rsync
   - python3-venv
   - tmpreaper
   # for v1 client, not needed for v2
   - make
+  - python3.11>=3.11.2-6+deb12u2
 
 tool_shed_servers_group_users:
   - "{{ galaxyproject_users.shed }}"
