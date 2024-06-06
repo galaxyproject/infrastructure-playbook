@@ -142,21 +142,6 @@ infrastructure
 ## Application groupings
 ##
 
-## Mail
-
-[mailservers]
-[mailservers:children]
-primarymxservers
-secondarymxservers
-
-[primarymxservers]
-newtrail.galaxyproject.org
-artifact.galaxyproject.org
-
-[secondarymxservers]
-
-[listservers]
-
 ## Web
 
 [webservers]

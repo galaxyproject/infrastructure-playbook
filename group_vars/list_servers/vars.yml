@@ -55,7 +55,7 @@ postgresql_objects_privileges:
 # galaxyproject.mailman3
 #
 
-# These vars are in all.yml so that they can be used with MXs:
+# These vars are in meta_galaxyproject so that they can be used with MXs:
 # - mailman3_domains
 # - mailman3_distribute_maps_dir
 mailman3_distribute_maps_dir: /var/list
