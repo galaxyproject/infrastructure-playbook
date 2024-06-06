@@ -21,6 +21,7 @@ galaxy_db_servers_group_packages:
   # for gxadmin
   - make
   # for Enis
+  - jq
   - zip
 
 _override_telegraf_agent_output:
