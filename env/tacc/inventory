@@ -30,7 +30,6 @@ galaxy-web-03.tacc.utexas.edu
 galaxy-web-04.tacc.utexas.edu
 
 [maingalaxydbservers]
-galaxy-db-02.tacc.utexas.edu
 
 [galaxynodes]
 roundup[49:64].tacc.utexas.edu
@@ -39,7 +38,6 @@ roundup[49:64].tacc.utexas.edu
 galaxy04.tacc.utexas.edu
 galaxy07.tacc.utexas.edu
 galaxy08.tacc.utexas.edu
-galaxy-db-02.tacc.utexas.edu
 galaxy-web-03.tacc.utexas.edu
 galaxy-web-04.tacc.utexas.edu
 galaxy-web-05.tacc.utexas.edu
@@ -92,7 +90,6 @@ galaxy08.tacc.utexas.edu
 certbotdnsservers
 
 [cvmfsclients]
-galaxy-db-02.tacc.utexas.edu
 
 [cvmfsclients:children]
 galaxynodes
