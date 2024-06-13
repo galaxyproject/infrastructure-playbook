@@ -1,0 +1,4 @@
+---
+
+authorized_keys_unprivileged:
+  authorized: "{{ galaxy_team_users }}"

@@ -1,0 +1,17 @@
+---
+# External/unprivileged hosts
+
+all:
+
+  hosts:
+    login01.expanse.sdsc.edu:
+      ansible_user: xgalaxy
+    rflogin03.rockfish.jhu.edu:
+      ansible_user: galaxy
+    login3.stampede3.tacc.utexas.edu:
+      ansible_user: xcgalaxy
+      #ansible_ssh_common_args: -oProxyJump=galaxy04.tacc.utexas.edu
+      ansible_ssh_executable: ./.ssh-keyboard-interactive
+    # ssh keys distributed administratively, so we use a common key in the password store
+    #   https://www.psc.edu/about-using-ssh/
+    #vm030.bridges2.psc.edu: {ansible_user: xcgalaxy}

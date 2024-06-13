@@ -1,0 +1,6 @@
+---
+
+- name: Unprivileged
+  hosts: all
+  roles:
+    - role: authorized_keys_unprivileged

@@ -1,0 +1,4 @@
+---
+
+authorized_keys_unprivileged:
+  authorized: "{{ ['rockfish_auto_key'] + galaxy_team_users }}"

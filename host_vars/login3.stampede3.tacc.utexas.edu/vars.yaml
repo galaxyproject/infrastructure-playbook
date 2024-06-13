@@ -1,0 +1,4 @@
+---
+
+authorized_keys_unprivileged:
+  authorized: "{{ ['stampede3_auto_key'] + galaxy_team_users }}"

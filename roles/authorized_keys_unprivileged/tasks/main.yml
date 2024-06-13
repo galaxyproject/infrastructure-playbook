@@ -1,0 +1,9 @@
+---
+# Distribute SSH keys on unprivileged accounts (e.g. HPC)
+
+- name: Set authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{% for authorized in authorized_keys_unprivileged.authorized %}{{ ssh_public_keys[authorized] ~ '\n' }}{% endfor %}"
+    exclusive: "{{ authorized_keys_unprivileged.exclusive | default(true) }}"
+  when: authorized_keys_unprivileged is defined
