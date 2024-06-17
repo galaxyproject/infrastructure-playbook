@@ -37,11 +37,10 @@
       become: true
       become_user: "{{ tool_shed_privileged_user }}"
       tags: shed
-    # TODO: https://github.com/galaxyproject/galaxy/issues/18205
-    #- role: tool_shed_unprivileged
-    #  become: true
-    #  become_user: "{{ tool_shed_user }}"
-    #  tags: shed
+    - role: tool_shed_unprivileged
+      become: true
+      become_user: "{{ tool_shed_user }}"
+      tags: shed
     - role: tool_shed_root
       tags: shed
     - role: galaxyproject.general.cron
