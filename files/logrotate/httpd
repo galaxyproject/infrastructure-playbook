@@ -2,6 +2,9 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 /var/log/httpd/*log {
+    daily
+    rotate 4
+    compress
     maxsize 100M
     missingok
     notifempty
