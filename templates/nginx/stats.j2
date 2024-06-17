@@ -14,8 +14,9 @@ server {
     listen *:443 ssl;
     server_name stats.galaxyproject.org;
 
-    access_log  syslog:server=unix:/dev/log;
-    error_log   syslog:server=unix:/dev/log;
+    # the default facility (local7) is the boot log on EL
+    access_log  syslog:server=unix:/dev/log,facility=local6;
+    error_log   syslog:server=unix:/dev/log,facility=local6;
 
     location /.well-known/ {
         root {{ certbot_well_known_root }};
@@ -34,8 +35,8 @@ server {
     listen {{ ansible_default_ipv4.address }}:8086 ssl;
     server_name stats.galaxyproject.org;
 
-    access_log  syslog:server=unix:/dev/log;
-    error_log   syslog:server=unix:/dev/log;
+    access_log  syslog:server=unix:/dev/log,facility=local6;
+    error_log   syslog:server=unix:/dev/log,facility=local6;
 
     location / {
         proxy_pass   http://influxdb_app;
