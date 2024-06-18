@@ -1,0 +1,5 @@
+---
+
+tc_limit_description: "Traffic Control Limit for Corral"
+tc_limit_path: /usr/local/sbin/tc-limit
+tc_limit_maxrate_gbit: "10"

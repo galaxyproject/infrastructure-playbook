@@ -1,0 +1,25 @@
+---
+
+- name: Install tc-limit script
+  ansible.builtin.template:
+    src: tc-limit.sh.j2
+    dest: "{{ tc_limit_path }}"
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Install tc-limit systemd service unit
+  ansible.builtin.template:
+    src: tc-limit.service.j2
+    dest: /etc/systemd/system/tc-limit.service
+    mode: "0644"
+    owner: root
+    group: root
+  register: __tc_limit_service_unit_result
+
+- name: Ensure tc-limit is enabled and started
+  ansible.builtin.systemd:
+    name: tc-limit
+    state: started
+    enabled: true
+    daemon_reload: "{{ __tc_limit_service_unit_result is changed }}"

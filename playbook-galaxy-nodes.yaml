@@ -21,9 +21,10 @@
     - role: galaxyproject.slurm
     - role: galaxyproject.general.copy
     - role: galaxyproject.general.cron
+    - role: tc_limit
   post_tasks:
     - name: Ensure /var/lib/slurm is publicly accessible
-      file:
+      ansible.builtin.file:
         path: /var/lib/slurm
         state: directory
         mode: "0755"

@@ -1,0 +1,10 @@
+[Unit]
+Description={{ tc_limit_description }}
+DefaultDependencies=no
+After=network.target
+ConditionPathExists={{ tc_limit_path }}
+
+[Service]
+Type=oneshot
+ExecStart={{ tc_limit_path }} -g {{ tc_limit_limit_gbit }} -i {{ tc_limit_ip }}
+RemainAfterExit=yes

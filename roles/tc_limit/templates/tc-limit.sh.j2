@@ -1,0 +1,43 @@
+#!/bin/bash
+set -euo pipefail
+
+LIMIT="{{ tc_limit_limit_gbit }}"
+DEST_IP="{{ tc_limit_ip }}"
+REMOVE=false
+
+while getopts ":hg:i:r" opt; do
+    case "$opt" in
+        h)
+            echo "usage: $0 [-r (remove)] [-g GBITS] [-i DESTINATION_IP]"
+            exit 0
+            ;;
+        g)
+            LIMIT="${OPTARG}gbit"
+            ;;
+        i)
+            DEST_IP="$OPTARG"
+            ;;
+        r)
+            REMOVE=true
+            ;;
+    esac
+done
+
+DEV="{{ ansible_default_ipv4.alias }}"
+MAXRATE="{{ tc_limit_maxrate_gbit }}"
+
+exists="$(tc class show dev $DEV classid 1:11)"
+
+if $REMOVE && [ -n "$exists" ]; then
+    tc qdisc delete dev $DEV root
+elif [ -z "$exists" ]; then
+    tc qdisc add dev $DEV root handle 1: htb default 1
+    tc class add dev $DEV parent 1:1 classid 1:10 htb rate $MAXRATE ceil $MAXRATE
+    tc class add dev $DEV parent 1:1 classid 1:11 htb rate $LIMIT ceil $LIMIT
+    tc filter add dev $DEV protocol ip parent 1:0 prio 1 u32 match ip dst $DEST_IP flowid 1:11
+    tc qdisc add dev $DEV parent 1:10 handle 1010: fq_codel
+    tc qdisc add dev $DEV parent 1:11 handle 1011: fq_codel
+else
+    tc class change dev $DEV classid 1:11 htb rate $LIMIT ceil $LIMIT
+    tc class show dev $DEV classid 1:11
+fi
