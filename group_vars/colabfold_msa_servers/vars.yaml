@@ -1,0 +1,10 @@
+---
+
+miniconda_prefix: "{{ colabfold_msa_server_root }}/conda"
+miniconda_conda_environments:
+  colabfold_msa_server:
+    channels:
+      - conda-forge
+      - bioconda
+    packages:
+      - mmseqs2-server

@@ -1,0 +1,15 @@
+---
+# special hosts at JHU ARCH
+
+all:
+
+  hosts:
+    devgalaxy-jhu:
+      ansible_user: galaxy
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q galaxy@login.rockfish.jhu.edu"'
+      ansible_host: devgalaxy
+
+  children:
+    colabfold_msa_servers:
+      hosts:
+        devgalaxy-jhu:

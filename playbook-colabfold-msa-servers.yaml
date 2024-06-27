@@ -1,0 +1,7 @@
+---
+
+- name: ColabFold MSA Servers
+  hosts: colabfold_msa_servers
+  roles:
+    - role: galaxyproject.miniconda
+    - role: colabfold_msa_server

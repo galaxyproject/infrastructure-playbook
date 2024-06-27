@@ -1,0 +1,79 @@
+---
+
+# server itself is deployed with galaxyproject.miniconda
+
+- name: Check for PDB databases
+  ansible.builtin.stat:
+    path: "{{ colabfold_msa_server_databases }}/UNIREF30_READY"
+  register: __colabfold_msa_server_databases_stat
+
+- name: PDB database block
+  when: not __colabfold_msa_server_databases_stat.stat.exists
+  block:
+
+    - name: Create databases directory
+      ansible.builtin.file:
+        path: "{{ colabfold_msa_server_databases }}"
+        state: directory
+        mode: "02755"
+
+    - name: Fetch PDB download script
+      ansible.builtin.get_url:
+        url: "{{ colabfold_msa_server_setup_databases_script_url }}"
+        dest: "/tmp/colabfold_setup_databases.sh"
+
+    - name: Cache PDB databases
+      ansible.builtin.command: "/bin/bash /tmp/colabfold_setup_databases.sh {{ colabfold_msa_server_databases }} {{ colabfold_msa_server_pdb_server }} {{ colabfold_msa_server_pdb_port }}"
+      environment:
+        PATH: "{{ colabfold_msa_server_bin }}:{{ ansible_env.PATH }}"
+
+  always:
+
+    - name: Remove PDB download script
+      ansible.builtin.file:
+        path: "/tmp/colabfold_setup_databases.sh"
+        state: absent
+
+- name: Create server directory
+  ansible.builtin.file:
+    path: "{{ colabfold_msa_server_root }}/server"
+    state: directory
+    mode: "02755"
+
+- name: Deploy config.json
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: "{{ colabfold_msa_server_root }}/server/config.json"
+    mode: "0644"
+
+- name: Deploy init script
+  ansible.builtin.template:
+    src: msa-server-init.j2
+    dest: "{{ colabfold_msa_server_root }}/server/msa-server-init"
+    mode: "0755"
+
+- name: Create systemd user directory
+  ansible.builtin.file:
+    path: "~/.config/systemd/user"
+    state: directory
+    mode: "0755"
+
+- name: Deploy systemd unit
+  ansible.builtin.template:
+    src: colabfold-msa-server.service.j2
+    dest: "~/.config/systemd/user/colabfold-msa-server.service"
+    mode: "0644"
+  notify:
+    - Reload systemd user daemon
+    - Restart ColabFold MSA Server
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Ensure ColabFold MSA Server is enabled and started
+  ansible.builtin.systemd:
+    name: colabfold-msa-server.service
+    state: started
+    enabled: true
+    scope: user
+

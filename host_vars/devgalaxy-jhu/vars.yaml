@@ -1,0 +1,6 @@
+---
+
+colabfold_msa_server_root: /data/mschatz1/galaxy/colabfold
+colabfold_msa_server_databases: /scratch4/mschatz1/galaxy/colabfold/databases
+colabfold_msa_server_jobs: /scratch4/mschatz1/galaxy/colabfold/jobs
+colabfold_msa_server_tmp: /scratch4/mschatz1/galaxy/colabfold/tmp

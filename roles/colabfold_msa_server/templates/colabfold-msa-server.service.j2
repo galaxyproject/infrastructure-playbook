@@ -1,0 +1,14 @@
+[Unit]
+Description=MMseqs2 Server
+After=network.target
+
+[Service]
+WorkingDirectory={{ colabfold_msa_server_root }}
+#Environment="MMSEQS_NUM_THREADS=1"
+ExecStart=/bin/bash {{ colabfold_msa_server_root }}/server/msa-server-init
+Type=simple
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

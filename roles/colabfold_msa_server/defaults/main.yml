@@ -1,0 +1,8 @@
+---
+
+colabfold_msa_server_port: 8000
+colabfold_msa_server_setup_databases_script_url: https://raw.githubusercontent.com/sokrypton/ColabFold/main/setup_databases.sh
+colabfold_msa_server_pdb_server: rsync.wwpdb.org::ftp
+colabfold_msa_server_pdb_port: 33444
+colabfold_msa_server_runtime_databases: /dev/shm/colabfold_databases
+colabfold_msa_server_bin: "{{ miniconda_prefix }}/envs/colabfold_msa_server/bin"
