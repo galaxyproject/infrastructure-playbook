@@ -1,0 +1,26 @@
+---
+
+- name: Mail (MX) Servers
+  hosts: mx_servers
+  roles:
+    - role: galaxyproject.general.virtual
+      # postfix here to get the elastic IP
+      tags: [general, postfix]
+    - role: galaxyproject.general.packages
+      tags: general
+    - role: galaxyproject.general.paths
+      tags: general
+    - role: galaxyproject.general.users
+      tags: general
+    - role: galaxyproject.opendkim
+      tags: [postfix, opendkim]
+    - role: galaxyproject.postfix
+      tags: postfix
+  post_tasks:
+    - name: Add postfix user to opendkim group
+      user:
+        name: postfix
+        groups: opendkim
+      notify:
+        - restart postfix
+      tags: postfix
