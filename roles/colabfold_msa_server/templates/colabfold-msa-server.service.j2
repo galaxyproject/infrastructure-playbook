@@ -1,6 +1,12 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
 [Unit]
 Description=MMseqs2 Server
 After=network.target
+{% for opt in colabfold_msa_server_systemd_unit_options | default({}) | dict2items %}
+{{ opt.key }}={{ opt.value }}
+{% endfor %}
 
 [Service]
 WorkingDirectory={{ colabfold_msa_server_root }}
@@ -11,4 +17,4 @@ Restart=on-failure
 RestartSec=10s
 
 [Install]
-WantedBy=multi-user.target
+WantedBy={{ colabfold_msa_server_systemd_wanted_by | default("multi-user.target") }}

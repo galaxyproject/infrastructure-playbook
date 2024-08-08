@@ -6,7 +6,7 @@
     scope: user
 
 - name: Restart ColabFold MSA Server
-  systemd:
+  ansible.builtin.systemd:
     name: colabfold-msa-server.service
     state: restarted
     scope: user

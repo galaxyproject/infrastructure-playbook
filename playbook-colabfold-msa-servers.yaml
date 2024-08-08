@@ -2,6 +2,23 @@
 
 - name: ColabFold MSA Servers
   hosts: colabfold_msa_servers
+  handlers:
+    # FIXME: where is the notify for this?
+    - name: systemd restart pulsar
+      ansible.builtin.systemd:
+        name: "{{ pulsar_systemd_service_name }}.service"
+        state: restarted
+        scope: user
+  pre_tasks:
+    - name: Enable lingering
+      ansible.builtin.command: loginctl enable-linger {{ pulsar_user }}
+      args:
+        creates: "/var/lib/systemd/linger/{{ pulsar_user }}"
+      #when: pulsar_systemd_enabled and not pulsar_systemd_root
   roles:
     - role: galaxyproject.miniconda
+      tags: [colabfold_msa_server, pulsar]
     - role: colabfold_msa_server
+      tags: colabfold_msa_server
+    - role: galaxyproject.pulsar
+      tags: pulsar

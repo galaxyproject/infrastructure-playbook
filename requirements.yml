@@ -13,6 +13,9 @@ roles:
     version: 1.1.6
   - name: galaxyproject.postgresql_objects
     version: 1.2.0
+  - name: galaxyproject.pulsar
+    src: https://github.com/galaxyproject/ansible-pulsar
+    version: user-systemd-unit
   - name: usegalaxy_eu.certbot
     version: 0.1.11
   - name: galaxyproject.slurm

@@ -4,3 +4,128 @@ colabfold_msa_server_root: /data/mschatz1/galaxy/colabfold
 colabfold_msa_server_databases: /scratch4/mschatz1/galaxy/colabfold/databases
 colabfold_msa_server_jobs: /scratch4/mschatz1/galaxy/colabfold/jobs
 colabfold_msa_server_tmp: /scratch4/mschatz1/galaxy/colabfold/tmp
+colabfold_msa_server_systemd_wanted_by: default.target
+
+# shared /home, so this prevents it from launching on other Rockfish nodes
+colabfold_msa_server_systemd_unit_options:
+  ConditionHost: "|devgalaxy"
+
+galaxy_instance_codename: rockfish-devgalaxy
+
+_rockfish_home_root: "/home/galaxy"
+_rockfish_nfs_root: "/data/mschatz1/galaxy"
+_rockfish_scratch_root: "/scratch4/mschatz1/galaxy"
+_rockfish_instance_root: "{{ _rockfish_nfs_root }}/{{ galaxy_instance_codename }}"
+
+#host_directories:
+#  - path: "{{ _rockfish_home_root }}/bin"
+#    mode: "0755"
+#  - path: "{{ _rockfish_home_root }}/etc"
+#    mode: "0750"
+#  - path: "{{ pulsar_root }}/log"
+#    mode: "0750"
+
+#host_templates:
+#  - src: "templates/pulsar/rockfish-supervisord-launch.sh.j2"
+#    dest: "{{ _rockfish_home_root }}/bin/supervisord-launch.sh"
+#    mode: "0755"
+
+miniconda_prefix: "{{ _rockfish_nfs_root }}/conda"
+miniconda_channels:
+  - conda-forge
+  - bioconda
+miniconda_conda_environments:
+  __python@3.11:
+    packages:
+      - python=3.11
+  __curl@7.71:
+    packages:
+      - curl=7.71
+  colabfold_msa_server:
+    channels:
+      - conda-forge
+      - bioconda
+    packages:
+      - mmseqs2-server
+
+#supervisord_prefix: "{{ _rockfish_nfs_root }}/supervisor"
+#supervisord_conf_path: "{{ supervisord_prefix }}/etc/supervisord.conf"
+#supervisord_conf_dir: "{{ supervisord_prefix }}/etc/supervisord.d"
+#supervisord_log_dir: "{{ supervisord_prefix }}/var/log"
+#supervisord_run_dir: "{{ supervisord_prefix }}/var/run"
+#host_supervisor_configs:
+#  - "{{ galaxy_instance_codename }}_pulsar"
+#
+#supervisord_unprivileged_command: "{ date; pgrep -u {{ ansible_user }} supervisord || /bin/bash '{{ _rockfish_home_root }}/bin/supervisord-launch.sh'; } >> {{ supervisord_log_dir }}/supervisord-launch.log 2>&1"
+
+pulsar_root: "{{ _rockfish_instance_root }}/pulsar"
+#pulsar_restart_handler_name: supervisor restart pulsar
+pulsar_persistence_dir: "{{ _rockfish_scratch_root }}/{{ galaxy_instance_codename }}/pulsar/var"
+pulsar_staging_dir: "{{ _rockfish_scratch_root }}/{{ galaxy_instance_codename }}/staging"
+#galaxy_root: not required
+
+pulsar_systemd: true
+pulsar_systemd_root: false
+pulsar_systemd_wanted_by: default.target
+pulsar_systemd_runner: pulsar-main
+pulsar_systemd_unit_options: "{{ colabfold_msa_server_systemd_unit_options }}"
+
+#pulsar_env:
+#  PATH: "{{ miniconda_prefix }}/envs/__curl@7.71/bin:/cm/shared/apps/slurm/current/sbin:/cm/shared/apps/slurm/current/bin:/cm/shared/apps/spack/cpu/opt/spack/linux-centos8-zen/gcc-8.3.1/gcc-10.2.0-n7su7jf54rc7l2ozegds5xksy6qhrjin/bin:/home/xgalaxy/.local/bin:/home/xgalaxy/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/dell/srvadmin/bin"
+
+#pulsar_supervisor_env:
+#  - PATH="{{ pulsar_venv_dir }}/bin:/cm/shared/apps/slurm/current/bin:%(ENV_PATH)s"
+#  - LD_LIBRARY_PATH="{{ miniconda_prefix }}/envs/__curl@7.71/lib:/cm/shared/apps/slurm/current/lib64"
+#  - SLURM_CONF="{{ _rockfish_home_root }}/etc/slurm.conf"
+
+galaxy_user: galaxy
+pulsar_privsep_user: "{{ galaxy_user }}"
+pip_virtualenv_command: "{{ miniconda_prefix }}/envs/__python@3.11/bin/python3 -m venv"
+pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url https://pypi.org/simple"
+
+pulsar_pycurl_ssl_library: openssl
+pulsar_drmaa_library_path: "{{ _rockfish_instance_root }}/slurm-drmaa/lib/libdrmaa.so"
+
+pulsar_job_metrics_plugins:
+  - type: core
+  - type: cpuinfo
+    verbose: true
+  - type: meminfo
+  - type: uname
+  - type: cgroup
+
+pulsar_optional_dependencies:
+  - pycurl
+  - kombu
+
+pulsar_yaml_config:
+  staging_directory: "{{ pulsar_staging_dir }}"
+  persistence_directory: "{{ pulsar_persistence_dir }}"
+  message_queue_url: "{{ pulsar_message_queue_url }}"
+  #sentry_dsn: "{{ pulsar_sentry_dsn }}"
+  maximum_stream_size: 8388608  # 8 MB
+  amqp_acknowledge: true
+  amqp_ack_republish_time: 180
+  amqp_publish_retry: true
+  amqp_publish_retry_max_retries: 5
+  amqp_publish_retry_interval_start: 10
+  amqp_publish_retry_interval_step: 10
+  amqp_publish_retry_interval_max: 60
+  dependency_resolution:
+    resolvers:
+      - type: conda
+        prefix: "{{ miniconda_prefix }}"
+        auto_init: false
+        auto_install: false
+  managers:
+    rockfish_devgalaxy:
+      type: queued_python
+      preprocess_action_max_retries: 10
+      preprocess_action_interval_start: 2
+      preprocess_action_interval_step: 2
+      preprocess_action_interval_max: 60
+      postprocess_action_max_retries: 10
+      postprocess_action_interval_start: 2
+      postprocess_action_interval_step: 2
+      postprocess_action_interval_max: 60
+      min_polling_interval: 15

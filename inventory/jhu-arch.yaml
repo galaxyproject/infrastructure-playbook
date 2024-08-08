@@ -10,6 +10,15 @@ all:
       ansible_host: devgalaxy
 
   children:
+
     colabfold_msa_servers:
+      hosts:
+        devgalaxy-jhu:
+
+    meta_galaxy_main:
+      hosts:
+        devgalaxy-jhu:
+
+    pulsar_servers:
       hosts:
         devgalaxy-jhu:
