@@ -74,3 +74,19 @@ all:
         galaxy-main-set04-6: {ansible_host: 129.114.55.8}
         galaxy-main-set04-7: {ansible_host: 129.114.55.52}
         galaxy-main-set04-8: {ansible_host: 129.114.55.32}
+        galaxy-main-set03-1: {ansible_host: 129.114.55.36}
+        galaxy-main-set03-2: {ansible_host: 129.114.55.53}
+        galaxy-main-set03-3: {ansible_host: 129.114.55.29}
+        galaxy-main-set03-4: {ansible_host: 129.114.55.48}
+        galaxy-main-set03-5: {ansible_host: 129.114.55.49}
+        galaxy-main-set03-6: {ansible_host: 129.114.55.28}
+        galaxy-main-set03-7: {ansible_host: 129.114.55.38}
+        galaxy-main-set03-8: {ansible_host: 129.114.55.40}
+        galaxy-main-set03-9: {ansible_host: 129.114.55.14}
+        galaxy-main-set03-10: {ansible_host: 129.114.55.34}
+        galaxy-main-set03-11: {ansible_host: 129.114.55.10}
+        galaxy-main-set03-12: {ansible_host: 129.114.55.60}
+        galaxy-main-set03-13: {ansible_host: 129.114.55.25}
+        galaxy-main-set03-14: {ansible_host: 129.114.55.6}
+        galaxy-main-set03-15: {ansible_host: 129.114.55.17}
+        galaxy-main-set03-16: {ansible_host: 129.114.55.20}
