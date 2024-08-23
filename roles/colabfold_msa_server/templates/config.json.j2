@@ -18,13 +18,16 @@
             "uniref"        : "{{ colabfold_msa_server_runtime_databases }}/uniref30_2302_db",
             "pdb"           : "{{ colabfold_msa_server_runtime_databases }}/pdb100_230517",
             "pdb70"         : "{{ colabfold_msa_server_runtime_databases }}/pdb100",
-            "environmental" : "{{ colabfold_msa_server_runtime_databases }}/colabfold_envdb_202108_db"
+            "environmental" : "{{ colabfold_msa_server_runtime_databases }}/colabfold_envdb_202108_db",
+            "pdbdivided"    : "{{ colabfold_msa_server_databases }}/pdb/divided",
+            "pdbobsolete"   : "{{ colabfold_msa_server_databases }}/pdb/obsolete"
+
         },
         "mmseqs"       : "{{ colabfold_msa_server_bin }}/mmseqs"
     },
     "local" : {
         // this will allow up to 16 jobs at the same time
-        "workers"  : 16
+        "workers"  : {{ colabfold_msa_server_workers }}
     },
     // ignore the rest, redis is not used here
     "redis" : {

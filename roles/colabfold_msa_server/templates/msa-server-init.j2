@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-rsync -avP {{ colabfold_msa_server_databases }}/*.idx {{ colabfold_msa_server_runtime_databases }}
+rsync -avP {{ colabfold_msa_server_databases }}/*.idx* {{ colabfold_msa_server_runtime_databases }}
 rsync -avP {{ colabfold_msa_server_databases }}/*.ff* {{ colabfold_msa_server_runtime_databases }}
 {{ colabfold_msa_server_bin }}/mmseqs-server -local -config {{ colabfold_msa_server_root }}/server/config.json

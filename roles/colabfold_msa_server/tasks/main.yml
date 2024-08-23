@@ -45,12 +45,16 @@
     src: config.json.j2
     dest: "{{ colabfold_msa_server_root }}/server/config.json"
     mode: "0644"
+  notify:
+    - Restart ColabFold MSA Server
 
 - name: Deploy init script
   ansible.builtin.template:
     src: msa-server-init.j2
     dest: "{{ colabfold_msa_server_root }}/server/msa-server-init"
     mode: "0755"
+  notify:
+    - Restart ColabFold MSA Server
 
 - name: Create systemd user directory
   ansible.builtin.file:
