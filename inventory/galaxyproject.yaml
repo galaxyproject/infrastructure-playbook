@@ -16,6 +16,10 @@ all:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
       #hostname_strategy: file
 
+    # TEMP TEMP TEMP
+    duvel.galaxyproject.org:
+      ansible_host: 172.18.2.208
+
   vars:
     ansible_user: root
 
@@ -34,6 +38,10 @@ all:
         radegast.galaxyproject.org:
         thumper.galaxyproject.org:
         rochefort.galaxyproject.org:
+        # FIXME: overrides postfix_config
+        #newtrail.galaxyproject.org:
+        #artifact.galaxyproject.org:
+        duvel.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -42,6 +50,7 @@ all:
         cvmfs_stratum1_servers:
         certbot_servers:
         tool_shed_servers:
+        galaxyproject_core_servers:
 
     virtual_hosts:
       hosts:
@@ -50,6 +59,8 @@ all:
         cvmfs1-psu0.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
+      children:
+        galaxyproject_core_servers:
 
     auto_update_hosts:
       children:
@@ -79,6 +90,17 @@ all:
         jeltz.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
+      children:
+        galaxyproject_core_servers:
+
+    # DNS/Kerberos KDC/???
+    galaxyproject_core_servers:
+      hosts:
+        duvel.galaxyproject.org:
+
+    kerberos_kdc_servers:
+      hosts:
+        duvel.galaxyproject.org:
 
     # Grants access to ssh private keys
     ssh_clients:

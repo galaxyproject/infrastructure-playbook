@@ -1,0 +1,15 @@
+---
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Restart GLAuth
+  ansible.builtin.service:
+    name: glauth.service
+    state: restarted
+
+- name: Restart GLAuth proxy
+  ansible.builtin.service:
+    name: glauth-proxy.service
+    state: restarted

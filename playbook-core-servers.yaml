@@ -1,0 +1,7 @@
+---
+
+- name: Core Servers
+  hosts: galaxyproject_core_servers
+  roles:
+    - role: glauth
+    #- role: kerberos_kdc

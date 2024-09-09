@@ -1,0 +1,19 @@
+---
+
+kerberos_kdc_admin_server_packages: "{{ kerberks_kdc_mit_admin_server_packages }}"
+kerberos_kdc_packages: "{{ kerberos_kdc_mit_packages }}"
+#kerberos_kdc_debconf_options: "{{ kerberos_kdc_mit_debconf_options }}"  # this would just be ignored on EL
+kerberos_kdc_service_name: "{{ kerberos_kdc_mit_service_name }}"
+kerberos_kdc_config_dir: "{{ kerberos_kdc_mit_config_dir }}"
+kerberos_kdc_defaults_file: "{{ kerberos_kdc_mit_defaults_file }}"
+kerberos_kdc_kadmind_acl_file: "{{ kerberos_kdc_mit_kadmind_acl_file }}"
+#kerberos_kdc_replicas_file: "{{ kerberos_kdc_mit_replicas_file }}"
+#kerberos_kdc_inetd_service_name: "{{ kerberos_kdc_mit_inetd_service_name }}"
+kerberos_kdc_dbname: "{{ kerberos_kdc_mit_dbname }}"
+#kerberos_kdc_log: "{{ kerberos_kdc_mit_log }}"
+
+kerberos_kdc_admin_keytab: "FILE:{{ kerberos_kdc_mit_config_dir }}/kadm5.keytab"
+kerberos_kdc_stash_file: "{{ kerberos_kdc_mit_config_dir }}/stash"
+#kerberos_kdc_iprop_keytab: "{{ kerberos_kdc_config_dir }}/iprop.keytab"
+kerberos_kdc_conf_file_template: kdc.conf.mit.j2
+kerberos_kdc_admin_server_service_name: "{{ kerberos_kdc_mit_admin_server_service_name }}"

@@ -1,0 +1,146 @@
+---
+
+- name: GLAuth version block
+  block:
+
+    - name: Fetch latest GLAuth release information
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/glauth/glauth/releases/latest
+      register: __glauth_release_latest_response
+
+    - name: Set latest GLAuth release number
+      ansible.builtin.set_fact:
+        glauth_version: "{{ __glauth_release_latest_response.json.tag_name }}"
+
+  when: glauth_version == 'latest'
+
+- name: Check for GLAuth existence
+  ansible.builtin.stat:
+    path: "{{ glauth_path }}"
+  register: __glauth_exists
+
+- name: GLAuth current version block
+  block:
+
+    - name: Get current GLAuth version
+      ansible.builtin.command: "{{ glauth_path }} --version"
+      changed_when: false
+      register: __glauth_current_version_response
+
+    - name: Set current GLAuth version fact
+      ansible.builtin.set_fact:
+        __glauth_current_version: >-
+            {{ __glauth_current_version_response.stdout_lines
+              | select('search', '^GLauth v.*')
+              | first
+              | regex_replace('^GLauth (v.*)$', '\1') }}
+
+  when: __glauth_exists.stat.exists
+
+- name: GLAuth install block
+  block:
+
+    - name: Report why GLAuth is being installed
+      ansible.builtin.debug:
+        msg: >-
+          GLAuth requested/latest version '{{ glauth_version }}' != installed version
+          '{{ __glauth_current_version | default("not installed") }}'
+
+    - name: Fetch GLAuth binary
+      ansible.builtin.get_url:
+        url: "{{ glauth_binary_url }}"
+        dest: "{{ glauth_path }}"
+        owner: "{{ glauth_owner | default(omit) }}"
+        group: "{{ glauth_group | default(omit) }}"
+        mode: "{{ glauth_mode | default('0755') }}"
+
+  when: not __glauth_exists.stat.exists or __glauth_current_version != glauth_version
+
+- name: GLAuth user block
+  block:
+
+    - name: Create GLAuth group
+      ansible.builtin.group:
+        name: "{{ glauth_user.group | default(glauth_user.name) }}"
+        gid: "{{ glauth_user.gid | default(omit) }}"
+        local: true
+        system: true
+
+    - name: Create GLAuth user
+      ansible.builtin.user:
+        name: "{{ glauth_user.name }}"
+        comment: "{{ glauth_user.comment | default('GLAuth Server') }}"
+        uid: "{{ glauth_user.uid | default(omit) }}"
+        group: "{{ glauth_user.group | default(glauth_user.name) }}"
+        home: "{{ glauth_user.home | default((ansible_os_family == 'Debian') | ternary('/nonexistent', '/dev/null')) }}"
+        create_home: "{{ glauth_user.create_home | default(false) }}"
+        shell: "{{ glauth_user.shell | default((ansible_os_family == 'Debian') | ternary('/bin/false', '/sbin/nologin')) }}"
+        local: true
+        system: true
+
+  when: glauth_create_user
+
+- name: Deploy GLAuth configuration
+  ansible.builtin.template:
+    src: glauth.cfg.j2
+    dest: "{{ glauth_config_path }}"
+    mode: "{{ glauth_config_mode }}"
+    owner: root
+    group: "{{ glauth_user.group | default(glauth_user.name) | default('root') }}"
+  notify:
+    - Restart GLAuth
+
+- name: GLAuth Systemd socket proxy block
+  block:
+
+    - name: Install GLAuth proxy systemd service unit
+      ansible.builtin.template:
+        src: glauth-proxy.service.j2
+        dest: /etc/systemd/system/glauth-proxy.service
+        mode: 0644
+      notify:
+        - Reload systemd
+        - Restart GLAuth proxy
+
+    - name: Install GLAuth proxy systemd socket unit
+      ansible.builtin.template:
+        src: glauth-proxy.socket.j2
+        dest: /etc/systemd/system/glauth-proxy.socket
+        mode: 0644
+      notify:
+        - Reload systemd
+        - Restart GLAuth proxy
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Ensure GLAuth proxy socket is enabled
+      service:
+        name: glauth-proxy.socket
+        state: started
+        enabled: true
+
+  when: glauth_systemd_socket_proxy
+
+- name: GLAuth Systemd block
+  block:
+
+    - name: Install GLAuth systemd service unit
+      ansible.builtin.template:
+        src: glauth.service.j2
+        dest: /etc/systemd/system/glauth.service
+        mode: 0644
+      notify:
+        - Reload systemd
+        - Restart GLAuth
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Ensure GLAuth is enabled and running
+      service:
+        name: glauth.service
+        state: started
+        enabled: true
+
+  when: glauth_systemd

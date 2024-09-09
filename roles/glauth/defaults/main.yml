@@ -1,0 +1,93 @@
+---
+
+# Use 'latest' to install the latest (stable) release from https://github.com/glauth/glauth/releases/, or a valid tag
+# for a specific tagged release (e.g. v2.3.2)
+glauth_version: latest
+
+# Path of the glauth binary
+glauth_path: /usr/local/sbin/glauth
+
+# Owner, group, mode of the glauth binary
+# glauth_owner: omit
+# glauth_group: omit
+# glauth_mode: 0755
+
+# Run GLAuth as an unprivileged user
+#glauth_user:
+#  name: glauth
+#  group: glauth
+#  # all remaining attributes are optional
+#  uid: 389
+#  gid: 389
+#  comment: GLAuth Server
+#  home: /
+#  create_home: false
+#  shell: /bin/false
+
+# Whether or not the role should create the user
+glauth_create_user: "{{ glauth_user is defined }}"
+
+# If using Linux, you can install a systemd service unit to start and manage your glauth instances
+glauth_systemd: true
+
+# If using Linux, you can install systemd service/socket units to proxy the privileged port 389 to glauth
+glauth_systemd_socket_proxy: "{{ glauth_systemd and glauth_user is defined }}"
+
+# GLAuth configuration
+glauth_config_path: /etc/glauth.cfg
+glauth_config_mode: "0640"
+# Be sure to explicitly include any quote characters as needed for toml
+glauth_config_root:
+  debug: true
+glauth_config_ldap:
+  enabled: true
+  listen: "127.0.0.1:3893"
+  tls: false
+  #tlsCertPath: "glauth.crt"
+  #tlsKeyPath: "glauth.key"
+glauth_config_ldaps:
+  enabled: false
+  #listen: "127.0.0.1:6363"
+  #cert: "glauth.crt"
+  #key: "glauth.key"
+glauth_config_tracing:
+  enabled: false
+glauth_config_backend:
+  datastore: "config"
+  baseDN: "dc=glauth,dc=com"
+  nameformat: "cn"
+  groupformat: "ou"
+glauth_config_behaviors:
+  IgnoreCapabilities: false
+  LimitFailedBinds: true
+  NumberOfFailedBinds: 3
+  PeriodOfFailedBinds: 10
+  BlockFailedBindsFor: 60
+  PruneSourcesOlderThan: 600
+glauth_config_api:
+  enabled: true
+  internals: true
+  tls: false
+  listen: "127.0.0.1:5555"
+  #cert: "cert.pem"
+  #key: "key.pem"
+glauth_config_users:
+  - name: "prisoner"
+    uidNumber: 6
+    primaryGroup: 13
+    # subentries (e.g. [[users.customattributes]]) not supported
+    # lists are supported
+    sshkeys:
+      - "ssh-rsa AAAAB3N..."
+glauth_config_groups:
+  - name: "thevillage"
+    gidNumber: 13
+
+# This is used to download the correct binary, which are named like
+# 'glauth-{{ glauth_os }}-{{ glauth_arch }}"
+glauth_os: "{{ ansible_system | lower }}"
+glauth_arch: "{{ (ansible_architecture == 'x86_64') | ternary ('amd64', ansible_architecture) }}"
+
+# You should generally not set this directly
+glauth_binary_platform: "glauth-{{ glauth_os }}-{{ glauth_arch }}"
+glauth_binary_url: "https://github.com/glauth/glauth/releases/download/{{ glauth_version }}/{{ glauth_binary_platform }}"

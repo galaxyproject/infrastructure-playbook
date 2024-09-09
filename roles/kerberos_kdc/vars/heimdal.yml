@@ -8,7 +8,8 @@ kerberos_kdc_defaults_file: "{{ kerberos_kdc_heimdal_defaults_file }}"
 kerberos_kdc_kadmind_acl_file: "{{ kerberos_kdc_heimdal_kadmind_acl_file }}"
 kerberos_kdc_replicas_file: "{{ kerberos_kdc_heimdal_replicas_file }}"
 kerberos_kdc_inetd_service_name: "{{ kerberos_kdc_heimdal_inetd_service_name }}"
-kerberos_kdc_dbname: "{{ kerberos_kdc_heimdal_dbname }}"  # what does MIT use for this?
+kerberos_kdc_dbname: "{{ kerberos_kdc_heimdal_dbname }}"
 kerberos_kdc_log: "{{ kerberos_kdc_heimdal_log }}"
 
 kerberos_kdc_iprop_keytab: "{{ kerberos_kdc_config_dir }}/iprop.keytab"
+kerberos_kdc_conf_file_template: kdc.conf.heimdal.j2

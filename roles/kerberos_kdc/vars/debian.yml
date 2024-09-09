@@ -25,4 +25,21 @@ kerberos_kdc_heimdal_dbname: "{{ kerberos_kdc_heimdal_state_dir }}/heimdal"
 kerberos_kdc_heimdal_log: "FILE:/var/log/heimdal-kdc.log"
 kerberos_kdc_heimdal_defaults_file: "/etc/default/heimdal-kdc"
 
-## MIT would go down here
+
+## MIT definitions
+kerberos_kdc_mit_packages:
+  - "krb5-kdc"
+
+kerberos_kdc_mit_service_name: "krb5-kdc"
+kerberos_kdc_mit_config_dir: "/etc/krb5kdc"
+kerberos_kdc_mit_state_dir: "/var/lib/krb5kdc"
+kerberos_kdc_mit_kadmind_acl_file: "{{ kerberos_kdc_mit_config_dir }}/kadm5.acl"
+# unfortunately this filename is not configurable
+#kerberos_kdc_mit_replicas_file: "{{ kerberos_kdc_mit_state_dir }}/slaves"
+kerberos_kdc_mit_dbname: "{{ kerberos_kdc_mit_state_dir }}/principal"  # What is this on replicas?
+#kerberos_kdc_mit_log: "FILE:/var/log/mit-kdc.log"
+#kerberos_kdc_mit_defaults_file: "/etc/default/mit-kdc"
+
+kerberos_kdc_mit_admin_server_packages:
+  - "krb5-admin-server"
+kerberos_kdc_mit_admin_server_service_name: "krb5-admin-server"

@@ -1,0 +1,11 @@
+[Unit]
+Requires=glauth.service
+After=glauth.service
+Requires=glauth-proxy.socket
+After=glauth-proxy.socket
+JoinsNamespaceOf=glauth.service
+
+[Service]
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:{{ glauth_config_ldap.listen.split(":")[-1] }}
+PrivateTmp=yes
+PrivateNetwork=yes

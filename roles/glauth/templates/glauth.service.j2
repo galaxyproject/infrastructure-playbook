@@ -1,0 +1,22 @@
+### 
+### This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+###
+
+[Unit]
+Description=GLAuth server
+After=network.target
+After=time-sync.target
+
+[Service]
+UMask=022
+Type=simple
+User={{ glauth_user.name | default('root') }}
+Group={{ glauth_user.group | default(glauth_user.name) | default('root') }}
+TimeoutStartSec=10
+ExecStart={{ glauth_path }} -c {{ glauth_config_path }}
+Restart=always
+PrivateTmp=yes
+PrivateNetwork=yes
+
+[Install]
+WantedBy=multi-user.target

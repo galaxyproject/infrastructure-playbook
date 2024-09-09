@@ -7,3 +7,67 @@ galaxyproject_groups: "{{ vault_galaxyproject_groups }}"
 # hosts inside the UEN can't make SMTP connections outside I guess
 postfix_config:
   relayhost: "[smtp.psu.edu]"
+
+# Both MXs and Mailman servers need these
+mailman3_distribute_maps_dir: /var/list
+mailman3_domains:
+  - lists.galaxyproject.org
+  - lists.anvilproject.org
+
+kerberos_kdc_admin_server: duvel.galaxyproject.org
+
+# GLAuth configuration
+glauth_user:
+  name: glauth
+  uid: 389
+  gid: 389
+
+glauth_config_backend:
+  datastore: "config"
+  baseDN: "dc=galaxyproject,dc=org"
+  nameformat: "uid"
+  groupformat: "cn"
+  anonymousdse: true
+
+glauth_config_behaviors:
+  IgnoreCapabilities: true
+
+glauth_config_users:
+  # annoying that a bind user is required
+  - name: "bind"
+    primaryGroup: 16384
+    #passsha256: testing value removed to avoid tripping repo scanners
+  - name: "nate"
+    #givenName: not implemented?
+    #sn: not implemented?
+    displayName: "Nate Coraor"
+    #gecos: not implemented?
+    uidNumber: 2048
+    primaryGroup: 2048
+    otherGroups: [4096, 4097]
+    loginShell: "/bin/zsh"
+    #loginShell: "/bin/false"
+    homeDirectory: "/home/nate"
+    #passsha256:
+    # will be overridden if user creates a ~/.ssh/authorized_keys, but this avoids having to precreate. or you can log in with a password eh
+    sshkeys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFH54+qZEBeU5uwIeWWOViLcC509qxoRW6oN0VHRQr4r nate@treehouse"
+  - name: "shared"
+    primaryGroup: 1024
+    uidNumber: 1024
+    loginShell: "/bin/bash"
+    homeDirectory: "/"
+    sshkeys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFH54+qZEBeU5uwIeWWOViLcC509qxoRW6oN0VHRQr4r nate@treehouse"
+
+glauth_config_groups:
+  #- name: "people"
+  #  gidNumber: 2000
+  - name: "nate"
+    gidNumber: 2048
+  - name: "bind"
+    gidNumber: 16384
+  - name: "access-all"
+    gidNumber: 4096
+  - name: "bonus"
+    gidNumber: 4097

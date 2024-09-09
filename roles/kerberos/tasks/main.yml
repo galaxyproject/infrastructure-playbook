@@ -11,8 +11,8 @@
     mode: 0444
     backup: yes
 
-- include_tasks: k5login.yml
-  when: k5login_users is defined and inventory_hostname in groups['kerberosauthclients']
-
-- include_tasks: auth.yml
-  when: inventory_hostname in groups['kerberosauthclients']
+#- include_tasks: k5login.yml
+#  when: k5login_users is defined and inventory_hostname in groups['kerberosauthclients']
+#
+#- include_tasks: auth.yml
+#  when: inventory_hostname in groups['kerberosauthclients']

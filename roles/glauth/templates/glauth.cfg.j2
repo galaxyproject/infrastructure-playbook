@@ -1,0 +1,41 @@
+###
+### This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+###
+
+#################
+# General configuration.
+{{ glauth_config_root | galaxyproject.general.to_toml }}
+
+#################
+# Server configuration.
+[ldap]
+{{ glauth_config_ldap | galaxyproject.general.to_toml }}
+
+[ldaps]
+{{ glauth_config_ldaps | galaxyproject.general.to_toml }}
+
+#################
+# Tracing section controls the tracer configuration
+[tracing]
+{{ glauth_config_tracing | galaxyproject.general.to_toml }}
+
+#################
+# The backend section controls the data store.
+[backend]
+{{ glauth_config_backend | galaxyproject.general.to_toml }}
+
+[behaviors]
+{{ glauth_config_behaviors | galaxyproject.general.to_toml }}
+
+#################
+# Enable and configure the optional REST API here.
+[api]
+{{ glauth_config_api | galaxyproject.general.to_toml }}
+
+#################
+# The users section contains a hardcoded list of valid users.
+{{ {"users": glauth_config_users} | galaxyproject.general.to_toml }}
+
+#################
+# The groups section contains a hardcoded list of valid users.
+{{ {"groups": glauth_config_groups} | galaxyproject.general.to_toml }}

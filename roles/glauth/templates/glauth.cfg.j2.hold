@@ -1,0 +1,127 @@
+###
+### This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+###
+
+#################
+# General configuration.
+{% for k, v in glauth_config_root.items() | default({}) %}
+{% if v is string %}
+{{ k }} = "{{ v }}"
+{% else %}
+{{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+#################
+# Server configuration.
+[ldap]
+{% for k, v in glauth_config_ldap.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+[ldaps]
+{% for k, v in glauth_config_ldaps.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+#################
+# Tracing section controls the tracer configuration
+[tracing]
+{% for k, v in glauth_config_tracing.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+#################
+# The backend section controls the data store.
+[backend]
+{% for k, v in glauth_config_backend.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+[behaviors]
+{% for k, v in glauth_config_behaviors.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+#################
+# Enable and configure the optional REST API here.
+[api]
+{% for k, v in glauth_config_api.items() | default({}) %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endfor %}
+
+#################
+# The users section contains a hardcoded list of valid users.
+{% for user in glauth_config_users | default([]) %}
+[[users]]
+{% for k, v in user.items() | default({}) %}
+{% if v is not string and v is not mapping and v is sequence %}
+  {{ k }} = [
+{% for i in v %}
+{% if i is string %}
+    "{{ i }}",
+{% else %}
+    {{ i }},
+{% endif %}
+{% endfor %}
+  ]
+{% else %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% endfor %}
+
+#################
+# The groups section contains a hardcoded list of valid users.
+{% for group in glauth_config_groups | default([]) %}
+[[groups]]
+{% for k, v in group.items() | default({}) %}
+{% if v is not string and v is not mapping and v is sequence %}
+  {{ k }} = [
+{% for i in v %}
+{% if i is string %}
+    "{{ i }}",
+{% else %}
+    {{ i }},
+{% endif %}
+{% endfor %}
+  ]
+{% else %}
+{% if v is string %}
+  {{ k }} = "{{ v }}"
+{% else %}
+  {{ k }} = {{ v }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% endfor %}
