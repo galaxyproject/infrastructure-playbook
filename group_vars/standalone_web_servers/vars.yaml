@@ -1,0 +1,4 @@
+---
+
+standalone_web_servers_group_packages:
+  - python3-venv

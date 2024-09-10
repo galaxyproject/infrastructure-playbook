@@ -127,12 +127,19 @@ all:
         datacache_servers:
         tool_shed_servers:
         depot_servers:
+        standalone_web_servers:
 
     certbot_servers:
       children:
         stats_servers:
         tool_shed_servers:
         depot_servers:
+        standalone_web_servers:
+
+    # these are deployed via the standalone web servers playbook and not as part of another system
+    standalone_web_servers:
+      hosts:
+        duvel.galaxyproject.org:
 
     list_servers:
       hosts:
