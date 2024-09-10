@@ -1,7 +1,7 @@
 ---
 
 - name: Create zones directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ dns_bind_zones_dir }}"
     group: "{{ dns_group }}"
@@ -9,14 +9,14 @@
   when: "'dnsprimaryservers' in group_names"
 
 - name: Create secondary/journal directory
-  file:
+  ansible.builtin.file:
     state: directory
     path: "{{ dns_bind_secondary_zones_dir }}"
     group: "{{ dns_group }}"
     mode: "0770"
 
 - name: Disable inclusion of named.conf.default-zones
-  replace:
+  ansible.builtin.replace:
     dest: "{{ dns_config_dir }}/named.conf"
     regexp: '^(include "/etc/bind/named.conf.default-zones";)'
     replace: '#\1'

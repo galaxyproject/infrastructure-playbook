@@ -1,0 +1,9 @@
+---
+
+- name: DNS Servers
+  hosts: dns_servers
+  roles:
+    #- role: galaxyproject.general.virtual
+    #  tags: general
+    - name: dns
+      tags: dns

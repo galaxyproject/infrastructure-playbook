@@ -1,14 +1,21 @@
 ---
 
-- name: Install packages
-  package:
+- name: Install packages (apt)
+  ansible.builtin.apt:
     name: "{{ dns_packages }}"
+    cache_valid_time: 3600
+  when: ansible_os_family == "Debian"
+
+- name: Install packages (dnf)
+  ansible.builtin.dnf:
+    name: "{{ dns_packages }}"
+  when: ansible_os_family == "RedHat"
 
 - name: Include DNS implementation tasks
-  include_tasks: "{{ dns_implementation | lower }}.yml"
+  ansible.builtin.include_tasks: "{{ dns_implementation | lower }}.yml"
 
 - name: Create DNS log directory
-  file:
+  ansible.builtin.file:
     state: directory
     dest: "{{ dns_log_dir }}"
     owner: "{{ dns_user }}"
@@ -17,19 +24,19 @@
   when: dns_log_dir is not none and dns_log_dir != ""
 
 - name: Install config files
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}.j2"
     dest: "{{ dns_config_dir }}/{{ item.dest }}"
     # this owner/mode scheme matches what debian does, even though it doesn't really make sense
     group: "{{ dns_group }}"
     mode: "0440"
     backup: yes
-  with_items: "{{ dns_config_templates }}"
+  loop: "{{ dns_config_templates }}"
   notify:
     - restart dns
 
 - name: Ensure DNS server is enabled and running
-  service:
+  ansible.builtin.service:
     name: "{{ dns_service_name }}"
     state: started
     enabled: yes

@@ -19,10 +19,6 @@ dns_bind_options:
   - query-source: 'address * port *'
   # negative cache ttl
   - max-ncache-ttl: 3600        # 1 hour
-  # how long to remember that a given ns isn't authoritative for a domain
-  - lame-ttl: 86400             # 24 hours
-  # how long to clean the cache
-  - cleaning-interval: 120      # 2 hours
 
 dns_bind_acls:
   - name: 'galaxy'
@@ -42,10 +38,12 @@ dns_bind_acls:
 dns_bind_control_inet_specs:
   - '127.0.0.1 allow { localhost; }'
 
+dns_log_dir: null
 dns_bind_logging_channels:
   - name: 'bind'
     options:
-      - file: '"{{ dns_log_dir }}/named.log" versions 3 size 5m'
+      # log to journald
+      - 'stderr'
       - severity: 'debug 1'
       - print-severity: 'yes'
       - print-time: 'yes'

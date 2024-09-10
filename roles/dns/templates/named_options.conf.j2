@@ -51,9 +51,13 @@ logging {
     {% for channel in dns_bind_logging_channels %}
     channel {{ channel.name }} {
         {% for pair in channel.options %}
+        {% if pair is string %}
+        {{ pair }};
+        {% else %}
         {% for key in pair %}
         {{ key }} {{ pair[key] }};
         {% endfor %}
+        {% endif %}
         {% endfor %}
     };
     {% endfor %}
