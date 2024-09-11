@@ -12,6 +12,7 @@ all_packages:
   - git
   - tmux
   - vim
+  - rsync
   # NOTE: htop is in EPEL
   - htop
 

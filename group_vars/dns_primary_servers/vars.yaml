@@ -1,6 +1,7 @@
 ---
 
-dns_bind_keys: "{{ vault_dns_bind_keys }} + {{ certbot_ddns_keys }}"
+certbot_ddns_keys: "{{ vault_certbot_ddns_keys }}"
+dns_bind_keys: "{{ vault_dns_bind_keys + certbot_ddns_keys }}"
 
 dns_bind_views:
   - name: 'galaxy'
@@ -26,7 +27,6 @@ dns_bind_views:
       - file: 'repeatme.org.zone'
       - file: 'galaxy2.org.zone'
       - file: 'galaxyworkbench.org.zone'
-      - file: 'gxy.io.zone'
       - file: 'galaxy.training.zone'
       - file: 'galaxy.tools.zone'
       - file: 'toolshed.tools.zone'
@@ -59,7 +59,6 @@ dns_bind_views:
       - file: 'repeatme.org.zone'
       - file: 'galaxy2.org.zone'
       - file: 'galaxyworkbench.org.zone'
-      - file: 'gxy.io.zone'
       - file: 'galaxy.training.zone'
       - file: 'galaxy.tools.zone'
       - file: 'toolshed.tools.zone'

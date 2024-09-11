@@ -12,6 +12,8 @@ nginx_conf_http:
   client_max_body_size: 128m
   proxy_read_timeout: 300
 
+nginx_flavor: light
+
 nginx_servers:
   - certbot_redirects
 

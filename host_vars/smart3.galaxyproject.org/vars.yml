@@ -19,10 +19,6 @@ smartos_images:
   # debian-12 20231127 linux zvol 2023-11-27
   - uuid: d89041d8-41b9-481d-918a-722be4598dd1
     state: present
-  # debian-12 20240612 linux zvol 2024-06-12
-  - uuid: f96d7627-98c2-4332-bc97-2ad630f926d2
-    state: present
-
 
 smartos_vms:
   - name: duvel

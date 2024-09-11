@@ -17,6 +17,10 @@ all:
       #hostname_strategy: file
 
     # initial set up
+    #newtrail.galaxyproject.org:
+    #  ansible_host: 18.218.3.91
+    #  ansible_user: admin
+    #  ansible_become: true
     #artifact.galaxyproject.org:
     #  ansible_host: 18.220.147.32
     #  ansible_user: admin
@@ -31,6 +35,7 @@ all:
     # - galaxyproject_users, galaxyproject_groups
     meta_galaxyproject:
       hosts:
+        newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         llv.galaxyproject.org:
@@ -147,6 +152,7 @@ all:
     # these are deployed via the standalone web servers playbook and not as part of another system
     standalone_web_servers:
       hosts:
+        newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
 
