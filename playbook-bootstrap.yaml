@@ -6,7 +6,8 @@
   roles:
     - role: usegalaxy_org.bootstrap
 
-- name: Bootstrap for Ansible
+- name: Bootstrap additional
   hosts: all
   roles:
     - role: galaxyproject.general.virtual
+    - role: galaxyproject.general.users

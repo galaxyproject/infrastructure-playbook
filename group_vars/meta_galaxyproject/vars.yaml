@@ -4,6 +4,11 @@
 galaxyproject_users: "{{ vault_galaxyproject_users }}"
 galaxyproject_groups: "{{ vault_galaxyproject_groups }}"
 
+galaxyproject_root_users: "{{ vault_galaxyproject_root_users }}"
+meta_galaxyproject_group_authorized_key_users:
+  - name: root
+    authorized: "{{ galaxyproject_root_users }}"
+
 # hosts inside the UEN can't make SMTP connections outside I guess
 postfix_config:
   relayhost: "[smtp.psu.edu]"

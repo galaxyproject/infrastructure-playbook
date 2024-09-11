@@ -25,6 +25,7 @@ all:
     # - galaxyproject_users, galaxyproject_groups
     meta_galaxyproject:
       hosts:
+        duvel.galaxyproject.org:
         llv.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
