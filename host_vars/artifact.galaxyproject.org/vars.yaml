@@ -4,16 +4,13 @@ host_directories:
   - path: /srv/nginx
   - path: /srv/nginx/galaxyproject.org/alias
 
-ldap_server_uris:
-  - ldap://localhost/ # prefer self
-  - ldap://ldap1.galaxyproject.org/
-  - ldap://ldap3.galaxyproject.org/
-
 nginx_conf_http:
   server_names_hash_bucket_size: 128
   # why are these so high?
-  client_max_body_size: 1g
-  proxy_read_timeout: 3600
+  #client_max_body_size: 1g
+  #proxy_read_timeout: 3600
+  client_max_body_size: 128m
+  proxy_read_timeout: 300
 
 nginx_servers:
   - certbot_redirects

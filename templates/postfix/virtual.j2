@@ -1,0 +1,3 @@
+{% for key in postfix_virtual_aliases | default({}) | sort %}
+{{ key }}	{{ postfix_virtual_aliases[key] }}
+{% endfor %}

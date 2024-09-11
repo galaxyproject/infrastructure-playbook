@@ -16,6 +16,12 @@ all:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
       #hostname_strategy: file
 
+    # initial set up
+    #artifact.galaxyproject.org:
+    #  ansible_host: 18.220.147.32
+    #  ansible_user: admin
+    #  ansible_become: true
+
   vars:
     ansible_user: root
 
@@ -25,6 +31,7 @@ all:
     # - galaxyproject_users, galaxyproject_groups
     meta_galaxyproject:
       hosts:
+        artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         llv.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
@@ -44,6 +51,7 @@ all:
         certbot_servers:
         tool_shed_servers:
 
+    # FIXME: is this group necessary?
     virtual_hosts:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
@@ -75,6 +83,8 @@ all:
 
     psu_public_hosts:
       hosts:
+        newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
@@ -137,6 +147,7 @@ all:
     # these are deployed via the standalone web servers playbook and not as part of another system
     standalone_web_servers:
       hosts:
+        artifact.galaxyproject.org:
         duvel.galaxyproject.org:
 
     list_servers:

@@ -8,6 +8,11 @@ mx_servers_group_users:
   - name: list
     shell: /bin/bash
 
+# Debian EC2 images come without cron, I wasn't aware that was something a Linux could do
+mx_servers_group_packages:
+  - cron
+  - tmpreaper
+
 #
 # galaxyproject.opendkim
 #
@@ -49,8 +54,13 @@ postfix_postsrsd: true
 
 # vaulted for privacy
 postfix_aliases: "{{ vault_postfix_aliases }}"
+postfix_virtual_aliases: "{{ vault_postfix_virtual_aliases }}"
+
+postfix_virtual_domains:
+  - brc-analytics.org
 
 postfix_config:
+  compatibility_level: 3.6
   alias_database: hash:/etc/postfix/aliases
   alias_maps: hash:/etc/postfix/aliases
   local_recipient_maps: $alias_maps
@@ -71,6 +81,9 @@ postfix_config:
   #content_filter: null
   #smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
   #parent_domain_matches_subdomains: debug_peer_list,fast_flush_domains,mynetworks,permit_mx_backup_networks,qmqpd_authorized_clients,relay_domains
+  virtual_alias_domains: "{{ postfix_virtual_domains | join(', ') }}"
+  virtual_alias_maps: hash:/etc/postfix/virtual
+
 postfix_master_config:
   # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
   # we create a loop; additionally, sign all mail that passes through amavis.
@@ -119,6 +132,6 @@ postfix_amavisd_new_config:
   '@spam_kill_level_maps': ({'{{ mailman3_domains | join("' => 9999, '") }}' => 9999}, \$sa_kill_level_deflt,)
   '@bypass_virus_checks_acl': "@virus_lovers_acl = qw({{ mailman3_domains | join(' ') }})"
 
-# templates/postfix/relay_restrictions.j2 in the playbook
-#postfix_maps:
-#  - postfix/relay_restrictions
+# templates/{{ item }}.j2 in the playbook
+postfix_maps:
+  - postfix/virtual
