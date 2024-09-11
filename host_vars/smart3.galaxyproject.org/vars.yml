@@ -19,6 +19,10 @@ smartos_images:
   # debian-12 20231127 linux zvol 2023-11-27
   - uuid: d89041d8-41b9-481d-918a-722be4598dd1
     state: present
+  # debian-12 20240612 linux zvol 2024-06-12
+  - uuid: f96d7627-98c2-4332-bc97-2ad630f926d2
+    state: present
+
 
 smartos_vms:
   - name: duvel
@@ -32,24 +36,6 @@ smartos_vms:
         netmask: 255.255.255.224
         gateway: 128.118.250.1
         vlan_id: 306
-        model: virtio
-    disks:
-      - image_uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
-        boot: true
-        model: virtio
-    customer_metadata:
-      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: nuvel
-    brand: bhyve
-    ram: 4096
-    vcpus: 2
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        ip: 172.18.2.208
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
         model: virtio
     disks:
       - image_uuid: d89041d8-41b9-481d-918a-722be4598dd1

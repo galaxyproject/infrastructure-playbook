@@ -5,3 +5,8 @@
   gather_facts: false
   roles:
     - role: usegalaxy_org.bootstrap
+
+- name: Bootstrap for Ansible
+  hosts: all
+  roles:
+    - role: galaxyproject.general.virtual

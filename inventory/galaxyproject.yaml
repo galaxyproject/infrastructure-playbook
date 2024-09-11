@@ -16,10 +16,6 @@ all:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
       #hostname_strategy: file
 
-    # TEMP TEMP TEMP
-    duvel.galaxyproject.org:
-      ansible_host: 172.18.2.208
-
   vars:
     ansible_user: root
 
@@ -78,6 +74,7 @@ all:
 
     psu_public_hosts:
       hosts:
+        duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         jeltz.galaxyproject.org:
