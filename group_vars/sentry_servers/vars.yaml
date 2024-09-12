@@ -1,13 +1,32 @@
 ---
 
+telegraf_plugins_default:
+  - plugin: cpu
+    config:
+      - percpu = true
+  - plugin: disk
+  - plugin: kernel
+  - plugin: processes
+  - plugin: diskio
+  - plugin: mem
+  - plugin: system
+  - plugin: swap
+  - plugin: net
+    config:
+      # prevent collecting docker veth* which wrecks series cardinality
+      - interfaces = ["net*", "lo"]
+  - plugin: netstat
+
 sentry_superuser_email: "{{ vault_sentry_superuser_email }}"
 sentry_superuser_password: "{{ vault_sentry_superuser_password }}"
 
-sentry_repo_version: 21.2.0
+sentry_repo: https://github.com/natefoo/sentry-self-hosted.git
+sentry_repo_version: 24.8.0+gx0
 
-sentryservers_group_packages:
+sentry_servers_group_packages:
   - python3-docker
   - python3-pip
+  - python3-venv
 
 sentry_mail_host: smtp.psu.edu
 sentry_mail_from: "{{ vault_sentry_mail_from }}"
@@ -24,4 +43,13 @@ sentry_github_app_id: 102271
 sentry_github_app_name: galaxyproject-SentryIntegration
 sentry_github_client_id: "{{ vault_sentry_github_client_id }}"
 sentry_github_client_secret: "{{ vault_sentry_github_client_secret }}"
+sentry_github_webhook_secret: "{{ vault_sentry_github_webhook_secret }}"
 sentry_github_private_key: "{{ vault_sentry_github_private_key }}"
+
+sentry_servers_group_crontabs:
+  - name: "Sentry cleanup"
+    id: sentry_cleanup
+    user: root
+    hour: 22
+    minute: 15
+    job: "(cd /opt/sentry && docker compose exec -T worker sentry cleanup --days 90 && docker compose exec -T postgres psql -U postgres -c VACUUM) 2>&1 | logger"

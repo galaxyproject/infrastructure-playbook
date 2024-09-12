@@ -9,11 +9,12 @@
 - name: Bootstrap additional
   hosts: all
   roles:
-    # TODO: probably need to do more basic setup stuff here
     - role: galaxyproject.general.virtual
+    - role: galaxyproject.general.locale
+    - role: galaxyproject.general.packages
     - role: galaxyproject.general.users
 
-- name: Bootstrap additional
+- name: Install telegraf
   hosts: telegraf_agents
   roles:
     - role: dj-wasabi.telegraf

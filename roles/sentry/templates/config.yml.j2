@@ -71,6 +71,8 @@ releasefile.cache-path: '/data/releasefile-cache'
 #   secret_key: 'XXXXXXX'
 #   bucket_name: 's3-bucket-name'
 
+# The URL prefix in which Sentry is accessible
+# system.url-prefix: https://example.sentry.com
 system.internal-url-prefix: 'http://web:9000'
 symbolicator.enabled: true
 symbolicator.options:
@@ -82,6 +84,8 @@ transaction-events.force-disable-internal-project: true
 # GitHub Integration #
 ######################
 
+# Refer to https://develop.sentry.dev/integrations/github/ for setup instructions.
+
 {% if sentry_github_app_id is defined %}
 github-login.extended-permissions: ['repo']
 # FIXME: If you set GITHUB_REQUIRE_VERIFIED_EMAIL in sentry.conf.py, you get:
@@ -91,10 +95,14 @@ github-login.extended-permissions: ['repo']
 #github-login.require-verified-email: true
 github-app.id: {{ sentry_github_app_id }}
 github-app.name: '{{ sentry_github_app_name }}'
-# github-app.webhook-secret: 'GITHUB_WEBHOOK_SECRET' # Use only if configured in GitHub
+github-app.webhook-secret: '{{ sentry_github_webhook_secret }}' # Use only if configured in GitHub
 github-app.client-id: '{{ sentry_github_client_id }}'
 github-app.client-secret: '{{ sentry_github_client_secret }}'
 github-app.private-key: |
+  {{ sentry_github_private_key | indent(2) }}
+github.integration-app-id: {{ sentry_github_app_id }}
+github.integration-hook-secret: {{ sentry_github_webhook_secret }}
+github.integration-private-key: |
   {{ sentry_github_private_key | indent(2) }}
 {% endif %}
 

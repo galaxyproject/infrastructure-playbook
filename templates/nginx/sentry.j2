@@ -13,6 +13,8 @@ server {
     access_log  /var/log/nginx/sentry.galaxyproject.org_access.log;
     error_log   /var/log/nginx/sentry.galaxyproject.org_error.log;
 
+    client_max_body_size 40m;
+
     location / {
         proxy_pass          http://sentry_app;
         proxy_http_version  1.1;

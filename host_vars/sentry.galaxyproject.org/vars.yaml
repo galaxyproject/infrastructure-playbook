@@ -3,9 +3,9 @@
 # FIXME: something still caused python2 to be installed, which causes the pre_task in the playbook that pip installs
 # docker-compose to fail. I apt removed the python2* packages by hand and rerunning the playbook does not appear to
 # reinstall them, but this will probably pop up again.
-pip_virtualenv_command: /usr/bin/python3 -m virtualenv
-certbot_virtualenv_package_name: python3-virtualenv
-pip_package: python3-pip
+#pip_virtualenv_command: /usr/bin/python3 -m virtualenv
+#certbot_virtualenv_package_name: python3-virtualenv
+#pip_package: python3-pip
 
 # FIXME: SmartOS auto-formats this ext4 and mounts it, so the task for this fails. Rather than enable the force option
 # here and potentially overwrite data on this volume in some future run of this playbook I just ran
@@ -27,12 +27,12 @@ docker_daemon_option_list:
 
 host_authorized_key_users:
   - name: root
-    authorized: "{{ galaxy_admin_users }} + ['marius_van_den_beek']"
+    authorized: "{{ galaxy_admin_users }}"
 
 host_packages:
   - xfsprogs
 
-nginx_flavor: full
+nginx_flavor: light
 
 nginx_servers:
   - certbot_redirects

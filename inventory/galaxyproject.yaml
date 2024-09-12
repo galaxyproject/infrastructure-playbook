@@ -56,6 +56,7 @@ all:
         certbot_servers:
         tool_shed_servers:
         standalone_web_servers:
+        sentry_servers:
 
     # FIXME: is this group necessary?
     virtual_hosts:
@@ -135,8 +136,10 @@ all:
       vars:
         ansible_python_interpreter: /opt/local/bin/python3
 
+    # FIXME: is this group necessary?
     web_servers:
       children:
+        sentry_servers:
         stats_servers:
         datacache_servers:
         tool_shed_servers:
@@ -145,6 +148,7 @@ all:
 
     certbot_servers:
       children:
+        sentry_servers:
         stats_servers:
         tool_shed_servers:
         depot_servers:
@@ -203,6 +207,10 @@ all:
       children:
         jenkins_agents:
         datacache_servers:
+
+    sentry_servers:
+      hosts:
+        sentry.galaxyproject.org:
 
     stats_servers:
       hosts:

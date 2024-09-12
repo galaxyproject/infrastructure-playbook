@@ -11,15 +11,15 @@
     repo: "{{ sentry_repo }}"
     version: "{{ sentry_repo_version }}"
   register: __sentry_repo_cloned
-  notify:
-    - Upgrade Sentry
+  #notify:
+  #  - Upgrade Sentry
 
 - name: Set sentry_run_install_script
   set_fact:
     __sentry_run_install_script: "{{ sentry_run_install_script if sentry_run_install_script is defined else (__sentry_repo_cloned is changed) }}"
 
 - name: Run installation script
-  command: /bin/bash ./install.sh --no-user-prompt
+  command: /bin/bash ./install.sh --skip-user-creation --no-report-self-hosted-issues
   args:
     chdir: "{{ sentry_prefix }}"
   when: __sentry_run_install_script
@@ -31,13 +31,14 @@
   loop:
     - sentry/sentry.conf.py
     - sentry/config.yml
-  notify:
-    - Restart Sentry
+  #notify:
+  #  - Restart Sentry
 
+# TODO: requires python docker-compose in system python, just start by hand
 # This always reports changed, not sure why
-- name: Run Sentry
-  docker_compose:
-    project_src: "{{ sentry_prefix }}"
+#- name: Run Sentry
+#  docker_compose:
+#    project_src: "{{ sentry_prefix }}"
 
 # TODO: this breaks the running container
 #- name: Create Sentry superuser
