@@ -65,7 +65,7 @@ postfix_config:
   alias_maps: hash:/etc/postfix/aliases
   local_recipient_maps: $alias_maps
   mnetworks_style: null
-  mynetworks: "127.0.0.0/8 {{ (ansible_default_ipv4.network ~ '/' ~ ansible_default_ipv4.netmask) |ipaddr('network/prefix') }} [::1]/128 [fe80::]/64"
+  mynetworks: "127.0.0.0/8 {{ (ansible_default_ipv4.network ~ '/' ~ ansible_default_ipv4.netmask) | ansible.utils.ipaddr('network/prefix') }} [::1]/128 [fe80::]/64"
   proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
   recipient_delimiter: +
   relay_recipient_maps: hash:{{ mailman3_distribute_maps_dir }}/postfix_lmtp
@@ -131,6 +131,10 @@ postfix_amavisd_new_config:
   '@bypass_spam_checks_acl': "@spam_lovers_acl = qw({{ mailman3_domains | join(' ') }})"
   '@spam_kill_level_maps': ({'{{ mailman3_domains | join("' => 9999, '") }}' => 9999}, \$sa_kill_level_deflt,)
   '@bypass_virus_checks_acl': "@virus_lovers_acl = qw({{ mailman3_domains | join(' ') }})"
+
+postfix_clamav_config:
+  # prevents temporarily spiking clamd memory to 2x while loading the new signature database
+  ConcurrentDatabaseReload: "no"
 
 # templates/{{ item }}.j2 in the playbook
 postfix_maps:
