@@ -67,23 +67,6 @@ smartos_vms:
         size: 294912
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: ns-training
-    brand: lx
-    kernel_version: 3.10.0-1062.1.2.el7.x86_64
-    image_uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
-    hostname: ns-training
-    max_physical_memory: 512
-    quota: 8192
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        ip: "{{ lookup('dig', 'ns-training.galaxyproject.org') }}"
-        netmask: 255.255.255.224
-        gateway: 128.118.250.1
-        vlan_id: 306
-    delegate_dataset: false
-    customer_metadata:
-      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   # grafana was segfaulting after the latest update on a centos-7 lx zone, so I figured we'd try a rockylinux-9 zone,
   # but got the same thing. the core doesn't load in gdb even on a real Linux host (probably due to lx but I'm not going
   # to take the time to figure out the exact issue and whether it can be fixed) so moving to bhyve
