@@ -55,6 +55,7 @@ all:
         cvmfs_stratum1_servers:
         certbot_servers:
         tool_shed_servers:
+        standalone_web_servers:
 
     # FIXME: is this group necessary?
     virtual_hosts:
