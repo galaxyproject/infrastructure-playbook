@@ -57,7 +57,7 @@
 
         - name: Update inventory with spawned instance IP
           set_fact:
-            ansible_host: "{{ spawned_out.server.private_v4 }}"
+            ansible_host: "{{ spawned_out.server.access_ipv4 or spawned_out.server.addresses[nics[0]['net-name']][0].addr }}"
           delegate_to: localhost
 
         # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
@@ -69,17 +69,31 @@
           gather_facts:
           become: true
 
+        - name: Set CVMFS cache size for instance
+          lineinfile:
+            path: /etc/cvmfs/default.local
+            regexp: '^CVMFS_QUOTA_LIMIT=.*'
+            line: 'CVMFS_QUOTA_LIMIT="{{ (0.6 * ((ansible_mounts | selectattr("mount", "==", "/") | first).size_available) / 1024**2) | int }}"'
+            mode: "0644"
+          become: true
+
         - name: Connect to tailnet
           command: "/usr/bin/tailscale up --auth-key {{ slurm_scale_tailscale_authkey | quote }}"
           become: true
           when: "inventory_hostname.startswith('js2-gxit-')"
 
-        - name: Copy slurm.conf
+        - name: Copy slurm config files
           copy:
-            src: /etc/slurm/slurm.conf
-            dest: /etc/slurm/slurm.conf
+            src: "{{ item.path }}"
+            dest: "{{ item.path }}"
+            mode: "{{ item.mode | default('0644') }}"
           become: true
-          register: slurm_conf
+          loop:
+            - path: /etc/slurm/slurm.conf
+            - path: /etc/slurm/prolog.bash
+              mode: "0755"
+            - path: /etc/slurm/prolog.sh
+              mode: "0755"
 
         - name: Log IP address
           debug:
@@ -105,93 +119,6 @@
       rescue:
 
         - name: Destroy existing instance on start failure
-          os_server:
-            cloud: "{{ cloud_id }}"
-            name: "{{ inventory_hostname }}"
-            state: absent
-          delegate_to: localhost
-          become: false
-
-        - name: Fail due to previous failure
-          fail:
-            msg: failed
-
-
-- name: Spawn new instance(s)
-  hosts: spawnnodes
-  gather_facts: false
-  environment:
-     OS_CLOUD: "{{ cloud_id }}"
-     OS_IDENTITY_API_VERSION: '3'
-  tasks:
-
-    - name: Instance spawn block
-      block:
-
-        - name: Spawn new instance
-          os_server:
-            cloud: "{{ cloud_id }}"
-            name: "{{ inventory_hostname }}"
-            image: "{{ image }}"
-            flavor: "{{ flavor }}"
-            key_name: "{{ key_name }}"
-            nics: "{{ nics }}"
-            security_groups: "{{ security_groups }}"
-            auto_ip: "{{ auto_ip }}"
-            meta: group=galaxynodes
-            userdata: |
-              #cloud-config
-              package_upgrade: false
-          delegate_to: localhost
-          register: spawned_out
-
-        - name: Update inventory with spawned instance IP
-          set_fact:
-            ansible_host: "{{ spawned_out.server.private_v4 }}"
-          delegate_to: localhost
-
-        # WARNING: Slurm's ResumeTimeout must be larger than however long this *entire* playbook might run for, and this
-        # task alone will wait up to 600 seconds.
-        - name: Wait for instance to become accessible
-          wait_for_connection:
-
-        - name: Gather Facts
-          gather_facts:
-          become: true
-
-        - name: Import new node setup role
-          import_role:
-            name: galaxynodeconfig
-          become: true
-
-        - name: Import CVMFS role
-          import_role:
-            name: galaxyproject.cvmfs
-          become: true
-
-        - name: Import Slurm role
-          import_role:
-            name: galaxyproject.slurm
-          become: true
-
-        # on restarts we want to wait until the playbook copies slurm.conf and starts slurmd itself
-        - name: Disable slurmd autostart
-          service:
-            name: slurmd
-            enabled: false
-          become: true
-
-        - name: Log IP address
-          debug:
-            var: ansible_host
-
-        - name: Update slurm controller with instance IP
-          command: scontrol update nodename={{ inventory_hostname }} nodeaddr={{ ansible_host }}
-          delegate_to: localhost
-
-      rescue:
-
-        - name: Destroy new instance on failure
           os_server:
             cloud: "{{ cloud_id }}"
             name: "{{ inventory_hostname }}"

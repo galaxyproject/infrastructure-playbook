@@ -3,8 +3,12 @@
 image: >-
   {{ (inventory_hostname | regex_search("^.*-gxit-.*") is none) | ternary("usegalaxy-node", "usegalaxy-gxit-node") }}
 key_name: admin-kp
-nics: net-name=usegalaxy
+nics:
+  - net-name: usegalaxy
 security_groups: default
 auto_ip: no
 flavor: >-
-  {{ (inventory_hostname | regex_search("^.*-gpu-.*") is none) | ternary("m3", "g3") }}.{{ inventory_hostname | regex_replace("^.*-([^\d]+).*", "\1") }}
+  {{
+    (inventory_hostname | regex_search("^.*-gpu-.*") is none) | ternary((
+      (inventory_hostname | regex_search("^.*-mem-.*") is none) | ternary("m3", "r3")), "g3")
+  }}.{{ inventory_hostname | regex_replace("^.*-([a-z\d]+[a-z]+)[\d]+.*", "\1") }}

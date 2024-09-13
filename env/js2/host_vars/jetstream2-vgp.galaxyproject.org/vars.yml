@@ -1,0 +1,27 @@
+---
+
+os_image: Featured-RockyLinux9
+os_flavor: m3.small
+os_key_name: nate-treehouse
+#os_boot_from_volume: true
+#os_volume_size: 60
+
+os_security_groups:
+  - default
+  - usegalaxy-control
+
+os_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+
+host_crontabs:
+  - id: pulsar_clean_jobs
+    name: Clean Main VGP Pulsar Jobs
+    user: g2main
+    minute: 30
+    job: /usr/local/bin/pulsar-clean-jobs main-vgp 2>&1 >> /srv/pulsar/main/log/cleanup-jobs.log
+  - id: clean_amqp_consume
+    name: Clean Main AMQP consume dir
+    user: g2main
+    minute: "30"
+    hour: "2"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/persisted_data/amqp_ack-jetstream2/consume"

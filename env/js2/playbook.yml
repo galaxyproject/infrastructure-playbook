@@ -26,8 +26,6 @@
       tags: requiretty
     #- role: geerlingguy.repo-epel
     #  tags: packages
-    - role: elrepo
-      tags: packages
     - role: packages          # Install packages
       tags: packages
     - role: ceph_mount

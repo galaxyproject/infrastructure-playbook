@@ -5,6 +5,9 @@ influxdb_client_pass: "{{ vault_influxdb_client_pass }}"
 # run telegraf on everything
 telegraf_agent_package_state: latest
 
+# 10s is the default if unset, set `interval = "<seconds>s"` on [agent] or on plugins to override
+telegraf_agent_interval: 60
+
 # otherwise this can be the tailnet hostname
 telegraf_agent_hostname: "{{ inventory_hostname }}"
 

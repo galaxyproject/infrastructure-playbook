@@ -6,8 +6,29 @@ set -euo pipefail
 
 DIR="$1"
 PERCENT=
+# FIXME: shouldn't be in /tmp, but needs to be readable by telegraf
+MUTEX="/tmp/tmpwatch-auto-$(id -un).lock"
+MUTEX_ACQUIRED=false
+declare -a EXCLUDE_ARGS
+
+case "$DIR" in
+    */main/*)
+        PULSAR_PERSISTED_DATA='/srv/pulsar/main/var/persisted_data'
+        ;;
+    */test/*)
+        PULSAR_PERSISTED_DATA='/srv/pulsar/test/var/persisted_data'
+        ;;
+esac
+
 
 : ${DEBUG:=false}
+
+
+function trap_handler() {
+    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    return 0
+}
+trap "trap_handler" SIGTERM SIGINT ERR EXIT
 
 
 function isintorempty() {
@@ -65,12 +86,23 @@ function hours() {
 }
 
 
+function exclude_args() {
+    local exclude_id
+    local exclude_ids=($(find ${PULSAR_PERSISTED_DATA}/jetstream2-{active,preprocessing}-jobs -maxdepth 1 -type f -printf "%f\n"))
+    # this could exceed ARG_MAX but these days it's 2 million so probably not
+    for exclude_id in "${exclude_ids[@]}"; do
+        EXCLUDE_ARGS+=(-x "${DIR}/${exclude_id}")
+    done
+}
+
+
 function clean() {
     local hours=$(hours)
     local verbose=
+    exclude_args
     $DEBUG && verbose="--verbose"
     $DEBUG && set -x
-    /usr/bin/tmpwatch --mtime --dirmtime --exclude-user=root $verbose "${hours}h" "$DIR"
+    /usr/bin/tmpwatch --mtime --dirmtime --all --exclude-user=root "${EXCLUDE_ARGS[@]}" $verbose "${hours}h" "$DIR"
     { set +x; } 2>/dev/null
 }
 
@@ -78,7 +110,10 @@ function clean() {
 function main() {
     [ -n "$DIR" ] || { echo "usage: $0 <dir>"; exit 2; }
     [ -d "$DIR" ] || error "Invalid directory: $DIR"
-    clean
+    if mkdir "$MUTEX"; then
+        MUTEX_ACQUIRED=true
+        clean
+    fi
 }
 
 

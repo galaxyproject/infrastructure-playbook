@@ -2,7 +2,8 @@
 # selinux cannot be imported. The python3-libselinux package exists for 3.6 but there is no python39-libselinux.
 #
 # You should probably set this as the default for all Rocky 8 hosts
-jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true ansible_python_interpreter=/usr/bin/python3.6
+jetstream2.galaxyproject.org ansible_user=rocky ansible_become=true
+jetstream2-vgp.galaxyproject.org ansible_user=rocky ansible_become=true
 usegalaxy-node ansible_user=rocky ansible_become=true
 usegalaxy-gxit-node ansible_user=rocky ansible_become=true
 cvmfs1-iu0.galaxyproject.org ansible_user=rocky ansible_become=true
@@ -11,6 +12,7 @@ cvmfs1-tacc0.galaxyproject.org ansible_user=rocky ansible_become=true ansible_ho
 [jetstreamhosts]
 openstackinitialize
 jetstream2.galaxyproject.org
+jetstream2-vgp.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 cvmfs1-tacc0.galaxyproject.org
 
@@ -27,6 +29,7 @@ usegalaxy-gxit-node
 
 [baseenv]
 jetstream2.galaxyproject.org
+jetstream2-vgp.galaxyproject.org
 cvmfs1-iu0.galaxyproject.org
 cvmfs1-tacc0.galaxyproject.org
 
@@ -41,6 +44,10 @@ baseenv
 [controllers]
 jetstream2.galaxyproject.org
 
+[pulsarservers]
+jetstream2.galaxyproject.org
+jetstream2-vgp.galaxyproject.org
+
 [slurmservers]
 jetstream2.galaxyproject.org
 
@@ -48,6 +55,7 @@ jetstream2.galaxyproject.org
 usegalaxy-node
 usegalaxy-gxit-node
 jetstream2.galaxyproject.org
+jetstream2-vgp.galaxyproject.org
 
 [slurmexechosts]
 usegalaxy-node

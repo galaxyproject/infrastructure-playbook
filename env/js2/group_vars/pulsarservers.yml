@@ -1,0 +1,48 @@
+---
+
+pulsarservers_group_authorized_key_users:
+  - name: g2test
+    authorized: "{{ galaxy_team_users }}"
+  - name: g2main
+    authorized: "{{ galaxy_team_users }}"
+
+pulsarservers_group_packages:
+  - vim
+  - git
+  - tmpwatch
+  - pdsh
+  # Pulsar deps
+  - '@development tools'
+  - libffi-devel
+  - libcurl-devel
+  - nss-devel
+  - openssl-devel
+  #- slurm-drmaa
+  # this probably won't work until after Slurm is installed
+  - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
+
+pulsarservers_group_files:
+  - src: files/admin/pulsar-clean-jobs
+    dest: /usr/local/bin/pulsar-clean-jobs
+    mode: "0755"
+    owner: root
+    group: root
+  - src: files/admin/pulsar-staging-fds
+    dest: /usr/local/bin/pulsar-staging-fds
+    mode: "0755"
+    owner: root
+    group: root
+
+pulsarservers_group_directories:
+  - path: /srv/pulsar/test
+    owner: g2test
+    group: G-803372
+  - path: /srv/pulsar/test/log
+    owner: g2test
+    group: G-803372
+  - path: /srv/pulsar/main
+    owner: g2main
+    group: G-803372
+  - path: /srv/pulsar/main/log
+    owner: g2main
+    group: G-803372

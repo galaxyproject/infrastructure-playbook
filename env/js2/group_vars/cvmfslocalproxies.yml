@@ -1,6 +1,13 @@
 ---
 
-cvmfs_localproxy_cache_mem: 8192
+cvmfslocalproxies_group_files:
+  - src: files/logrotate/squid
+    dest: /etc/logrotate.d/squid
+    mode: "0644"
+    owner: root
+    group: root
+
+cvmfs_localproxy_cache_mem: 4096
 # CERN config examples use 128 KB for both local proxies and stratum 1, but data objects are larger than this. I started
 # with 4 (MB) but that still seems way too small for a good hit ratio for stuff in the data repo.
 cvmfs_localproxy_maximum_object_size_in_memory: 64

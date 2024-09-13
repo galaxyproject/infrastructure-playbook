@@ -2,6 +2,18 @@
 
 slurm_munge_key: files/slurm/munge.key
 
+# what mounts/dirs/users the prolog script will check
+slurm_prolog_cvmfs_repos:
+  - main.galaxyproject.org
+  - data.galaxyproject.org
+  - singularity.galaxyproject.org
+
+slurm_prolog_dirs:
+  - /jetstream2/scratch
+
+slurm_prolog_users:
+  - g2main
+
 slurm_config:
   ControlMachine: "{{ slurm_controller_name }}"
   ControlAddr: "{{ slurm_controller_ip }}"
@@ -16,22 +28,23 @@ slurm_config:
   JobCompLoc: /var/log/slurm/slurm.job.log
   JobCompType: jobcomp/filetxt
   SchedulerType: sched/backfill
+  SchedulerParameters: nohold_on_prolog_fail
+
+  Prolog: /etc/slurm/prolog.*
+  PrologEpilogTimeout: 90
 
   SelectType: select/cons_res
   SelectTypeParameters: CR_CPU_Memory
   SwitchType: switch/none
 
-  SlurmctldPort: 7002
   SlurmctldTimeout: 300
-  SlurmdPort: 7003
   SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
   SlurmdTimeout: 300
   StateSaveLocation: /var/spool/slurm/ctld/slurm.state
 
-  DefaultStorageLoc: /var/log/slurm/slurm_accounting
-  AccountingStorageType: accounting_storage/slurmdbd
-  AccountingStorageHost: galaxy08.tacc.utexas.edu
-  AccountingStoragePort: 7031
+  # TODO: disabled until TACC slurm is upgraded
+  #AccountingStorageType: accounting_storage/slurmdbd
+  #AccountingStorageHost: galaxy08.tacc.utexas.edu
 
   JobAcctGatherType: jobacct_gather/cgroup
   JobAcctGatherFrequency: task=15
@@ -48,107 +61,140 @@ slurm_config:
   ResumeProgram: "/opt/slurmscale/sbin/slurm_resume"
   SuspendProgram: "/opt/slurmscale/sbin/slurm_suspend"
   ResumeFailProgram: "/opt/slurmscale/sbin/slurm_suspend"
-  ResumeRate: 0        # number of nodes per minute that can be created; 0 means no limit
+  ResumeRate: 8        # number of nodes per minute that can be created; 0 means no limit
   ResumeTimeout: 900   # max time in seconds between ResumeProgram running and when the node is ready for use
-  SuspendRate: 0       # number of nodes per minute that can be suspended/destroyed
+  SuspendRate: 8       # number of nodes per minute that can be suspended/destroyed
   SuspendTime: 600     # time in seconds before an idle node is suspended
-  SuspendTimeout: 60   # time between running SuspendProgram and the node being completely down
+  SuspendTimeout: 300  # time between running SuspendProgram and the node being completely down
 
 slurm_nodes:
-  - name: "{{ slurm_cluster_name }}-tiny[0-7]"
+  - name: "js2-tiny[0-7]"
     State: CLOUD
+    Weight: 10
     CPUs: 1
-    RealMemory: 2984
-  - name: "{{ slurm_cluster_name }}-small[0-7]"
+    RealMemory: 2840  # 2984, then 2919, then 2896 reported by slurmd
+  - name: "js2-small[0-7]"
     State: CLOUD
+    Weight: 20
     CPUs: 2
-    RealMemory: 5937
-  - name: "{{ slurm_cluster_name }}-quad[0-7]"
+    RealMemory: 5900  # 5937 reported by slurmd
+  - name: "js2-quad[0-7]"
     State: CLOUD
+    Weight: 30
     CPUs: 4
-    RealMemory: 14819
-  - name: "{{ slurm_cluster_name }}-medium[0-47]"
+    RealMemory: 14800  # 14819 reported by slurmd
+  - name: "js2-medium[0-23]"
     State: CLOUD
+    Weight: 40
     CPUs: 8
-    RealMemory: 29938
-  - name: "{{ slurm_cluster_name }}-large[0-7]"
+    RealMemory: 29900  # 29938 reported by slurmd
+  - name: "js2-large[0-23]"
     State: CLOUD
+    Weight: 50
     CPUs: 16
-    RealMemory: 60176
-  - name: "{{ slurm_cluster_name }}-xl[0-7]"
+    RealMemory: 60100  # 60176 reported by slurmd
+  - name: "js2-xl[0-15]"
     State: CLOUD
+    Weight: 60
     CPUs: 32
     RealMemory: 125000  # 125798 reported by slurmd
-  - name: "{{ slurm_cluster_name }}-gpu-small[0-1]"
+  #- name: "js2-2xl[0-1]"
+  #  State: CLOUD
+  #  Weight: 70
+  #  CPUs: 64
+  #  RealMemory: 250000  # 251678 reported by slurmd
+  - name: "js2-mem-large[0-17]"
+    State: CLOUD
+    Weight: 80
+    CPUs: 64
+    RealMemory: 502000  # 503677 reported by slurmd
+  - name: "js2-mem-xl[0-15]"
+    State: CLOUD
+    Weight: 90
+    CPUs: 128
+    RealMemory: 1004000  # 1007851 reported by slurmd
+  - name: "js2-gpu-small[0-3]"
     State: CLOUD
     CPUs: 4
-    RealMemory: 14819
-  - name: "{{ slurm_cluster_name }}-gxit-small[0-1]"
+    RealMemory: 14800  # 14819 reported by slurmd
+  - name: "js2-gpu-medium[0-3]"
+    State: CLOUD
+    CPUs: 8
+    RealMemory: 29900  # ????? reported by slurmd
+  - name: "js2-gpu-large[0-1]"
+    State: CLOUD
+    CPUs: 16
+    RealMemory: 60100  # ????? reported by slurmd
+  - name: "js2-gpu-xl[0-1]"
+    State: CLOUD
+    CPUs: 32
+    RealMemory: 125000  # ????? reported by slurmd
+  - name: "js2-gxit-small[0-1]"
     State: CLOUD
     CPUs: 2
-    RealMemory: 5937
+    RealMemory: 5900  # same as js2-small
 
 slurm_partitions:
-  - name: tpv
-    Nodes: "{{ slurm_cluster_name }}-tiny[0-1],{{ slurm_cluster_name }}-small[0-1],{{ slurm_cluster_name }}-quad[0-1],{{ slurm_cluster_name }}-medium[0-1]"
+  - name: vgp
+    Nodes: "js2-tiny[0-1],js2-small[0-1],js2-quad[0-1],js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
-  - name: normal
-    Nodes: "{{ slurm_cluster_name }}-small[2-7]"
+  - name: priority
+    Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-7],js2-xl[2-7]"
+    DefaultTime: "06:00:00"
+    MaxTime: "96:00:00"
+    MaxNodes: 1
+    State: UP
+  - name: tpv
     Default: YES
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
+    Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
+    DefaultTime: "06:00:00"
+    MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
-    OverSubscribe: EXCLUSIVE
-  - name: quad
-    Nodes: "{{ slurm_cluster_name }}-quad[2-7]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-  - name: multi
-    Nodes: "{{ slurm_cluster_name }}-medium[2-47]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
-  - name: large
-    Nodes: "{{ slurm_cluster_name }}-large[0-7]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
-    MaxNodes: 1
-    State: UP
-    OverSubscribe: EXCLUSIVE
-  - name: xl
-    Nodes: "{{ slurm_cluster_name }}-xl[0-7]"
-    DefaultTime: "48:20:00"
-    MaxTime: "96:20:00"
+  - name: resize-shm
+    Nodes: "js2-mem-large[16-17]"
+    DefaultTime: "06:00:00"
+    MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: gpu-small
     DefaultTime: "24:20:00"
     MaxTime: "96:20:00"
-    Nodes: "{{ slurm_cluster_name }}-gpu-small[0-1]"
+    Nodes: "js2-gpu-small[0-3]"
     MaxNodes: 1
     State: UP
+    OverSubscribe: EXCLUSIVE
+  - name: gpu-medium
+    DefaultTime: "24:20:00"
+    MaxTime: "96:20:00"
+    Nodes: "js2-gpu-medium[0-3]"
+    MaxNodes: 1
+    State: UP
+    OverSubscribe: EXCLUSIVE
+  - name: gpu-large
+    DefaultTime: "24:20:00"
+    MaxTime: "96:20:00"
+    Nodes: "js2-gpu-large[0-1]"
+    MaxNodes: 1
+    State: UP
+    OverSubscribe: EXCLUSIVE
+  - name: gpu-xl
+    DefaultTime: "24:20:00"
+    MaxTime: "96:20:00"
+    Nodes: "js2-gpu-xl[0-1]"
+    MaxNodes: 1
+    State: UP
+    OverSubscribe: EXCLUSIVE
   - name: gxit
-    Nodes: "{{ slurm_cluster_name }}-gxit-small[0-1]"
+    Nodes: "js2-gxit-small[0-1]"
     DefaultTime: "12:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
     State: UP
-  #- name: reserved
-  #  Nodes: "{{ slurm_cluster_name }}-large[23-26]"
-  #  DefaultTime: "48:20:00"
-  #  MaxTime: "96:20:00"
-  #  MaxNodes: 1
-  #  State: UP
-  #  OverSubscribe: EXCLUSIVE
 
 slurm_cgroup_config:
   CgroupAutomount: yes

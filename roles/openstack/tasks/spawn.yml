@@ -23,6 +23,8 @@
         auto_ip: "{{ os_auto_ip | default(omit) }}"
         floating_ips: "{{ os_floating_ips | default(omit) }}"
         meta: "group={{ group_names[0] }}"
+        boot_from_volume: "{{ os_boot_from_volume | default(omit) }}"
+        volume_size: "{{ os_volume_size | default(omit) }}"
         #volumes: "{{ os_volumes | default(omit) }}"
         #volumes: "{{ os_volumes }}"
         userdata: |
@@ -74,7 +76,8 @@
 
     - name: Update inventory with spawned instance IP
       set_fact:
-        ansible_host: "{{ __spawn_result.server.public_v4 or __spawn_result.server.private_v4 }}"
+        # access_ipv4 is blank on JS2 for some reason
+        ansible_host: "{{ __spawn_result.server.access_ipv4 | default(__spawn_result.server.accessIPv4 | default(__spawn_result.server.addresses[os_nics[0]['net-name']][0].addr)) }}"
       #delegate_to: localhost
 
     - name: Log IP addresses

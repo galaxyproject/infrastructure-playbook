@@ -1,0 +1,12 @@
+---
+
+systemd_journald_persistent: true
+
+mounts:
+  - src: 129.114.52.152:/corral/main/projects/galaxy/
+    path: /corral4
+    fstype: nfs
+    opts: rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,addr=129.114.52.152
+    owner: ndc
+    group: G-803372
+

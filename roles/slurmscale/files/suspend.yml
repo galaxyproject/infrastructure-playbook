@@ -17,8 +17,24 @@
      OS_CLOUD: "{{ cloud_id }}"
      OS_IDENTITY_API_VERSION: '3'
   tasks:
+    - name: Stop instance
+      openstack.cloud.server_action:
+        cloud: "{{ cloud_id }}"
+        name: "{{ inventory_hostname }}"
+        action: "stop"
+      delegate_to: localhost
+      become: false
+      ignore_errors: true
+
+    - name: Sleep
+      ansible.builtin.pause:
+        seconds: 60
+      run_once: true
+      delegate_to: localhost
+      become: false
+
     - name: Destroy instance
-      os_server:
+      openstack.cloud.server:
         cloud: "{{ cloud_id }}"
         name: "{{ inventory_hostname }}"
         state: absent

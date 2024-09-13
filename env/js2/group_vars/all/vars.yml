@@ -6,8 +6,6 @@ openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
 slurm_scale_tailscale_authkey: "{{ vault_slurm_scale_tailscale_authkey }}"
 
-default_kernel: kernel-ml
-
 clouds_yaml: "{{ vault_clouds_yaml }}"
 cloud_id: js2
 controller_name: jetstream2
@@ -43,7 +41,9 @@ ceph_mounts:
     key: "{{ ceph_galaxy_scratch_key }}"
     src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
     opts: noatime,_netdev
+    # kernel client keeps wrecking MDS's and FUSE client seems to still be decently performant so, gonna run that for now
     fstype: fuse.ceph
+    #fstype: ceph
 
 slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
 slurm_controller_name: "{{ controller_name }}"
@@ -54,6 +54,7 @@ os_clouds_yaml: "{{ clouds_yaml }}"
 
 os_name: "{{ inventory_hostname_short }}"
 
+# FIXME: this doesn't work when launching the controller itself, I used my own key
 os_key_name: admin-kp
 
 os_nics:
@@ -72,6 +73,8 @@ galaxy_cvmfs_repos_enabled: yes
 all_groups:
   - name: G-803372
     gid: 803372
+  - name: idc
+    gid: 808
 
 all_users:
   - name: g2test
@@ -88,3 +91,9 @@ all_users:
     uid: 819800
     home: /home/g2main
     shell: /bin/bash
+  - name: idc
+    group: idc
+    comment: 'Intergalactic Data Commission'
+    uid: 808
+    home: /home/idc
+    shell: /bin/sh
