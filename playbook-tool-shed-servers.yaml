@@ -49,5 +49,3 @@
       tags: nginx
     - role: error_pages
       tags: nginx
-    - role: dj-wasabi.telegraf
-      tags: telegraf

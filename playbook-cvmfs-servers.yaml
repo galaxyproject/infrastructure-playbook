@@ -20,8 +20,6 @@
       tags: general
     - role: galaxyproject.cvmfs
       tags: cvmfs
-    - role: dj-wasabi.telegraf
-      tags: telegraf
   post_tasks:
     # some kind of file operation on the catalog fails under >= 2.11 on LX currently
     - name: Lock CVMFS version

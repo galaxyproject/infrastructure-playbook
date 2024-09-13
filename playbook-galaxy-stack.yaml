@@ -10,7 +10,6 @@
     - role: galaxyproject.postgresql
     - role: galaxyproject.general.users
     - role: galaxyproject.gxadmin
-    - role: dj-wasabi.telegraf
     - role: galaxyproject.cvmfs
   post_tasks:
     - name: Install PostgreSQL contrib package for pgcrypto
