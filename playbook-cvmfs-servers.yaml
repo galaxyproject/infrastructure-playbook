@@ -3,15 +3,6 @@
 - name: CVMFS Servers
   hosts: cvmfs_stratum0_servers:cvmfs_stratum1_servers
   roles:
-    - role: galaxyproject.general.virtual
-      tags: general
-      when: "'virtual_hosts' in group_names"
-    - role: galaxyproject.general.packages
-      tags: general
-    - role: galaxyproject.general.users
-      tags: general
-    - role: galaxyproject.general.paths
-      tags: general
     # see squid-foreground comments in host_vars/cvmfs1-psu0
     #- role: galaxyproject.general.copy
     #  tags: general

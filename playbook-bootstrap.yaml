@@ -10,9 +10,11 @@
   hosts: all
   roles:
     - role: galaxyproject.general.virtual
+      when: "'virtual_hosts' in group_names"
     - role: galaxyproject.general.locale
     - role: galaxyproject.general.packages
     - role: galaxyproject.general.users
+    - role: galaxyproject.general.paths
 
 - name: Install telegraf
   hosts: telegraf_agents

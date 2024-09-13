@@ -11,6 +11,14 @@ all:
     cvmfs1-psu0.galaxyproject.org:
       hostname_strategy: file
 
+    cvmfs-stratum0.galaxyproject.eu:
+      ansible_user: centos
+      ansible_become: true
+
+    cvmfs1-tacc0.galaxyproject.org:
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q galaxy04.tacc.utexas.edu"'
+      ansible_host: galaxy08
+
     # for lx-brand zones, use:
     #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
@@ -42,7 +50,7 @@ all:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
-        #cvmfs1-iu0.galaxyproject.org:
+        cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
         thumper.galaxyproject.org:
@@ -50,9 +58,16 @@ all:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
+        cvmfs1-iu0.galaxyproject.org:
       children:
-        cvmfs_stratum0_servers:
-        cvmfs_stratum1_servers:
+        # to exclude EU stratum0
+        #cvmfs_stratum0_servers:
+        # to exclude TACC stratum1
+        #cvmfs_stratum1_servers:
         certbot_servers:
         tool_shed_servers:
         standalone_web_servers:
@@ -64,6 +79,7 @@ all:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
+        cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
 
@@ -198,10 +214,13 @@ all:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
+        cvmfs-stratum0.galaxyproject.eu:
 
     cvmfs_stratum1_servers:
       hosts:
         cvmfs1-psu0.galaxyproject.org:
+        cvmfs1-iu0.galaxyproject.org:
+        cvmfs1-tacc0.galaxyproject.org:
 
     cvmfs_clients:
       children:

@@ -2,10 +2,6 @@
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 
-# overrides
-baseenv_group_authorized_key_users: []
-baseenv_group_sshd_config: []
-
 mounts:
   - path: /srv/cvmfs
     src: ufr-dyn.isi1.public.ads.uni-freiburg.de:/ifs/isi1/ufr/bronze/nfs/denbi/stratum0
@@ -62,6 +58,10 @@ cvmfs_repositories:
       - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
       - CVMFS_VIRTUAL_DIR=true
     client_options: []
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
 
 cvmfs_private_keys:
   - path: /etc/cvmfs/keys/singularity.galaxyproject.org.key
