@@ -9,6 +9,34 @@ meta_galaxyproject_group_authorized_key_users:
   - name: root
     authorized: "{{ galaxyproject_root_users }}"
 
+# FIXME: this overrides the postfix_config for mx_servers
 # hosts inside the UEN can't make SMTP connections outside I guess
 #postfix_config:
 #  relayhost: "[smtp.psu.edu]"
+
+# TODO: stuff below should be reviewed to see what if anything is useful
+#baseenv_group_sshd_config:
+#  # Password auth is disabled in the EC2 Ubuntu AMIs
+#  #- option: "PasswordAuthentication"
+#    value: "yes"
+#  # Cloud instances typically have this set to no or without-password
+#  - option: "PermitRootLogin"
+#    value: "yes"
+#  # mmm, KEX: Disable weak DH algorithms (https://weakdh.org/sysadmin.html)
+#  - option: "KexAlgorithms"
+#    value: "curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1"
+#  # Enabled by default on Linux distros and SunSSH, need to enable it for
+#  # pkgsrc OpenSSH to get pam_unix_cred to read /etc/user_attr
+#  - option: "UsePAM"
+#    value: "yes"
+
+# for the resolv role
+#resolv_nameservers:
+#  - 128.118.250.8
+#  - 3.14.178.173
+#  - 3.136.94.7
+#resolv_domain: galaxyproject.org
+#resolv_search: galaxyproject.org
+
+# template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
+#zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}

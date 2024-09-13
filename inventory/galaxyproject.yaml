@@ -55,6 +55,7 @@ all:
         radegast.galaxyproject.org:
         thumper.galaxyproject.org:
         rochefort.galaxyproject.org:
+        westvleteren.galaxyproject.org:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -149,6 +150,7 @@ all:
       hosts:
         thumper.galaxyproject.org:
         rochefort.galaxyproject.org:
+        westvleteren.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/local/bin/python3
 
@@ -259,3 +261,4 @@ all:
     zfs_backup_servers:
       hosts:
         thumper.galaxyproject.org:
+        westvleteren.galaxyproject.org:
