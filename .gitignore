@@ -15,6 +15,7 @@ roles/galaxyproject.opendkim
 roles/galaxyproject.postfix
 roles/galaxyproject.postgresql
 roles/galaxyproject.postgresql_objects
+roles/galaxyproject.pulsar
 roles/galaxyproject.slurm
 roles/galaxyproject.telegraf_cvmfs
 roles/geerlingguy.repo-epel
