@@ -1,6 +1,6 @@
 ---
 
-cvmfslocalproxies_group_files:
+cvmfs_local_proxies_group_files:
   - src: files/logrotate/squid
     dest: /etc/logrotate.d/squid
     mode: "0644"

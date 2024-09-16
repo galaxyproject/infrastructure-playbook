@@ -1,16 +1,16 @@
 ---
 
 - name: Remove clouds.yaml
-  file:
-    path: "{{ inventory_dir }}/clouds.yaml"
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/clouds.yaml"
     state: absent
   delegate_to: localhost
   run_once: true
   become: false
 
 - name: Remove additional secrets
-  file:
-    path: "{{ inventory_dir }}/{{ item.dest }}"
+  ansible.builtin.file:
+    path: "{{ playbook_dir }}/{{ item.dest }}"
     state: absent
   loop: "{{ os_secrets | default([]) }}"
   delegate_to: localhost

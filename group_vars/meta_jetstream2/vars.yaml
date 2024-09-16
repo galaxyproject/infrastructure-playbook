@@ -1,5 +1,116 @@
 ---
 
+vault_pass: "{{ vault_vault_pass }}"
+all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
+openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
+ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
+slurm_scale_tailscale_authkey: "{{ vault_slurm_scale_tailscale_authkey }}"
+
+clouds_yaml: "{{ vault_clouds_yaml }}"
+cloud_id: js2
+controller_name: jetstream2
+
+# These would be the values for the TACC JS2 cloud
+#cloud_id: js2-tacc
+#os_public_network: provider
+
+jetstream_local_controller_address: "{{ controller_name }}.js2local"
+jetstream_local_cvmfs_stratum1_address: "cvmfs1-iu0.js2local"
+jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.js2local"
+
+# Used by the image generation playbook, instances names match the image name
+usegalaxy_node_image_name: "{{ inventory_hostname }}"
+
+# Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in
+# sshkeys provided by the sshservers group vars)
+os_admin_users: "{{ galaxy_admin_users }}"
+
+# This turns out to be unnecessary
+#openstack_userdata: |
+#  #cloud-config
+#  manage_resolv_conf: true
+#  resolv_conf:
+#    searchdomains:
+#      - jetstreamlocal
+#      - galaxyproject.org
+#    domain: galaxyproject.org
+
+ceph_mounts:
+  - name: galaxy-scratch
+    path: /jetstream2/scratch
+    key: "{{ ceph_galaxy_scratch_key }}"
+    src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
+    opts: noatime,_netdev
+    # kernel client keeps wrecking MDS's and FUSE client seems to still be decently performant so, gonna run that for now
+    fstype: fuse.ceph
+    #fstype: ceph
+
+os_cloud_id: "{{ cloud_id }}"
+os_clouds_yaml: "{{ clouds_yaml }}"
+
+os_name: "{{ inventory_hostname_short }}"
+
+# FIXME: this doesn't work when launching the controller itself, I used my own key
+os_key_name: admin-kp
+
+os_nics:
+  - net-name: "usegalaxy"
+
+galaxy_cvmfs_repos_enabled: yes
+
+all_groups:
+  - name: G-803372
+    gid: 803372
+  - name: idc
+    gid: 808
+
+all_users:
+  - name: g2test
+    group: G-803372
+    groups: docker
+    comment: 'Galaxy Test Server'
+    uid: 819456
+    home: /home/g2test
+    shell: /bin/bash
+  - name: g2main
+    group: G-803372
+    groups: docker
+    comment: 'Galaxy Main Server'
+    uid: 819800
+    home: /home/g2main
+    shell: /bin/bash
+  - name: idc
+    group: idc
+    comment: 'Intergalactic Data Commission'
+    uid: 808
+    home: /home/idc
+    shell: /bin/sh
+
+# Prefer the JS2 stratum 1 via the local network
+galaxy_cvmfs_server_urls:
+  - domain: galaxyproject.org
+    use_geoapi: true
+    urls:
+      - "http://cvmfs1-iu0.js2local/cvmfs/@fqrn@"
+      - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@"
+      - "http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@"
+
+cvmfs_http_proxies:
+  - "http://jetstream2.js2local:3128"
+  - "DIRECT"
+
+slurm_user:
+  uid: 40302
+  gid: 40302
+  group: slurm
+  comment: 'Slurm Workload Manager'
+  home: /var/spool/slurm
+  shell: /bin/bash
+
+slurm_cluster_name: "{{ cloud_id | replace('_', '-') }}"
+slurm_controller_name: "{{ controller_name }}"
+
 slurm_munge_key: files/slurm/munge.key
 
 # what mounts/dirs/users the prolog script will check
@@ -15,8 +126,7 @@ slurm_prolog_users:
   - g2main
 
 slurm_config:
-  ControlMachine: "{{ slurm_controller_name }}"
-  ControlAddr: "{{ slurm_controller_ip }}"
+  SlurmctldHost: "{{ slurm_controller_name }}"
   ClusterName: "{{ slurm_cluster_name }}"
 
   UnkillableStepTimeout: 300

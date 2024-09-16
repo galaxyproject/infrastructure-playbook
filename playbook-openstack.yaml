@@ -1,5 +1,7 @@
+---
+
 - name: Spawn instances
-  hosts: jetstreamhosts
+  hosts: openstack_instances
   gather_facts: no
   environment:
     OS_CLOUD: "{{ os_cloud_id }}"

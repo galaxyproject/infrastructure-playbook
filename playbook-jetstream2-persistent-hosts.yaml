@@ -1,0 +1,48 @@
+---
+
+- name: Tasks for Jetstream2 persistent hosts
+  hosts: jetstream2_persistent_hosts
+  roles:
+    - role: ceph_mount
+      tags: paths
+    - role: galaxyproject.general.copy
+      tags: copy
+    - role: galaxyproject.general.cron
+      tags: cron
+    - role: galaxyproject.general.services
+      tags: services
+  post_tasks:
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+    - name: Ensure firewalld is not installed
+      ansible.builtin.dnf:
+        name: firewalld
+        state: absent
+  tags: [initial, system]
+
+- name: CVMFS tasks
+  hosts: jetstream2_persistent_hosts
+  roles:
+    - role: galaxyproject.cvmfs
+  tags: cvmfs
+
+# This has to be last for slurm elastic (everything must be configured/done when slurmd starts)
+- name: Tasks for slurm hosts
+  hosts: jetstream2_persistent_hosts
+  tasks:
+    - ansible.builtin.import_role:
+        name: galaxyproject.slurm
+    - name: Fix /var/spool/slurm perms
+      ansible.builtin.file:
+        path: /var/spool/slurm
+        owner: slurm
+        group: slurm
+        mode: 0755
+  tags: slurm
+
+#- name: Slurmscale
+#  hosts: controllers
+#  roles:
+#    - role: slurmscale
+#  tags: slurmscale

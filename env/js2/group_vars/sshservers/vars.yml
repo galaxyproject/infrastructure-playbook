@@ -1,3 +1,0 @@
----
-
-sshkeys: "{{ common_sshkeys }}"

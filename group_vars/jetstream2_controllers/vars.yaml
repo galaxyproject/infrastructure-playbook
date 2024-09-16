@@ -18,7 +18,7 @@ os_floating_ips:
 
 cvmfs_quota_limit: 1024
 
-controllers_group_files:
+jetstream2_controllers_group_files:
   - src: files/admin/pdsh-up
     dest: /usr/local/bin/pdsh-up
     mode: "0755"
@@ -30,7 +30,7 @@ controllers_group_files:
     owner: root
     group: root
 
-controllers_group_templates:
+jetstream2_controllers_group_templates:
   - src: templates/telegraf/slurm_slurp.sh.j2
     dest: /usr/local/bin/slurm_slurp.sh
     owner: root
@@ -42,7 +42,7 @@ controllers_group_templates:
     owner: root
     group: root
 
-controllers_group_directories:
+jetstream2_controllers_group_directories:
   - path: /jetstream2/scratch/slurm
     owner: root
     group: root

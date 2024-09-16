@@ -1,0 +1,75 @@
+---
+# jetstream2 hosts
+
+all:
+
+  children:
+
+    openstack_instances:
+      hosts:
+        # mainly configured through the galaxyproject inventory so excluded from jetstream2_persistent_hosts
+        cvmfs1-iu0.galaxyproject.org:
+      vars:
+        ansible_user: rocky
+        ansible_become: true
+      children:
+        jetstream2_openstack_initializer:
+        jetstream2_persistent_hosts:
+
+    meta_jetstream2:
+      children:
+        jetstream2_openstack_initializer:
+        jetstream2_image_builders:
+        jetstream2_persistent_hosts:
+
+    jetstream2_openstack_initializer:
+      hosts:
+        # this is a fake host, all tasks run locally. sets up openstack networks and security groups
+        jetstream2-openstack-initializer:
+
+    jetstream2_image_builders:
+      hosts:
+        usegalaxy-node:
+        usegalaxy-gxit-node:
+      vars:
+        ansible_user: rocky
+        ansible_become: true
+
+    jetstream2_persistent_hosts:
+      hosts:
+        jetstream2.galaxyproject.org:
+        jetstream2-vgp.galaxyproject.org:
+      vars:
+        ansible_user: rocky
+        ansible_become: true
+
+    # "contoller" node(s) for this cloud (not necessarily a slurm controller)
+    jetstream2_controllers:
+      hosts:
+        jetstream2.galaxyproject.org:
+
+    jetstream2_pulsar_servers:
+      hosts:
+        jetstream2.galaxyproject.org:
+        jetstream2-vgp.galaxyproject.org:
+
+    slurm_controllers:
+      hosts:
+        jetstream2.galaxyproject.org:
+
+    slurm_exec_hosts:
+      children:
+        jetstream2_image_builders:
+
+    cvmfs_local_proxies:
+      children:
+        jetstream2_controllers:
+
+    cvmfs_clients:
+      children:
+        jetstream2_image_builders:
+        jetstream2_controllers:
+
+    telegraf_agents:
+      children:
+        jetstream2_persistent_hosts:
