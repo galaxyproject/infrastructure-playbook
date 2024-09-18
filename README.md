@@ -3,7 +3,7 @@
 Ansible playbook for managing Galaxy infrastructure. For the playbook managing Galaxy itself, see
 [galaxyproject/usegalaxy-playbook](https://github.com/galaxyproject/usegalaxy-playbook/).
 
-**NOTE: This playbook is a work in progress converting from the [`env` layout](env/) to a unified layout. Older TACC VMs as well as JS2 are still managed under the old layout.**
+**NOTE: This playbook is a work in progress converting from the [`env` layout](env/) to a unified layout. Older TACC VMs are still managed under the old layout.**
 
 ## To run
 

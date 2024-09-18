@@ -1,5 +1,0 @@
----
-
-image: "{{ base_name }}"
-
-#volume_name: galaxy-gie-all-20180522

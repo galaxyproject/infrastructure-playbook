@@ -34,20 +34,8 @@ mts-update:
 mts-config:
 	ansible-playbook -i inventory/galaxyproject.yaml --limit=radegast.galaxyproject.org --tags=config playbook-tool-shed-servers.yaml
 
-galaxy tacc jsiu jstacc js2:
-	ansible-playbook -i env/$@/inventory env/$@/$(PLAYBOOK).yml --diff $(TAGS_ARG) $(LIMIT_ARG)
-
-usegalaxy-node-image:
-	ansible-playbook -i env/js2/inventory env/js2/image.yml --limit=usegalaxy-node
-
-usegalaxy-gxit-node-image:
-	ansible-playbook -i env/js2/inventory env/js2/image.yml --limit=usegalaxy-gxit-node
-
-usegalaxy-node-images:
-	ansible-playbook -i env/js2/inventory env/js2/image.yml --limit=imagehosts
-
 js2-openstack-init:
 	# sets up router, subnets, security groups, etc.
-	ansible-playbook -i env/js2/inventory env/js2/jetstream.yml --limit=openstackinitialize
+	ansible-playbook -i inventory/jetstream2.yaml playbook-openstack.yaml --limit=jetstream2_openstack_initializer
 
-.PHONY: galaxy tacc jsiu jstacc js2 usegalaxy-node-image tts tts-update tts-config mts mts-update mts-config
+.PHONY: tts tts-update tts-config mts mts-update mts-config js2-openstack-init
