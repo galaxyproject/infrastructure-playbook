@@ -35,7 +35,6 @@ cvmfs_http_proxies:
   - "DIRECT"
 
 slurm_roles: [exec]
-slurm_munge_key: files/slurm/munge.key
 
 slurm_prolog_cvmfs_repos:
   - main.galaxyproject.org

@@ -18,6 +18,7 @@
     - role: galaxyproject.general.paths
     - role: galaxyproject.cvmfs
     - role: galaxyproject.slurm
+      tags: slurm
     - role: galaxyproject.general.copy
     - role: galaxyproject.general.cron
     - role: tc_limit

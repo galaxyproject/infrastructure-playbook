@@ -11,25 +11,14 @@ slurm_controller_name: galaxy08
 slurm_controller_ip: 129.114.60.125
 slurm_cluster_name: roundup
 slurm_dbd_server_name: galaxy08
-#slurm_dbd_server_ip: 129.114.60.125
-
-# FIXME: old paths?
-#slurmd_spool_dir: /var/lib/slurm/slurmd/slurmd.spool
-#slurmctld_state_dir: /var/lib/slurm/slurmctld/slurm.state
 
 slurm_munge_key: files/slurm/munge.key
 
-# what mounts/dirs/users the prolog script will check
-slurm_prolog_cvmfs_repos:
-  - main.galaxyproject.org
-  - data.galaxyproject.org
-  - singularity.galaxyproject.org
-
-slurm_prolog_dirs:
-  - /corral4/main
-
-slurm_prolog_users:
-  - g2main
+slurm_cgroup_config:
+  CgroupAutomount: yes
+  ConstrainCores: yes
+  ConstrainRAMSpace: yes
+  ConstrainSwapSpace: yes
 
 slurm_config:
   ControlMachine: "{{ slurm_controller_name }}"
@@ -58,10 +47,8 @@ slurm_config:
   SwitchType: switch/none
 
   SlurmctldTimeout: 300
-  #SlurmdSpoolDir: /var/spool/slurm/d/slurmd.spool
   SlurmdSpoolDir: /var/lib/slurm/slurmd/slurmd.spool
   SlurmdTimeout: 300
-  #StateSaveLocation: /var/spool/slurm/ctld/slurm.state
   StateSaveLocation: /var/lib/slurm/slurmctld/slurm.state
 
   AccountingStorageType: accounting_storage/slurmdbd
@@ -79,13 +66,6 @@ slurm_config:
 
 # Weight is set so that nodes exclusive to a partition will be preferred
 slurm_nodes:
-  # permanent nodes
-  - name: roundup[49-64]
-    RealMemory: 122880
-    CPUS: 24
-    State: UNKNOWN
-    Weight: 20
-    Features: roundup
   # actual mem of cyclone instances as reported by slurmd -C: 90810
   - name: galaxy-main-set02-1
     NodeAddr: 129.114.55.31
@@ -120,28 +100,28 @@ slurm_nodes:
     RealMemory: 90000
     CPUS: 23
     State: UNKNOWN
-    Weight: 0
+    Weight: 10
     Features: cyclone
   - name: galaxy-main-set02-6
     NodeAddr: 129.114.55.47
     RealMemory: 90000
     CPUS: 23
     State: UNKNOWN
-    Weight: 0
+    Weight: 10
     Features: cyclone
   - name: galaxy-main-set02-7
     NodeAddr: 129.114.55.51
     RealMemory: 90000
     CPUS: 23
     State: UNKNOWN
-    Weight: 0
+    Weight: 10
     Features: cyclone
   - name: galaxy-main-set02-8
     NodeAddr: 129.114.55.57
     RealMemory: 90000
     CPUS: 23
     State: UNKNOWN
-    Weight: 0
+    Weight: 10
     Features: cyclone
   - name: galaxy-main-set04-1
     NodeAddr: 129.114.55.18
@@ -320,7 +300,7 @@ slurm_partitions:
     MaxNodes: 1
     DefMemPerCPU: 3900
     MaxCPUsPerNode: 20
-    Nodes: roundup[49-64],galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
     LLN: "YES"
     PriorityTier: 0
   - name: normal
@@ -339,6 +319,6 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 3900
-    Nodes: roundup[49-64],galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    Nodes: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
     LLN: "YES"
     PriorityTier: 20

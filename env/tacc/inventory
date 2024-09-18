@@ -32,7 +32,7 @@ galaxy-web-04.tacc.utexas.edu
 [maingalaxydbservers]
 
 [galaxynodes]
-roundup[49:64].tacc.utexas.edu
+#roundup[49:64].tacc.utexas.edu
 
 [baseenv]
 galaxy04.tacc.utexas.edu
