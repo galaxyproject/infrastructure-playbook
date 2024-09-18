@@ -1,6 +1,5 @@
 ---
 
-slurm_scale_user: slurm
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
 #os_image: Featured-RockyLinux9
@@ -82,3 +81,14 @@ slurm_slurp_partitions:
   - tpv
   - vgp
   - priority
+
+slurm_scale_ssh_user: rocky
+slurm_scale_playbook_repo: https://github.com/galaxyproject/slurmscale-playbook.git
+slurm_scale_vars:
+  - slurm_scale_tailscale_authkey
+  - ceph_mounts
+  - galaxy_cvmfs_server_urls
+  - cvmfs_http_proxies
+slurm_scale_images:
+  - usegalaxy-node
+  - usegalaxy-gxit-node

@@ -19,21 +19,12 @@ all:
     meta_jetstream2:
       children:
         jetstream2_openstack_initializer:
-        jetstream2_image_builders:
         jetstream2_persistent_hosts:
 
     jetstream2_openstack_initializer:
       hosts:
         # this is a fake host, all tasks run locally. sets up openstack networks and security groups
         jetstream2-openstack-initializer:
-
-    jetstream2_image_builders:
-      hosts:
-        usegalaxy-node:
-        usegalaxy-gxit-node:
-      vars:
-        ansible_user: rocky
-        ansible_become: true
 
     jetstream2_persistent_hosts:
       hosts:
@@ -57,17 +48,12 @@ all:
       hosts:
         jetstream2.galaxyproject.org:
 
-    slurm_exec_hosts:
-      children:
-        jetstream2_image_builders:
-
     cvmfs_local_proxies:
       children:
         jetstream2_controllers:
 
     cvmfs_clients:
       children:
-        jetstream2_image_builders:
         jetstream2_controllers:
 
     telegraf_agents:

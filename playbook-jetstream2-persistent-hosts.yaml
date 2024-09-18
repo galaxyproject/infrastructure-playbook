@@ -41,8 +41,8 @@
         mode: 0755
   tags: slurm
 
-#- name: Slurmscale
-#  hosts: controllers
-#  roles:
-#    - role: slurmscale
-#  tags: slurmscale
+- name: Slurmscale
+  hosts: jetstream2_controllers
+  roles:
+    - role: slurmscale
+  tags: slurmscale

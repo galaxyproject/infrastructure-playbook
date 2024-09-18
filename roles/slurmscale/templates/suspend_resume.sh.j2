@@ -3,26 +3,29 @@
 # TODO: configurable
 log_loc=/var/log/slurm/elastic.log
 log_dir=/var/log/slurm/elastic
+log_time=$(date +%Y%m%dT%H%M%S)
+ssh_user='{{ slurm_scale_ssh_user }}'
 
 {
 
 . {{ slurm_scale_root | quote }}/bin/activate
 
-cd {{ slurm_scale_root | quote }}/etc/ansible
+cd {{ slurm_scale_playbook_path | quote }}
 
 echo "Start: $(date)"
+
+names=$(scontrol show hostname "$1" | xargs echo | tr ' ' ',')
 
 # suspend/resume operation comes from the name this program is called as (e.g. slurm_suspend, slurm_resume)
 case $0 in
     *suspend)
         op='suspend'
+        inventory='inventory/openstack.yaml'
         ;;
     *resume)
         # this isn't ideal but the names have to exist somehow and it can't be done with -i
         op='resume'
-        set -x
-        { echo '[galaxynodes]'; scontrol show hostname "$1"; } > inventory/spawn.$$ 2>> $log_loc
-        { set +x; } 2>/dev/null
+        inventory="${names},"
         ;;
     *)
         echo "error: unknown program name: $0"
@@ -30,18 +33,17 @@ case $0 in
         ;;
 esac
 
+playbook="playbook-${op}.yaml"
+
 echo "Node $op invoked: $0 $*"
 
-names=$(scontrol show hostname "$1" | xargs echo | tr ' ' ',')
-
-echo "Start: $(date)" >> "${log_dir}/${1}.log"
+echo "Start: $(date)" >> "${log_dir}/${log_time}-${op}.log"
 start=$(date +%s)
 set -x
-{ ansible-playbook -l "$names" ${op}.yml; } >> "${log_dir}/${1}.log" 2>&1
-{ [ -f inventory/spawn.$$ ] && rm -f inventory/spawn.$$; }
+{ ansible-playbook -l "$names" -i "$inventory" -u "$ssh_user" "${playbook}"; } >> "${log_dir}/${log_time}-${op}.log" 2>&1
 { set +x; } 2>/dev/null
-echo "End: $(date)" >> "${log_dir}/${1}.log"
-echo "Elapsed: $(($(date +%s) - $start))" >> "${log_dir}/${1}.log"
+echo "End: $(date)" >> "${log_dir}/${log_time}-${op}.log"
+echo "Elapsed: $(($(date +%s) - $start))" >> "${log_dir}/${log_time}-${op}.log"
 
 echo "End: $(date)"
 

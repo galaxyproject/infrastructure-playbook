@@ -1,18 +1,18 @@
 ---
 
 - name: Create slurm scale directory
-  file:
+  ansible.builtin.file:
     path: "{{ slurm_scale_root }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
 
 - name: Install dependencies
-  yum:
+  ansible.builtin.dnf:
     name:
       - openssl-devel
 
 - name: Create slurm scale virtualenv
-  pip:
+  ansible.builtin.pip:
     name:
       - pip
       - setuptools
@@ -25,7 +25,7 @@
 # using `latest` with these can be disastrous e.g. if a new major release of Ansible is uploaded or a C extension
 # dependency (e.g. cffi) is updated without wheels.
 - name: Install slurm scale dependencies
-  pip:
+  ansible.builtin.pip:
     name:
       - ansible>2.7.5
       - shade
@@ -36,166 +36,132 @@
   become_user: "{{ slurm_scale_user }}"
 
 - name: Create slurm scale ansible directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
   loop:
     - "{{ slurm_scale_root }}/sbin"
-    - "{{ slurm_scale_root }}/etc"
+    - "{{ slurm_scale_playbook_path | dirname }}"
     - "/var/log/slurm/elastic"
 
-# FIXME: this is always changed
-- name: Copy ansible files
-  synchronize:
-    archive: no
-    recursive: yes
-    links: no
-    times: yes
-    perms: yes
-    copy_links: yes
-    src: files/
-    dest: "{{ slurm_scale_root }}/etc/ansible"
-    rsync_path: "sudo -u {{ slurm_scale_user }} rsync"
+- name: Clone slurm scale playbook
+  ansible.builtin.git:
+    repo: "{{ slurm_scale_playbook_repo }}"
+    dest: "{{ slurm_scale_playbook_path }}"
+    version: "{{ slurm_scale_playbook_commit | default(omit) }}"
+    force: "{{ slurms_scale_playbook_force | default(false) }}"
+  become: yes
+  become_user: "{{ slurm_scale_user }}"
+  diff: false
+  register: __slurmscale_playbook_repo_result
 
 # Have to do this post-rsync
 - name: Create ansible directories for templates and symlinks
-  file:
-    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path | dirname }}"
+  ansible.builtin.file:
+    path: "{{ slurm_scale_playbook_path }}/{{ item.path | dirname }}"
     state: directory
     owner: "{{ slurm_scale_user }}"
   loop:
-    - path: group_vars/all/cloud.yml
     - path: files/slurm/munge.key
-    - path: inventory/openstack.yml
-    #- path: templates/slurm/slurm.conf.j2
-    #- path: templates/slurm.conf.j2
 
-- name: Template ansible files
-  template:
-    src: "{{ item.path }}.j2"
-    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
+- name: Write secret vars
+  ansible.builtin.copy:
+    content: |
+      {% for name in slurm_scale_vars %}
+      {{ {name: hostvars[inventory_hostname][name]} | to_nice_yaml(indent=2) }}
+      {% endfor %}
+    dest: "{{ slurm_scale_playbook_path }}/group_vars/all/secrets.yaml"
     owner: "{{ slurm_scale_user }}"
-  loop:
-    - path: group_vars/all/cloud.yml
-    - path: group_vars/all/slurm.yml
-    - path: group_vars/all/tailscale.yml
-    - path: inventory/openstack.yml
-
-#- name: Create symlinks
-#  file:
-#    path: "{{ slurm_scale_root }}/etc/ansible/{{ item.path }}"
-#    src: "{{ item.src }}"
-#    state: link
-#  loop:
-#    - path: templates/slurm/slurm.conf.j2
-#      src: /etc/slurm/slurm.conf
+  diff: false
 
 - name: Install slurm suspend/resume script
-  template:
+  ansible.builtin.template:
     src: suspend_resume.sh.j2
     dest: "{{ slurm_scale_root }}/sbin/slurm_suspend"
     owner: "{{ slurm_scale_user }}"
     mode: 0755
 
 - name: Link slurm suspend/resume script
-  file:
+  ansible.builtin.file:
     dest: "{{ slurm_scale_root }}/sbin/slurm_resume"
     src: "{{ slurm_scale_root }}/sbin/slurm_suspend"
     state: hard
     force: yes    # supposed to be fixed in 2.4 but it's not?
 
 - name: Install private data
-  copy:
+  ansible.builtin.copy:
     content: "{{ item.content }}"
-    dest: "{{ slurm_scale_root }}/etc/ansible/{{ item.dest }}"
+    dest: "{{ slurm_scale_playbook_path }}/{{ item.dest }}"
     owner: "{{ slurm_scale_user }}"
     mode: "0400"
-  no_log: yes
   loop:
     - content: "{{ slurm_ssh_key }}"
       dest: "slurm-kp.pem"
     - content: "{{ clouds_yaml | to_nice_yaml }}"
       dest: "clouds.yaml"
+  loop_control:
+    label: "{{ item.dest }}"
+  diff: false
 
 # this decrypts the key
 - name: Install munge key
-  copy:
+  ansible.builtin.copy:
     src: "{{ slurm_munge_key }}"
-    dest: "{{ slurm_scale_root }}/etc/ansible/files/slurm/munge.key"
+    dest: "{{ slurm_scale_playbook_path }}/files/slurm/munge.key"
     owner: "{{ slurm_scale_user }}"
     mode: "0400"
-
-# This is for creating the usegalaxy-node image, but it would probably be ideal if we could just use this playbook for
-# slurmscale itself rather than constructing a quasi-playbook as we do above
-- name: Create Slurm ssh directory
-  file:
-    path: /var/spool/slurm/.ssh
-    state: directory
-    owner: slurm
-    group: slurm
-    mode: 0700
-
-- name: Create Slurm ssh config
-  copy:
-    content: |
-      UserKnownHostsFile /dev/null
-      StrictHostKeyChecking no
-    dest: /var/spool/slurm/.ssh/config
-    owner: slurm
-    group: slurm
-    mode: 0600
-
-- name: Clone Playbook
-  become: yes
-  become_user: slurm
-  git:
-    dest: "{{ slurm_scale_root }}/etc/infrastructure-playbook"
-    recursive: true
-    force: true
-    repo: https://github.com/galaxyproject/infrastructure-playbook.git
-
-- name: Write vault pass
-  copy:
-    content: "{{ vault_pass }}"
-    dest: "{{ slurm_scale_root }}/etc/infrastructure-playbook/.pass"
-    owner: slurm
-    group: slurm
-    mode: 0600
-  no_log: yes
-
-# FIXME: the playbook writes clouds.yaml and removes it so this should be unnecessary right?
-- name: Write clouds.yaml
-  copy:
-    content: "{{ clouds_yaml | to_nice_yaml }}"
-    dest: "{{ slurm_scale_root }}/etc/infrastructure-playbook/clouds.yaml"
-    owner: slurm
-    group: slurm
-    mode: 0600
-  no_log: yes
+  diff: false
 
 - name: Install roles
+  ansible.builtin.command: "{{ slurm_scale_root }}/bin/ansible-galaxy role install --force -r requirements.yaml"
+  args:
+    chdir: "{{ slurm_scale_playbook_path }}"
   become: yes
   become_user: slurm
-  command: "{{ slurm_scale_root }}/bin/ansible-galaxy role install -p roles -r requirements.yml"
-  args:
-    chdir: "{{ slurm_scale_root }}/etc/infrastructure-playbook"
+  when: __slurmscale_playbook_repo_result is changed
 
-- name: Write image cleanup script
-  copy:
+- name: Install collections
+  ansible.builtin.command: "{{ slurm_scale_root }}/bin/ansible-galaxy collection install --force -r requirements.yaml"
+  args:
+    chdir: "{{ slurm_scale_playbook_path }}"
+  become: yes
+  become_user: slurm
+  when: __slurmscale_playbook_repo_result is changed
+
+# FIXME: hardcoding these in the task is not ideal
+- name: Write image generation script
+  ansible.builtin.copy:
     content: |
       #!/bin/bash
-      export OS_CLOUD=js2
-      cd "{{ slurm_scale_root }}/etc/infrastructure-playbook"
+      set -euo pipefail
+      . {{ slurm_scale_root | quote }}/bin/activate
+      cd {{ slurm_scale_playbook_path | quote }}
+      {% for image in slurm_scale_images %}
+      ansible-playbook -i inventory/image-builders.yaml playbook-image.yaml --limit={{ image }}
+      {% endfor %}
+    dest: "{{ slurm_scale_root }}/sbin/slurmscale-build-images"
+    owner: slurm
+    group: slurm
+    mode: 0755
+
+- name: Write image cleanup script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      set -euo pipefail
+      . {{ slurm_scale_root | quote }}/bin/activate
+      export OS_CLOUD={{ os_cloud_id }}
+      cd {{ slurm_scale_playbook_path | quote }}
       while read id name; do
           case "$name" in
-              usegalaxy-node-*|usegalaxy-gxit-node-*)
+              {{ slurm_scale_images | join('-*|') }}-*)
                   echo "Deleting ${name} (${id})"
                   openstack image delete "$id" || echo "WARNING: Image ${id} failed to delete, but this is ok if it is still in use"
                   ;;
           esac
       done < <(openstack image list --private --format value --column ID --column Name)
-    dest: "{{ slurm_scale_root }}/bin/clean-usegalaxy-node-images"
+    dest: "{{ slurm_scale_root }}/sbin/slurmscale-clean-images"
     owner: slurm
     group: slurm
     mode: 0755
@@ -204,17 +170,17 @@
   cron:
     cron_file: ansible_slurmscale
     user: "{{ slurm_scale_user }}"
-    name: usegalaxy-node image
+    name: "slurmscale images"
     hour: 0
     minute: 0
     weekday: 0
-    job: ". {{ slurm_scale_root }}/bin/activate && make -C {{ slurm_scale_root }}/etc/infrastructure-playbook usegalaxy-node-image"
+    job: "{{ slurm_scale_root | quote }}/sbin/slurmscale-build-images"
 
 - name: Create image cleanup cron job
   cron:
     cron_file: ansible_slurmscale
     user: "{{ slurm_scale_user }}"
-    name: usegalaxy-node image cleanup
+    name: slurmscale image cleanup
     hour: 23
     minute: 0
-    job: ". {{ slurm_scale_root }}/bin/activate && {{ slurm_scale_root }}/bin/clean-usegalaxy-node-images"
+    job: "{{ slurm_scale_root | quote }}/sbin/slurmscale-clean-images"

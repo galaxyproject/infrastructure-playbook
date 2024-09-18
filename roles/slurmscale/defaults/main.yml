@@ -1,3 +1,5 @@
 ---
 
+slurm_scale_user: slurm
 slurm_scale_root: /opt/slurmscale
+slurm_scale_playbook_path: "{{ slurm_scale_root }}/etc/playbook"

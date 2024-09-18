@@ -14,13 +14,6 @@ controller_name: jetstream2
 #cloud_id: js2-tacc
 #os_public_network: provider
 
-jetstream_local_controller_address: "{{ controller_name }}.js2local"
-jetstream_local_cvmfs_stratum1_address: "cvmfs1-iu0.js2local"
-jetstream_local_cvmfs_proxy_address: "{{ controller_name }}.js2local"
-
-# Used by the image generation playbook, instances names match the image name
-usegalaxy_node_image_name: "{{ inventory_hostname }}"
-
 # Controls whose keys are added to the admin user on cloud instances in the openstack role (names match those in
 # sshkeys provided by the sshservers group vars)
 os_admin_users: "{{ galaxy_admin_users }}"
