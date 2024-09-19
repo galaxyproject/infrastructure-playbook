@@ -89,6 +89,7 @@ slurm_scale_vars:
   - ceph_mounts
   - galaxy_cvmfs_server_urls
   - cvmfs_http_proxies
+  - docker_gid
 slurm_scale_images:
   - usegalaxy-node
   - usegalaxy-gxit-node

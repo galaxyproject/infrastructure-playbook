@@ -51,11 +51,17 @@ os_nics:
 
 galaxy_cvmfs_repos_enabled: yes
 
+# Docker is preinstalled in the feature image and the gid can change between builds, but with slurm must be the same
+# between controller and exec hosts (since a user's groups are inherited from the controller, not the exec host)
+docker_gid: 909
+
 all_groups:
   - name: G-803372
     gid: 803372
   - name: idc
     gid: 808
+  - name: docker
+    gid: "{{ docker_gid }}"
 
 all_users:
   - name: g2test
