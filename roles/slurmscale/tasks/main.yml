@@ -129,38 +129,17 @@
   become_user: slurm
   when: __slurmscale_playbook_repo_result is changed
 
-# FIXME: hardcoding these in the task is not ideal
 - name: Write image generation script
-  ansible.builtin.copy:
-    content: |
-      #!/bin/bash
-      set -euo pipefail
-      . {{ slurm_scale_root | quote }}/bin/activate
-      cd {{ slurm_scale_playbook_path | quote }}
-      {% for image in slurm_scale_images %}
-      ansible-playbook -i inventory/image-builders.yaml playbook-image.yaml --limit={{ image }}
-      {% endfor %}
+  ansible.builtin.template:
+    src: slurmscale-build-images.bash.j2
     dest: "{{ slurm_scale_root }}/sbin/slurmscale-build-images"
     owner: slurm
     group: slurm
     mode: 0755
 
 - name: Write image cleanup script
-  ansible.builtin.copy:
-    content: |
-      #!/bin/bash
-      set -euo pipefail
-      . {{ slurm_scale_root | quote }}/bin/activate
-      export OS_CLOUD={{ os_cloud_id }}
-      cd {{ slurm_scale_playbook_path | quote }}
-      while read id name; do
-          case "$name" in
-              {{ slurm_scale_images | join('-*|') }}-*)
-                  echo "Deleting ${name} (${id})"
-                  openstack image delete "$id" || echo "WARNING: Image ${id} failed to delete, but this is ok if it is still in use"
-                  ;;
-          esac
-      done < <(openstack image list --private --format value --column ID --column Name)
+  ansible.builtin.template:
+    src: slurmscale-clean-images.bash.j2
     dest: "{{ slurm_scale_root }}/sbin/slurmscale-clean-images"
     owner: slurm
     group: slurm

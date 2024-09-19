@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+. {{ slurm_scale_root | quote }}/bin/activate
+export OS_CLOUD={{ os_cloud_id }}
+cd {{ slurm_scale_playbook_path | quote }}
+
+while read id name; do
+    case "$name" in
+        {{ slurm_scale_images | join('-*|') }}-*)
+            echo "Deleting ${name} (${id})"
+            openstack image delete "$id" || echo "WARNING: Image ${id} failed to delete, but this is ok if it is still in use"
+            ;;
+    esac
+done < <(openstack image list --private --format value --column ID --column Name)

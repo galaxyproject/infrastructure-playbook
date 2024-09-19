@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+. {{ slurm_scale_root | quote }}/bin/activate
+cd {{ slurm_scale_playbook_path | quote }}
+
+if [[ $# -eq 0 ]]; then
+    images=(
+{% for image in slurm_scale_images %}
+        {{ image | quote }}
+{% endfor %}
+    )
+else
+    images="$@"
+fi
+
+for image in ${images[@]}; do
+    ansible-playbook -i inventory/image-builders.yaml playbook-image.yaml --limit="$image"
+done
