@@ -30,7 +30,7 @@ smartos_images:
 smartos_vms:
   - name: jeltz
     brand: bhyve
-    ram: 2048
+    ram: 4096
     vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
