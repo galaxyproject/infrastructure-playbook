@@ -93,3 +93,10 @@ cvmfs_repositories:
     server_options:
       - CVMFS_AUTO_GC=false
     client_options: []
+  - repository: brc.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: g2test
+    key_dir: /etc/cvmfs/keys/galaxyproject.org
+    server_options:
+      - CVMFS_AUTO_GC=false
+    client_options: []

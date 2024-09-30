@@ -28,6 +28,7 @@ cvmfs_stratum1_servers_group_users:
   - "{{ galaxyproject_users.refgenie }}"
   - "{{ galaxyproject_users.idc }}"
   - "{{ galaxyproject_users.cloud }}"
+  - "{{ galaxyproject_users.brc }}"
   - "{{ galaxyproject_users.g2test }}"
   - "{{ galaxyproject_users.g2main }}"
 
@@ -39,6 +40,7 @@ cvmfs_stratum1_servers_group_groups:
   - "{{ galaxyproject_groups.refgenie }}"
   - "{{ galaxyproject_groups.idc }}"
   - "{{ galaxyproject_groups.cloud }}"
+  - "{{ galaxyproject_groups.brc }}"
   - "{{ galaxyproject_groups.G_803372 }}"
 
 cvmfs_stratum1_servers_group_files:
@@ -152,6 +154,9 @@ cvmfs_keys:
   - path: /etc/cvmfs/keys/galaxyproject.org/idc.galaxyproject.org.pub
     owner: root
     key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/galaxyproject.org/brc.galaxyproject.org.pub
+    owner: root
+    key: "{{ cvmfs_site_keys.pub }}"
 
 cvmfs_repositories:
   - repository: test.galaxyproject.org
@@ -220,6 +225,13 @@ cvmfs_repositories:
   - repository: idc.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: idc
+    key_dir: /etc/cvmfs/keys/galaxyproject.org
+    server_options:
+      - CVMFS_AUTO_GC=false
+    client_options: []
+  - repository: brc.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: brc
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
       - CVMFS_AUTO_GC=false

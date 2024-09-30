@@ -47,6 +47,10 @@ zfs_filesystems:
     mountpoint: /srv/cvmfs/idc.galaxyproject.org
     owner: idc
     group: idc
+  - name: zones/{{ zone_id }}/data/srv-cvmfs/brc.galaxyproject.org
+    mountpoint: /srv/cvmfs/brc.galaxyproject.org
+    owner: brc
+    group: brc
 
 # This foreground-only setup worked on the older EL7 LX zone, where squid can't bind port 80 when run in standard
 # daemon/forking mode (and iptables and setcap aren't possible in LX, and systemd-socket-proxyd yields a strange arp

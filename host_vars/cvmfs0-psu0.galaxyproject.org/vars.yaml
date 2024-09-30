@@ -31,6 +31,7 @@ host_users:
   - "{{ galaxyproject_users.usegalaxy }}"
   - "{{ galaxyproject_users.refgenie }}"
   - "{{ galaxyproject_users.idc }}"
+  - "{{ galaxyproject_users.brc }}"
 
 host_groups:
   - "{{ galaxyproject_groups.data }}"
@@ -39,6 +40,7 @@ host_groups:
   - "{{ galaxyproject_groups.usegalaxy }}"
   - "{{ galaxyproject_groups.refgenie }}"
   - "{{ galaxyproject_groups.idc }}"
+  - "{{ galaxyproject_groups.brc }}"
 
 host_directories:
   - path: /srv/idc
@@ -90,6 +92,12 @@ cvmfs_repositories:
   - repository: idc.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: idc
+    server_options:
+      - CVMFS_GARBAGE_COLLECTION=true
+    client_options: []
+  - repository: brc.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: brc
     server_options:
       - CVMFS_GARBAGE_COLLECTION=true
     client_options: []
@@ -230,4 +238,29 @@ cvmfs_keys:
       1i71kRfuNlmZTTiKuMv2McEuZTuO29Qw0jhz0HSs137/rRxLTaWVWijegvaIdONM
       qWtkkqPGt98aCTWUyWnsI+WWgjJ8Oyh/uxN1kl3vLU90f0xhVsoejxf3ySb4bGG2
       ab0ldOFrZ6YT9JEnDHIvitFheKJg2qtjLEEhs3Neh4t0uvzt+Sw=
+      -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/brc.galaxyproject.org.pub
+    owner: brc
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/brc.galaxyproject.org.crt
+    owner: brc
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIC/TCCAeUCFFz88m58h72k+AR8vsbXHSm/FRICMA0GCSqGSIb3DQEBCwUAMDsx
+      OTA3BgNVBAMMMGJyYy5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFz
+      ZSBNYW5hZ2VyczAeFw0yNDA5MzAxODU5NTNaFw0yNTA5MzAxODU5NTNaMDsxOTA3
+      BgNVBAMMMGJyYy5nYWxheHlwcm9qZWN0Lm9yZyBDZXJuVk0tRlMgUmVsZWFzZSBN
+      YW5hZ2VyczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALnaMsGkwkdl
+      MDQJQALAvm1wjK1GYCqM/UmvXAM5op0N76NCcVK0qG3kwVxQVLKVIxHPqWupjlxX
+      t+9ZGepOs+G6Im+ZGedEaiATdIFlT5BvWRvwf2+k6tfDUDgrZAlfqnIlr6VgUvLs
+      5asjOGlr+0QsH4AtXnvUab8NP2nsMNMRVvJvM/OIesZU52BQSzb1b28qxV5YTQbM
+      R9JDO/03IuDQKn6/I6yq2ccm1KaS+NPOzgXF5yONgEw4lqvTiPTCW4UhwoRNQr66
+      1Ih0a8EqSl/doI739DSqVU4A36Tr9+f2Id3RMhyoQ3dz4/s12RSiTHlDOtg1vR/l
+      2QH1a2i1fhsCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAKluPV0ZNaJO11ioBgf/8
+      YIdoRwDc9l8mg5q4LL7WLbcUoPhVfAYtiUuWYs8SFtxA+s/Vl63wmHwEHVJXt13n
+      5AVtTz9qxrfSwSRJq2kJ/GxCYthRFYLl4C3YRuTqMfG4XU2mimFm9fgZog7FjZbw
+      iqKWApAiNO1gVZWhri1v7V1qFOXxVtDDC1+f4QYXgU1aBMHLj59kuAhJ3wpQk9w4
+      cB4+Rf8jhaPAQucF+YGHXAbvbWvwUfU72+f4My8Zc2M57NtTPacKlnP2UfjQUpqL
+      6jeUVeFViddr6scU6Ce2U5VVH4386Y/J6DiGv9zCEsOj4m0+yCENHskN9H5uCboH
+      xA==
       -----END CERTIFICATE-----
