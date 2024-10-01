@@ -28,7 +28,10 @@
       tags: general
     - role: galaxyproject.general.copy
       tags: general
+    - role: dj-wasabi.telegraf
+      tags: telegraf
     - role: galaxyproject.telegraf_cvmfs
+      tags: telegraf
     # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
     # the config
     - role: usegalaxy_org.stats
