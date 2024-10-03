@@ -48,6 +48,23 @@ host_directories:
     group: idc
     mode: "0755"
 
+# TEMP TEMP TEMP TEMP
+telegraf_plugins_extra:
+  http_response:
+    config:
+      - urls = ["http://localhost/cvmfs/info/v1/meta.json"]
+      - response_status_code = 200
+      - interface = "lo"
+      - '[inputs.http_response.headers]'
+      - '  Host = "{{ inventory_hostname }}"'
+  brc_genomes_cvmfs:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'echo brc-genomes-cvmfs count=$(cat /cvmfs/brc.galaxyproject.org/config/dbkeys.loc | wc -l)'"]
+      - timeout = "30s"
+      - data_format = "influx"
+      - interval = "5m"
+
 cvmfs_manage_firewall: false
 galaxy_cvmfs_repos_enabled: false
 cvmfs_repositories:

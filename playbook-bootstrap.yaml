@@ -20,3 +20,4 @@
   hosts: telegraf_agents
   roles:
     - role: dj-wasabi.telegraf
+  tags: telegraf
