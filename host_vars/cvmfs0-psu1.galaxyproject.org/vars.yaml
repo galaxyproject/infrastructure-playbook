@@ -55,6 +55,10 @@ cvmfs_repositories:
     client_options:
       # TODO: why was this set? default appears to be 65536 now
       - CVMFS_NFILES=4096
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
   - repository: main.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
     owner: g2main
@@ -67,6 +71,10 @@ cvmfs_repositories:
       - CVMFS_VIRTUAL_DIR=true
     client_options:
       - CVMFS_NFILES=4096
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 15
+      hour: 1
   - repository: cloud.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
     owner: cloud
@@ -79,6 +87,10 @@ cvmfs_repositories:
       - CVMFS_VIRTUAL_DIR=true
     client_options:
       - CVMFS_NFILES=4096
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 1
 
 cvmfs_private_keys:
   - path: /etc/cvmfs/keys/test.galaxyproject.org.masterkey

@@ -75,8 +75,15 @@ cvmfs_repositories:
       - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
       - CVMFS_AUTO_GC=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
       - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_FILE_MBYTE_LIMIT=32768
     client_options: []
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
+      weekday: 0
   - repository: refgenomes-databio.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: refgenie
@@ -84,7 +91,9 @@ cvmfs_repositories:
       - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
       - CVMFS_AUTO_GC=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
       - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_FILE_MBYTE_LIMIT=32768
     client_options: []
   - repository: sandbox.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
@@ -110,14 +119,34 @@ cvmfs_repositories:
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: idc
     server_options:
+      - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_FILE_MBYTE_LIMIT=32768
     client_options: []
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
+      weekday: 1
   - repository: brc.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
     owner: brc
     server_options:
+      - CVMFS_AUTO_TAG=false
       - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_FILE_MBYTE_LIMIT=32768
     client_options: []
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
+      weekday: 2
 
 cvmfs_keys:
   - path: /etc/cvmfs/keys/data.galaxyproject.org.pub
