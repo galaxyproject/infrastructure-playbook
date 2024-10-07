@@ -12,6 +12,7 @@ all:
     meta_tacc:
       hosts:
         galaxy-db.tacc.utexas.edu:
+        galaxy-vgp.tacc.utexas.edu:
       children:
         cyclone_nodes:
 
@@ -26,6 +27,13 @@ all:
         galaxy-db.tacc.utexas.edu:
       children:
         galaxy_nodes:
+
+    # Deploys Postfix as a null client
+    postfix_clients:
+      hosts:
+        galaxy-vgp.tacc.utexas.edu:
+      children:
+        galaxy_db_servers:
 
     # Deploys MinIO and Tailscale
     minio_servers:

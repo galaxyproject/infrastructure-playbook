@@ -21,6 +21,4 @@ meta_tacc_group_mounts:
     owner: ndc
     group: G-803372
 
-postfix_config:
-  compatibility_level: 2
-  relayhost: "[relay02.tacc.utexas.edu]"
+postfix_relayhost: "[relay02.tacc.utexas.edu]"

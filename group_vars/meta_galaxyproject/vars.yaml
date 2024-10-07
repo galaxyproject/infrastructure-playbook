@@ -9,10 +9,8 @@ meta_galaxyproject_group_authorized_key_users:
   - name: root
     authorized: "{{ galaxyproject_root_users }}"
 
-# FIXME: this overrides the postfix_config for mx_servers
-# hosts inside the UEN can't make SMTP connections outside I guess
-#postfix_config:
-#  relayhost: "[smtp.psu.edu]"
+# TODO: add null clients to postfix_clients group
+postfix_relayhost: "[smtp.psu.edu]"
 
 # TODO: stuff below should be reviewed to see what if anything is useful
 #baseenv_group_sshd_config:

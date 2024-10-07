@@ -1,0 +1,8 @@
+---
+
+postfix_role: "null-client"
+postfix_config:
+  compatibility_level: 2
+  myorigin: "$myhostname"
+  relayhost: "{{ postfix_relayhost }}"
+  smtpd_relay_restrictions: "permit_mynetworks, reject"

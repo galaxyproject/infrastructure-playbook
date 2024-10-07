@@ -8,7 +8,7 @@ roles:
   - name: galaxyproject.opendkim
     version: 0.1.0
   - name: galaxyproject.postfix
-    version: 0.2.0
+    version: 0.2.1
   - name: galaxyproject.postgresql
     version: 1.1.6
   - name: galaxyproject.postgresql_objects

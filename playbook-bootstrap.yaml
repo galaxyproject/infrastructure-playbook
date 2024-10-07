@@ -21,3 +21,9 @@
   roles:
     - role: dj-wasabi.telegraf
   tags: telegraf
+
+- name: Install postfix
+  hosts: postfix_clients
+  roles:
+    - role: galaxyproject.postfix
+  tags: postfix
