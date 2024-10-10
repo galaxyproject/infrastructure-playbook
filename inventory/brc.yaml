@@ -1,0 +1,17 @@
+---
+# Probably temp for BRC TURBO MODE
+
+all:
+
+  hosts:
+    jetstream2.galaxyproject.org:
+      ansible_user: rocky
+      ansible_become: true
+    cvmfs0-psu0.galaxyproject.org:
+      ansible_user: root
+
+  children:
+    brc_tailnet_hosts:
+      hosts:
+        jetstream2.galaxyproject.org:
+        cvmfs0-psu0.galaxyproject.org:

@@ -1,0 +1,6 @@
+---
+
+- name: BRC Tailnet
+  hosts: brc_tailnet_hosts
+  roles:
+    - role: artis3n.tailscale
