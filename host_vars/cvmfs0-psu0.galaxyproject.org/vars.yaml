@@ -48,6 +48,10 @@ host_directories:
     group: idc
     mode: "0755"
 
+host_packages:
+  # for brc
+  - tree
+
 # TEMP TEMP TEMP TEMP
 telegraf_plugins_extra:
   http_response:

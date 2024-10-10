@@ -1,5 +1,9 @@
 ---
 
+host_packages:
+  # for brc
+  - parallel
+
 host_crontabs:
   - id: pulsar_clean_jobs
     name: Clean Test Pulsar Jobs
