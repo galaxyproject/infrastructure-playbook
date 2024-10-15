@@ -177,21 +177,23 @@ slurm_config:
   SuspendTimeout: 300  # time between running SuspendProgram and the node being completely down
 
 slurm_nodes:
-  - name: "js2-tiny[0-7]"
-    State: CLOUD
-    Weight: 10
-    CPUs: 1
-    RealMemory: 2840  # 2984, then 2919, then 2896 reported by slurmd
-  - name: "js2-small[0-7]"
-    State: CLOUD
-    Weight: 20
-    CPUs: 2
-    RealMemory: 5900  # 5937 reported by slurmd
-  - name: "js2-quad[0-7]"
-    State: CLOUD
-    Weight: 30
-    CPUs: 4
-    RealMemory: 14800  # 14819 reported by slurmd
+  # FIXME: now that you are building on a medium these instances can't boot with the image =/
+  # fatal: [js2-small4 -> localhost]: FAILED! => {"changed": false, "extra_data": {"data": null, "details": "Flavor's disk is too small for requested image. Flavor disk is 21474836480 bytes, image is 64424509440 bytes.", "response": "{\"badRequest\": {\"code\": 400, \"message\": \"Flavor's disk is too small for requested image. Flavor disk is 21474836480 bytes, image is 64424509440 bytes.\"}}"}, "msg": "BadRequestException: 400: Client Error for url: https://js2.jetstream-cloud.org:8774/v2.1/servers, Flavor's disk is too small for requested image. Flavor disk is 21474836480 bytes, image is 64424509440 bytes."}
+  #- name: "js2-tiny[0-7]"
+  #  State: CLOUD
+  #  Weight: 10
+  #  CPUs: 1
+  #  RealMemory: 2840  # 2984, then 2919, then 2896 reported by slurmd
+  #- name: "js2-small[0-7]"
+  #  State: CLOUD
+  #  Weight: 20
+  #  CPUs: 2
+  #  RealMemory: 5900  # 5937 reported by slurmd
+  #- name: "js2-quad[0-7]"
+  #  State: CLOUD
+  #  Weight: 30
+  #  CPUs: 4
+  #  RealMemory: 14800  # 14819 reported by slurmd
   - name: "js2-medium[0-23]"
     State: CLOUD
     Weight: 40
@@ -245,20 +247,23 @@ slurm_nodes:
 
 slurm_partitions:
   - name: vgp
-    Nodes: "js2-tiny[0-1],js2-small[0-1],js2-quad[0-1],js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
+    #Nodes: "js2-tiny[0-1],js2-small[0-1],js2-quad[0-1],js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
+    Nodes: "js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
   - name: priority
-    Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-7],js2-xl[2-7]"
+    #Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-7],js2-xl[2-7]"
+    Nodes: "js2-medium[2-3],js2-large[2-7],js2-xl[2-7],js2-mem-large[6-15],js2-mem-xl[6-15]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
     State: UP
   - name: tpv
     Default: YES
-    Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
+    #Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
+    Nodes: "js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
