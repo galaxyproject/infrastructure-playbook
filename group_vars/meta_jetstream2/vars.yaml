@@ -240,10 +240,14 @@ slurm_nodes:
     State: CLOUD
     CPUs: 32
     RealMemory: 125000  # ????? reported by slurmd
-  - name: "js2-gxit-small[0-1]"
+  #- name: "js2-gxit-small[0-1]"
+  #  State: CLOUD
+  #  CPUs: 2
+  #  RealMemory: 5900  # same as js2-small
+  - name: "js2-gxit-medium[0-1]"
     State: CLOUD
-    CPUs: 2
-    RealMemory: 5900  # same as js2-small
+    CPUs: 8
+    RealMemory: 29900  # same as js2-medium
 
 slurm_partitions:
   - name: vgp
@@ -304,7 +308,7 @@ slurm_partitions:
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: gxit
-    Nodes: "js2-gxit-small[0-1]"
+    Nodes: "js2-gxit-medium[0-1]"
     DefaultTime: "12:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
