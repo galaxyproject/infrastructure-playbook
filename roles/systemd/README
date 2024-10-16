@@ -1,7 +1,0 @@
-This is the current method used to set swap limits (not really a swap limit as it is a combined):
-
-ExecStartPost=/bin/bash -c "echo {{ memswlim }} > /sys/fs/cgroup/memory/system.slice/{{ item.name }}.{{ item.unit_type | default('service') | lower }}/memory.memsw.limit_in_bytes"
-
-MemorySwapMax could be used instead if cgroups v2 were mounted, but they're not by default:
-
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/managing_monitoring_and_updating_the_kernel/using-cgroups-v2-to-control-distribution-of-cpu-time-for-applications_managing-monitoring-and-updating-the-kernel

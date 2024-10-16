@@ -6,6 +6,7 @@
     # FIXME: bootstrap does users now
     # postgresql before users so that the postgres user exists for the group mod in users
     - role: galaxyproject.postgresql
+    - role: galaxyproject.general.systemd
     - role: galaxyproject.general.users
     - role: galaxyproject.gxadmin
       tags: gxadmin
@@ -13,7 +14,7 @@
       tags: cvmfs
   post_tasks:
     - name: Install PostgreSQL contrib package for pgcrypto
-      dnf:
+      ansible.builtin.dnf:
         name: "postgresql{{ __postgresql_version_dotless }}-contrib"
   tags: postgres
 

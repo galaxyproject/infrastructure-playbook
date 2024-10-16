@@ -1,5 +1,11 @@
 ---
 
+# Always restart PostgreSQL on exit
+galaxy_db_servers_group_systemd_overrides:
+  - name: "postgresql-{{ __postgresql_version_dotless }}"
+    override:
+      Restart: "always"
+
 # Variables from meta_galaxy_* group vars
 postgresql_pg_hba_conf: "{{ galaxy_db_postgresql_pg_hba_conf }}"
 
