@@ -167,6 +167,26 @@ telegraf_plugins_extra:
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
 
+  # 10 foot testing
+  galaxy_terminal_jobs:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery jobs-terminal-summary --newer-than=\"24 hours\"'"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_active_users:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery active-user-count 24'"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+
 postgresql_version: 16
 postgresql_create_backup_dir: false
 postgresql_backup_dir: /corral4/backup/pgsql/{{ inventory_hostname }}
@@ -220,3 +240,5 @@ postgresql_conf:
 
 gxadmin_dir: /usr/local/lib/gxadmin
 gxadmin_bin_dir: /usr/local/bin
+gxadmin_repo: https://github.com/natefoo/gxadmin.git
+gxadmin_commit: 10-foot
