@@ -81,7 +81,7 @@ telegraf_plugins_extra:
   galaxy_queue_by_destination:
     plugin: "exec"
     config:
-      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue --by destination | sed \"s/= /=unknown /\"'"]
+      - commands = ["/bin/bash -c 'PGDATABASE=galaxy_{{ galaxy_instance_codename }} /usr/local/bin/gxadmin iquery queue --by destination | sed \"s/=[ ,]/=_null_ /\"'"]
       - timeout = "180s"
       - data_format = "influx"
       - interval = "1m"
