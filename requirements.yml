@@ -21,7 +21,7 @@ roles:
   - name: galaxyproject.slurm
     version: 1.0.1
   - name: galaxyproject.cvmfs
-    version: 0.2.23
+    version: 0.2.24
   - name: galaxyproject.telegraf_cvmfs
     version: 1.0.0
   - name: galaxyproject.miniconda
