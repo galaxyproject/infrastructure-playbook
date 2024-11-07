@@ -20,6 +20,7 @@ nginx_servers:
 nginx_ssl_servers:
   - galaxyproject
   - training
+  - iwc
   - biostar
 
 certbot_domains:
