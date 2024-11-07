@@ -27,6 +27,7 @@ certbot_domains:
   - galaxyproject.org
   - www.galaxyproject.org
   - training.galaxyproject.org
+  - iwc.galaxyproject.org
   - biostar.usegalaxy.org
   - biostar.galaxyproject.org
 

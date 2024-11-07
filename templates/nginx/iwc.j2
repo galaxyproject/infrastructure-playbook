@@ -1,0 +1,20 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:443 ssl;
+    server_name iwc.galaxyproject.org;
+
+    access_log  /var/log/nginx/iwc.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/iwc.galaxyproject.org_error.log;
+
+    location / {
+        proxy_http_version     1.1;
+        proxy_set_header       Host galaxyproject.github.io;
+        proxy_pass             https://galaxyproject.github.io/iwc/;
+    }
+
+}
+
+# vim: set filetype=nginx
