@@ -23,3 +23,8 @@
   roles:
     - geerlingguy.redis
   tags: redis
+
+- name: Galaxy Tailnet
+  hosts: galaxy_tailnet_hosts
+  roles:
+    - role: artis3n.tailscale

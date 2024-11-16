@@ -51,6 +51,11 @@ all:
         galaxy07.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
+    # Deploys tailscale
+    galaxy_tailnet_hosts:
+      hosts:
+        galaxy-db.tacc.utexas.edu:
+
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
       hosts:
