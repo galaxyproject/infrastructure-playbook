@@ -17,6 +17,10 @@ cvmfs_stratum1_servers_group_authorized_key_users:
     authorized: "{{ galaxy_team_users }}"
   - name: g2main
     authorized: "{{ galaxy_team_users }}"
+  - name: data
+    authorized: "{{ galaxy_team_users }}"
+  - name: singularity
+    authorized: "{{ galaxy_team_users }}"
   - name: cloud
     authorized: "{{ galaxy_cloud_team_users }}"
 
