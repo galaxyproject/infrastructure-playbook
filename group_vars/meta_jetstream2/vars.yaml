@@ -140,6 +140,7 @@ slurm_config:
   SchedulerParameters: nohold_on_prolog_fail
 
   Prolog: /etc/slurm/prolog.*
+  Epilog: /etc/slurm/epilog.sh
   PrologEpilogTimeout: 90
 
   SelectType: select/cons_res

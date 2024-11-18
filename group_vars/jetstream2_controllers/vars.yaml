@@ -28,6 +28,11 @@ jetstream2_controllers_group_files:
     mode: "0755"
     owner: root
     group: root
+  - src: files/slurm/epilog.sh
+    dest: /etc/slurm/epilog.sh
+    mode: "0755"
+    owner: root
+    group: root
 
 jetstream2_controllers_group_templates:
   - src: templates/telegraf/slurm_slurp.sh.j2
