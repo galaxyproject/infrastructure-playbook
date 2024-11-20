@@ -215,7 +215,7 @@ slurm_nodes:
   #  Weight: 70
   #  CPUs: 64
   #  RealMemory: 250000  # 251678 reported by slurmd
-  - name: "js2-mem-large[0-17]"
+  - name: "js2-mem-large[0-19]"
     State: CLOUD
     Weight: 80
     CPUs: 64
@@ -245,7 +245,7 @@ slurm_nodes:
   #  State: CLOUD
   #  CPUs: 2
   #  RealMemory: 5900  # same as js2-small
-  - name: "js2-gxit-medium[0-1]"
+  - name: "js2-gxit-medium[0-7]"
     State: CLOUD
     CPUs: 8
     RealMemory: 29900  # same as js2-medium
@@ -274,7 +274,7 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: resize-shm
-    Nodes: "js2-mem-large[16-17]"
+    Nodes: "js2-mem-large[16-19]"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
@@ -309,7 +309,7 @@ slurm_partitions:
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: gxit
-    Nodes: "js2-gxit-medium[0-1]"
+    Nodes: "js2-gxit-medium[0-7]"
     DefaultTime: "12:20:00"
     MaxTime: "96:20:00"
     MaxNodes: 1
