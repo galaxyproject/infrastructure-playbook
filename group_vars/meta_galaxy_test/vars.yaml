@@ -1,0 +1,6 @@
+---
+# This is included for Galaxy Test hosts to provide Test-specific values
+
+# Variables used by other group vars
+galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
+galaxy_instance_codename: test

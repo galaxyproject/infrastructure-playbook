@@ -3,18 +3,21 @@
 
 all:
 
-  vars:
-    ansible_user: root
+  #vars:
+  #  ansible_user: root
 
   children:
 
     # Provides TACC-specific values for group vars
     meta_tacc:
-      hosts:
-        galaxy-db.tacc.utexas.edu:
-        galaxy-vgp.tacc.utexas.edu:
       children:
+        vm_stack_hosts:
         cyclone_nodes:
+
+    # Provides Test-specific values for group vars
+    meta_galaxy_test:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
 
     # Provides Main-specific values for group vars
     meta_galaxy_main:
@@ -23,16 +26,14 @@ all:
 
     # Deploys and configures telegraf
     telegraf_agents:
-      hosts:
-        galaxy-db.tacc.utexas.edu:
       children:
+        vm_stack_hosts:
         galaxy_nodes:
 
     # Deploys Postfix as a null client
     postfix_clients:
-      hosts:
-        galaxy-vgp.tacc.utexas.edu:
       children:
+        vm_stack_hosts:
         galaxy_db_servers:
 
     # Deploys MinIO and Tailscale
@@ -43,12 +44,13 @@ all:
     # Deploys PostgreSQL and gxadmin
     galaxy_db_servers:
       hosts:
+        galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
     # Deploys redis
     galaxy_redis_servers:
       hosts:
-        galaxy07.tacc.utexas.edu:
+        galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
     # Deploys tailscale
@@ -59,17 +61,37 @@ all:
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
       hosts:
+        galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
       children:
         galaxy_nodes:
+
+    # Deploys Slurm client and configuration
+    slurm_clients:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
+        galaxy-db.tacc.utexas.edu:
 
     # Configures as a cluster node
     galaxy_nodes:
       children:
         cyclone_nodes:
 
+    # Galaxy hosts from the VM stack
+    vm_stack_hosts:
+      vars:
+        ansible_become: true
+        ansible_ssh_executable: ./.ssh-keyboard-interactive
+      hosts:
+        galaxy-jump.tacc.utexas.edu:
+        galaxy-test.tacc.utexas.edu:
+        galaxy-db.tacc.utexas.edu:
+        galaxy-vgp.tacc.utexas.edu:
+
     # Galaxy nodes from the Cyclone cloud
     cyclone_nodes:
+      vars:
+        ansible_user: root
       hosts:
         galaxy-main-set02-1: {ansible_host: 129.114.55.31}
         galaxy-main-set02-2: {ansible_host: 129.114.55.21}

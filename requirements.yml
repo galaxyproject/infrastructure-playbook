@@ -10,7 +10,7 @@ roles:
   - name: galaxyproject.postfix
     version: 0.2.1
   - name: galaxyproject.postgresql
-    version: 1.1.6
+    version: 1.1.7
   - name: galaxyproject.postgresql_objects
     version: 1.2.0
   - name: galaxyproject.pulsar
