@@ -53,6 +53,14 @@ all:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
+    # Creates:
+    # - local gxpriv user
+    # - telegraf plugins for Galaxy servers
+    # - install cvmfs_remount_sync and prefer TACC stratum 1
+    galaxy_servers:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
+
     # Deploys tailscale
     galaxy_tailnet_hosts:
       hosts:

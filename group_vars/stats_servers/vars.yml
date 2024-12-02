@@ -105,7 +105,7 @@ stats_influxdb_auth_enabled: true
 
 # separate db filtering for statsd (Galaxy timing) and system stuff using
 #   https://github.com/influxdata/telegraf/issues/1778
-telegraf_agent_output:
+_override_telegraf_agent_output:
   - type: influxdb
     config:
       - urls = ["http://localhost:8086"]
@@ -113,20 +113,6 @@ telegraf_agent_output:
       - username = "{{ stats_influxdb_users[1].user_name }}"
       - password = "{{ stats_influxdb_users[1].user_password }}"
       #- insecure_skip_verify = true
-
-telegraf_plugins_default:
-  - plugin: cpu
-    config:
-      - percpu = true
-  - plugin: disk
-  - plugin: kernel
-  - plugin: processes
-  - plugin: diskio
-  - plugin: mem
-  - plugin: system
-  - plugin: swap
-  - plugin: net
-  - plugin: netstat
 
 telegraf_cvmfs_check_servers:
   hosts:

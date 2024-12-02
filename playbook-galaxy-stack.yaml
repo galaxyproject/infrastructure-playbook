@@ -16,6 +16,10 @@
     - name: Install PostgreSQL contrib package for pgcrypto
       ansible.builtin.dnf:
         name: "postgresql{{ __postgresql_version_dotless }}-contrib"
+    - name: Install slurm-drmaa
+      ansible.builtin.dnf:
+        name: "{{ slurm_drmaa_rpm_url }}"
+        disable_gpg_check: true
   tags: postgres
 
 - name: Galaxy Redis Servers

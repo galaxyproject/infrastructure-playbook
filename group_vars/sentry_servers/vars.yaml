@@ -1,22 +1,5 @@
 ---
 
-telegraf_plugins_default:
-  - plugin: cpu
-    config:
-      - percpu = true
-  - plugin: disk
-  - plugin: kernel
-  - plugin: processes
-  - plugin: diskio
-  - plugin: mem
-  - plugin: system
-  - plugin: swap
-  - plugin: net
-    config:
-      # prevent collecting docker veth* which wrecks series cardinality
-      - interfaces = ["net*", "lo"]
-  - plugin: netstat
-
 sentry_superuser_email: "{{ vault_sentry_superuser_email }}"
 sentry_superuser_password: "{{ vault_sentry_superuser_password }}"
 

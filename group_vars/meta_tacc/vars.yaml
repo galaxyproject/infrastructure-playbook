@@ -11,7 +11,8 @@ tacc_root_users: "{{ vault_tacc_root_users }}"
 #    authorized: "{{ tacc_root_users }}"
 #    exclusive: false
 
-tacc_corral_gateway_address_default: "129.114.52.151"
+#tacc_corral_gateway_address_default: 129.114.52.151
+tacc_corral_gateway_address_default: 129.114.52.161
 
 meta_tacc_group_mounts:
   - src: "{{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}:/corral/main/projects/galaxy/"

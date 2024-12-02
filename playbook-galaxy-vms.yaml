@@ -1,0 +1,10 @@
+---
+
+- name: Galaxy VMs
+  hosts: vm_stack_hosts
+  roles:
+    - role: galaxyproject.cvmfs
+    - role: galaxyproject.slurm
+      tags: slurm
+    #- role: galaxyproject.general.copy
+    #- role: galaxyproject.general.cron

@@ -1,45 +1,45 @@
 ---
 
-galaxyservers_group_groups:
-  - name: gxsrc
+galaxy_privileged_user: gxpriv
+galaxy_group: G-803372
+
+galaxy_servers_group_groups:
+  - name: "{{ galaxy_privileged_user }}"
     gid: 493
 
-galaxyservers_group_users:
-  - name: gxsrc
-    group: gxsrc
-    groups: G-803372
+galaxy_servers_group_users:
+  - name: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_privileged_user }}"
+    groups: "{{ galaxy_group }}"
     uid: 493
-    home: /home/gxsrc
+    home: "/home/{{ galaxy_privileged_user }}"
     shell: /bin/bash
 
-galaxyservers_group_directories:
+galaxy_servers_group_directories:
   - path: /srv/nginx/{{ galaxy_instance_hostname }}/root
-    owner: gxsrc
-    group: gxsrc
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}
-    owner: gxsrc
-    group: gxsrc
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/bin
-    owner: gxsrc
-    group: gxsrc
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/config
-    owner: gxsrc
-    group: gxsrc
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/log
     owner: "{{ galaxy_user }}"
-    group: G-803372
+    group: "{{ galaxy_group }}"
+    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/var
     owner: "{{ galaxy_user }}"
-    group: G-803372
-
-# node, npm for GIE proxy
-galaxyservers_group_packages: []
-#  - nodejs
-#  - npm
-#  - '@development tools' # for npm modules
-#  - collectl
-#  - slurm-drmaa
-#   - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.3/slurm-drmaa-1.1.3-20.11.el8.x86_64.rpm
+    group: "{{ galaxy_group }}"
+    mode: "0755"
 
 systemd_journald_persistent: true
 
@@ -69,7 +69,7 @@ teletraf_x509_cert_host: "{{ galaxy_instance_hostname }}"
 #
 # separate db filtering for statsd (Galaxy timing) and system stuff using
 #   https://github.com/influxdata/telegraf/issues/1778
-telegraf_agent_output:
+_override_telegraf_agent_output:
   - type: influxdb
     config:
       - urls = ["https://stats.galaxyproject.org:8086"]
@@ -97,7 +97,7 @@ telegraf_agent_output:
       - '[outputs.influxdb.tagpass]'
       - '  influxdb_database = ["{{ galaxy_instance_codename }}_sql"]'
 
-telegraf_plugins_default:
+_override_telegraf_plugins_default:
   - plugin: statsd
     config:
       - service_address = "127.0.0.1:8125"
@@ -127,6 +127,9 @@ telegraf_plugins_default:
   - plugin: system
   - plugin: swap
   - plugin: net
+    config:
+      # prevent collecting docker veth* which wrecks series cardinality
+      - interfaces = ["eth*", "en*", "net*", "lo"]
   - plugin: netstat
   - plugin: x509_cert
     config:

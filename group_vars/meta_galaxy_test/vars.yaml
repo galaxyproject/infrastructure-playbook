@@ -3,4 +3,9 @@
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
+galaxy_user: g2test
 galaxy_instance_codename: test
+galaxy_instance_hostname: test.galaxyproject.org
+
+# One-off slurm-drmaa install task in playbook-galaxy-stack
+slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
