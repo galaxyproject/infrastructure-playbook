@@ -3,4 +3,4 @@
 tacc_corral_gateway_address: 129.114.52.169
 
 tc_limit_ip: "{{ tacc_corral_gateway_address }}"
-tc_limit_limit_gbit: "2"
+tc_limit_limit_gbit: "1"
