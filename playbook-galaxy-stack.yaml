@@ -28,6 +28,26 @@
     - geerlingguy.redis
   tags: redis
 
+- name: Galaxy Servers
+  hosts: galaxy_servers
+  tasks:
+    - name: Grant necessary access to NGINX in SELinux
+      ansible.posix.seboolean:
+        name: "{{ item }}"
+        state: true
+        persistent: true
+      loop:
+        - httpd_can_network_connect
+        - httpd_use_fusefs
+    - name: Install PolicyKit rule for gxpriv systemctl privileges
+      ansible.builtin.template:
+        src: polkit/99-galaxy-server.rules.j2
+        dest: /etc/polkit-1/rules.d/99-galaxy-server.rules
+        owner: root
+        group: root
+        mode: "0644"
+  tags: galaxy
+
 - name: Galaxy Tailnet
   hosts: galaxy_tailnet_hosts
   roles:
