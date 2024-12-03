@@ -1,5 +1,14 @@
 ---
 
+filesystems:
+  - dev: /dev/nvme1n1
+    fstype: xfs
+
+host_mounts:
+  - src: /dev/nvme1n1
+    path: /var/lib/pgsql
+    fstype: xfs
+
 # Override for newest stable
 postgresql_version: 17
 
