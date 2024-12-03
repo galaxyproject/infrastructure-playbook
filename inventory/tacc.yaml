@@ -69,8 +69,10 @@ all:
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
       hosts:
+        galaxy-jump.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
+        galaxy-vgp.tacc.utexas.edu:
       children:
         galaxy_nodes:
 
