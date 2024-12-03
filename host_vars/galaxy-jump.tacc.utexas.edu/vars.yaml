@@ -2,3 +2,4 @@
 
 host_packages:
   - pass
+  - pinentry
