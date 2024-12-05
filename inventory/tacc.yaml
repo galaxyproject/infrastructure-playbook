@@ -96,7 +96,11 @@ all:
         galaxy-jump.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
+          ansible_become: false
+          ansible_user: root
         galaxy-vgp.tacc.utexas.edu:
+          ansible_become: false
+          ansible_user: root
 
     # Galaxy nodes from the Cyclone cloud
     cyclone_nodes:
