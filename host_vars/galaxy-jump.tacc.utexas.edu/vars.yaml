@@ -3,3 +3,5 @@
 host_packages:
   - pass
   - pinentry
+  - pdsh
+  - pdsh-rcmd-ssh
