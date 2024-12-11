@@ -1,5 +1,7 @@
 ---
 
+tacc_corral_gateway_address: 129.114.52.151
+
 filesystems:
   - dev: /dev/nvme1n1
     fstype: xfs
