@@ -5,3 +5,4 @@ host_packages:
   - pinentry
   - pdsh
   - pdsh-rcmd-ssh
+  - make
