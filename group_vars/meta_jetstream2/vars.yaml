@@ -215,7 +215,7 @@ slurm_nodes:
   #  Weight: 70
   #  CPUs: 64
   #  RealMemory: 250000  # 251678 reported by slurmd
-  - name: "js2-mem-large[0-19]"
+  - name: "js2-mem-large[0-16]"
     State: CLOUD
     Weight: 80
     CPUs: 64
@@ -274,7 +274,7 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: resize-shm
-    Nodes: "js2-mem-large[16-19]"
+    Nodes: "js2-mem-large16"
     DefaultTime: "06:00:00"
     MaxTime: "96:00:00"
     MaxNodes: 1
