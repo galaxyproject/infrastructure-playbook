@@ -1,17 +1,21 @@
 ---
 
 # NOTE: it's impossible to use Ansible to create this
-# groupadd -r -g 492 gxadm
-# useradd -r -u 492 -g gxadm -m -d /home/gxadm -c 'Galaxy Admin User' -s /bin/sh gxadm
+# groupadd -r -g 199 gxadm
+# useradd -r -u 199 -g gxadm -m -d /home/gxadm -c 'Galaxy Admin User' -s /bin/sh gxadm
 
 galaxy_vms_group_groups:
   - name: gxadm
-    gid: 492
+    gid: 199
 
 galaxy_vms_group_users:
   - name: gxadm
     group: gxadm
-    uid: 492
+    uid: 199
     home: "/home/gxadm"
     comment: "Galaxy Admin User"
     shell: /bin/sh
+
+galaxy_vms_group_authorized_key_users:
+  - name: gxadm
+    authorized: "{{ tacc_root_users }}"

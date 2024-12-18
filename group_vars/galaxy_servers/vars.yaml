@@ -5,13 +5,13 @@ galaxy_group: G-803372
 
 galaxy_servers_group_groups:
   - name: "{{ galaxy_privileged_user }}"
-    gid: 493
+    gid: 198
 
 galaxy_servers_group_users:
   - name: "{{ galaxy_privileged_user }}"
     group: "{{ galaxy_privileged_user }}"
     groups: "{{ galaxy_group }}"
-    uid: 493
+    uid: 198
     home: "/home/{{ galaxy_privileged_user }}"
     comment: "Galaxy Privileged user"
     shell: /bin/bash
