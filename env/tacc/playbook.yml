@@ -71,13 +71,6 @@
       when: ansible_os_family == "RedHat"  # this is everything, but just to be safe...
   tags: initial,system
 
-- name: Tailscale
-  hosts: tailscalemachines
-  remote_user: root
-  roles:
-    - role: artis3n.tailscale
-  tags: tailscale
-
 - name: Tasks for RabbitMQ servers
   hosts: rabbitmqservers
   remote_user: root

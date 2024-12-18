@@ -1,6 +1,0 @@
----
-
-tailscale_authkeys: "{{ vault_tailscale_authkeys }}"
-tailscale_authkey: "{{ tailscale_authkeys[inventory_hostname] }}"
-
-tailscale_args: --accept-routes

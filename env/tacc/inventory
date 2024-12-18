@@ -1,18 +1,6 @@
 [galaxyservers]
 [galaxyservers:children]
-testgalaxyservers
 maingalaxyservers
-
-[galaxydbservers]
-[galaxydbservers:children]
-testgalaxydbservers
-maingalaxydbservers
-
-[testgalaxyservers]
-galaxy07.tacc.utexas.edu
-
-[testgalaxydbservers]
-galaxy07.tacc.utexas.edu
 
 [maingalaxyservers]
 galaxy-vgp.tacc.utexas.edu
@@ -31,22 +19,16 @@ galaxy-web-04.tacc.utexas.edu
 
 [maingalaxydbservers]
 
-[galaxynodes]
-#roundup[49:64].tacc.utexas.edu
-
 [baseenv]
 galaxy04.tacc.utexas.edu
-galaxy07.tacc.utexas.edu
 galaxy08.tacc.utexas.edu
 galaxy-web-03.tacc.utexas.edu
 galaxy-web-04.tacc.utexas.edu
 galaxy-web-05.tacc.utexas.edu
 galaxy-web-06.tacc.utexas.edu
-galaxy-vgp.tacc.utexas.edu
 
 [baseenv:children]
 galaxyservers
-galaxynodes
 
 [sshclients]
 galaxy-web-05.tacc.utexas.edu
@@ -69,9 +51,6 @@ certbotservers
 #   - nginx_ssl_servers
 #   - certbot_domains
 [certbotservers]
-# note: Galaxy webservers are managed in usegalaxy-playbook
-galaxy04.tacc.utexas.edu
-
 [certbotservers:children]
 certbotdnsservers
 
@@ -92,13 +71,7 @@ certbotdnsservers
 [cvmfsclients]
 
 [cvmfsclients:children]
-galaxynodes
 galaxyservers
-
-[dockerclients]
-galaxy07.tacc.utexas.edu
-galaxy-web-05.tacc.utexas.edu
-galaxy-web-06.tacc.utexas.edu
 
 [slurmclients]
 [slurmclients:children]
@@ -114,35 +87,12 @@ galaxy08.tacc.utexas.edu
 galaxy08.tacc.utexas.edu
 
 [slurmexechosts]
-[slurmexechosts:children]
-galaxynodes
 
 # anything that'll be using the SSL role should go in sslservers to pick up the group_vars
 [sslservers]
 [sslservers:children]
 rabbitmqservers
 webservers
-dockerclients
 
 [rabbitmqservers]
 galaxy08.tacc.utexas.edu
-
-# provides
-#   - irods yum repo and icommands package install
-#   - irods config for users listed in group vars
-[irodsclients]
-[irodsclients:children]
-testgalaxyservers
-
-# provides
-#   - kubernetes yum repo and kubectl install
-#   - kube config for users listed in group vars
-[kubeclients]
-[kubeclients:children]
-testgalaxyservers
-
-# provides
-#   - tailscale_authkey
-#   - access to the tailnet
-[tailscalemachines]
-galaxy07.tacc.utexas.edu

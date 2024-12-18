@@ -48,6 +48,7 @@ slurm_prolog_users:
   - g2main
 
 galaxy_nodes_group_crontabs:
+  # tmpwatch-auto would need to be reverted to being non-pulsar-dependent to use this again
   #- id: clean_dev_shm
   #  name: "Clean /dev/shm"
   #  user: root
