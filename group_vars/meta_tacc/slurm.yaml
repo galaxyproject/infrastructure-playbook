@@ -3,6 +3,7 @@
 slurm_user:
   uid: 40302
   gid: 40302
+  group: slurm
   comment: 'Slurm Workload Manager'
   home: /var/lib/slurm
   shell: /bin/bash

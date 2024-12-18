@@ -11,7 +11,7 @@ all:
     # Provides TACC-specific values for group vars
     meta_tacc:
       children:
-        vm_stack_hosts:
+        galaxy_vms:
         cyclone_nodes:
 
     # Provides Test-specific values for group vars
@@ -27,13 +27,13 @@ all:
     # Deploys and configures telegraf
     telegraf_agents:
       children:
-        vm_stack_hosts:
+        galaxy_vms:
         galaxy_nodes:
 
     # Deploys Postfix as a null client
     postfix_clients:
       children:
-        vm_stack_hosts:
+        galaxy_vms:
         galaxy_db_servers:
 
     # Deploys MinIO and Tailscale
@@ -54,7 +54,7 @@ all:
         galaxy-db.tacc.utexas.edu:
 
     # Creates:
-    # - local gxpriv user
+    # - local gxsrc user
     # - telegraf plugins for Galaxy servers
     # - install cvmfs_remount_sync and prefer TACC stratum 1
     galaxy_servers:
@@ -88,8 +88,9 @@ all:
         cyclone_nodes:
 
     # Galaxy hosts from the VM stack
-    vm_stack_hosts:
+    galaxy_vms:
       vars:
+        ansible_user: gxadm
         ansible_become: true
         ansible_ssh_executable: ./.ssh-keyboard-interactive
       hosts:

@@ -1,6 +1,6 @@
 ---
 
-galaxy_privileged_user: gxpriv
+galaxy_privileged_user: gxsrc
 galaxy_group: G-803372
 
 galaxy_servers_group_groups:
@@ -13,6 +13,7 @@ galaxy_servers_group_users:
     groups: "{{ galaxy_group }}"
     uid: 493
     home: "/home/{{ galaxy_privileged_user }}"
+    comment: "Galaxy Privileged user"
     shell: /bin/bash
 
 galaxy_servers_group_directories:

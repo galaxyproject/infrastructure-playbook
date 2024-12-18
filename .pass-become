@@ -1,6 +1,6 @@
 #!/bin/sh
 
-password_path="${BECOME_PASSWORD_PATH:=tacc/$USER}"
+password_path="${BECOME_PASSWORD_PATH:=admin/tacc/gxadm}"
 if [ -n "${BECOME_PASSWORD_STORE_DIR:-}" ]; then
     PASSWORD_STORE_DIR="$BECOME_PASSWORD_STORE_DIR"
     export PASSWORD_STORE_DIR

@@ -1,0 +1,14 @@
+---
+
+# NOTE: it's impossible to use Ansible to create this
+galaxy_vms_group_groups:
+  - name: gxadm
+    gid: 492
+
+galaxy_vms_group_users:
+  - name: gxadm
+    group: gxadm
+    uid: 492
+    home: "/home/gxadm"
+    comment: "Galaxy Admin User"
+    shell: /bin/sh

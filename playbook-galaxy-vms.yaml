@@ -1,7 +1,7 @@
 ---
 
 - name: Galaxy VMs
-  hosts: vm_stack_hosts
+  hosts: galaxy_vms
   roles:
     - role: galaxyproject.cvmfs
     - role: galaxyproject.slurm
