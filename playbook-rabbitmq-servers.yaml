@@ -1,0 +1,10 @@
+---
+
+- name: RabbitMQ Servers
+  hosts: rabbitmq_servers
+  roles:
+    # There is a circular dependency on first run, certbot needs the rabbitmq user to exist but rabbitmq needs the cert
+    # to exist. You can either unset `certbot_post_renew` on first run, disable the RabbitMQ SSL options and reverse the
+    # role order on first run, or precreate the rabbitmq user.
+    - role: usegalaxy_eu.certbot
+    - role: galaxyproject.rabbitmq

@@ -1,0 +1,3 @@
+---
+
+certbot_tsig_key: "{{ vault_certbot_tsig_key }}"

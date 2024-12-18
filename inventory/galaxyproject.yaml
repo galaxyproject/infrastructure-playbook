@@ -69,7 +69,7 @@ all:
         #cvmfs_stratum0_servers:
         # to exclude TACC stratum1
         #cvmfs_stratum1_servers:
-        certbot_servers:
+        letsencrypt_clients:
         tool_shed_servers:
         standalone_web_servers:
         sentry_servers:
@@ -164,13 +164,24 @@ all:
         depot_servers:
         standalone_web_servers:
 
-    certbot_servers:
+    # Not fully usable on its own but provides vars common to both ACME challenge methods
+    letsencrypt_clients:
+      children:
+        letsencrypt_http01_clients:
+
+    # Provides Certbot config for HTTP-01 challenges
+    letsencrypt_http01_clients:
       children:
         sentry_servers:
         stats_servers:
         tool_shed_servers:
         depot_servers:
         standalone_web_servers:
+
+    # Provides the Certbot TSIG key for DNS-01 challenges
+    certbot_tsig_key_consumers:
+      children:
+        dns_primary_servers:
 
     # these are deployed via the standalone web servers playbook and not as part of another system
     standalone_web_servers:

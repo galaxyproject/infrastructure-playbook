@@ -1,0 +1,61 @@
+---
+
+rabbitmq_users: "{{ vault_rabbitmq_users }}"
+telegraf_rabbitmq_password: "{{ (rabbitmq_users | selectattr('user', 'equalto', 'telegraf') | first).password }}"
+
+rabbitmq_config:
+  vm_memory_high_watermark:
+    relative: 0.8
+  disk_free_limit:
+    absolute: 1GB
+  consumer_timeout: 3600000 # one hour in milliseconds
+  listeners:
+    tcp: none
+    ssl:
+      default: 5671
+  ssl_options:
+    cacertfile: /etc/ssl/certs/fullchain.pem
+    certfile: /etc/ssl/certs/cert.pem
+    keyfile: /etc/ssl/user/privkey-rabbitmq.pem
+    verify: verify_peer
+    fail_if_no_peer_cert: false
+    versions:
+      - tlsv1.3
+      - tlsv1.2
+  # From EU:
+  #management_agent:
+  #  disable_metrics_collector: false
+  #management:
+  #  disable_stats: false
+
+rabbitmq_vhosts:
+  - name: /test_pulsar
+  - name: /main_pulsar
+  - name: /test_internal
+  - name: /main_internal
+
+telegraf_plugins_extra:
+  rabbitmq:
+    config:
+      - username = "telegraf"
+      - password = "{{ telegraf_rabbitmq_password }}"
+      - queue_name_include = ["*__setup", "*__kill", "*__status_update"]
+      - queue_name_exclude = ["*_nagios__setup", "*_nagios__kill", "*_nagios__status_update"]
+
+telegraf_x509_cert_port: 5671
+
+certbot_share_key_users:
+  - rabbitmq
+
+certbot_domains:
+  - rabbitmq.galaxyproject.org
+  - amqp.galaxyproject.org
+  - mq.galaxyproject.org
+
+# Erlang watches the PEM cache and automatically reloads certs, so a post-renewal restart is not necessary, but the role
+# will not install the post-renewal hook that sets up the key/cert if `certbpot_post_renewal` is not defined.
+certbot_post_renewal: 'true'
+
+# Otherwise, use this to restart rabbitmq if needed
+#certbot_post_renewal: |
+#    systemctl restart rabbitmq-server || true

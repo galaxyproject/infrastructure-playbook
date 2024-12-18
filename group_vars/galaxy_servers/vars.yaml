@@ -132,6 +132,7 @@ _override_telegraf_plugins_default:
       # prevent collecting docker veth* which wrecks series cardinality
       - interfaces = ["eth*", "en*", "net*", "lo"]
   - plugin: netstat
+  # TODO: doesn't this duplicate telegraf_plugins_extra in letsencrypt_clients group_vars?
   - plugin: x509_cert
     config:
       # could use the cert file directly, but this way we check the actual cert in use, you just have to filter out the

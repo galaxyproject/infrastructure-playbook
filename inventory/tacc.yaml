@@ -53,6 +53,26 @@ all:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
+    # Not fully usable on its own but provides vars common to both ACME challenge methods
+    letsencrypt_clients:
+      children:
+        letsencrypt_dns01_clients:
+
+    # Provides Certbot config for DNS-01 challenges
+    letsencrypt_dns01_clients:
+      hosts:
+        galaxy-control.tacc.utexas.edu:
+
+    # Provides the Certbot TSIG key for DNS-01 challenges
+    certbot_tsig_key_consumers:
+      children:
+        letsencrypt_dns01_clients:
+
+    # Deploys and configures RabbitMQ
+    rabbitmq_servers:
+      hosts:
+        galaxy-control.tacc.utexas.edu:
+
     # Creates:
     # - local gxsrc user
     # - telegraf plugins for Galaxy servers
@@ -68,12 +88,8 @@ all:
 
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
-      hosts:
-        galaxy-jump.tacc.utexas.edu:
-        galaxy-test.tacc.utexas.edu:
-        galaxy-db.tacc.utexas.edu:
-        galaxy-vgp.tacc.utexas.edu:
       children:
+        galaxy_vms:
         galaxy_nodes:
 
     # Deploys Slurm client and configuration
@@ -81,6 +97,9 @@ all:
       hosts:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
+      # ???
+      #children:
+      #  galaxy_vms:
 
     # Configures as a cluster node
     galaxy_nodes:
@@ -95,6 +114,7 @@ all:
         ansible_ssh_executable: ./.ssh-keyboard-interactive
       hosts:
         galaxy-jump.tacc.utexas.edu:
+        galaxy-control.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
           ansible_become: false

@@ -1,0 +1,9 @@
+---
+
+certbot_dns_provider: rfc2136
+certbot_dns_credentials:
+  server: 3.14.178.173
+  port: 53
+  name: "{{ certbot_tsig_key.name }}"
+  secret: "{{ certbot_tsig_key.secret }}"
+  algorithm: "{{ certbot_tsig_key.algorithm | upper }}"

@@ -34,6 +34,8 @@ roles:
     version: v3.2.3
   - name: geerlingguy.redis
     version: 1.8.0
+  - name: galaxyproject.rabbitmq
+    version: 1.0.1
 
 collections:
   - name: galaxyproject.general
