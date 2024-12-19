@@ -1,0 +1,16 @@
+---
+
+- name: SLURM CONTROLLER MOVE NODES
+  hosts: moved_nodes
+  roles:
+    - role: galaxyproject.general.users
+  post_tasks:
+    - name: chown spool
+      shell: find /var/lib/slurm -user 40302 -print0 | xargs -0 -r chown slurm:slurm
+    - name: chown logs
+      shell: find /var/log/slurm -user 40302 -print0 | xargs -0 -r chown slurm:slurm
+
+- name: SLURM CONTROLLER MOVE
+  hosts: galaxy_vms:moved_nodes
+  roles:
+    - role: galaxyproject.slurm

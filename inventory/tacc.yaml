@@ -95,11 +95,21 @@ all:
     # Deploys Slurm client and configuration
     slurm_clients:
       hosts:
+        galaxy-jump.tacc.utexas.edu:
+        galaxy-control.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
       # ???
       #children:
       #  galaxy_vms:
+
+    slurm_controllers:
+      hosts:
+        galaxy-control.tacc.utexas.edu:
+
+    slurm_dbd_servers:
+      hosts:
+        galaxy-control.tacc.utexas.edu:
 
     # Configures as a cluster node
     galaxy_nodes:
@@ -122,6 +132,14 @@ all:
         galaxy-vgp.tacc.utexas.edu:
           ansible_become: false
           ansible_user: root
+
+    # nodes moved to the new controller
+    moved_nodes:
+      hosts:
+        galaxy-main-set02-2:
+        galaxy-main-set02-3:
+        galaxy-main-set02-5:
+        galaxy-main-set04-4:
 
     # Galaxy nodes from the Cyclone cloud
     cyclone_nodes:

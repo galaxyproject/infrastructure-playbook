@@ -1,17 +1,9 @@
 ---
 
-slurm_user:
-  uid: 40302
-  gid: 40302
-  group: slurm
-  comment: 'Slurm Workload Manager'
-  home: /var/lib/slurm
-  shell: /bin/bash
-
-slurm_controller_name: galaxy08
-slurm_controller_ip: 129.114.60.125
-slurm_cluster_name: roundup
-slurm_dbd_server_name: galaxy08
+slurm_controller_name: galaxy-control
+slurm_controller_ip: 129.114.60.48
+slurm_cluster_name: cyclone
+slurm_dbd_server_name: galaxy-control
 
 slurm_munge_key: files/slurm/munge.key
 
@@ -68,13 +60,13 @@ slurm_config:
 # Weight is set so that nodes exclusive to a partition will be preferred
 slurm_nodes:
   # actual mem of cyclone instances as reported by slurmd -C: 90810
-  - name: galaxy-main-set02-1
-    NodeAddr: 129.114.55.31
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
+  #- name: galaxy-main-set02-1
+  #  NodeAddr: 129.114.55.31
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
   - name: galaxy-main-set02-2
     NodeAddr: 129.114.55.21
     RealMemory: 90000
@@ -89,13 +81,13 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 0
     Features: cyclone
-  - name: galaxy-main-set02-4
-    NodeAddr: 129.114.55.27
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
+  #- name: galaxy-main-set02-4
+  #  NodeAddr: 129.114.55.27
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
   - name: galaxy-main-set02-5
     NodeAddr: 129.114.55.23
     RealMemory: 90000
@@ -103,48 +95,48 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 10
     Features: cyclone
-  - name: galaxy-main-set02-6
-    NodeAddr: 129.114.55.47
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 10
-    Features: cyclone
-  - name: galaxy-main-set02-7
-    NodeAddr: 129.114.55.51
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 10
-    Features: cyclone
-  - name: galaxy-main-set02-8
-    NodeAddr: 129.114.55.57
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 10
-    Features: cyclone
-  - name: galaxy-main-set04-1
-    NodeAddr: 129.114.55.18
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set04-2
-    NodeAddr: 129.114.55.39
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set04-3
-    NodeAddr: 129.114.55.56
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
+  #- name: galaxy-main-set02-6
+  #  NodeAddr: 129.114.55.47
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 10
+  #  Features: cyclone
+  #- name: galaxy-main-set02-7
+  #  NodeAddr: 129.114.55.51
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 10
+  #  Features: cyclone
+  #- name: galaxy-main-set02-8
+  #  NodeAddr: 129.114.55.57
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 10
+  #  Features: cyclone
+  #- name: galaxy-main-set04-1
+  #  NodeAddr: 129.114.55.18
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set04-2
+  #  NodeAddr: 129.114.55.39
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set04-3
+  #  NodeAddr: 129.114.55.56
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
   - name: galaxy-main-set04-4
     NodeAddr: 129.114.55.26
     RealMemory: 90000
@@ -152,146 +144,148 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 0
     Features: cyclone
-  - name: galaxy-main-set04-5
-    NodeAddr: 129.114.55.58
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set04-6
-    NodeAddr: 129.114.55.8
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set04-7
-    NodeAddr: 129.114.55.52
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set04-8
-    NodeAddr: 129.114.55.32
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-1
-    NodeAddr: 129.114.55.36
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-2
-    NodeAddr: 129.114.55.53
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-3
-    NodeAddr: 129.114.55.29
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-4
-    NodeAddr: 129.114.55.48
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-5
-    NodeAddr: 129.114.55.49
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-6
-    NodeAddr: 129.114.55.28
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-7
-    NodeAddr: 129.114.55.38
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-8
-    NodeAddr: 129.114.55.40
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-9
-    NodeAddr: 129.114.55.14
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-10
-    NodeAddr: 129.114.55.34
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-11
-    NodeAddr: 129.114.55.10
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-12
-    NodeAddr: 129.114.55.60
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-13
-    NodeAddr: 129.114.55.25
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-14
-    NodeAddr: 129.114.55.6
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-15
-    NodeAddr: 129.114.55.17
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
-  - name: galaxy-main-set03-16
-    NodeAddr: 129.114.55.20
-    RealMemory: 90000
-    CPUS: 23
-    State: UNKNOWN
-    Weight: 0
-    Features: cyclone
+  #- name: galaxy-main-set04-5
+  #  NodeAddr: 129.114.55.58
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set04-6
+  #  NodeAddr: 129.114.55.8
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set04-7
+  #  NodeAddr: 129.114.55.52
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set04-8
+  #  NodeAddr: 129.114.55.32
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-1
+  #  NodeAddr: 129.114.55.36
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-2
+  #  NodeAddr: 129.114.55.53
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-3
+  #  NodeAddr: 129.114.55.29
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-4
+  #  NodeAddr: 129.114.55.48
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-5
+  #  NodeAddr: 129.114.55.49
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-6
+  #  NodeAddr: 129.114.55.28
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-7
+  #  NodeAddr: 129.114.55.38
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-8
+  #  NodeAddr: 129.114.55.40
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-9
+  #  NodeAddr: 129.114.55.14
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-10
+  #  NodeAddr: 129.114.55.34
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-11
+  #  NodeAddr: 129.114.55.10
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-12
+  #  NodeAddr: 129.114.55.60
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-13
+  #  NodeAddr: 129.114.55.25
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-14
+  #  NodeAddr: 129.114.55.6
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-15
+  #  NodeAddr: 129.114.55.17
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+  #- name: galaxy-main-set03-16
+  #  NodeAddr: 129.114.55.20
+  #  RealMemory: 90000
+  #  CPUS: 23
+  #  State: UNKNOWN
+  #  Weight: 0
+  #  Features: cyclone
+
+_all_nodes_tmp: galaxy-main-set02-[2-3,5],galaxy-main-set04-[4]
 
 # Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
 slurm_partitions:
@@ -301,7 +295,8 @@ slurm_partitions:
     MaxNodes: 1
     DefMemPerCPU: 3900
     MaxCPUsPerNode: 20
-    Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    #Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    Nodes: "{{ _all_nodes_tmp }}"
     LLN: "YES"
     PriorityTier: 0
   - name: normal
@@ -310,7 +305,8 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 3900
-    Nodes: galaxy-main-set02-[1-8]
+    #Nodes: galaxy-main-set02-[1-8]
+    Nodes: "{{ _all_nodes_tmp }}"
     LLN: "YES"
     Default: "YES"
     PriorityTier: 10
@@ -320,6 +316,7 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 3900
-    Nodes: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    #Nodes: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
+    Nodes: "{{ _all_nodes_tmp }}"
     LLN: "YES"
     PriorityTier: 20

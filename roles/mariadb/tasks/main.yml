@@ -2,7 +2,7 @@
 # Basic MariaDB install/config mainly for use by SlurmDBD
 
 - name: Include install tasks for RedHat
-  include: install_redhat.yml
+  include_tasks: install_redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Disable network listening
@@ -29,7 +29,7 @@
 
 - name: Start and enable MariaDB
   service:
-    name: mysql
+    name: mariadb
     state: started
     enabled: yes
 
@@ -37,6 +37,7 @@
   mysql_user:
     name: root
     password: "{{ mariadb_root_pass }}"
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
   ignore_errors: yes  # will fail after the first time
 
 - name: Add users

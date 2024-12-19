@@ -1,0 +1,4 @@
+---
+
+# overrides group_vars, which are one or the other
+slurm_roles: [controller, dbd]

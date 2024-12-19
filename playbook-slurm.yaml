@@ -1,0 +1,7 @@
+---
+
+- name: Slurm DBD Servers
+  hosts: slurm_dbd_servers
+  roles:
+    - mariadb
+    - galaxyproject.slurm

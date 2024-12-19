@@ -1,0 +1,50 @@
+---
+
+slurm_roles: [dbd]
+
+slurm_dbd_mysql_pass: "{{ vault_slurm_dbd_mysql_pass }}"
+
+slurm_dbd_servers_group_directories:
+  - path: /srv/slurm/archive
+    owner: slurm
+    group: slurm
+    mode: "0755"
+
+slurmdbd_config:
+  AuthType: auth/munge
+  DbdAddr: 129.114.60.48
+  DbdHost: galaxy-control
+  DebugLevel: 4
+  LogFile: /var/log/slurm/slurmdbd.log
+  PidFile: /run/slurmdbd.pid
+  StorageType: accounting_storage/mysql
+  StoragePass: "{{ slurm_dbd_mysql_pass }}"
+  StorageUser: slurm
+  # refusing to connect over the socket for some reason despite the command line working fine, this forces TCP
+  StorageHost: 127.0.0.1
+  # FIXME: should be /corral4/slurm/archive but it checks for writability as root despite writing as slurm
+  #ArchiveDir: /srv/slurm/archive
+  #ArchiveEvents: "yes"
+  #ArchiveJobs: "yes"
+  #ArchiveResvs: "yes"
+  #ArchiveSteps: "yes"
+  #ArchiveSuspend: "yes"
+  #ArchiveTXN: "yes"
+  #ArchiveUsage: "yes"
+  PurgeEventAfter: 545days
+  PurgeJobAfter: 545days
+  PurgeResvAfter: 545days
+  PurgeStepAfter: 545days
+  PurgeSuspendAfter: 545days
+  PurgeTXNAfter: 545days
+  PurgeUsageAfter: 545days
+
+mariadb_root_pass: "{{ vault_mariadb_root_pass }}"
+mariadb_options:
+  innodb_buffer_pool_size: 2048M
+  innodb_log_file_size: 64M
+  innodb_lock_wait_timeout: 900
+  max_allowed_packet: 16M
+mariadb_users: "{{ vault_mariadb_users }}"
+mariadb_databases:
+  - name: slurm_acct_db
