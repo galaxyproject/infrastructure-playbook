@@ -1,7 +1,86 @@
 ---
 
+# local service/system users used by other group_vars. UIDs/GIDs 100-200 avoids system and package conflicts
+tacc_users:
+  gxadm:
+    name: gxadm
+    uid: 199
+    group: gxadm
+    comment: Galaxy Admin User
+    home: /home/gxadm
+    shell: /bin/sh
+    local: true
+  gxsrc:
+    name: gxsrc
+    uid: 198
+    group: gxsrc
+    groups: G-803372
+    comment: Galaxy Privileged User
+    home: /home/gxsrc
+    shell: /bin/bash
+    local: true
+  tiaas:
+    name: tiaas
+    uid: 197
+    group: tiaas
+    comment: Training Infrastructure as a Service
+    home: "/srv/tiaas/{{ galaxy_instance_codename | default('_none_') }}"
+    shell: /bin/bash
+    local: true
+  slurm:
+    name: slurm
+    uid: 180
+    group: slurm
+    comment: Slurm Workload Manager
+    home: /var/lib/slurm
+    shell: /bin/sh
+    local: true
+  postgres:
+    name: postgres
+    uid: 26
+    group: postgres
+    groups: G-803372
+    comment: PostgreSQL Server
+    home: /var/lib/pgsql
+    local: true
+
+tacc_groups:
+  # this is in LDAP but we need to create it locally to add service accounts to it
+  G_803372:
+    name: G-803372
+    gid: 803372
+    local: true
+  gxadm:
+    name: gxadm
+    gid: 199
+    local: true
+  gxsrc:
+    name: gxsrc
+    gid: 198
+    local: true
+  tiaas:
+    name: tiaas
+    gid: 197
+    local: true
+  slurm:
+    name: slurm
+    gid: 180
+  postgres:
+    name: postgres
+    gid: 26
+    local: true
+
+meta_tacc_group_groups:
+  - "{{ tacc_groups.slurm }}"
+
+meta_tacc_group_users:
+  - "{{ tacc_users.slurm }}"
+
 # used by cyclone_nodes and galaxy_vms
 tacc_root_users: "{{ vault_tacc_root_users }}"
+
+meta_tacc_group_packages:
+  - netcat
 
 tacc_corral_gateway_address_default: 129.114.52.161
 

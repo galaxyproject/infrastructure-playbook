@@ -5,16 +5,10 @@
 # useradd -r -u 199 -g gxadm -m -d /home/gxadm -c 'Galaxy Admin User' -s /bin/sh gxadm
 
 galaxy_vms_group_groups:
-  - name: gxadm
-    gid: 199
+  - "{{ tacc_groups.gxadm }}"
 
 galaxy_vms_group_users:
-  - name: gxadm
-    group: gxadm
-    uid: 199
-    home: "/home/gxadm"
-    comment: "Galaxy Admin User"
-    shell: /bin/sh
+  - "{{ tacc_users.gxadm }}"
 
 galaxy_vms_group_authorized_key_users:
   - name: gxadm

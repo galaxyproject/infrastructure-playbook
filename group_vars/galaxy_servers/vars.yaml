@@ -4,17 +4,14 @@ galaxy_privileged_user: gxsrc
 galaxy_group: G-803372
 
 galaxy_servers_group_groups:
-  - name: "{{ galaxy_privileged_user }}"
-    gid: 198
+  - "{{ tacc_groups.tiaas }}"
+  - "{{ tacc_groups.gxsrc }}"
+  # This is necessary for privilege separation
+  - "{{ tacc_groups.G_803372 }}"
 
 galaxy_servers_group_users:
-  - name: "{{ galaxy_privileged_user }}"
-    group: "{{ galaxy_privileged_user }}"
-    groups: "{{ galaxy_group }}"
-    uid: 198
-    home: "/home/{{ galaxy_privileged_user }}"
-    comment: "Galaxy Privileged user"
-    shell: /bin/bash
+  - "{{ tacc_users.tiaas }}"
+  - "{{ tacc_users.gxsrc }}"
 
 galaxy_servers_group_directories:
   - path: /srv/nginx/{{ galaxy_instance_hostname }}/root

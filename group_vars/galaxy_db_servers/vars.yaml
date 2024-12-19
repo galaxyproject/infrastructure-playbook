@@ -9,19 +9,13 @@ galaxy_db_servers_group_systemd_overrides:
 # Variables from meta_galaxy_* group vars
 postgresql_pg_hba_conf: "{{ galaxy_db_postgresql_pg_hba_conf }}"
 
-# This is necessary for proper quota usage on Corral
 galaxy_db_servers_group_groups:
-  - name: G-803372
-    gid: 803372
-    local: true
+  - "{{ tacc_groups.postgres }}"
+  # This is necessary for proper quota usage on Corral
+  - "{{ tacc_groups.G_803372 }}"
 
-# NOTE: running this on a fresh instance would precreate the postgres user with system-determined uid and gid, which is
-# not ideal (on EL the package seems to create with uid/gid 26).
 galaxy_db_servers_group_users:
-  - name: postgres
-    groups: G-803372
-    local: true
-    system: true
+  - "{{ tacc_users.postgres }}"
 
 galaxy_db_servers_group_packages:
   # for gxadmin
