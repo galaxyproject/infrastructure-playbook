@@ -74,18 +74,8 @@ certbotdnsservers
 galaxyservers
 
 [slurmclients]
-[slurmclients:children]
-baseenv
-galaxyservers
-slurmservers
-slurmexechosts
-
 [slurmdbdservers]
-galaxy08.tacc.utexas.edu
-
 [slurmservers]
-galaxy08.tacc.utexas.edu
-
 [slurmexechosts]
 
 # anything that'll be using the SSL role should go in sslservers to pick up the group_vars

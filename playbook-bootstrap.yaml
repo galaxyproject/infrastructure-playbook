@@ -1,4 +1,5 @@
 ---
+# TODO: now that this is sorta the "initialize everything" playbook it should probably be renamed
 
 - name: Bootstrap for Ansible
   hosts: all
@@ -15,6 +16,9 @@
     - role: galaxyproject.general.packages
     - role: galaxyproject.general.users
     - role: galaxyproject.general.paths
+    # NOTE: if this ends up being problematic, you could pass a `copy_inheritance_chain` var in other playbooks that
+    # need to do a late copy that sets the inheritance chain keys to `late_templates` and `late_files`
+    - role: galaxyproject.general.copy
 
 - name: Install telegraf
   hosts: telegraf_agents

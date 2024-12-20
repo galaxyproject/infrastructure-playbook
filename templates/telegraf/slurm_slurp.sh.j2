@@ -5,19 +5,18 @@ set -euo pipefail
 
 PARTITIONS=({{ slurm_slurp_partitions |join(' ') }})
 
-typeset -A JOBS
+declare -A JOBS
 JOB_STATES=(completing configuring pending running)
 
-typeset -A NODES NODES_BY_PARTITION
+declare -A NODES
 NODE_STATES=(allocated completing down drained draining idle mixed)
 
 CLUSTER="{{ slurm_slurp_cluster_name }}"
-typeset -A TAGS
+declare -A TAGS
 TAGS[cluster]="$CLUSTER"
 
 
 function _array_copy() {
-    # TODO: replace with nameref
     local src="$1"
     local dest="$2"
     local _t=$(declare -p $1)
@@ -27,9 +26,9 @@ function _array_copy() {
 
 function _array_to_csv() {
     # set $2 to `true` to lowercase key names
+    declare -n arr="$1"
     local lowercase="${2:-false}"
-    # TODO: replace with nameref
-    eval "declare -A arr=${1#*=}"
+    local s k
     s=
     for k in "${!arr[@]}"; do
         _k="$k"
@@ -49,29 +48,19 @@ function _normalize_state() {
     state="${state%*~}"     # drop trailing ~
     state="${state%*\*}"    # drop trailing *
     state="${state%*#}"     # drop trailing #
+    state="${state%*%}"     # drop trailing %
     echo "$state"
 }
 
 
-# TODO: namerefs require bash 4.3+
-function initialize_jobs_arrays_43() {
+function initialize_jobs_arrays() {
     for partition in ${PARTITIONS[@]}; do
         local name="JOBS_${partition//-/_}"
-        typeset -A "$name"
-        typeset -n _jobs="$name"
+        declare -g -A "$name"
+        declare -n _jobs="$name"
         for state in ${JOB_STATES[@]}; do
             _jobs[$state]=0
         done
-    done
-}
-
-
-function initialize_jobs_arrays() {
-    for state in ${JOB_STATES[@]}; do
-        JOBS[$state]=0
-    done
-    for partition in ${PARTITIONS[@]}; do
-        _array_copy JOBS "JOBS_${partition//-/_}"
     done
 }
 
@@ -81,56 +70,47 @@ function initialize_nodes_arrays() {
         NODES[$state]=0
     done
     for partition in ${PARTITIONS[@]}; do
-        _array_copy NODES "NODES_${partition//-/_}"
+        local name="NODES_${partition//-/_}"
+        declare -g -A "$name"
+        declare -n _nodes="$name"
+        for state in ${NODE_STATES[@]}; do
+            _nodes[$state]=0
+        done
     done
 }
 
 
-function collect_jobs_43() {
-    while read partition state; do
-        local name="JOBS_${partition//-/_}"
-        typeset -n _jobs="$name"
-        (($_jobs[$state]++))
-    done < <(squeue -h -O partition,state)
-}
-
-
 function collect_jobs() {
+    local partition state
     while read partition state; do
         state="$(_normalize_state $state)"
-        case "$partition" in
-        {% for partition in slurm_slurp_partitions %}
-            {{ partition }})
-                JOBS_{{ partition | replace('-', '_') }}[$state]=$((JOBS_{{ partition  | replace('-', '_') }}[$state]+1))
-                ;;
-        {% endfor %}
-        esac
+        local name="JOBS_${partition//-/_}"
+        declare -n _jobs="$name"
+        ((_jobs[$state]++)) || true
     done < <(squeue -h -O partition,state)
 }
 
 
 function collect_nodes() {
-    while read name state; do
+    local nodename partition state
+    while read nodename state; do
         state="$(_normalize_state $state)"
         NODES[$state]=$((NODES[$state]+1))
     done < <(sinfo -Neh -O nodelist:32,statelong | sort | uniq)
-    while read name partition state; do
+    while read nodename partition state; do
         state="$(_normalize_state $state)"
-        case "$partition" in
-        {% for partition in slurm_slurp_partitions %}
-            {{ partition }})
-                NODES_{{ partition | replace('-', '_') }}[$state]=$((NODES_{{ partition  | replace('-', '_') }}[$state]+1))
-                ;;
-        {% endfor %}
-        esac
+        partition="${partition%*\*}"    # drop trailing *
+        local name="NODES_${partition//-/_}"
+        declare -n _nodes="$name"
+        ((_nodes[$state]++)) || true
     done < <(sinfo -Neh -O nodelist:32,partition,statelong)
 }
 
 
 function print_telegraf() {
     local measurement="$1"
-    local tags="$(_array_to_csv "$(declare -p "$2")")"
-    local values="$(_array_to_csv "$(declare -p "$3")")"
+    local tags="$(_array_to_csv "$2")"
+    local values="$(_array_to_csv "$3")"
     echo "${measurement},${tags} ${values}"
 }
 
