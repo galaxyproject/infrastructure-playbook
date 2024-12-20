@@ -6,3 +6,5 @@ host_packages:
   - pdsh
   - pdsh-rcmd-ssh
   - make
+  - bind-utils
+  - openldap-clients
