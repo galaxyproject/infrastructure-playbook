@@ -136,10 +136,22 @@ all:
     # nodes moved to the new controller
     moved_nodes:
       hosts:
+        galaxy-main-set02-1:
         galaxy-main-set02-2:
         galaxy-main-set02-3:
+        galaxy-main-set02-4:
         galaxy-main-set02-5:
+        galaxy-main-set02-6:
+        galaxy-main-set02-7:
+        galaxy-main-set02-8:
+        galaxy-main-set04-1:
+        galaxy-main-set04-2:
+        galaxy-main-set04-3:
         galaxy-main-set04-4:
+        galaxy-main-set04-5:
+        galaxy-main-set04-6:
+        galaxy-main-set04-7:
+        galaxy-main-set04-8:
 
     # Galaxy nodes from the Cyclone cloud
     cyclone_nodes:
