@@ -48,9 +48,8 @@ certbot_share_key_users:
   - rabbitmq
 
 certbot_domains:
-  - rabbitmq.galaxyproject.org
-  - amqp.galaxyproject.org
   - mq.galaxyproject.org
+  - amqp.galaxyproject.org
 
 # Erlang watches the PEM cache and automatically reloads certs, so a post-renewal restart is not necessary, but the role
 # will not install the post-renewal hook that sets up the key/cert if `certbpot_post_renewal` is not defined.
