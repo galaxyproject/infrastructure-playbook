@@ -65,6 +65,7 @@ tacc_groups:
   slurm:
     name: slurm
     gid: 180
+    local: true
   postgres:
     name: postgres
     gid: 26
@@ -81,6 +82,7 @@ tacc_root_users: "{{ vault_tacc_root_users }}"
 
 meta_tacc_group_packages:
   - netcat
+  - strace
 
 tacc_corral_gateway_address_default: 129.114.52.161
 
