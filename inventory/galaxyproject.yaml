@@ -15,10 +15,6 @@ all:
       ansible_user: centos
       ansible_become: true
 
-    cvmfs1-tacc0.galaxyproject.org:
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q galaxy04.tacc.utexas.edu"'
-      ansible_host: galaxy08
-
     # for lx-brand zones, use:
     #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
@@ -233,7 +229,8 @@ all:
       hosts:
         cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
-        cvmfs1-tacc0.galaxyproject.org:
+        # use inventory/tacc.yaml
+        #cvmfs1-tacc0.galaxyproject.org:
 
     cvmfs_clients:
       children:

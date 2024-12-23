@@ -13,6 +13,12 @@ galaxy_servers_group_users:
   - "{{ tacc_users.tiaas }}"
   - "{{ tacc_users.gxsrc }}"
 
+galaxy_servers_group_authorized_key_users:
+  - name: gxsrc
+    authorized: "{{ galaxy_team_users }}"
+  - name: "{{ galaxy_user }}"
+    authorized: "{{ galaxy_team_users }}"
+
 galaxy_servers_group_directories:
   - path: /srv/nginx/{{ galaxy_instance_hostname }}/root
     owner: "{{ galaxy_privileged_user }}"

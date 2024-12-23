@@ -88,20 +88,30 @@ all:
 
     # Deploys CVMFS and configures as a client
     cvmfs_clients:
-      children:
-        galaxy_vms:
-        galaxy_nodes:
-
-    # Deploys Slurm client and configuration
-    slurm_clients:
       hosts:
         galaxy-jump.tacc.utexas.edu:
         galaxy-control.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
+        galaxy-main.tacc.utexas.edu:
+        #galaxy-main1.tacc.utexas.edu:
+        #galaxy-main2.tacc.utexas.edu:
+        #galaxy-main3.tacc.utexas.edu:
+        #galaxy-main4.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
-      # ???
-      #children:
-      #  galaxy_vms:
+        galaxy-vgp.tacc.utexas.edu:
+      children:
+        # exclude galaxy-cvmfs
+        #galaxy_vms:
+        galaxy_nodes:
+
+    cvmfs_stratum1_servers:
+      hosts:
+        galaxy-cvmfs.tacc.utexas.edu:
+
+    # Deploys Slurm client and configuration
+    slurm_clients:
+      children:
+        galaxy_vms:
 
     slurm_controllers:
       hosts:
@@ -125,7 +135,13 @@ all:
       hosts:
         galaxy-jump.tacc.utexas.edu:
         galaxy-control.tacc.utexas.edu:
+        galaxy-cvmfs.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
+        galaxy-main.tacc.utexas.edu:
+        #galaxy-main1.tacc.utexas.edu:
+        #galaxy-main2.tacc.utexas.edu:
+        #galaxy-main3.tacc.utexas.edu:
+        #galaxy-main4.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
           ansible_become: false
           ansible_user: root

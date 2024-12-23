@@ -84,13 +84,12 @@ meta_tacc_group_packages:
 
 tacc_corral_gateway_address_default: 129.114.52.161
 
-# FIXME: temp disabled until Corral mounts are resolved
-#meta_tacc_group_mounts:
-#  - src: "{{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}:/corral/main/projects/galaxy/"
-#    path: /corral4
-#    fstype: nfs
-#    opts: "rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,nolock,addr={{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}"
-#    owner: ndc
-#    group: G-803372
+meta_tacc_group_mounts:
+  - src: "{{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}:/corral/main/projects/galaxy/"
+    path: /corral4
+    fstype: nfs
+    opts: "rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,nolock,addr={{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}"
+    owner: ndc
+    group: G-803372
 
 postfix_relayhost: "[relay02.tacc.utexas.edu]"
