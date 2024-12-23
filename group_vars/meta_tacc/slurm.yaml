@@ -173,13 +173,13 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 0
     Features: cyclone
-  #- name: galaxy-main-set03-1
-  #  NodeAddr: 129.114.55.36
-  #  RealMemory: 90000
-  #  CPUS: 23
-  #  State: UNKNOWN
-  #  Weight: 0
-  #  Features: cyclone
+  - name: galaxy-main-set03-1
+    NodeAddr: 129.114.55.36
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+    Features: cyclone
   - name: galaxy-main-set03-2
     NodeAddr: 129.114.55.53
     RealMemory: 90000
@@ -271,13 +271,13 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 0
     Features: cyclone
-  #- name: galaxy-main-set03-15
-  #  NodeAddr: 129.114.55.17
-  #  RealMemory: 90000
-  #  CPUS: 23
-  #  State: UNKNOWN
-  #  Weight: 0
-  #  Features: cyclone
+  - name: galaxy-main-set03-15
+    NodeAddr: 129.114.55.17
+    RealMemory: 90000
+    CPUS: 23
+    State: UNKNOWN
+    Weight: 0
+    Features: cyclone
   - name: galaxy-main-set03-16
     NodeAddr: 129.114.55.20
     RealMemory: 90000
@@ -285,8 +285,6 @@ slurm_nodes:
     State: UNKNOWN
     Weight: 0
     Features: cyclone
-
-_all_nodes_tmp: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[2-14,16]
 
 # Within nodes of a common weight, LLN is used; normal jobs are prioritized on shared nodes
 slurm_partitions:
@@ -296,9 +294,7 @@ slurm_partitions:
     MaxNodes: 1
     DefMemPerCPU: 3900
     MaxCPUsPerNode: 20
-    #Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
-    Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[2-14,16]
-    #Nodes: "{{ _all_nodes_tmp }}"
+    Nodes: galaxy-main-set02-[5-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
     LLN: "YES"
     PriorityTier: 0
   - name: normal
@@ -307,8 +303,7 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 3900
-    #Nodes: galaxy-main-set02-[1-8]
-    Nodes: "{{ _all_nodes_tmp }}"
+    Nodes: galaxy-main-set02-[1-8]
     LLN: "YES"
     Default: "YES"
     PriorityTier: 10
@@ -318,7 +313,6 @@ slurm_partitions:
     MaxNodes: 1
     MaxCPUsPerNode: 20
     DefMemPerCPU: 3900
-    #Nodes: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
-    Nodes: "{{ _all_nodes_tmp }}"
+    Nodes: galaxy-main-set02-[1-8],galaxy-main-set04-[1-8],galaxy-main-set03-[1-16]
     LLN: "YES"
     PriorityTier: 20

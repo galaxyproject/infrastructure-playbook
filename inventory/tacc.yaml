@@ -153,6 +153,7 @@ all:
         galaxy-main-set04-7:
         galaxy-main-set04-8:
 
+        galaxy-main-set03-1:
         galaxy-main-set03-2:
         galaxy-main-set03-3:
         galaxy-main-set03-4:
@@ -166,6 +167,7 @@ all:
         galaxy-main-set03-12:
         galaxy-main-set03-13:
         galaxy-main-set03-14:
+        galaxy-main-set03-15:
         galaxy-main-set03-16:
 
     # Galaxy nodes from the Cyclone cloud
