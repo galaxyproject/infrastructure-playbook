@@ -1,0 +1,6 @@
+---
+
+# Increase to 201 to match EL and leave ample space for our accounts
+login_defs:
+  SYS_UID_MIN: 201
+  SYS_GID_MIN: 201

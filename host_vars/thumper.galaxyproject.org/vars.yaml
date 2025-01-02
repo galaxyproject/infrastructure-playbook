@@ -20,6 +20,11 @@ zfs_filesystems:
   - name: zones/thumper/backup/tool-shed-main/repos
     owner: backup-mts
     group: backup-mts
+  - name: zones/thumper/archive
+    compression: lz4
+  - name: zones/thumper/archive/singularity
+    owner: singularity
+    group: singularity
 
 # FIXME: the wal_archive dir should be created by the backup script but there's a bug when it's remote and it's created
 # as a file, fix upstream
@@ -41,10 +46,12 @@ host_packages:
 host_users:
   - "{{ galaxyproject_users.backup_tts }}"
   - "{{ galaxyproject_users.backup_mts }}"
+  - "{{ galaxyproject_users.depot_singularity }}"
 
 host_groups:
   - "{{ galaxyproject_groups.backup_tts }}"
   - "{{ galaxyproject_groups.backup_mts }}"
+  - "{{ galaxyproject_groups.depot_singularity }}"
 
 host_authorized_key_users:
   - name: backup-tts
@@ -55,6 +62,10 @@ host_authorized_key_users:
     authorized:
       - backup_mts_rsync
       - backup_mts_zfs
+  - name: singularity
+    authorized:
+      - nate_coraor
+      - bjoern_gruening
 
 host_files:
   - src: roles/galaxyproject.postgresql/files/backup.py

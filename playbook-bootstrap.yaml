@@ -9,10 +9,15 @@
 
 - name: Bootstrap additional
   hosts: all
+  pre_tasks:
+    - name: Group by OS Family
+      ansible.builtin.group_by:
+        key: "group_by_{{ ansible_os_family | lower }}"
   roles:
     - role: galaxyproject.general.virtual
       when: "'virtual_hosts' in group_names"
     - role: galaxyproject.general.locale
+    - role: galaxyproject.general.login_defs
     - role: galaxyproject.general.packages
     - role: galaxyproject.general.users
     - role: galaxyproject.general.paths
