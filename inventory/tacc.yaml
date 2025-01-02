@@ -130,23 +130,30 @@ all:
     galaxy_vms:
       vars:
         ansible_user: gxadm
-        ansible_become: true
+        # FIXME: this can be set once galaxy-db and galaxy-vgp have the same auth config as the rest of the VMs
+        #ansible_become: true
         ansible_ssh_executable: ./.ssh-keyboard-interactive
       hosts:
         galaxy-jump.tacc.utexas.edu:
+          ansible_become: true
         galaxy-control.tacc.utexas.edu:
+          ansible_become: true
         galaxy-cvmfs.tacc.utexas.edu:
+          ansible_become: true
         galaxy-test.tacc.utexas.edu:
+          ansible_become: true
         galaxy-main.tacc.utexas.edu:
+          ansible_become: true
         #galaxy-main1.tacc.utexas.edu:
         #galaxy-main2.tacc.utexas.edu:
         #galaxy-main3.tacc.utexas.edu:
         #galaxy-main4.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
-          ansible_become: false
+          # annoyingly, this overrides become on plays
+          #ansible_become: false
           ansible_user: root
         galaxy-vgp.tacc.utexas.edu:
-          ansible_become: false
+          #ansible_become: false
           ansible_user: root
 
     # Galaxy nodes from the Cyclone cloud

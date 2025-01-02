@@ -3,6 +3,10 @@
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
+galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users }}"
+galaxy_db_postgresql_objects_groups: "{{ vault_galaxy_db_postgresql_objects_groups }}"
+galaxy_db_postgresql_objects_databases: "{{ vault_galaxy_db_postgresql_objects_databases }}"
+galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_privileges }}"
 galaxy_user: g2test
 galaxy_instance_codename: test
 galaxy_instance_hostname: test.galaxyproject.org

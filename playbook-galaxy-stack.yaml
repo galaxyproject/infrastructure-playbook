@@ -10,16 +10,19 @@
     - role: galaxyproject.general.users
     - role: galaxyproject.gxadmin
       tags: gxadmin
-    - role: galaxyproject.cvmfs
-      tags: cvmfs
+    - role: galaxyproject.postgresql_objects
+      become: true
+      become_user: postgres
   post_tasks:
     - name: Install PostgreSQL contrib package for pgcrypto
       ansible.builtin.dnf:
         name: "postgresql{{ __postgresql_version_dotless }}-contrib"
-    - name: Install slurm-drmaa
-      ansible.builtin.dnf:
-        name: "{{ slurm_drmaa_rpm_url }}"
-        disable_gpg_check: true
+    - name: Install pgcrypto on Galaxy database
+      community.postgresql.postgresql_ext:
+        name: pgcrypto
+        db: "galaxy_{{ galaxy_instance_codename }}"
+      become: true
+      become_user: postgres
   tags: postgres
 
 - name: Galaxy Redis Servers
@@ -39,13 +42,17 @@
       loop:
         - httpd_can_network_connect
         - httpd_use_fusefs
-    - name: Install PolicyKit rule for gxpriv systemctl privileges
+    - name: Install PolicyKit rule for gxsrc systemctl privileges
       ansible.builtin.template:
         src: polkit/99-galaxy-server.rules.j2
         dest: /etc/polkit-1/rules.d/99-galaxy-server.rules
         owner: root
         group: root
         mode: "0644"
+    - name: Install slurm-drmaa
+      ansible.builtin.dnf:
+        name: "{{ slurm_drmaa_rpm_url }}"
+        disable_gpg_check: true
   tags: galaxy
 
 - name: Galaxy Tailnet

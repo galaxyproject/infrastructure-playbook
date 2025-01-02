@@ -8,6 +8,10 @@ galaxy_db_servers_group_systemd_overrides:
 
 # Variables from meta_galaxy_* group vars
 postgresql_pg_hba_conf: "{{ galaxy_db_postgresql_pg_hba_conf }}"
+postgresql_objects_users: "{{ galaxy_db_postgresql_objects_users }}"
+postgresql_objects_groups: "{{ galaxy_db_postgresql_objects_groups }}"
+postgresql_objects_databases: "{{ galaxy_db_postgresql_objects_databases }}"
+postgresql_objects_privileges: "{{ galaxy_db_postgresql_objects_privileges }}"
 
 galaxy_db_servers_group_groups:
   - "{{ tacc_groups.postgres }}"
