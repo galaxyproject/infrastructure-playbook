@@ -1,5 +1,0 @@
----
-
-install_epel: true
-
-nginx_srv: /srv/nginx

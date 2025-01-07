@@ -1,6 +1,8 @@
 ---
 # This is included for Galaxy Test hosts to provide Test-specific values
 
+galaxy_config_id_secret: "{{ vault_galaxy_config_id_secret }}"  # needed by tiaas
+
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
 galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users }}"
@@ -10,6 +12,41 @@ galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_
 galaxy_user: g2test
 galaxy_instance_codename: test
 galaxy_instance_hostname: test.galaxyproject.org
+galaxy_db_host: /var/run/postgresql
+
+# Test-specific TIaaS vars
+tiaas_galaxy_db_host: "/var/run/postgresql/"
+tiaas_disassociate_training_roles:
+  hour: 8
+
+# Test-specific nginx vars
+nginx_conf_user: "{{ galaxy_user }}"
+nginx_conf_group: G-803372
+nginx_default_redirect_uri: https://test.galaxyproject.org$request_uri
+
+_nginx_conf_http:
+  client_max_body_size: 10g
+  proxy_read_timeout: 600
+
+nginx_servers:
+  - default
+  #- certbot_redirects
+
+nginx_ssl_servers:
+  - galaxy_test
+
+certbot_domains:
+  - test.galaxyproject.org
+  - '*.interactivetoolentrypoint.interactivetool.test.galaxyproject.org'
+  - '*.ep.interactivetool.test.galaxyproject.org'
+
+certbot_post_renewal: |
+    systemctl restart nginx || true
+
+# for the nginx template
+galaxy_server_dir: /cvmfs/test.galaxyproject.org/galaxy
+galaxy_tusd_port: 1080
+gxit_proxy_port: 8910
 
 # One-off slurm-drmaa install task in playbook-galaxy-stack
 slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm

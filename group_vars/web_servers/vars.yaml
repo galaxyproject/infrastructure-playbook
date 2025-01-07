@@ -1,0 +1,30 @@
+---
+
+## used by: letsencrypt_http01_clients, error_pages role
+nginx_srv: /srv/nginx
+
+## used by: galaxyproject.nginx
+# for EL, the actual value only matters if it is 'galaxy', anything else means `dnf install nginx`
+# web_servers is the parent group to many other groups and so these can be overridden by other groups
+nginx_flavor: "{{ 'light' if ansible_os_family == 'Debian' else 'appstream' }}"
+nginx_enable_default_server: false
+nginx_conf_worker_processes: 4
+nginx_enable_default_ipv6: false
+#nginx_ssl_config_profile: intermediate
+nginx_ssl_config_profile: modern
+#nginx_conf_ssl_protocols:
+#  - TLSv1.2
+#  - TLSv1.3
+
+# in the case of nginx_conf_http, this avoids repeating the same commonly set variables
+# to add to the default, set _nginx_conf_http in group vars; to fully override, set _override_nginx_conf_http
+_default_nginx_conf_http:
+  gzip: 'on'
+  gzip_vary: 'on'
+  gzip_proxied: any
+  gzip_comp_level: 6
+  gzip_buffers: 16 8k
+  gzip_http_version: 1.1
+  gzip_types: text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript
+  server_names_hash_bucket_size: 128
+nginx_conf_http: "{{ _override_nginx_conf_http | default(_default_nginx_conf_http | combine(_nginx_conf_http | default({}))) }}"

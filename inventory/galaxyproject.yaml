@@ -150,7 +150,7 @@ all:
       vars:
         ansible_python_interpreter: /opt/local/bin/python3
 
-    # FIXME: is this group necessary?
+    # Sets some default variables for nginx package/config
     web_servers:
       children:
         sentry_servers:

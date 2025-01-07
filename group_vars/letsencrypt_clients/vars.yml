@@ -12,6 +12,11 @@ certbot_auto_renew_user: root
 certbot_environment: production
 certbot_agree_tos: --agree-tos
 
+nginx_ssl_role: usegalaxy_eu.certbot
+nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+nginx_conf_ssl_certificate_key: /etc/ssl/private/privkey.pem
+nginx_conf_ssl_trusted_certificate: /etc/ssl/certs/fullchain.pem
+
 # Apparently telegraf doesn't validate the cert so it's ok if it's not valid for inventory_hostname
 telegraf_plugins_extra:
   x509_cert:

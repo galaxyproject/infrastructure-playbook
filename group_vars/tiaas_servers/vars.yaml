@@ -1,0 +1,35 @@
+---
+
+# TIaaS doesn't log anything without a logging config so you can use this if you're having issues, but it should not be
+# left on in production.
+#tiaas_debug: 'True'
+
+tiaas_virtualenv_command: python3 -m venv
+tiaas_virtualenv_python: "{{ omit }}"  # defaults to 'python3' but can't be used with virtualenv_command
+
+tiaas_galaxy_idsecret: "{{ galaxy_config_id_secret }}"
+
+tiaas_dir: "/srv/tiaas/{{ galaxy_instance_codename }}"
+tiaas_user: tiaas
+tiaas_group: tiaas
+#tiaas_repo: https://github.com/natefoo/tiaas2.git
+tiaas_version: main
+#tiaas_version: minor-fixes
+tiaas_admin_user: admin
+tiaas_admin_pass: "{{ vault_tiaas_admin_pass }}"
+
+# moved from /static/style in 23.0
+tiaas_galaxy_stylesheet: "{{ galaxy_server_dir }}/static/dist/base.css"
+
+tiaas_galaxy_db_name: "galaxy_{{ galaxy_instance_codename }}"
+
+tiaas_tiaas_use_sqlite: false
+tiaas_tiaas_db_name: "tiaas_{{ galaxy_instance_codename }}"
+
+tiaas_send_email_from: "tiaas+noreply@galaxyproject.org"
+
+tiaas_info:
+  owner: "{{ galaxy_instance_hostname }}"
+  owner_email: galaxy-bugs@galaxyproject.org
+  owner_site: "https://{{ galaxy_instance_hostname }}/"
+  domain: "{{ galaxy_instance_hostname }}"

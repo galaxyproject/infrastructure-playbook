@@ -36,6 +36,8 @@ roles:
     version: 1.8.0
   - name: galaxyproject.rabbitmq
     version: 1.0.1
+  - name: galaxyproject.tiaas2
+    version: 2.2.2
 
 collections:
   - name: galaxyproject.general

@@ -33,7 +33,30 @@
 
 - name: Galaxy Servers
   hosts: galaxy_servers
-  tasks:
+  vars_files:
+    # for tiaas_nginx_routes used by templates
+    - "{{ playbook_dir }}/roles/galaxyproject.tiaas2/defaults/main.yml"
+  pre_tasks:
+    # Because loading the defaults above clears the tiaas_* vars in group_vars. set as a fact because vars is lower
+    # precedence than vars_files
+    - ansible.builtin.set_fact:
+        tiaas_dir: "/srv/tiaas/{{ galaxy_instance_codename }}"
+      when: galaxy_instance_codename is defined
+    # Done before nginx is installed because it will fail to start if the module doesn't exist
+    - name: Install nginx-module-upload
+      ansible.builtin.dnf:
+        name: "{{ nginx_upload_module_url }}"
+        disable_gpg_check: true
+      when: nginx_upload_module_url is defined
+    # This should not be necessary - it is /var/lib/nginx/tmp/proxy, and even setting proxy_temp_path doesn't fix it. I
+    # think this is harcoded in the upload module somewhere since it was built from pkg-oss?
+    - name: Create /var/cache/nginx/proxy_temp
+      file:
+        path: /var/cache/nginx/proxy_temp
+        owner: "{{ galaxy_user }}"
+        mode: "0755"
+        state: directory
+      when: nginx_upload_module_url is defined
     - name: Grant necessary access to NGINX in SELinux
       ansible.posix.seboolean:
         name: "{{ item }}"
@@ -42,6 +65,14 @@
       loop:
         - httpd_can_network_connect
         - httpd_use_fusefs
+  roles:
+    - role: galaxyproject.nginx
+  post_tasks:
+  tags: nginx
+
+- name: Galaxy Servers
+  hosts: galaxy_servers
+  tasks:
     - name: Install PolicyKit rule for gxsrc systemctl privileges
       ansible.builtin.template:
         src: polkit/99-galaxy-server.rules.j2
@@ -54,6 +85,12 @@
         name: "{{ slurm_drmaa_rpm_url }}"
         disable_gpg_check: true
   tags: galaxy
+
+- name: Deploy TIaaS
+  hosts: tiaas_servers
+  roles:
+    - galaxyproject.tiaas2
+  tags: tiaas
 
 - name: Galaxy Tailnet
   hosts: galaxy_tailnet_hosts

@@ -62,11 +62,17 @@ all:
     letsencrypt_dns01_clients:
       hosts:
         galaxy-control.tacc.utexas.edu:
+        galaxy-test.tacc.utexas.edu:
 
     # Provides the Certbot TSIG key for DNS-01 challenges
     certbot_tsig_key_consumers:
       children:
         letsencrypt_dns01_clients:
+
+    # Sets some default variables for nginx package/config
+    web_servers:
+      children:
+        galaxy_servers:
 
     # Deploys and configures RabbitMQ
     rabbitmq_servers:
@@ -78,6 +84,10 @@ all:
     # - telegraf plugins for Galaxy servers
     # - install cvmfs_remount_sync and prefer TACC stratum 1
     galaxy_servers:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
+
+    tiaas_servers:
       hosts:
         galaxy-test.tacc.utexas.edu:
 

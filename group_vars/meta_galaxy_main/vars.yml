@@ -2,6 +2,9 @@
 # This is included for Galaxy Main hosts to provide Main-specific values
 
 pulsar_message_queue_url: "{{ vault_pulsar_message_queue_url }}"
+galaxy_database_password: "{{ vault_galaxy_database_password }}"
+tiaas_database_password: "{{ vault_tiaas_database_password }}"
+galaxy_config_id_secret: "{{ vault_galaxy_config_id_secret }}"  # needed by tiaas
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
@@ -9,4 +12,16 @@ galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users
 galaxy_db_postgresql_objects_groups: "{{ vault_galaxy_db_postgresql_objects_groups }}"
 galaxy_db_postgresql_objects_databases: "{{ vault_galaxy_db_postgresql_objects_databases }}"
 galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_privileges }}"
+galaxy_user: g2main
 galaxy_instance_codename: main
+galaxy_instance_hostname: usegalaxy.org
+
+# Main-specific TIaaS vars
+tiaas_galaxy_db_user: "{{ galaxy_user }}"
+tiaas_galaxy_db_pass: "{{ galaxy_database_password }}"
+tiaas_galaxy_db_host: "galaxy-db.tacc.utexas.edu"
+#tiaas_galaxy_db_port: ""
+tiaas_tiaas_db_user: "tiaas"
+tiaas_tiaas_db_pass: "{{ tiaas_database_password }}"
+tiaas_tiaas_db_host: "galaxy-db.tacc.utexas.edu"
+#tiaas_tiaas_db_port: ""
