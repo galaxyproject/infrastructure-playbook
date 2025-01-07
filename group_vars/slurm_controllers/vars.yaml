@@ -15,7 +15,7 @@ slurm_slurp_partitions:
   - multi
   - priority
 
-telegraf_plugins_extra:
+slurm_controllers_group_telegraf_plugins_extra:
   slurm_slurp:
     plugin: "exec"
     config:

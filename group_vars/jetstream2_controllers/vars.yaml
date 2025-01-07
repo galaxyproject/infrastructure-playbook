@@ -55,7 +55,7 @@ jetstream2_controllers_group_directories:
 telegraf_agent_hostname: "{{ inventory_hostname }}"
 # not sure why but it's establishing connections very slowly
 telegraf_influxdb_output_timeout: "15s"
-telegraf_plugins_extra:
+jetstream2_controllers_group_telegraf_plugins_extra:
   slurm_slurp:
     plugin: "exec"
     config:

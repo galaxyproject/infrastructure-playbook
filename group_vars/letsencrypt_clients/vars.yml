@@ -18,7 +18,7 @@ nginx_conf_ssl_certificate_key: /etc/ssl/private/privkey.pem
 nginx_conf_ssl_trusted_certificate: /etc/ssl/certs/fullchain.pem
 
 # Apparently telegraf doesn't validate the cert so it's ok if it's not valid for inventory_hostname
-telegraf_plugins_extra:
+letsencrypt_clients_group_telegraf_plugins_extra:
   x509_cert:
     config:
       - sources = ["https://{{ telegraf_x509_cert_host | default(inventory_hostname) }}:{{ telegraf_x509_cert_port | default(443) }}"]

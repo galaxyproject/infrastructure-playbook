@@ -47,7 +47,7 @@ _override_telegraf_agent_output:
       - '[outputs.influxdb.tagpass]'
       - '  influxdb_database = ["{{ galaxy_instance_codename }}_sql"]'
 
-telegraf_plugins_extra:
+galaxy_db_servers_group_telegraf_plugins_extra:
   # introduces too much cardinality
   #galaxy_tool_popularity_1m:
   #  plugin: "exec"

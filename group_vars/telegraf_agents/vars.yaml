@@ -41,3 +41,4 @@ _default_telegraf_plugins_default:
   - plugin: netstat
 
 telegraf_plugins_default: "{{ _override_telegraf_plugins_default | default(_default_telegraf_plugins_default) }}"
+telegraf_plugins_extra: "{{ lookup('galaxyproject.general.inheritance_chain', 'telegraf_plugins_extra') }}"

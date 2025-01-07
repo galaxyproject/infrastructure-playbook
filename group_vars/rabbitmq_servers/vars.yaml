@@ -34,7 +34,7 @@ rabbitmq_vhosts:
   - name: /test_internal
   - name: /main_internal
 
-telegraf_plugins_extra:
+rabbitmq_servers_group_telegraf_plugins_extra:
   rabbitmq:
     config:
       - username = "telegraf"

@@ -3,7 +3,7 @@
 firewalld_state: absent
 selinux_state: disabled
 
-telegraf_plugins_extra:
+cvmfs_stratum1_servers_group_telegraf_plugins_extra:
   http_response:
     config:
       - urls = ["http://localhost/cvmfs/info/v1/meta.json"]
