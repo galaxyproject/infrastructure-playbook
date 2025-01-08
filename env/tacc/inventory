@@ -3,8 +3,6 @@
 maingalaxyservers
 
 [maingalaxyservers]
-galaxy-vgp.tacc.utexas.edu
-
 [maingalaxyservers:children]
 maingalaxywebservers
 maingalaxyjobservers
@@ -20,8 +18,6 @@ galaxy-web-04.tacc.utexas.edu
 [maingalaxydbservers]
 
 [baseenv]
-galaxy04.tacc.utexas.edu
-galaxy08.tacc.utexas.edu
 galaxy-web-03.tacc.utexas.edu
 galaxy-web-04.tacc.utexas.edu
 galaxy-web-05.tacc.utexas.edu
@@ -38,36 +34,6 @@ galaxy-web-05.tacc.utexas.edu
 [sshservers:children]
 baseenv
 
-[webservers]
-[webservers:children]
-certbotservers
-
-# provides:
-#   - certbot setup
-#   - nginx cerbot setup (could split this into a separate group if we have non-nginx certbot servers)
-#   - telegraf x509_cert plugin
-# users must set:
-#   - nginx_servers
-#   - nginx_ssl_servers
-#   - certbot_domains
-[certbotservers]
-[certbotservers:children]
-certbotdnsservers
-
-# provides:
-#   - certbot TSIG key to certbot webservers
-#   - certbot DNS-01 rfc2136 provider config
-# overrides WEB-01 (webroot) mode
-[certbotdnsservers]
-galaxy08.tacc.utexas.edu
-
-# provides:
-#   - certbot TSIG key for DNS servers
-#   - certbot TSIG key to certbot webservers
-[certbottsigkeyservers]
-[certbottsigkeyservers:children]
-certbotdnsservers
-
 [cvmfsclients]
 
 [cvmfsclients:children]
@@ -77,12 +43,3 @@ galaxyservers
 [slurmdbdservers]
 [slurmservers]
 [slurmexechosts]
-
-# anything that'll be using the SSL role should go in sslservers to pick up the group_vars
-[sslservers]
-[sslservers:children]
-rabbitmqservers
-webservers
-
-[rabbitmqservers]
-galaxy08.tacc.utexas.edu

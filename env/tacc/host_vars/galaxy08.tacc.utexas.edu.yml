@@ -1,4 +1,0 @@
----
-
-# see group_vars/rabbitmqservers
-certbot_post_renewal: 'true'
