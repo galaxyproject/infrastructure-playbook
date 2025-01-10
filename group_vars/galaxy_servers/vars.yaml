@@ -44,6 +44,13 @@ galaxy_servers_group_directories:
     owner: "{{ galaxy_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
+  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/error"
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+
+galaxy_servers_group_packages:
+  - tmpwatch
 
 systemd_journald_persistent: true
 

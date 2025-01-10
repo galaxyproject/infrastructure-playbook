@@ -43,11 +43,17 @@
         tiaas_dir: "/srv/tiaas/{{ galaxy_instance_codename }}"
       when: galaxy_instance_codename is defined
     # Done before nginx is installed because it will fail to start if the module doesn't exist
-    - name: Install nginx-module-upload
+    - name: Install NGINX upload module
       ansible.builtin.dnf:
         name: "{{ nginx_upload_module_url }}"
         disable_gpg_check: true
       when: nginx_upload_module_url is defined
+    - name: Install NGINX zip module
+      ansible.builtin.get_url:
+        url: "{{ nginx_mod_zip_url }}"
+        dest: /usr/lib64/nginx/modules/ngx_http_zip_module.so
+        mode: 0755
+      when: nginx_mod_zip_url is defined
     # This should not be necessary - it is /var/lib/nginx/tmp/proxy, and even setting proxy_temp_path doesn't fix it. I
     # think this is harcoded in the upload module somewhere since it was built from pkg-oss?
     - name: Create /var/cache/nginx/proxy_temp
