@@ -31,7 +31,7 @@
     - geerlingguy.redis
   tags: redis
 
-- name: Galaxy Servers
+- name: Galaxy Servers Web Tasks
   hosts: galaxy_servers
   vars_files:
     # for tiaas_nginx_routes used by templates
@@ -76,7 +76,7 @@
   post_tasks:
   tags: nginx
 
-- name: Galaxy Servers
+- name: Galaxy Servers Additional Tasks
   hosts: galaxy_servers
   tasks:
     - name: Install PolicyKit rule for gxsrc systemctl privileges
@@ -91,6 +91,47 @@
         name: "{{ slurm_drmaa_rpm_url }}"
         disable_gpg_check: true
   tags: galaxy
+
+- name: Gravity Tasks
+  hosts: galaxy_servers
+  tasks:
+    - name: Create Gravity config dir
+      ansible.builtin.file:
+        path: /etc/galaxy/gravity.d
+        state: directory
+        mode: "0755"
+        owner: "{{ galaxy_privileged_user }}"
+        group: "{{ galaxy_group }}"
+    #- name: Install Gravity config
+    #  ansible.builtin.template:
+    #    src: "templates/galaxy/config/gravity.yml.j2"
+    #    dest: "{{ gravity_config_file }}"
+    #    mode: "0644"
+    #  notify:
+    #    - galaxyctl update
+    #    - restart galaxy
+    - name: Install Gravity
+      ansible.builtin.pip:
+        name:
+          - "{{ gravity_package | default('gravity') }}"
+        virtualenv: "{{ gravity_venv_dir }}"
+        virtualenv_command: "{{ gravity_virtualenv_command | default(galaxy_virtualenv_command | default(pip_virtualenv_command | default(omit))) }}"
+      when: gravity_venv_dir is defined
+    - name: Deploy galaxyctl wrapper script
+      ansible.builtin.copy:
+        content: |
+          #!/usr/bin/env sh
+          export GRAVITY_CONFIG_FILE={{ gravity_config_file | quote }}
+          exec {{ galaxy_gravity_command | quote }} "$@"
+        dest: "/usr/local/bin/galaxyctl-{{ galaxy_instance_codename }}"
+        owner: root
+        group: root
+        mode: "0755"
+  handlers:
+    - name: galaxyctl update
+      ansible.builtin.command: "{{ galaxy_gravity_command }} update"
+  tags:
+    - galaxy
 
 - name: Deploy TIaaS
   hosts: tiaas_servers

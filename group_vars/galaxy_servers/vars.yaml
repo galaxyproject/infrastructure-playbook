@@ -171,3 +171,8 @@ _override_telegraf_plugins_default:
     config:
       - pattern = "main\\.py.*workflow_scheduler0"
       - 'user = "{{ galaxy_user }}"'
+
+gravity_venv_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/gravity"
+gravity_package: "gravity==1.0.6"
+gravity_config_file: "/etc/galaxy/gravity.d/galaxy_{{ galaxy_instance_codename }}.yml"
+galaxy_gravity_command: "{{ gravity_venv_dir }}/bin/galaxyctl"

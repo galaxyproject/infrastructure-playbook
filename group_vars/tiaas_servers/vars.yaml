@@ -12,6 +12,7 @@ tiaas_galaxy_idsecret: "{{ galaxy_config_id_secret }}"
 tiaas_dir: "/srv/tiaas/{{ galaxy_instance_codename }}"
 tiaas_user: tiaas
 tiaas_group: tiaas
+tiaas_create_user: false
 #tiaas_repo: https://github.com/natefoo/tiaas2.git
 tiaas_version: main
 #tiaas_version: minor-fixes
