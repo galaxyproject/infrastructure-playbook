@@ -20,6 +20,7 @@ roles/galaxyproject.rabbitmq
 roles/galaxyproject.slurm
 roles/galaxyproject.telegraf_cvmfs
 roles/galaxyproject.tiaas2
+roles/galaxyproject.tusd
 roles/geerlingguy.repo-epel
 roles/geerlingguy.redis
 roles/usegalaxy_eu.certbot

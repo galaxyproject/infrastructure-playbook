@@ -90,6 +90,8 @@
       ansible.builtin.dnf:
         name: "{{ slurm_drmaa_rpm_url }}"
         disable_gpg_check: true
+  roles:
+    - role: galaxyproject.tusd
   tags: galaxy
 
 - name: Gravity Tasks

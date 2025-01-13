@@ -38,6 +38,8 @@ roles:
     version: 1.0.1
   - name: galaxyproject.tiaas2
     version: 2.2.2
+  - name: galaxyproject.tusd
+    version: 0.0.1
 
 collections:
   - name: galaxyproject.general

@@ -172,6 +172,11 @@ _override_telegraf_plugins_default:
       - pattern = "main\\.py.*workflow_scheduler0"
       - 'user = "{{ galaxy_user }}"'
 
+## used by: galaxyproject.tusd
+tusd_systemd: false
+#tusd_version: ...
+
+## used by: gravity tasks in playbook-galaxy-stack
 gravity_venv_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/gravity"
 gravity_package: "gravity==1.0.6"
 gravity_config_file: "/etc/galaxy/gravity.d/galaxy_{{ galaxy_instance_codename }}.yml"
