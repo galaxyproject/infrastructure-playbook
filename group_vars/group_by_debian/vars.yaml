@@ -1,5 +1,7 @@
 ---
 
+_venv_package_name: python3-venv
+
 # Increase to 201 to match EL and leave ample space for our accounts
 login_defs:
   SYS_UID_MIN: 201

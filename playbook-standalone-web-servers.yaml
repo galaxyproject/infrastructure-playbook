@@ -3,8 +3,6 @@
 - name: Standalone Web Servers
   hosts: standalone_web_servers
   roles:
-    - role: galaxyproject.general.packages
-      tags: general
     - role: galaxyproject.general.firewall
       tags: general
     - role: galaxyproject.nginx

@@ -1,0 +1,7 @@
+---
+
+nginx_conf_user: nginx
+nginx_conf_group: nginx
+
+nginx_ssl_servers:
+  - usegalaxy_lb

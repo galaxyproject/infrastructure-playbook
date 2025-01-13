@@ -37,12 +37,10 @@ nginx_servers:
   - default
   #- certbot_redirects
 
-nginx_ssl_servers:
-  - galaxy_test
+_nginx_galaxy_server: galaxy_test
 
 certbot_domains:
   - test.galaxyproject.org
-  - '*.interactivetoolentrypoint.interactivetool.test.galaxyproject.org'
   - '*.ep.interactivetool.test.galaxyproject.org'
 
 certbot_post_renewal: |
@@ -52,6 +50,7 @@ certbot_post_renewal: |
 galaxy_server_dir: /cvmfs/test.galaxyproject.org/galaxy
 galaxy_tusd_port: 1080
 gxit_proxy_port: 8910
+nginx_job_files_upload_store: /corral4/test/upload_job_files
 
 # One-off slurm-drmaa install task in playbook-galaxy-stack
 slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm

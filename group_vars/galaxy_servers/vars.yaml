@@ -172,6 +172,10 @@ _override_telegraf_plugins_default:
       - pattern = "main\\.py.*workflow_scheduler0"
       - 'user = "{{ galaxy_user }}"'
 
+nginx_upload_module_url: https://github.com/natefoo/nginx-upload-module-build/raw/refs/heads/main/nginx_v1.20.1.el9/build-module-artifacts/nginx-module-upload-1.20.1+1.0-1.el9.ngx.x86_64.rpm
+nginx_ssl_servers:
+  - "{{ _nginx_galaxy_server }}"
+
 ## used by: galaxyproject.tusd
 tusd_systemd: false
 #tusd_version: ...

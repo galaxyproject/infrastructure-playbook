@@ -23,6 +23,11 @@ all:
     meta_galaxy_main:
       hosts:
         galaxy-db.tacc.utexas.edu:
+        galaxy-main.tacc.utexas.edu:
+        galaxy-main1.tacc.utexas.edu:
+        galaxy-main2.tacc.utexas.edu:
+        galaxy-main3.tacc.utexas.edu:
+        galaxy-main4.tacc.utexas.edu:
 
     # Deploys and configures telegraf
     telegraf_agents:
@@ -62,7 +67,9 @@ all:
     letsencrypt_dns01_clients:
       hosts:
         galaxy-control.tacc.utexas.edu:
-        galaxy-test.tacc.utexas.edu:
+      children:
+        galaxy_servers:
+        galaxy_load_balancers:
 
     # Provides the Certbot TSIG key for DNS-01 challenges
     certbot_tsig_key_consumers:
@@ -73,6 +80,12 @@ all:
     web_servers:
       children:
         galaxy_servers:
+        galaxy_load_balancers:
+
+    # Allow installation from playbook-standalone-webservers
+    standalone_web_servers:
+      children:
+        galaxy_load_balancers:
 
     # Deploys and configures RabbitMQ
     rabbitmq_servers:
@@ -86,6 +99,10 @@ all:
     galaxy_servers:
       hosts:
         galaxy-test.tacc.utexas.edu:
+
+    galaxy_load_balancers:
+      hosts:
+        galaxy-main.tacc.utexas.edu:
 
     tiaas_servers:
       hosts:
