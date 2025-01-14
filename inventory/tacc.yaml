@@ -120,10 +120,10 @@ all:
         galaxy-control.tacc.utexas.edu:
         galaxy-test.tacc.utexas.edu:
         galaxy-main.tacc.utexas.edu:
-        #galaxy-main1.tacc.utexas.edu:
-        #galaxy-main2.tacc.utexas.edu:
-        #galaxy-main3.tacc.utexas.edu:
-        #galaxy-main4.tacc.utexas.edu:
+        galaxy-main1.tacc.utexas.edu:
+        galaxy-main2.tacc.utexas.edu:
+        galaxy-main3.tacc.utexas.edu:
+        galaxy-main4.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
         galaxy-vgp.tacc.utexas.edu:
       children:

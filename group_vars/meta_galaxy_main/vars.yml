@@ -15,6 +15,10 @@ galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_
 galaxy_user: g2main
 galaxy_instance_codename: main
 galaxy_instance_hostname: usegalaxy.org
+galaxy_cvmfs_repo: main.galaxyproject.org
+
+## Used by: gravity_config
+galaxy_tus_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_tus"
 
 # Main-specific TIaaS vars
 tiaas_galaxy_db_user: "{{ galaxy_user }}"
@@ -53,11 +57,11 @@ certbot_domains:
 certbot_post_renewal: |
     systemctl restart nginx || true
 
-# for the nginx template
+## Used by: nginx template
 galaxy_server_dir: /cvmfs/main.galaxyproject.org/galaxy
 galaxy_tusd_port: 1080
 gxit_proxy_port: 8910
 nginx_job_files_upload_store: /corral4/main/_upload_job_files;
 
-# One-off slurm-drmaa install task in playbook-galaxy-stack
+## Used by: slurm-drmaa install task in playbook-galaxy-stack
 slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm

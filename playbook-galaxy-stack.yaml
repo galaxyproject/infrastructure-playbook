@@ -104,16 +104,17 @@
         path: /etc/galaxy/gravity.d
         state: directory
         mode: "0755"
-        owner: "{{ galaxy_privileged_user }}"
-        group: "{{ galaxy_group }}"
-    #- name: Install Gravity config
-    #  ansible.builtin.template:
-    #    src: "templates/galaxy/config/gravity.yml.j2"
-    #    dest: "{{ gravity_config_file }}"
-    #    mode: "0644"
-    #  notify:
-    #    - galaxyctl update
-    #    - restart galaxy
+        owner: root
+        group: root
+    - name: Install Gravity config
+      ansible.builtin.copy:
+        content: "{{ {'gravity': gravity_config} | to_nice_yaml(indent=4) }}"
+        dest: "{{ gravity_config_file }}"
+        mode: "0644"
+        owner: root
+        group: root
+      notify:
+        - galaxyctl update
     - name: Install Gravity
       ansible.builtin.pip:
         name:

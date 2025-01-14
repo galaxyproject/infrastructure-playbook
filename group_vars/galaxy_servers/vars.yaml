@@ -185,3 +185,7 @@ gravity_venv_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/gravity"
 gravity_package: "gravity==1.0.6"
 gravity_config_file: "/etc/galaxy/gravity.d/galaxy_{{ galaxy_instance_codename }}.yml"
 galaxy_gravity_command: "{{ gravity_venv_dir }}/bin/galaxyctl"
+
+## used by: gravity_config
+galaxy_config_file: "/srv/galaxy/{{ galaxy_instance_codename }}/config/galaxy.yml"
+galaxy_venv_dir: "/cvmfs/{{ galaxy_cvmfs_repo }}/venv"
