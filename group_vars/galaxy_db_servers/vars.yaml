@@ -21,6 +21,14 @@ galaxy_db_servers_group_groups:
 galaxy_db_servers_group_users:
   - "{{ tacc_users.postgres }}"
 
+galaxy_db_servers_group_authorized_key_users:
+  - name: "{{ galaxy_user }}"
+    authorized:
+      - nate_coraor
+      - dannon_baker
+      - marius_van_den_beek
+      - john_davis
+
 galaxy_db_servers_group_packages:
   # for gxadmin
   - make
