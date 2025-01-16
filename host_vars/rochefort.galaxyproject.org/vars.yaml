@@ -67,9 +67,6 @@ host_users:
     shell: /bin/bash
 
 zfs_filesystems:
-  - name: data/rochefort/vicepa
-    mountpoint: /vicepa
-    atime: "off"
   - name: data/rochefort/snpeff-data
     mountpoint: /srv/nginx/snpeff-data.galaxyproject.org/root
     exec: "off"
@@ -168,9 +165,6 @@ host_services:
     enabled: 'yes'
 
 zfs_admin_permissions:
-  - name: data/rochefort/vicepa
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
   - name: data/rochefort/snpeff-data
     users: zfsdump-rochefort
     permissions: send,snapshot,hold
