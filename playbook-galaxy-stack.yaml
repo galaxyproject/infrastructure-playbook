@@ -95,7 +95,6 @@
         state: absent
       when: "(item | basename) not in nginx_ssl_servers"
       loop: "{{ __usegalaxy_servers.files | map(attribute='path') }}"
-
   tags: nginx
 
 - name: Galaxy Servers Additional Tasks
@@ -114,6 +113,8 @@
         disable_gpg_check: true
   roles:
     - role: galaxyproject.tusd
+    # NOTE: moving the cron jobs to another VM would require manually removing them from the old one
+    - role: galaxyproject.general.cron
   tags: galaxy
 
 - name: Gravity Tasks
