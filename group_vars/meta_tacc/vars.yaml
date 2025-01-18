@@ -95,3 +95,13 @@ meta_tacc_group_mounts:
     group: G-803372
 
 postfix_relayhost: "[relay02.tacc.utexas.edu]"
+postfix_aliases:
+  mailer-daemon: postmaster
+  postmaster: root
+  nobody: root
+  postgres: root
+  gxsrc: root
+  gxadmin: root
+  g2test: root
+  g2main: root
+  root: root@galaxyproject.org

@@ -4,5 +4,8 @@ postfix_role: "null-client"
 postfix_config:
   compatibility_level: 2
   myorigin: "$myhostname"
+  # aliases don't work if local transport is disabled - however you could use virtual instead
+  local_transport: "local:$myhostname"
+  mydestination: "$myhostname, localhost.$mydomain, localhost"
   relayhost: "{{ postfix_relayhost }}"
   smtpd_relay_restrictions: "permit_mynetworks, reject"
