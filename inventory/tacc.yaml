@@ -16,18 +16,19 @@ all:
 
     # Provides Test-specific values for group vars
     meta_galaxy_test:
-      hosts:
-        galaxy-test.tacc.utexas.edu:
+      children:
+        galaxy_test_servers:
 
     # Provides Main-specific values for group vars
     meta_galaxy_main:
       hosts:
         galaxy-db.tacc.utexas.edu:
-        galaxy-main.tacc.utexas.edu:
-        galaxy-main1.tacc.utexas.edu:
-        galaxy-main2.tacc.utexas.edu:
-        galaxy-main3.tacc.utexas.edu:
-        galaxy-main4.tacc.utexas.edu:
+      children:
+        galaxy_main_load_balancers:
+        galaxy_main_web_servers:
+        galaxy_main_staging_servers:
+        galaxy_main_handler_servers:
+        galaxy_main_celery_servers:
 
     # Deploys and configures telegraf
     telegraf_agents:
@@ -69,7 +70,7 @@ all:
         galaxy-control.tacc.utexas.edu:
       children:
         galaxy_servers:
-        galaxy_load_balancers:
+        galaxy_main_load_balancers:
 
     # Provides the Certbot TSIG key for DNS-01 challenges
     certbot_tsig_key_consumers:
@@ -80,12 +81,12 @@ all:
     web_servers:
       children:
         galaxy_servers:
-        galaxy_load_balancers:
+        galaxy_main_load_balancers:
 
     # Allow installation from playbook-standalone-webservers
     standalone_web_servers:
       children:
-        galaxy_load_balancers:
+        galaxy_main_load_balancers:
 
     # Deploys and configures RabbitMQ
     rabbitmq_servers:
@@ -97,12 +98,39 @@ all:
     # - telegraf plugins for Galaxy servers
     # - install cvmfs_remount_sync and prefer TACC stratum 1
     galaxy_servers:
+      children:
+        galaxy_test_servers:
+        galaxy_main_web_servers:
+        galaxy_main_staging_servers:
+        galaxy_main_handler_servers:
+        galaxy_main_celery_servers:
+
+    galaxy_test_servers:
       hosts:
         galaxy-test.tacc.utexas.edu:
 
-    galaxy_load_balancers:
+    galaxy_main_load_balancers:
       hosts:
         galaxy-main.tacc.utexas.edu:
+
+    # This should allow reshuffling VMs as needed - change groups and run the the Galaxy stack playbook
+    galaxy_main_web_servers:
+      hosts:
+        # Web servers are also backup staging servers
+        galaxy-main1.tacc.utexas.edu:
+
+    galaxy_main_staging_servers:
+      hosts:
+        # Staging servers are also backup web servers
+        galaxy-main2.tacc.utexas.edu:
+
+    galaxy_main_handler_servers:
+      hosts:
+        galaxy-main3.tacc.utexas.edu:
+
+    galaxy_main_celery_servers:
+      hosts:
+        galaxy-main4.tacc.utexas.edu:
 
     tiaas_servers:
       hosts:
@@ -171,10 +199,14 @@ all:
           ansible_become: true
         galaxy-main.tacc.utexas.edu:
           ansible_become: true
-        #galaxy-main1.tacc.utexas.edu:
-        #galaxy-main2.tacc.utexas.edu:
-        #galaxy-main3.tacc.utexas.edu:
-        #galaxy-main4.tacc.utexas.edu:
+        galaxy-main1.tacc.utexas.edu:
+          ansible_become: true
+        galaxy-main2.tacc.utexas.edu:
+          ansible_become: true
+        galaxy-main3.tacc.utexas.edu:
+          ansible_become: true
+        galaxy-main4.tacc.utexas.edu:
+          ansible_become: true
         galaxy-db.tacc.utexas.edu:
           # annoyingly, this overrides become on plays
           #ansible_become: false

@@ -4,13 +4,11 @@ galaxy_privileged_user: gxsrc
 galaxy_group: G-803372
 
 galaxy_servers_group_groups:
-  - "{{ tacc_groups.tiaas }}"
   - "{{ tacc_groups.gxsrc }}"
   # This is necessary for privilege separation
   - "{{ tacc_groups.G_803372 }}"
 
 galaxy_servers_group_users:
-  - "{{ tacc_users.tiaas }}"
   - "{{ tacc_users.gxsrc }}"
 
 galaxy_servers_group_authorized_key_users:
@@ -173,8 +171,28 @@ _override_telegraf_plugins_default:
       - 'user = "{{ galaxy_user }}"'
 
 nginx_upload_module_url: https://github.com/natefoo/nginx-upload-module-build/raw/refs/heads/main/nginx_v1.20.1.el9/build-module-artifacts/nginx-module-upload-1.20.1+1.0-1.el9.ngx.x86_64.rpm
-nginx_ssl_servers:
-  - "{{ _nginx_galaxy_server }}"
+nginx_load_modules:
+  - order: 50
+    path: ngx_http_upload_module.so
+
+all_gravity_config:
+  instance_name: "{{ galaxy_instance_codename }}"
+  process_manager: systemd
+  galaxy_user: "{{ galaxy_user }}"
+  galaxy_group: "{{ galaxy_group }}"
+  galaxy_root: "{{ galaxy_server_dir }}"
+  galaxy_config_file: "{{ galaxy_config_file }}"
+  #log_dir: "{{ galaxy_log_dir }}"
+  virtualenv: "{{ galaxy_venv_dir }}"
+  memory_limit: 4
+  gunicorn:
+    enable: false
+  celery:
+    enable: false
+    enable_beat: false
+
+# Automatically assemble gravity_config depending on what groups the host is in
+gravity_config: "{{ lookup('galaxyproject.general.inheritance_chain', 'gravity_config') }}"
 
 ## used by: galaxyproject.tusd
 tusd_systemd: false

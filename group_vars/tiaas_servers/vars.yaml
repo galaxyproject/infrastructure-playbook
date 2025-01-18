@@ -1,5 +1,11 @@
 ---
 
+tiaas_servers_group_groups:
+  - "{{ tacc_groups.tiaas }}"
+
+tiaas_servers_group_users:
+  - "{{ tacc_users.tiaas }}"
+
 # TIaaS doesn't log anything without a logging config so you can use this if you're having issues, but it should not be
 # left on in production.
 #tiaas_debug: 'True'

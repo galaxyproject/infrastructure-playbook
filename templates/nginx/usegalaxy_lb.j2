@@ -11,19 +11,26 @@ server {
 }
 
 # Define web upstream
-upstream galaxy_web {
-    server galaxy-web-05.tacc.utexas.edu:8000;
-    server galaxy-web-06.tacc.utexas.edu:8000 backup;
-    #server 129.114.60.89:8000;          # galaxy-main1
-    #server 129.114.60.79:8000 backup;   # galaxy-main2
+upstream galaxy {
+    least_conn;
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8080;
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081;
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8080 backup;
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8081 backup;
 }
 
 # Define staging upstreams
 upstream galaxy_staging {
-    server galaxy-web-03.tacc.utexas.edu:8000;
-    server galaxy-web-04.tacc.utexas.edu:8000 backup;
-    #server 129.114.60.79:8000;          # galaxy-main2
-    #server 129.114.60.89:8000 backup;   # galaxy-main1
+    least_conn;
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8080;
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8081;
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8080 backup;
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081 backup;
+}
+
+upstream tusd {
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:{{ galaxy_tusd_port }};
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:{{ galaxy_tusd_port }} backup;
 }
 
 # Main server
@@ -34,18 +41,29 @@ server {
     access_log  /var/log/nginx/main.access.log;
     error_log   /var/log/nginx/main.error.log;
 
+    # usegalaxy.org link shortening
+    include {{ nginx_conf_dir }}/usegalaxy_rewrites.conf;
+    include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
+
+}
+
+server {
+    listen       *:443 ssl http2;
+    server_name  staging.usegalaxy.org;
+
+    access_log  /var/log/nginx/staging.access.log;
+    error_log   /var/log/nginx/staging.error.log;
+
     # upstreams set this to a reasonable value
     client_max_body_size 0;
 
     location / {
-        proxy_pass         http://galaxy_web;
+        proxy_pass         http://galaxy;
         proxy_redirect     off;
         proxy_set_header   Host              $host;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
-
-        add_header X-Clacks-Overhead 'GNU James Taylor (@jxtx) Simon Gladman (@slugger70)';
     }
 
     location ~ ^/api/jobs/[^/]+/files {
@@ -68,17 +86,6 @@ server {
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
     }
-
-    # Route all path-based interactive tool requests to the InteractiveTool proxy application
-    location ~* ^/(interactivetool/.+)$ {
-        proxy_redirect      off;
-        proxy_http_version  1.1;
-        proxy_set_header    Host        $host;
-        proxy_set_header    X-Real-IP   $remote_addr;
-        proxy_set_header    Upgrade     $http_upgrade;
-        proxy_set_header    Connection  "upgrade";
-        proxy_pass          http://127.0.0.1:{{ gxit_proxy_port }};
-    }
 }
 
 # Domain-based Galaxy Interactive Tools (GxITs)
@@ -99,7 +106,7 @@ server {
         proxy_set_header    X-Real-IP   $remote_addr;
         proxy_set_header    Upgrade     $http_upgrade;
         proxy_set_header    Connection  "upgrade";
-        proxy_pass          http://127.0.0.1:{{ gxit_proxy_port }};
+        proxy_pass          http://{{ gxit_proxy_host }}:{{ gxit_proxy_port }};
     }
 
     # error docs

@@ -1,0 +1,18 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# For non-frontend Main servers, simply redirect to Main
+server {
+    listen       *:443 ssl default_server;
+    server_name  usegalaxy.org *.usegalaxy.org;
+
+    location /_hostname {
+        add_header Content-Type text/plain;
+        return 200 '{{ inventory_hostname_short }}';
+    }
+
+    return 302 https://usegalaxy.org$request_uri;
+}
+
+# vim: set filetype=nginx

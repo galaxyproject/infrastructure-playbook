@@ -73,9 +73,29 @@
       loop:
         - httpd_can_network_connect
         - httpd_use_fusefs
+    # TODO: Lots of silliness with Galaxy being on FUSE, and other things that require a custom module
+    - name: Mask setroubleshootd
+      ansible.builtin.systemd_service:
+        name: setroubleshootd.service
+        masked: true
   roles:
     - role: galaxyproject.nginx
   post_tasks:
+    # This allows changing the role of galaxy-main* VMs
+    - name: Collect list of usegalaxy* NGINX servers
+      ansible.builtin.find:
+        paths: /etc/nginx/sites-enabled
+        patterns: 'usegalaxy*'
+        file_type: "link"
+        recurse: false
+      register: __usegalaxy_servers
+    - name: Remove any undefined usegalaxy* NGINX servers
+      ansible.builtin.file:
+        path: "/etc/nginx/sites-enabled/{{ item }}"
+        state: absent
+      when: "(item | basename) not in nginx_ssl_servers"
+      loop: "{{ __usegalaxy_servers.files | map(attribute='path') }}"
+
   tags: nginx
 
 - name: Galaxy Servers Additional Tasks
@@ -136,7 +156,7 @@
     - name: galaxyctl update
       ansible.builtin.command: "{{ galaxy_gravity_command }} update"
   tags:
-    - galaxy
+    - gravity
 
 # TODO: cron jobs
 

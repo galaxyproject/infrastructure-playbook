@@ -29,6 +29,9 @@ nginx_conf_user: "{{ galaxy_user }}"
 nginx_conf_group: G-803372
 nginx_default_redirect_uri: https://test.galaxyproject.org$request_uri
 
+nginx_servers:
+  - default
+
 #nginx_mod_zip_url: https://github.com/natefoo/mod-zip-dso/raw/main/nginx-1.12.2-el7/ngx_http_zip_module.so
 #nginx_load_modules:
 #  - order: 50
@@ -38,11 +41,8 @@ _nginx_conf_http:
   client_max_body_size: 10g
   proxy_read_timeout: 600
 
-nginx_servers:
-  - default
-  #- certbot_redirects
-
-_nginx_galaxy_server: galaxy_test
+nginx_ssl_servers:
+  - galaxy_test
 
 certbot_domains:
   - test.galaxyproject.org
@@ -54,6 +54,7 @@ certbot_post_renewal: |
 ## Used by: nginx template
 galaxy_server_dir: /cvmfs/test.galaxyproject.org/galaxy
 galaxy_tusd_port: 1080
+gxit_proxy_host: 127.0.0.1
 gxit_proxy_port: 8910
 nginx_job_files_upload_store: /corral4/test/upload_job_files
 

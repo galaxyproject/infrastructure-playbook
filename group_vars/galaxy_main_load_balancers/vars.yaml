@@ -1,0 +1,29 @@
+---
+
+# gxsrc for static and error documents
+galaxy_main_load_balancers_group_groups:
+  - "{{ tacc_groups.gxsrc }}"
+  - "{{ tacc_groups.G_803372 }}"
+
+galaxy_main_load_balancers_group_users:
+  - "{{ tacc_users.gxsrc }}"
+
+galaxy_main_load_balancers_group_authorized_key_users:
+  - name: gxsrc
+    authorized: "{{ galaxy_team_users }}"
+
+galaxy_main_load_balancers_group_directories:
+  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/error"
+    owner: gxsrc
+    group: G-803372
+    mode: "0755"
+
+nginx_conf_user: nginx
+nginx_conf_group: nginx
+
+nginx_ssl_servers:
+  - usegalaxy_lb
+
+nginx_extra_configs:
+  - usegalaxy_rewrites.conf
+  - usegalaxy_proxy.conf
