@@ -18,8 +18,9 @@ galaxy_main_load_balancers_group_directories:
     group: G-803372
     mode: "0755"
 
-nginx_conf_user: nginx
-nginx_conf_group: nginx
+# must run as g2main for x-accel-redirect
+#nginx_conf_user: nginx
+#nginx_conf_group: nginx
 
 nginx_ssl_servers:
   - usegalaxy_lb
