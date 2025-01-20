@@ -2,6 +2,10 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
+# SSL_read() failed (SSL: error:0A000126:SSL routines::unexpected eof while reading) while processing HTTP/2 connection,
+# https://github.com/openssl/openssl/discussions/22690
+ssl_conf_command Options IgnoreUnexpectedEOF;
+
 # Redirect www -> root
 server {
     listen       *:443 ssl;
@@ -13,6 +17,7 @@ server {
 # Define web upstream
 upstream galaxy {
     least_conn;
+    # Don't double proxy through nginx or failover doesn't work properly
     server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8080;
     server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081;
     server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8080 backup;
@@ -28,6 +33,12 @@ upstream galaxy_staging {
     server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081 backup;
 }
 
+upstream galaxy_staging_upload {
+    # For nginx_upload_module we have to double proxy
+    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8000;
+    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8000 backup;
+}
+
 upstream tusd {
     server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:{{ galaxy_tusd_port }};
     server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:{{ galaxy_tusd_port }} backup;
@@ -41,12 +52,15 @@ server {
     access_log  /var/log/nginx/main.access.log;
     error_log   /var/log/nginx/main.error.log;
 
+    client_max_body_size 50g;
+
     # usegalaxy.org link shortening
     include {{ nginx_conf_dir }}/usegalaxy_rewrites.conf;
     include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
 
 }
 
+# Main staging server
 server {
     listen       *:443 ssl http2;
     server_name  staging.usegalaxy.org;
@@ -56,6 +70,10 @@ server {
 
     # upstreams set this to a reasonable value
     client_max_body_size 0;
+
+    # Disable buffering
+    proxy_request_buffering off;
+    proxy_buffering off;
 
     location / {
         proxy_pass         http://galaxy;
@@ -67,18 +85,6 @@ server {
     }
 
     location ~ ^/api/jobs/[^/]+/files {
-        try_files false @galaxy_staging;
-    }
-
-    location /_job_files {
-        try_files false @galaxy_staging;
-    }
-
-    # since this is internal it should be unnecessary
-    #location /_upload_job_files_done {
-    #}
-
-    location @galaxy_staging {
         proxy_pass         http://galaxy_staging;
         proxy_redirect     off;
         proxy_set_header   Host              $host;
@@ -86,6 +92,19 @@ server {
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
     }
+
+    location /_job_files {
+        proxy_pass         http://galaxy_staging_upload;
+        proxy_redirect     off;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+    # since this is internal it should be unnecessary
+    #location /_upload_job_files_done {
+    #}
 }
 
 # Domain-based Galaxy Interactive Tools (GxITs)

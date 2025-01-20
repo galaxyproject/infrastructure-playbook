@@ -9,76 +9,35 @@ upstream galaxy_staging {
 }
 
 server {
-    listen       *:443 ssl;
+    listen       *:8000;
+
+    access_log  /var/log/nginx/staging-lb.access.log;
+    error_log   /var/log/nginx/staging-lb.error.log;
+
+    set $gx_host                $http_host;
+    set $gx_x_real_ip           $http_x_real_ip;
+    set $gx_x_forwarded_for     $http_x_forwarded_for;
+    set $gx_x_forwarded_proto   $http_x_forwarded_proto;
+
+    include {{ nginx_conf_dir }}/usegalaxy_staging_proxy.conf;
+}
+
+server {
+    listen       *:443 ssl http2;
     server_name  staging.usegalaxy.org;
 
     # Enable HSTS (age is 180 days)
     add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
-    access_log  /var/log/nginx/staging.access.log;
-    error_log   /var/log/nginx/staging.error.log;
+    access_log  /var/log/nginx/staging-direct.access.log;
+    error_log   /var/log/nginx/staging-direct.error.log;
 
-    location /_hostname {
-        add_header Content-Type text/plain;
-        return 200 '{{ inventory_hostname_short }}';
-    }
+    set $gx_host                $host;
+    set $gx_x_real_ip           $remote_addr;
+    set $gx_x_forwarded_for     $proxy_add_x_forwarded_for;
+    set $gx_x_forwarded_proto   $scheme;
 
-    location / {
-        return 302 https://usegalaxy.org;
-    }
-
-    location ~ ^/api/jobs/[^/]+/files$ {
-        proxy_pass                  http://galaxy_staging;
-        proxy_redirect              off;
-        proxy_request_buffering     off;
-        proxy_buffering             off;
-        proxy_set_header            Host              $host;
-        proxy_set_header            X-Real-IP         $remote_addr;
-        proxy_set_header            X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header            X-Forwarded-Proto $scheme;
-    }
-
-    location /_x_accel_redirect {
-        internal;
-        alias /;
-    }
-
-    location /_job_files {
-        if ($request_method != POST) {
-            rewrite "" /api/jobs/$arg_job_id/files last;
-        }
-
-        client_max_body_size    500g;
-
-        upload_store            {{ nginx_job_files_upload_store }};
-        upload_store_access     user:rw;
-        upload_pass_form_field  "";
-        upload_set_form_field   "__${upload_field_name}_path" "$upload_tmp_path";
-        upload_pass_args        on;
-        upload_pass             /_upload_job_files_done;
-    }
-
-    location /_upload_job_files_done {
-        internal;
-        rewrite "" /api/jobs/$arg_job_id/files;
-    }
-
-    location /api/job_files/resumable_upload {
-        # Disable request and response buffering
-        proxy_request_buffering     off;
-        proxy_buffering             off;
-        proxy_http_version          1.1;
-
-        # Add X-Forwarded-* headers
-        proxy_set_header X-Forwarded-Host   $host;
-        proxy_set_header X-Forwarded-Proto  $scheme;
-
-        proxy_set_header Upgrade            $http_upgrade;
-        proxy_set_header Connection         "upgrade";
-        client_max_body_size        0;
-        return 410 "tus job_files upload disabled";
-        #proxy_pass http://127.0.0.1:1081/files;
-    }
+    include {{ nginx_conf_dir }}/usegalaxy_staging_proxy.conf;
 }
 
 # vim: set filetype=nginx

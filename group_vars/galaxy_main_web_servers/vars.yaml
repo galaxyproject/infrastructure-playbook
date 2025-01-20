@@ -7,6 +7,7 @@ nginx_ssl_servers:
 
 nginx_extra_configs:
   - usegalaxy_proxy.conf
+  - usegalaxy_staging_proxy.conf
 
 galaxy_main_web_servers_group_gravity_config:
   gunicorn:

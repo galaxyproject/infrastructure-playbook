@@ -34,7 +34,7 @@
 # TODO: some of these probably make sense as local roles
 
 - name: Galaxy Servers Web Tasks
-  hosts: galaxy_servers
+  hosts: galaxy_servers:galaxy_main_load_balancers
   vars_files:
     # for tiaas_nginx_routes used by templates
     - "{{ playbook_dir }}/roles/galaxyproject.tiaas2/defaults/main.yml"

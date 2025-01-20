@@ -32,6 +32,8 @@ server {
     listen       *:443 ssl http2 default_server;
     server_name  usegalaxy.org *.usegalaxy.org {{ inventory_hostname_short }}.usegalaxy.org;
 
+    client_max_body_size 50g;
+
     include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
 
     location /_hostname {
