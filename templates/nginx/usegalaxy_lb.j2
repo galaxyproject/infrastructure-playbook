@@ -18,30 +18,46 @@ server {
 upstream galaxy {
     least_conn;
     # Don't double proxy through nginx or failover doesn't work properly
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8080;
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081;
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8080 backup;
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8081 backup;
+{% for name in groups['galaxy_main_web_servers'] %}
+    server {{ lookup('dig', name) }}:8080;
+    server {{ lookup('dig', name) }}:8081;
+{% endfor %}
+{% for name in groups['galaxy_main_staging_servers'] %}
+    server {{ lookup('dig', name) }}:8080 backup;
+    server {{ lookup('dig', name) }}:8081 backup;
+{% endfor %}
 }
 
 # Define staging upstreams
 upstream galaxy_staging {
     least_conn;
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8080;
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8081;
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8080 backup;
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8081 backup;
+{% for name in groups['galaxy_main_staging_servers'] %}
+    server {{ lookup('dig', name) }}:8080;
+    server {{ lookup('dig', name) }}:8081;
+{% endfor %}
+{% for name in groups['galaxy_main_web_servers'] %}
+    server {{ lookup('dig', name) }}:8080 backup;
+    server {{ lookup('dig', name) }}:8081 backup;
+{% endfor %}
 }
 
 upstream galaxy_staging_upload {
     # For nginx_upload_module we have to double proxy
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:8000;
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8000 backup;
+{% for name in groups['galaxy_main_staging_servers'] %}
+    server {{ lookup('dig', name) }}:8000;
+{% endfor %}
+{% for name in groups['galaxy_main_web_servers'] %}
+    server {{ lookup('dig', name) }}:8000 backup;
+{% endfor %}
 }
 
 upstream tusd {
-    server {{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:{{ galaxy_tusd_port }};
-    server {{ lookup('dig', groups['galaxy_main_staging_servers'][0]) }}:{{ galaxy_tusd_port }} backup;
+{% for name in groups['galaxy_main_web_servers'] %}
+    server {{ lookup('dig', name) }}:{{ galaxy_tusd_port }};
+{% endfor %}
+{% for name in groups['galaxy_main_staging_servers'] %}
+    server {{ lookup('dig', name) }}:{{ galaxy_tusd_port }} backup;
+{% endfor %}
 }
 
 # Main server
