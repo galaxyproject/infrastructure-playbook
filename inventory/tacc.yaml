@@ -98,12 +98,22 @@ all:
     # - telegraf plugins for Galaxy servers
     # - install cvmfs_remount_sync and prefer TACC stratum 1
     galaxy_servers:
+      # FIXME:
+      #hosts:
+      #  galaxy-vgp.tacc.utexas.edu:
       children:
         galaxy_test_servers:
         galaxy_main_web_servers:
         galaxy_main_staging_servers:
         galaxy_main_handler_servers:
         galaxy_main_celery_servers:
+
+    # Deploys cleanup cron jobs, removes any ansible_cron_galaxy_{{ galaxy_instance_codename }} jobs from other
+    # galaxy_servers
+    galaxy_cleanup_servers:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
+        galaxy-main4.tacc.utexas.edu:
 
     galaxy_test_servers:
       hosts:

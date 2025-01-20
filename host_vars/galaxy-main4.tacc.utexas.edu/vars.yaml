@@ -1,9 +1,0 @@
----
-
-host_crontabs:
-  - name: "Clean {{ galaxy_instance_codename }} jobs"
-    id: "galaxy_{{ galaxy_instance_codename }}_clean_jobs"
-    user: "{{ galaxy_user }}"
-    hour: "2"
-    minute: "0"
-    job: "find /corral4/{{ galaxy_instance_codename }}/jobs/*/* -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rvf {} + | tee -a /srv/galaxy/{{ galaxy_instance_codename }}/log/cleanup_jobs.log && find /corral4/main/jobs/* -mindepth 0 -maxdepth 1 -type d -empty -exec rmdir {} +"

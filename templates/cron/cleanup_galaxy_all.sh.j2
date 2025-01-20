@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MUTEX="$HOME/.galaxy-clean.lock"
+MUTEX_ACQUIRED=false
+
+function trap_handler() {
+    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    return 0
+}
+trap "trap_handler" SIGTERM SIGINT ERR EXIT
+
+if mkdir "$MUTEX"; then
+    MUTEX_ACQUIRED=true
+{
+    set -x;
+{% for job in galaxy_cleanup_jobs %}
+    {{ job }};
+{% endfor %}
+    { set +x; } 2>/dev/null;
+} > {{ galaxy_log_dir }}/cleanup_daily-$(date +%Y-%m-%d).log 2>&1
+fi

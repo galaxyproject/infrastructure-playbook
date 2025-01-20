@@ -91,7 +91,7 @@
       register: __usegalaxy_servers
     - name: Remove any undefined usegalaxy* NGINX servers
       ansible.builtin.file:
-        path: "/etc/nginx/sites-enabled/{{ item }}"
+        path: "/etc/nginx/sites-enabled/{{ item | basename }}"
         state: absent
       when: "(item | basename) not in nginx_ssl_servers"
       loop: "{{ __usegalaxy_servers.files | map(attribute='path') }}"
@@ -111,10 +111,37 @@
       ansible.builtin.dnf:
         name: "{{ slurm_drmaa_rpm_url }}"
         disable_gpg_check: true
+    - name: Remove Galaxy cleanup script
+      ansible.builtin.file:
+        path: "/srv/galaxy/{{ galaxy_instance_codename }}/bin/cleanup_galaxy_all.sh"
+        state: absent
+      when: "inventory_hostname not in groups['galaxy_cleanup_servers']"
+    - name: Install Galaxy cleanup script
+      ansible.builtin.template:
+        src: "cron/cleanup_galaxy_all.sh.j2"
+        dest: "/srv/galaxy/{{ galaxy_instance_codename }}/bin/cleanup_galaxy_all.sh"
+        owner: "{{ galaxy_privileged_user }}"
+        group: "{{ galaxy_group }}"
+        mode: "0755"
+      when: "inventory_hostname in groups['galaxy_cleanup_servers']"
   roles:
     - role: galaxyproject.tusd
-    # NOTE: moving the cron jobs to another VM would require manually removing them from the old one
     - role: galaxyproject.general.cron
+  post_tasks:
+    - name: Collect list of ansible_cron_galaxy_* cron jobs
+      ansible.builtin.find:
+        paths: /etc/cron.d
+        patterns: 'ansible_cron_galaxy_{{ galaxy_instance_codename }}_*'
+        file_type: "file"
+        recurse: false
+      register: __galaxy_cron_jobs
+    - name: Remove any undefined ansible_cron_galaxy_* cron jobs
+      ansible.builtin.file:
+        path: "/etc/cron.d/{{ item | basename }}"
+        state: absent
+      # flatten because ansible makes a single item response not a list? or a bug in inheritance_chain
+      when: "(item | basename | regex_replace('^ansible_cron_', '')) not in ([lookup('galaxyproject.general.inheritance_chain', 'crontabs')] | flatten | map(attribute='id'))"
+      loop: "{{ __galaxy_cron_jobs.files | map(attribute='path') }}"
   tags: galaxy
 
 - name: Gravity Tasks
@@ -158,8 +185,6 @@
       ansible.builtin.command: "{{ galaxy_gravity_command }} update"
   tags:
     - gravity
-
-# TODO: cron jobs
 
 - name: Deploy TIaaS
   hosts: tiaas_servers

@@ -17,8 +17,14 @@ galaxy_instance_codename: main
 galaxy_instance_hostname: usegalaxy.org
 galaxy_cvmfs_repo: main.galaxyproject.org
 
-## Used by: gravity_config
+## Used by: cleanup jobs, gravity_config, nginx templates; these need to be changed in unision with usegalaxy-playbook
+galaxy_cleanup_hour: 4
+galaxy_log_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/log"
+galaxy_job_working_directory: "/corral4/{{ galaxy_instance_codename }}/jobs"
+galaxy_new_file_path: "/corral4/{{ galaxy_instance_codename }}/scratch3"
 galaxy_tus_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_tus"
+galaxy_job_conf_persistence_directory: "/corral4/{{ galaxy_instance_codename }}/pulsar_amqp_ack"
+nginx_job_files_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_job_files"
 
 # Main-specific TIaaS vars
 tiaas_galaxy_db_user: "{{ galaxy_user }}"
@@ -65,7 +71,6 @@ galaxy_server_dir: /cvmfs/main.galaxyproject.org/galaxy
 galaxy_tusd_port: 1080
 gxit_proxy_host: galaxy-db.tacc.utexas.edu
 gxit_proxy_port: 8910
-nginx_job_files_upload_store: /corral4/main/_upload_job_files
 
 ## Used by: slurm-drmaa install task in playbook-galaxy-stack
 slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm

@@ -1,3 +1,11 @@
 ---
 
 tacc_corral_gateway_address: 129.114.52.152
+
+galaxy_cleanup_hour: 7
+galaxy_tus_upload_store: "/corral4/main/_upload_vgp"
+nginx_job_files_upload_store: "/corral4/main/_upload_job_files_vgp"
+
+galaxy_cleanup_jobs:
+  - "/bin/find {{ galaxy_tus_upload_store }} -mindepth 1 -maxdepth 1 -mtime +5 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_tus_upload_store.log"
+  - "/bin/find {{ nginx_job_files_upload_store }} -mindepth 1 -maxdepth 1 -mtime +5 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_job_files_upload_store.log"
