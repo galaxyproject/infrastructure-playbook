@@ -46,7 +46,7 @@ redis_requirepass: "{{ vault_redis_requirepass }}"
 redis_bind_interface: 127.0.0.1
 
 # this becomes gravity_config in galaxy_servers group vars
-galaxy_test_group_gravity_config:
+galaxy_test_servers_group_gravity_config:
   gunicorn:
     - bind: localhost:8080
       workers: 1
