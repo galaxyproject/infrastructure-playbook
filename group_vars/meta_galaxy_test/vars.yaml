@@ -22,6 +22,7 @@ galaxy_job_working_directory: "/corral4/{{ galaxy_instance_codename }}/jobs"
 galaxy_new_file_path: "/corral4/{{ galaxy_instance_codename }}/scratch"
 galaxy_tus_upload_store: "/corral4/{{ galaxy_instance_codename }}/upload"
 galaxy_job_conf_persistence_directory: "/srv/galaxy/{{ galaxy_instance_codename }}/var/pulsar_amqp_ack"
+galaxy_celery_scratch_path: "/corral4/{{ galaxy_instance_codename }}/celery-scratch"
 nginx_job_files_upload_store: "/corral4/{{ galaxy_instance_codename }}/upload_job_files"
 
 ## Used by: gravity_config

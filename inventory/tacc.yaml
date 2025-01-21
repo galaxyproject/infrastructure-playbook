@@ -114,6 +114,7 @@ all:
       hosts:
         galaxy-test.tacc.utexas.edu:
         galaxy-main4.tacc.utexas.edu:
+        galaxy-vgp.tacc.utexas.edu:
 
     galaxy_test_servers:
       hosts:

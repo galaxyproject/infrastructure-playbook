@@ -1,7 +1,6 @@
 ---
 
 galaxy_cleanup_servers_group_crontabs:
-
   - name: "Clean Galaxy {{ galaxy_instance_codename }}"
     id: "galaxy_{{ galaxy_instance_codename }}_clean"
     user: "{{ galaxy_user }}"

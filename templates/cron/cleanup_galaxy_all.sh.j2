@@ -8,7 +8,7 @@ function trap_handler() {
     $MUTEX_ACQUIRED && rmdir "$MUTEX"
     return 0
 }
-trap "trap_handler" SIGTERM SIGINT ERR EXIT
+trap "trap_handler" EXIT
 
 if mkdir "$MUTEX"; then
     MUTEX_ACQUIRED=true

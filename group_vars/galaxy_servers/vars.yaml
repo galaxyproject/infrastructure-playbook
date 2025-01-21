@@ -221,5 +221,7 @@ galaxy_cleanup_jobs:
   - "/bin/find {{ nginx_job_files_upload_store }} -mindepth 1 -maxdepth 1 -mtime +5 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_job_files_upload_store.log"
   # pulsar amqp_ack
   - "/bin/find {{ galaxy_job_conf_persistence_directory }}/*/consume -mindepth 1 -maxdepth 1 -mtime +14 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_amqp_ack_consume.log"
+  # celery scratch
+  - "/bin/find {{ galaxy_celery_scratch_path }} -mindepth 1 -maxdepth 1 -mtime +14 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_celery_scratch.log"
   # galaxy datasets
   - "/srv/galaxy/{{ galaxy_instance_codename }}/bin/cleanup_datasets.sh 7 | tee -a {{ galaxy_log_dir }}/cleanup_datasets_sh.log"
