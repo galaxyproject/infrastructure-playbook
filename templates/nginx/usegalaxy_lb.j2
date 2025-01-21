@@ -74,6 +74,36 @@ server {
     include {{ nginx_conf_dir }}/usegalaxy_rewrites.conf;
     include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
 
+    # TIaaS
+    location /tiaas {
+        proxy_pass            http://galaxy-main1.tacc.utexas.edu:8001;
+        proxy_redirect        off;
+        proxy_set_header      Host                 $host;
+        proxy_set_header      X-Real-IP            $remote_addr;
+        proxy_set_header      X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_hide_header     X-Frame-Options;
+        proxy_read_timeout    600;  # seconds
+    }
+
+    location /tiaas/static {
+        proxy_pass            https://galaxy-main1.usegalaxy.org;
+        proxy_redirect        off;
+        proxy_ssl_protocols   TLSv1.3;
+        proxy_set_header      Host                 $host;
+        proxy_set_header      X-Real-IP            $remote_addr;
+        proxy_set_header      X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_hide_header     X-Frame-Options;
+    }
+
+    location {{ tiaas_galaxy_prefix }}/join-training {
+        proxy_pass            http://galaxy-main1.tacc.utexas.edu:8001;
+        proxy_redirect        off;
+        proxy_set_header      Host                 $host;
+        proxy_set_header      X-Real-IP            $remote_addr;
+        proxy_set_header      X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_hide_header     X-Frame-Options;
+        proxy_read_timeout    600;  # seconds
+    }
 }
 
 # Main staging server

@@ -36,13 +36,30 @@ server {
 
     include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
 
-    location /_hostname {
-        add_header Content-Type text/plain;
-        return 200 '{{ inventory_hostname_short }}';
+    # TIaaS
+    location /tiaas {
+        proxy_pass            http://{{ tiaas_socket_listen }};
+        proxy_redirect        off;
+        proxy_set_header      Host                 $host;
+        proxy_set_header      X-Real-IP            $remote_addr;
+        proxy_set_header      X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_hide_header     X-Frame-Options;
+        proxy_read_timeout    600;  # seconds
     }
 
-    # TIaaS
-    {{ tiaas_nginx_routes }}
+    location /tiaas/static {
+        alias {{ tiaas_static_dir }};
+    }
+
+    location {{ tiaas_galaxy_prefix }}/join-training {
+        proxy_pass            http://{{ tiaas_socket_listen }};
+        proxy_redirect        off;
+        proxy_set_header      Host                 $host;
+        proxy_set_header      X-Real-IP            $remote_addr;
+        proxy_set_header      X-Forwarded-For      $proxy_add_x_forwarded_for;
+        proxy_hide_header     X-Frame-Options;
+        proxy_read_timeout    600;  # seconds
+    }
 }
 
 # Domain-based Galaxy Interactive Tools (GxITs)

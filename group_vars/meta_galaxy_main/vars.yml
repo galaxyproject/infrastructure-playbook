@@ -28,6 +28,10 @@ galaxy_celery_scratch_path: "/corral4/{{ galaxy_instance_codename }}/celery-scra
 nginx_job_files_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_job_files"
 
 # Main-specific TIaaS vars
+tiaas_socket: "0.0.0.0:8001"
+tiaas_socket_bind: "{{ tiaas_socket }}"
+tiaas_socket_listen: "{{ lookup('dig', groups['galaxy_main_web_servers'][0]) }}:8001"
+tiaas_extra_args: "--forwarded-allow-ips={{ lookup('dig', groups['galaxy_main_load_balancers'][0]) }}"
 tiaas_galaxy_db_user: "{{ galaxy_user }}"
 tiaas_galaxy_db_pass: "{{ galaxy_database_password }}"
 tiaas_galaxy_db_host: "galaxy-db.tacc.utexas.edu"

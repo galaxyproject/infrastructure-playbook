@@ -146,6 +146,7 @@ all:
     tiaas_servers:
       hosts:
         galaxy-test.tacc.utexas.edu:
+        galaxy-main1.tacc.utexas.edu:
 
     # Deploys tailscale
     galaxy_tailnet_hosts:
