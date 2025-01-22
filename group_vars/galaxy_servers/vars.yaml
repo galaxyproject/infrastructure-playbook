@@ -137,7 +137,7 @@ tusd_systemd: false
 
 ## used by: gravity tasks in playbook-galaxy-stack
 gravity_venv_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/gravity"
-gravity_package: "gravity==1.0.6"
+gravity_package: "gravity==1.0.7"
 gravity_config_file: "/etc/galaxy/gravity.d/galaxy_{{ galaxy_instance_codename }}.yml"
 galaxy_gravity_command: "{{ gravity_venv_dir }}/bin/galaxyctl"
 
