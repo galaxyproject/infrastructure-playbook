@@ -17,3 +17,30 @@ galaxy_main_handler_servers_group_gravity_config:
       environment:
         HDF5_USE_FILE_LOCKING: "FALSE"
         GALAXY_CONFIG_LOG_LEVEL: INFO
+
+galaxy_main_handler_servers_group_telegraf_plugins_extra:
+  procstat_handler0:
+    plugin: procstat
+    config:
+      - pattern = "main\\.py.*handler0"
+      - 'user = "{{ galaxy_user }}"'
+  procstat_handler1:
+    plugin: procstat
+    config:
+      - pattern = "main\\.py.*handler1"
+      - 'user = "{{ galaxy_user }}"'
+  procstat_handler2:
+    plugin: procstat
+    config:
+      - pattern = "main\\.py.*handler2"
+      - 'user = "{{ galaxy_user }}"'
+  procstat_handler3:
+    plugin: procstat
+    config:
+      - pattern = "main\\.py.*handler3"
+      - 'user = "{{ galaxy_user }}"'
+  procstat_workflow_scheduler:
+    plugin: procstat
+    config:
+      - pattern = "main\\.py.*workflow_scheduler0"
+      - 'user = "{{ galaxy_user }}"'

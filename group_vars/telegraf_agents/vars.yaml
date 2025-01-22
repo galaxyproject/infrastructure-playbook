@@ -11,6 +11,10 @@ telegraf_agent_interval: 60
 # otherwise this can be the tailnet hostname
 telegraf_agent_hostname: "{{ inventory_hostname }}"
 
+# remove anything in /etc/telefraf/telegraf.d not explicitly specified
+# use with -e as this does not work as advertised (it wipes the directory and reinstalls, so is changed every time)
+#telegraf_plugins_extra_exclusive: true
+
 _default_telegraf_agent_output:
   - type: influxdb
     config:

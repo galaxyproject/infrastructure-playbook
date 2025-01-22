@@ -113,3 +113,23 @@ galaxy_test_servers_group_gravity_config:
         - workflow-schedulers
       environment:
         HDF5_USE_FILE_LOCKING: "FALSE"
+
+galaxy_test_servers_group_telegraf_plugins_extra:
+  statsd:
+    config:
+      - service_address = "127.0.0.1:8125"
+      - delete_gauges = false
+      - delete_counters = false
+      - delete_sets = false
+      - delete_timings = true
+      - percentiles = [90]
+      - metric_separator = "_"
+      - parse_data_dog_tags = false
+      - allowed_pending_messages = 10000
+      - percentile_limit = 1000
+      - udp_packet_size = 1500
+      - '[inputs.statsd.tags]'
+      - '  influxdb_database = "telegraf"'
+  nginx:
+    config:
+      - urls = ["http://localhost/_status"]
