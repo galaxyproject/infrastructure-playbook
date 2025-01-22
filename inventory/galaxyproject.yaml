@@ -237,6 +237,11 @@ all:
         jenkins_agents:
         datacache_servers:
 
+    # Deploys tailscale
+    galaxy_tailnet_hosts:
+      hosts:
+        cvmfs0-psu1.galaxyproject.org:
+
     sentry_servers:
       hosts:
         sentry.galaxyproject.org:

@@ -152,6 +152,7 @@ all:
     galaxy_tailnet_hosts:
       hosts:
         galaxy-db.tacc.utexas.edu:
+        galaxy-jump.tacc.utexas.edu:
 
     # Deploys CVMFS and configures as a client
     cvmfs_clients:

@@ -196,3 +196,4 @@
   hosts: galaxy_tailnet_hosts
   roles:
     - role: artis3n.tailscale
+  tags: tailscale
