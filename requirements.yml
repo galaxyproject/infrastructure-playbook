@@ -2,7 +2,7 @@
 
 roles:
   - name: galaxyproject.nginx
-    version: 0.7.1
+    version: 1.0.0
   - name: galaxyproject.mailman3
     version: 1.0.3
   - name: galaxyproject.opendkim

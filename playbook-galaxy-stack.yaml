@@ -49,7 +49,7 @@
       ansible.builtin.dnf:
         name: "{{ nginx_upload_module_url }}"
         disable_gpg_check: true
-      when: nginx_upload_module_url is defined
+      when: nginx_upload_module_url is defined and nginx_upload_module_url
     - name: Install NGINX zip module
       ansible.builtin.get_url:
         url: "{{ nginx_mod_zip_url }}"

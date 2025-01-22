@@ -23,6 +23,7 @@ all:
     meta_galaxy_main:
       hosts:
         galaxy-db.tacc.utexas.edu:
+        galaxy-vgp.tacc.utexas.edu:
       children:
         galaxy_main_load_balancers:
         galaxy_main_web_servers:
@@ -98,9 +99,8 @@ all:
     # - telegraf plugins for Galaxy servers
     # - install cvmfs_remount_sync and prefer TACC stratum 1
     galaxy_servers:
-      # FIXME:
-      #hosts:
-      #  galaxy-vgp.tacc.utexas.edu:
+      hosts:
+        galaxy-vgp.tacc.utexas.edu:
       children:
         galaxy_test_servers:
         galaxy_main_web_servers:
