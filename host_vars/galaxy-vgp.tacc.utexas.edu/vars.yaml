@@ -49,6 +49,7 @@ host_gravity_config:
       environment:
         LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
         HDF5_USE_FILE_LOCKING: "FALSE"
+        GALAXY_CONFIG_SERVER_NAME: "vgp-0"
     - bind: localhost:8081
       workers: 1
       timeout: 600
@@ -58,6 +59,7 @@ host_gravity_config:
       environment:
         LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
         HDF5_USE_FILE_LOCKING: "FALSE"
+        GALAXY_CONFIG_SERVER_NAME: "vgp-1"
   celery:
     enable: false
     enable_beat: false
