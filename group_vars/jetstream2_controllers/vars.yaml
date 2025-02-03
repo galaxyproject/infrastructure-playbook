@@ -15,7 +15,7 @@ os_security_groups:
 os_floating_ips:
   - "{{ lookup('dig', inventory_hostname) }}"
 
-cvmfs_quota_limit: 1024
+cvmfs_quota_limit: 8192
 
 jetstream2_controllers_group_files:
   - src: files/admin/pdsh-up
