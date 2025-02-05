@@ -3,6 +3,8 @@
 # for galaxyproject.mailman3's distribute_maps feature
 list_servers_group_private_key_users: "{{ vault_listservers_group_private_key_users }}"
 
+nginx_tor_exit_deny_conf: "/etc/nginx/conf.d/tor-exit-deny.conf"
+
 #
 # galaxyproject.general.users
 #
@@ -16,6 +18,21 @@ list_servers_group_groups:
 list_servers_group_authorized_key_users:
   - name: michelle
     authorized: [michelle_savage]
+
+list_servers_group_templates:
+  # NOTE: this would fail on first run
+  - src: templates/nginx/tor-exit-deny-list.bash.j2
+    dest: "/etc/nginx/tor-exit-deny-list.bash"
+    owner: root
+    group: root
+    mode: "0644"
+
+list_servers_group_crontabs:
+  - id: nginx_tor_exit_deny_list
+    name: Update Tor exit node deny list for NGINX
+    user: root
+    hour: "*/6"
+    job: "{ bash /etc/nginx/tor-exit-deny-list.bash | tee >(logger -p cron.info); } &>>/var/log/tor-exit-deny-list.log"
 
 #
 # usegalaxy_org.postgresql_relocate_pgdata
@@ -135,6 +152,7 @@ postfix_config:
   transport_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   relay_domains: hash:{{ postfix_mailman3_var_dir }}/postfix_domains
+  relay_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
 
 postfix_master_config:
   # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
@@ -236,7 +254,7 @@ opendkim_config:
 # galaxyproject.nginx + usegalaxy_eu.certbot
 #
 
-nginx_conf_http:
+_nginx_conf_http:
   proxy_read_timeout: "{{ mailman3_web_timeout }}"
 nginx_flavor: core
 nginx_servers:
@@ -244,21 +262,13 @@ nginx_servers:
 nginx_ssl_servers:
   - mailman
 
-nginx_ssl_role: usegalaxy_eu.certbot
-nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
-nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
+# previously we were setting up a key for www-data but that shouldn't be necessary since nginx drops privs
+#nginx_ssl_role: usegalaxy_eu.certbot
+#nginx_conf_ssl_certificate: /etc/ssl/certs/fullchain.pem
+#nginx_conf_ssl_certificate_key: /etc/ssl/user/privkey-www-data.pem
 
-certbot_virtualenv_package_name: python3-venv
-certbot_virtualenv_command: python3 -m venv
-certbot_auto_renew: true
-certbot_auto_renew_cron_file: ansible_certbot_auto_renew
-certbot_auto_renew_user: root
-certbot_auth_method: --webroot
 certbot_domains: "{{ [inventory_hostname] + mailman3_domains }}"
-certbot_admin_email: nate@bx.psu.edu
-certbot_agree_tos: --agree-tos
-certbot_well_known_root: /srv/nginx/_well-known_root
-certbot_share_key_users:
-  - www-data
+#certbot_share_key_users:
+#  - www-data
 certbot_post_renewal: |
   systemctl restart nginx || true

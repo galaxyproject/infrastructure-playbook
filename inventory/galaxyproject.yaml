@@ -158,6 +158,7 @@ all:
         datacache_servers:
         tool_shed_servers:
         depot_servers:
+        list_servers:
         standalone_web_servers:
 
     # Not fully usable on its own but provides vars common to both ACME challenge methods
@@ -172,6 +173,7 @@ all:
         stats_servers:
         tool_shed_servers:
         depot_servers:
+        list_servers:
         standalone_web_servers:
 
     # Provides the Certbot TSIG key for DNS-01 challenges

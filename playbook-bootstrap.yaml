@@ -24,6 +24,8 @@
     # NOTE: if this ends up being problematic, you could pass a `copy_inheritance_chain` var in other playbooks that
     # need to do a late copy that sets the inheritance chain keys to `late_templates` and `late_files`
     - role: galaxyproject.general.copy
+    - role: galaxyproject.general.cron
+  tags: system
 
 - name: Install telegraf
   hosts: telegraf_agents

@@ -30,6 +30,9 @@ server {
 
     client_max_body_size 16M;
 
+    # the wildcard allows this to work before the file is created
+    include {{ nginx_conf_dir }}/block-list*.conf;
+
     location /static/ {
         alias {{ mailman3_django_static_dir }}/;
     }

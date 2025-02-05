@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+debug=true
+
+conf={{ nginx_tor_exit_deny_conf | quote }}
+new_conf_written=false
+tmp=
+diff='diff -qu'
+curl='curl --silent'
+
+if $debug; then
+    curl='curl'
+    diff='diff -u'
+fi
+
+function exit_handler() {
+    if ! $debug && [[ -n $tmp ]]; then
+        rm -f "$tmp"
+    fi
+}
+
+function err_handler() {
+    if $new_conf_written; then
+        echo "ERROR: restoring previous config due to error"
+        cp -p "${conf}.prev" "$conf"
+    fi
+}
+
+trap exit_handler EXIT
+trap err_handler ERR
+
+function log_debug() {
+    $debug && echo "DEBUG: $*" >&2
+}
+
+tmp=$(mktemp -t tor-exit-deny.XXXXXX )
+log_debug "Using temp file: $tmp"
+
+echo "INFO: Fetching updated tor exit node list"
+
+# merge lists, die on any failures
+{
+    $curl --fail 'https://www.dan.me.uk/torlist/?exit' ;
+    $curl --fail 'https://check.torproject.org/exit-addresses' | grep ExitAddress | cut -d ' ' -f 2 ;
+} | grep -v ':' | sort | uniq | sed 's/^/deny /g; s/$/;/g' > "$tmp"
+
+if [[ ! -f $conf ]]; then
+    echo "INFO: Deny list does not exist, it will be created: ${conf}"
+    touch "$conf"
+fi
+
+$diff "$conf" "$tmp" >&2 && { echo "INFO: No changes to tor exit node list"; exit 0; } || true
+
+log_debug "Backing up current deny list to: ${conf}.prev"
+cp -p "$conf" "${conf}.prev"
+
+log_debug "Copying new deny list"
+cp -p "$tmp" "$conf"
+new_conf_written=true
+
+nginx -t
+nginx -s reload
+
+echo "INFO: Tor exit node list updated"

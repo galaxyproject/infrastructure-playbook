@@ -18,8 +18,15 @@ nginx_ssl_config_profile: modern
 
 # in the case of nginx_conf_http, this avoids repeating the same commonly set variables
 # to add to the default, set _nginx_conf_http in group vars; to fully override, set _override_nginx_conf_http
-_default_nginx_conf_http:
+
+# debian ships with gzip: on and the role does not overwrite the default config like it does for redhat, so this mess
+# avoids a duplicate config option error
+_default_os_default_nginx_conf_http:
   gzip: 'on'
+_os_default_nginx_conf_http:
+  debian: {}
+
+_default_nginx_conf_http:
   gzip_vary: 'on'
   gzip_proxied: any
   gzip_comp_level: 6
@@ -27,4 +34,4 @@ _default_nginx_conf_http:
   gzip_http_version: 1.1
   gzip_types: text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript
   server_names_hash_bucket_size: 128
-nginx_conf_http: "{{ _override_nginx_conf_http | default(_default_nginx_conf_http | combine(_nginx_conf_http | default({}))) }}"
+nginx_conf_http: "{{ _override_nginx_conf_http | default(_os_default_nginx_conf_http[ansible_os_family | lower] | default(_default_os_default_nginx_conf_http) | combine(_default_nginx_conf_http | combine(_nginx_conf_http | default({})))) }}"
