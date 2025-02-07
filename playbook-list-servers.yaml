@@ -43,7 +43,6 @@
         mode: "{{ '0755' if item.dir == 'bin' else '0644' }}"
       loop: "{{ mailman3_venv_extra_files }}"
       when: not item.name.endswith('.j2')
-      tags: post
     - name: Deploy Mailman venv extra files (templates)
       ansible.builtin.template:
         src: "mailman/{{ item.name }}"
@@ -51,12 +50,20 @@
         mode: "{{ '0755' if item.dir == 'bin' else '0644' }}"
       loop: "{{ mailman3_venv_extra_files }}"
       when: item.name.endswith('.j2')
-      tags: post
-    - name: Source virtualenv in list user .bashrc
+    - name: Source virtualenv in Mailman users .bashrc
       ansible.builtin.lineinfile:
-        path: /var/list/.bashrc
+        path: "{{ item }}"
         line: "[[ -n $VIRTUAL_ENV ]] || . {{ mailman3_install_dir }}/bin/activate"
-      tags: post
+      loop:
+        - /var/list/.bashrc
+        - /var/lib/mailman3/web/.bashrc
+    - name: Add aliases for mailman-web in mailman3-web user .bashrc
+      ansible.builtin.lineinfile:
+        path: /var/lib/mailman3/web/.bashrc
+        line: "alias mailman-web-{{ item }}='PYTHONPATH=/var/lib/mailman3/web/project DJANGO_SETTINGS_MODULE=settings_lists_{{ item }}project_org mailman-web'"
+      loop:
+        - galaxy
+        - anvil
 
 - name: MX Servers
   hosts: mx_servers
