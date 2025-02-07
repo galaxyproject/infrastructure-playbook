@@ -138,6 +138,13 @@ mailman3_distribute_maps:
 
 mailman3_distribute_map_frequency: 30
 
+# Deployed by playbook post_tasks
+mailman3_venv_extra_files:
+  - name: mailman-close-list.j2
+    dir: bin
+  - name: close_list.py
+    dir: lib
+
 #
 # galaxyproject.postfix
 #

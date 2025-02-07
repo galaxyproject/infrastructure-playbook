@@ -36,6 +36,27 @@
       notify:
         - restart postfix
       tags: postfix
+    - name: Deploy Mailman venv extra files (files)
+      ansible.builtin.copy:
+        src: "mailman/{{ item.name }}"
+        dest: "{{ (mailman3_install_dir, item.dir, item.name) | path_join }}"
+        mode: "{{ '0755' if item.dir == 'bin' else '0644' }}"
+      loop: "{{ mailman3_venv_extra_files }}"
+      when: not item.name.endswith('.j2')
+      tags: post
+    - name: Deploy Mailman venv extra files (templates)
+      ansible.builtin.template:
+        src: "mailman/{{ item.name }}"
+        dest: "{{ (mailman3_install_dir, item.dir, item.name | splitext | first) | path_join }}"
+        mode: "{{ '0755' if item.dir == 'bin' else '0644' }}"
+      loop: "{{ mailman3_venv_extra_files }}"
+      when: item.name.endswith('.j2')
+      tags: post
+    - name: Source virtualenv in list user .bashrc
+      ansible.builtin.lineinfile:
+        path: /var/list/.bashrc
+        line: "[[ -n $VIRTUAL_ENV ]] || . {{ mailman3_install_dir }}/bin/activate"
+      tags: post
 
 - name: MX Servers
   hosts: mx_servers
