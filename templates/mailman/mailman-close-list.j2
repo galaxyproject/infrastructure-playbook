@@ -9,21 +9,25 @@ fi
 LISTSPEC="$1"
 OWNER="${2:-{{ mailman3_config.mailman.site_owner }}}"
 
-echo 'Updating list settings...'
-PYTHONPATH={{ mailman3_install_dir | quote }}/lib mailman withlist -r close_list -l "$LISTSPEC" | sed 's/^/  /'
+function log() {
+    [ -t 0 ] && echo -e '\033[0;32m#' "$@" '\033[0m' || echo '#' "$@"
+}
 
-echo 'Updating list owners...'
-echo 'Previous owners:'
+log 'Updating list settings'
+PYTHONPATH={{ mailman3_install_dir | quote }}/lib mailman withlist -r close_list -l "$LISTSPEC"
+
+log 'Updating list owners'
+echo -e "\033[0;35mPrevious owners:\033[0m"
 mailman members --role owner "$LISTSPEC" | sed 's/^/  /'
-echo 'Previous moderators:'
+echo -e "\033[0;35mPrevious moderators:\033[0m"
 mailman members --role moderator "$LISTSPEC" | sed 's/^/  /'
 
 if [[ $(mailman members --count-only --role moderator "$LISTSPEC") -ne 0 ]]; then
-    echo 'Removing previous moderators...'
+    log 'Removing previous moderators'
     mailman members --email-only --role moderator "$LISTSPEC" | grep -v "^${OWNER}$" | tr '[:upper:]' '[:lower:]' | xargs printf " --delete %s" | xargs mailman admins "$LISTSPEC" --role moderator
 fi
-echo "Adding closed list owner: $OWNER"
+log "Adding closed list owner: $OWNER"
 mailman members --email-only --role owner "$LISTSPEC" | grep -q "^${OWNER}$" || mailman admins "$LISTSPEC" --role owner --add "$OWNER"
-echo 'Removing previous owners...'
+log 'Removing previous owners'
 mailman members --email-only --role owner "$LISTSPEC" | grep -v "^${OWNER}$" | tr '[:upper:]' '[:lower:]' | xargs --no-run-if-empty printf " --delete %s" | xargs --no-run-if-empty mailman admins "$LISTSPEC" --role owner
-echo 'Done'
+log 'Done'

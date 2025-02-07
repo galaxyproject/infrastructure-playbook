@@ -32,7 +32,13 @@ list_servers_group_crontabs:
     name: Update Tor exit node deny list for NGINX
     user: root
     hour: "*/6"
-    job: "{ bash /etc/nginx/tor-exit-deny-list.bash | tee >(logger -p cron.info); } &>>/var/log/tor-exit-deny-list.log"
+    job: "bash -c '{ bash /etc/nginx/tor-exit-deny-list.bash | tee >(logger -p cron.info); } &>>/var/log/tor-exit-deny-list.log'"
+  - id: mailman_set_dmarc_mitigate_action
+    name: Set Mailman DMARC Mitigate Action
+    user: list
+    hour: 0
+    minute: 0
+    job: "PYTHONPATH=/opt/mailman3/lib /opt/mailman3/bin/mailman shell -r dmarc_mitigation | logger -p cron.warn"
 
 #
 # usegalaxy_org.postgresql_relocate_pgdata
@@ -143,6 +149,8 @@ mailman3_venv_extra_files:
   - name: mailman-close-list.j2
     dir: bin
   - name: close_list.py
+    dir: lib
+  - name: dmarc_mitigation.py
     dir: lib
 
 #
