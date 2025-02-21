@@ -1,0 +1,15 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:443 ssl;
+    server_name status.galaxyproject.org;
+
+    access_log  /var/log/nginx/status.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/status.galaxyproject.org_error.log;
+
+    root        /srv/nginx/status.galaxyproject.org/root;
+}
+
+# vim: set filetype=nginx

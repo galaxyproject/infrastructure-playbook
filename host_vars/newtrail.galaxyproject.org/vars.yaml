@@ -8,6 +8,11 @@ host_directories:
   - path: /srv/nginx/galaxy.tools/root
     #owner: marten
     #group: marten
+  - path: /srv/nginx/status.galaxyproject.org/root
+
+host_files:
+  - src: files/sites/status/index.html
+    dest: /srv/nginx/status.galaxyproject.org/root/index.html
 
 nginx_conf_http:
   server_names_hash_bucket_size: 128
@@ -23,6 +28,7 @@ nginx_ssl_servers:
   - toolshed.tools
   - galaxy.tools
   - my.galaxy.training
+  - status
 
 certbot_domains:
   - newtrail.galaxyproject.org
@@ -43,6 +49,7 @@ certbot_domains:
   - galaxy.tools
   - my.galaxy.training
   - my.gat.galaxy.training
+  - status.galaxyproject.org
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf
