@@ -46,6 +46,27 @@ galaxy_servers_group_directories:
     owner: "{{ galaxy_privileged_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
+  - path: /home/{{ galaxy_user }}/bin
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+
+galaxy_servers_group_templates:
+  - src: templates/galaxy/helper.py.j2
+    dest: /srv/galaxy/{{ galaxy_instance_codename }}/bin/helper.py
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+
+galaxy_servers_group_files:
+  - content: |
+      #!/bin/bash
+      .  {{ galaxy_venv_dir }}/bin/activate
+      GALAXY_CONFIG_FILE={{ galaxy_config_file }} PYTHONPATH={{ galaxy_server_dir }}/lib python3 /srv/galaxy/{{ galaxy_instance_codename }}/bin/helper.py "$@"
+    dest: /home/{{ galaxy_user }}/bin/helper
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
 
 # TODO: remove
 #galaxy_servers_group_packages:
