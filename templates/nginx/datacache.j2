@@ -30,6 +30,11 @@ server {
         alias /cvmfs/singularity.galaxyproject.org;
         autoindex on;
     }
+
+    location /brc {
+        alias /cvmfs/brc.galaxyproject.org;
+        autoindex on;
+    }
 }
 
 # vim: set filetype=nginx
