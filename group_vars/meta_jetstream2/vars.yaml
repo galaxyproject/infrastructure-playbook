@@ -253,9 +253,9 @@ slurm_nodes:
 slurm_partitions:
   - name: vgp
     #Nodes: "js2-tiny[0-1],js2-small[0-1],js2-quad[0-1],js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
-    Nodes: "js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
+    Nodes: "Nodes=js2-medium[0-23],js2-large[0-23],js2-xl[0-7],js2-mem-large[0-15],js2-mem-xl[0-15]"
     DefaultTime: "06:00:00"
-    MaxTime: "96:00:00"
+    MaxTime: "UNLIMITED"
     MaxNodes: 1
     State: UP
   - name: priority
