@@ -13,6 +13,8 @@ trap "trap_handler" SIGTERM SIGINT ERR EXIT
 
 if mkdir "$MUTEX"; then
     MUTEX_ACQUIRED=true
+    r=0 w=0
     umask 022
-    echo pulsar_staging_fds $(sudo lsof -p $(pgrep -u g2main pulsar-main) | grep /jetstream2/scratch | awk '{print $4}' | tr -d '0-9' | sort | uniq -c | awk '{print $2"="$1}' | xargs echo | tr ' ' ,) > "$OUTPUT"
+    eval $(sudo lsof -p $(pgrep -u g2main pulsar-main) | grep /jetstream2/scratch | awk '{print $4}' | tr -d '0-9' | sort | uniq -c | awk '{print $2"="$1}' | xargs echo)
+    echo pulsar_staging_fds "r=$r,w=$w" > "$OUTPUT"
 fi
