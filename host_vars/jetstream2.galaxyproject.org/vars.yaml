@@ -7,12 +7,12 @@ host_packages:
 host_crontabs:
   - id: pulsar_clean_jobs
     name: Clean Test Pulsar Jobs
-    user: g2test
+    user: root
     minute: 45
     job: /usr/local/bin/pulsar-clean-jobs test 2>&1 >> /srv/pulsar/test/log/cleanup-jobs.log
   - id: pulsar_clean_jobs
     name: Clean Main Pulsar Jobs
-    user: g2main
+    user: root
     minute: 00
     job: /usr/local/bin/pulsar-clean-jobs main 2>&1 >> /srv/pulsar/main/log/cleanup-jobs.log
   - id: clean_amqp_consume
