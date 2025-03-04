@@ -4,10 +4,6 @@
 all:
 
   hosts:
-    llv.galaxyproject.org:
-      ansible_user: ubuntu
-      ansible_become: true
-
     cvmfs1-psu0.galaxyproject.org:
       hostname_strategy: file
 
