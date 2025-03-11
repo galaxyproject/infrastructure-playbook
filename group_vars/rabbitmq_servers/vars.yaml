@@ -3,6 +3,9 @@
 rabbitmq_users: "{{ vault_rabbitmq_users }}"
 telegraf_rabbitmq_password: "{{ (rabbitmq_users | selectattr('user', 'equalto', 'telegraf') | first).password }}"
 
+rabbitmq_plugins:
+  - names: rabbitmq_management
+
 rabbitmq_config:
   vm_memory_high_watermark:
     relative: 0.8
