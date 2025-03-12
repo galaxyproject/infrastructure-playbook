@@ -124,6 +124,26 @@
         group: "{{ galaxy_group }}"
         mode: "0755"
       when: "inventory_hostname in groups['galaxy_cleanup_servers']"
+    - name: Set default ACL granting journal access
+      ansible.posix.acl:
+        path: /var/log/journal
+        # This is the ACCESS group
+        entity: G-815688
+        etype: group
+        permissions: rx
+        default: true
+        recalculate_mask: no_mask
+        state: present
+    - name: Set ACLs granting journal access
+      ansible.posix.acl:
+        path: /var/log/journal
+        # This is the ACCESS group
+        entity: G-815688
+        etype: group
+        permissions: rx
+        recalculate_mask: no_mask
+        recursive: true
+        state: present
   roles:
     - role: galaxyproject.tusd
     - role: galaxyproject.general.cron
