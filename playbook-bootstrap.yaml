@@ -13,6 +13,7 @@
     - name: Group by OS Family
       ansible.builtin.group_by:
         key: "group_by_{{ ansible_os_family | lower }}"
+      changed_when: false
   roles:
     - role: galaxyproject.general.virtual
       when: "'virtual_hosts' in group_names"
