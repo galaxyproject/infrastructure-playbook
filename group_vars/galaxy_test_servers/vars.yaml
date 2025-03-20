@@ -90,6 +90,7 @@ galaxy_test_servers_group_gravity_config:
     #  hooks_http: /api/job_files/tus_hooks
   gx_it_proxy:
     enable: true
+    ip: "127.0.0.1"
     port: "{{ gxit_proxy_port }}"
     sessions: "{{ galaxy_interactivetools_map }}"
     verbose: true
