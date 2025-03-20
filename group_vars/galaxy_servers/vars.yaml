@@ -142,7 +142,7 @@ all_gravity_config:
   galaxy_config_file: "{{ galaxy_config_file }}"
   #log_dir: "{{ galaxy_log_dir }}"
   virtualenv: "{{ galaxy_venv_dir }}"
-  memory_limit: 6
+  memory_limit: 7
   gunicorn:
     enable: false
   celery:
