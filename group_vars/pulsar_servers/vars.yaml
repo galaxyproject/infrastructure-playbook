@@ -1,7 +1,6 @@
 ---
 
 pulsar_servers_group_directories:
-  #- path: "{{ ansible_user | expanduser }}/bin"
   - path: "bin"
     mode: "0755"
 
