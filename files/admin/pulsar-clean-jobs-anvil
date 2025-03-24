@@ -106,7 +106,7 @@ function error() {
 
 
 function percent_full() {
-    python3 -c "print(round(max($(myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))"
+    python3 -c "print(round(max($(/usr/local/bin/myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))"
 }
 
 
