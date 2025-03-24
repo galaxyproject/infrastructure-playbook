@@ -14,14 +14,16 @@ MUTEX="$HOME/pulsar-clean-jobs-$1.lock"
 MUTEX_ACQUIRED=false
 declare -a ACTIVE_IDS
 ACTIVE_IDS_SET=false
+DIR=
+ACTIVE_DIRS=()
 
 function usage() {
-    echo "usage: $0 [-hn] ID"
+    echo "usage: $0 [-hn] APP_YML"
     if [ "${1:-}" = 'help' ]; then
         cat <<EOF
-    -h  print help
-    -n  dry run
-    ID id of pulsar jobs dir to clean (test|main)
+    -h          print help
+    -n          dry run
+    APP_YML     pulsar instance app.yml
 EOF
     fi
 }
@@ -39,8 +41,8 @@ while getopts ":hn" opt; do
 done
 shift $((OPTIND-1))
 
-ID="${1:-}"
-[ -n "$ID" ] || { usage; exit 2; }
+APP_YML="${1:-}"
+[ -n "$APP_YML" ] || { usage; exit 2; }
 
 case "$ID" in
     main)
@@ -58,7 +60,7 @@ function trap_handler() {
     $MUTEX_ACQUIRED && rmdir "$MUTEX"
     return 0
 }
-trap "trap_handler" SIGTERM SIGINT ERR EXIT
+trap "trap_handler" EXIT
 
 
 function isintorempty() {
@@ -159,6 +161,21 @@ function clean() {
             $DRY_RUN || rm -rf "$dir"
         fi
     done < <(ls -lrt --time-style=+%s "$DIR" | tail -n +2 | awk "\$6 < $min_mtime {print \$6, \$7}")
+}
+
+
+function read_app_yml() {
+    eval $($PYTHON <<EOF
+import yaml
+conf = yaml.safe_load(open("$APP_YML"))
+print(f"DIR={conf['staging_directory']}")
+print("ACTIVE_DIRS=(")
+for manager in conf['managers'].keys():
+    print(f"    {conf['persistence_directory']}/{manager}-preprocessing-jobs")
+    print(f"    {conf['persistence_directory']}/{manager}-active-jobs")
+print(")")
+EOF
+)
 }
 
 
