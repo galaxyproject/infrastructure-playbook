@@ -4,31 +4,28 @@
 ##
 set -euo pipefail
 
-# FIXME: in addition to the warning threshold, add a hard threshold where anything over X hours is removed regardless
-# whether "active"
-
 PERCENT=
-WARN_HOURS=72
+HOURS=
+WARN_HOURS=$((3 * 24))
+LIMIT_HOURS=$((7 * 24))
 DRY_RUN=false
-MUTEX="$HOME/pulsar-clean-jobs-$1.lock"
+MUTEX_ID=$(echo -n "${1:-}" | md5sum | awk '{print $1}')
+MUTEX="$HOME/pulsar-clean-jobs-${MUTEX_ID}.lock"
 MUTEX_ACQUIRED=false
-declare -a ACTIVE_IDS
-ACTIVE_IDS_SET=false
-DIR=
-ACTIVE_DIRS=()
 
 function usage() {
-    echo "usage: $0 [-hn] APP_YML"
+    echo "usage: $0 [-hn] DIR"
     if [ "${1:-}" = 'help' ]; then
         cat <<EOF
-    -h          print help
-    -n          dry run
-    APP_YML     pulsar instance app.yml
+    -h      print help
+    -n      dry run
+    -r      override hours
+    DIR     staging dir to clean
 EOF
     fi
 }
 
-while getopts ":hn" opt; do
+while getopts ":hnr:" opt; do
     case "$opt" in
         h)
             usage help
@@ -37,23 +34,15 @@ while getopts ":hn" opt; do
         n)
             DRY_RUN=true
             ;;
+        r)
+            HOURS="$OPTARG"
+            ;;
     esac
 done
 shift $((OPTIND-1))
 
-APP_YML="${1:-}"
-[ -n "$APP_YML" ] || { usage; exit 2; }
-
-case "$ID" in
-    main)
-        DIR='/anvil/scratch/x-xcgalaxy/main/staging'
-        ACTIVE_DIRS=$(echo /anvil/scratch/x-xcgalaxy/main/pulsar/var/anvil-{active,preprocessing}-jobs)
-        ;;
-    test)
-        DIR='/anvil/scratch/x-xcgalaxy/test/staging'
-        ACTIVE_DIRS=$(echo /anvil/scratch/x-xcgalaxy/test/pulsar/var/anvil-{active,preprocessing}-jobs)
-        ;;
-esac
+DIR="${1:-}"
+[ -n "$DIR" ] || { usage; exit 2; }
 
 
 function trap_handler() {
@@ -64,23 +53,21 @@ trap "trap_handler" EXIT
 
 
 function isintorempty() {
-    # if the value referenced by the var *name* passed in $1 is:
+    # if the value passed in $1 is:
     #   an integer: return 0
     #   empty: return 1
     #   not an integer: return 2
-    local name=${2:-"\$$1"}
-    [ -n "${!1}" ] || return 1
-    [ "${!1}" -eq "${!1}" ] 2>/dev/null || { rc=$?; [ $rc -ne 2 ] || { echo "ERROR: invalid non-integer value for $name: ${!1}"; }; return $rc; }
+    [ -n "${1}" ] || return 1
+    [ "${1}" -eq "${1}" ] 2>/dev/null || { rc=$?; [ $rc -ne 2 ] || { echo "ERROR: invalid non-integer value: ${1}"; }; return $rc; }
     return 0
 }
 
 
 function isint() {
-    local name=${2:-"\$$1"}
-    if isintorempty $1 $name; then
+    if isintorempty "$1"; then
         return 0
     else
-        [ $? -ne 1 ] || echo "ERROR: $name value cannot be empty string"
+        [ $? -ne 1 ] || echo "ERROR: value cannot be empty string"
         return 1
     fi
 }
@@ -113,7 +100,7 @@ function percent_full() {
 
 
 function hours() {
-    isint PERCENT || exit 1
+    isint "$PERCENT" || exit 1
     # max of 5 days, scaled by percent full with a max allowed of 95%, after which the time is 0
     if [[ $PERCENT -ge 95 ]]; then
         echo 0
@@ -125,16 +112,6 @@ function hours() {
 
 function is_active() {
     local id="$1"
-    local active_id
-    #if ! $ACTIVE_IDS_SET; then
-    #    ACTIVE_IDS=($(find ${ACTIVE_DIRS} -maxdepth 1 -type f -printf "%f\n"))
-    #    ACTIVE_IDS_SET=true
-    #fi
-    #for active_id in "${ACTIVE_IDS[@]}"; do
-    #    if [[ $active_id == $id ]]; then
-    #        return 0
-    #    fi
-    #done
     if [ -f "${DIR}/${id}/final_status" -a -f "${DIR}/${id}/postprocessed" ]; then
         return 1
     fi
@@ -142,46 +119,48 @@ function is_active() {
 }
 
 
-function clean() {
-    PERCENT=$(percent_full)
-    local mtime id dir
-    local hours=$(hours)
-    local min_mtime=$(date --date="$hours hours ago" '+%s')
-    local now=$(date '+%s')
-    log "at $(date), $DIR is ${PERCENT}% full; scratch dirs older than $(date --date="$hours hours ago") ($hours hours) will be removed"
-    while read mtime id; do
-        if is_active "$id"; then
-            log "ignoring active: $id"
-            if [[ $(($now - $mtime)) -gt $(($WARN_HOURS * 60 * 60)) ]]; then
-                log_warning "supposedly active job dir older than $WARN_HOURS hours: $id"
-	    fi
-        else
-	    dir="${DIR}/${id}"
-            log "removing: $dir"
-            $DRY_RUN || rm -rf "$dir"
-        fi
-    done < <(ls -lrt --time-style=+%s "$DIR" | tail -n +2 | awk "\$6 < $min_mtime {print \$6, \$7}")
+function clean_dir() {
+    local id="$1"
+    local dir="${DIR}/${id}"
+    log "removing: $dir"
+    $DRY_RUN || rm -rf "$dir"
 }
 
 
-function read_app_yml() {
-    eval $($PYTHON <<EOF
-import yaml
-conf = yaml.safe_load(open("$APP_YML"))
-print(f"DIR={conf['staging_directory']}")
-print("ACTIVE_DIRS=(")
-for manager in conf['managers'].keys():
-    print(f"    {conf['persistence_directory']}/{manager}-preprocessing-jobs")
-    print(f"    {conf['persistence_directory']}/{manager}-active-jobs")
-print(")")
-EOF
-)
+function clean() {
+    PERCENT=$(percent_full)
+    local hours min_mtime mtime id
+    local now=$(date '+%s')
+    if [ -n "$HOURS" ]; then
+        log "Hours overridden by -r option: $HOURS"
+        hours="$HOURS"
+    else
+        hours=$(hours)
+    fi
+    min_mtime=$(date --date="$hours hours ago" '+%s')
+    log "at $(date), $DIR is ${PERCENT}% full; scratch dirs older than $(date --date="$hours hours ago") ($hours hours) will be removed"
+    while read mtime id; do
+        isint "$id" || error "dir is not an integer, is $DIR a staging dir?: $id"
+        if is_active "$id"; then
+            if [[ $(($now - $mtime)) -gt $(($LIMIT_HOURS * 60 * 60)) ]]; then
+                log_warning "supposedly active job dir older than limit $LIMIT_HOURS hours, removing: $id"
+                clean_dir "$id"
+            elif [[ $(($now - $mtime)) -gt $(($WARN_HOURS * 60 * 60)) ]]; then
+                log_warning "supposedly active job dir older than warn $WARN_HOURS hours: $id"
+            else
+                log "ignoring active: $id"
+            fi
+        else
+            clean_dir "$id"
+        fi
+    done < <(ls -lrt --time-style=+%s "$DIR" | tail -n +2 | awk "\$6 < $min_mtime {print \$6, \$7}")
 }
 
 
 function main() {
     [ -d "$DIR" ] || error "Invalid directory: $DIR"
     if mkdir "$MUTEX"; then
+        log "Acquired mutex: $MUTEX"
         MUTEX_ACQUIRED=true
         clean
     fi
