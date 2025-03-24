@@ -98,7 +98,7 @@ function error() {
 
 
 function percent_full() {
-    {{ pulsar_clean_jobs_percent_full_function | default("echo 0") | indent(4) }}
+    {{ pulsar_clean_jobs_percent_full_function | default("echo 0") }}
 }
 
 

@@ -16,7 +16,8 @@ all:
       ansible_ssh_executable: ./.ssh-keyboard-interactive
     # ssh keys distributed administratively, so we use a common key in the password store
     #   https://www.psc.edu/about-using-ssh/
-    #vm030.bridges2.psc.edu: {ansible_user: xcgalaxy}
+    vm030.bridges2.psc.edu:
+      ansible_user: xcgalaxy
 
   children:
     pulsar_servers:
@@ -25,3 +26,4 @@ all:
         #rflogin03.rockfish.jhu.edu:
         login01.anvil.rcac.purdue.edu:
         #login3.stampede3.tacc.utexas.edu:
+        vm030.bridges2.psc.edu:

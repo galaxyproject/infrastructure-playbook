@@ -1,0 +1,16 @@
+---
+
+pulsar_clean_jobs_percent_full_function: |
+  /opt/packages/psc.allocations.user/env/bin/python3 <<EOF
+  from pathlib import Path
+  from psc.accounting import Context, utils
+  context = Context()
+  cluster = context.cluster
+  group = "mcb140028p"
+  path = Path(cluster.group_filesystem.get_path(group))
+  fs = cluster.group_filesystem
+  quota = fs.get_project_quota(str(path))
+  size_ratio = quota.used_capacity / quota.soft_limit
+  inode_ratio = quota.used_inodes / quota.soft_limit_inodes
+  print(round(100 * max(size_ratio, inode_ratio)))
+  EOF
