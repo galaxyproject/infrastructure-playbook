@@ -2,3 +2,17 @@
 
 authorized_keys_unprivileged:
   authorized: "{{ ['stampede3_auto_key'] + galaxy_team_users }}"
+
+pulsar_clean_jobs_percent_full_function: |
+  python <<EOF
+  import subprocess
+  line = subprocess.check_output("quota -pf /scratch".split(), text=True).splitlines()[-1].strip()
+  used_blocks, j, limit_blocks, j, used_inodes, j, limit_inodes, j = [int(x) for x in line.split()]
+  size_ratio = 0
+  inodes_ratio = 0
+  if limit_blocks != 0:
+      size_ratio = used_blocks / limit_blocks
+  if limit_inodes != 0:
+      inodes_ratio = used_inodes / limit_inodes
+  print(round(100 * max(size_ratio, inodes_ratio)))
+  EOF
