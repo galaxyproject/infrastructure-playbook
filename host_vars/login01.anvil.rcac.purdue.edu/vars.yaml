@@ -4,4 +4,4 @@ authorized_keys_unprivileged:
   authorized: "{{ ['anvil_auto_key'] + galaxy_team_users }}"
 
 pulsar_clean_jobs_percent_full_function: |
-  python3 -c "print(round(max($(/usr/local/bin/myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))"
+  python3 -c "print(round(max($(/usr/local/bin/myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))" || echo 0

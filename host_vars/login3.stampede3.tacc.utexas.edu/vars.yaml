@@ -5,14 +5,18 @@ authorized_keys_unprivileged:
 
 pulsar_clean_jobs_percent_full_function: |
   python <<EOF
-  import subprocess
-  line = subprocess.check_output("quota -pf /scratch".split(), text=True).splitlines()[-1].strip()
-  used_blocks, j, limit_blocks, j, used_inodes, j, limit_inodes, j = [int(x) for x in line.split()]
-  size_ratio = 0
-  inodes_ratio = 0
-  if limit_blocks != 0:
-      size_ratio = used_blocks / limit_blocks
-  if limit_inodes != 0:
-      inodes_ratio = used_inodes / limit_inodes
-  print(round(100 * max(size_ratio, inodes_ratio)))
+  import subprocess, sys, traceback
+  try:
+      line = subprocess.check_output("quota -pf /scratch".split(), text=True).splitlines()[-1].strip()
+      used_blocks, j, limit_blocks, j, used_inodes, j, limit_inodes, j = [int(x) for x in line.split()]
+      size_ratio = 0
+      inodes_ratio = 0
+      if limit_blocks != 0:
+          size_ratio = used_blocks / limit_blocks
+      if limit_inodes != 0:
+          inodes_ratio = used_inodes / limit_inodes
+      print(round(100 * max(size_ratio, inodes_ratio)))
+  except Exception as exc:
+      traceback.print_exception(exc, file=sys.stderr)
+      print(0)
   EOF
