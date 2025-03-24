@@ -21,6 +21,8 @@ tusd_version: v1.10.0
 
 slurm_drmaa_rpm_url: https://depot.galaxyproject.org/yum/el/8/x86_64/slurm-drmaa-1.1.4-1.el8.x86_64.rpm
 
+galaxy_memory_limit: 6
+
 #gravity_config:
 host_gravity_config:
   #instance_name: "{{ galaxy_instance_codename }}"

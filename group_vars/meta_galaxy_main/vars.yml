@@ -27,6 +27,9 @@ galaxy_job_conf_persistence_directory: "/corral4/{{ galaxy_instance_codename }}/
 galaxy_celery_scratch_path: "/corral4/{{ galaxy_instance_codename }}/celery-scratch"
 nginx_job_files_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_job_files"
 
+# default, can be overridden
+galaxy_memory_limit: 5
+
 # Main-specific TIaaS vars
 tiaas_socket: "0.0.0.0:8001"
 tiaas_socket_bind: "{{ tiaas_socket }}"

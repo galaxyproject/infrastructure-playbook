@@ -9,6 +9,8 @@ nginx_extra_configs:
   - usegalaxy_proxy.conf
   - usegalaxy_staging_proxy.conf
 
+galaxy_memory_limit: 7
+
 galaxy_main_web_servers_group_gravity_config:
   gunicorn:
     - bind: 0.0.0.0:8080
