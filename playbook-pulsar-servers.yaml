@@ -1,0 +1,7 @@
+---
+
+- name: Pulsar Servers
+  hosts: pulsar_servers
+  roles:
+    - role: galaxyproject.general.paths
+    - role: galaxyproject.general.copy

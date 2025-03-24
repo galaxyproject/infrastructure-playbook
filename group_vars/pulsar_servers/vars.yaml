@@ -1,0 +1,11 @@
+---
+
+pulsar_servers_group_directories:
+  #- path: "{{ ansible_user | expanduser }}/bin"
+  - path: "bin"
+    mode: "0755"
+
+pulsar_servers_group_templates:
+  - src: admin/pulsar-clean-jobs.j2
+    dest: "bin/pulsar-clean-jobs"
+    mode: "0755"

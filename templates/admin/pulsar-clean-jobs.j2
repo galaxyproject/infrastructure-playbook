@@ -46,7 +46,10 @@ DIR="${1:-}"
 
 
 function trap_handler() {
-    $MUTEX_ACQUIRED && rmdir "$MUTEX"
+    if $MUTEX_ACQUIRED; then
+        rmdir "$MUTEX"
+        log "Released mutex: $MUTEX"
+    fi
     return 0
 }
 trap "trap_handler" EXIT
@@ -95,7 +98,7 @@ function error() {
 
 
 function percent_full() {
-    python3 -c "print(round(max($(/usr/local/bin/myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))"
+    {{ pulsar_clean_jobs_percent_full_function | default("echo 0") | indent(4) }}
 }
 
 
