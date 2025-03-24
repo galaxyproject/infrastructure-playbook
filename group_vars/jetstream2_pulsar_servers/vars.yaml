@@ -22,11 +22,6 @@ jetstream2_pulsar_servers_group_packages:
   - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
 
 jetstream2_pulsar_servers_group_files:
-  - src: files/admin/pulsar-clean-jobs
-    dest: /usr/local/bin/pulsar-clean-jobs
-    mode: "0755"
-    owner: root
-    group: root
   - src: files/admin/pulsar-staging-fds
     dest: /usr/local/bin/pulsar-staging-fds
     mode: "0755"
@@ -46,3 +41,13 @@ jetstream2_pulsar_servers_group_directories:
   - path: /srv/pulsar/main/log
     owner: g2main
     group: G-803372
+
+pulsar_clean_jobs_percent_full_function: |
+  df --output=pcent "$DIR" | tail -n 1 | tr -d %' '
+
+jetstream2_pulsar_servers_group_templates:
+  - src: templates/admin/pulsar-clean-jobs.j2
+    dest: /usr/local/bin/pulsar-clean-jobs
+    mode: "0755"
+    owner: root
+    group: root

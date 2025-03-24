@@ -1,4 +1,5 @@
 ---
+# NOTE: only the unprivileged/HPC Pulsar servers
 
 pulsar_servers_group_directories:
   - path: "bin"
