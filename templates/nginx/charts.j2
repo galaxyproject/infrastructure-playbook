@@ -1,0 +1,37 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# defined in galaxyproject
+#proxy_cache_path    /var/lib/nginx/cache levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m use_temp_path=off;
+
+server {
+    listen      *:443 ssl;
+    server_name charts.galaxyproject.org;
+
+    access_log  /var/log/nginx/charts.galaxyproject.org_access.log;
+    error_log   /var/log/nginx/charts.galaxyproject.org_error.log;
+
+    #client_max_body_size 8M;
+
+    #root        /srv/nginx/training.galaxyproject.org/root;
+
+    #error_page  404      /error.html;
+    #error_page  403 =404 /error.html;
+
+    location /galaxy-charts/ {
+        proxy_http_version     1.1;
+        proxy_set_header       Host galaxyproject.github.io;
+        proxy_pass             https://galaxyproject.github.io/galaxy-charts/;
+    }
+
+    location / {
+        proxy_http_version     1.1;
+        proxy_set_header       Host galaxyproject.github.io;
+        proxy_pass             https://galaxyproject.github.io/galaxy-charts/;
+    }
+
+    #return 302 https://galaxyproject.github.io/galaxy-charts$request_uri;
+}
+
+# vim: set filetype=nginx

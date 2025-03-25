@@ -29,6 +29,7 @@ nginx_ssl_servers:
   - galaxy.tools
   - my.galaxy.training
   - status
+  - charts
 
 certbot_domains:
   - newtrail.galaxyproject.org
@@ -50,6 +51,7 @@ certbot_domains:
   - my.galaxy.training
   - my.gat.galaxy.training
   - status.galaxyproject.org
+  - charts.galaxyproject.org
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf
