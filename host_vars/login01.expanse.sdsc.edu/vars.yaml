@@ -2,3 +2,25 @@
 
 authorized_keys_unprivileged:
   authorized: "{{ galaxy_team_users }}"
+
+pulsar_clean_jobs_percent_full_function: |
+  python3.11 <<EOF
+  import subprocess, sys, traceback
+  try:
+      line = subprocess.check_output("lfs quota -q -u xgalaxy /expanse/lustre/scratch".split(), text=True).splitlines()[-1]
+      line_a = line.strip().split()
+      if line[0] == " ":
+          used_kb, limit_kb, used_inodes, limit_inodes = [int(x) for x in (line_a[0], line_a[2], line_a[4], line_a[6])]
+      else:
+          used_kb, limit_kb, used_inodes, limit_inodes = [int(x) for x in (line_a[1], line_a[3], line_a[5], line_a[7])]
+      size_ratio = 0
+      inodes_ratio = 0
+      if limit_kb != 0:
+          size_ratio = used_kb / limit_kb
+      if limit_inodes != 0:
+          inodes_ratio = used_inodes / limit_inodes
+      print(round(100 * max(size_ratio, inodes_ratio)))
+  except Exception as exc:
+      traceback.print_exception(exc, file=sys.stderr)
+      print(0)
+  EOF
