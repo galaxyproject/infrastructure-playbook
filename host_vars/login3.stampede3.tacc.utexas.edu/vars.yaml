@@ -8,7 +8,11 @@ pulsar_clean_jobs_percent_full_function: |
   import subprocess, sys, traceback
   try:
       line = subprocess.check_output("quota -pf /scratch".split(), text=True).splitlines()[-1].strip()
-      used_blocks, j, limit_blocks, j, used_inodes, j, limit_inodes, j = [int(x) for x in line.split()]
+      line_a = line.strip().split()
+      if line[0] == " ":
+          used_blocks, limit_blocks, used_inodes, limit_inodes = [int(x) for x in (line_a[0], line_a[2], line_a[4], line_a[6])]
+      else:
+          used_blocks, limit_blocks, used_inodes, limit_inodes = [int(x) for x in (line_a[1], line_a[3], line_a[5], line_a[7])]
       size_ratio = 0
       inodes_ratio = 0
       if limit_blocks != 0:
