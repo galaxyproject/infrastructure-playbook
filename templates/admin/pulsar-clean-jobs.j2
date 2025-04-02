@@ -126,7 +126,9 @@ function clean_dir() {
     local id="$1"
     local dir="${DIR}/${id}"
     log "removing: $dir"
-    $DRY_RUN || rm -rf "$dir"
+    if ! $DRY_RUN; then
+        rm -rf "$dir" || log_error "Removal failed: ${id}"
+    fi
 }
 
 
