@@ -117,6 +117,33 @@ function is_active() {
     local id="$1"
     if [ -f "${DIR}/${id}/final_status" -a -f "${DIR}/${id}/postprocessed" ]; then
         return 1
+    elif [ -f "${DIR}/${id}/cancelled" ]; then
+        return 1
+    fi
+    return 0
+}
+
+
+function is_active_slurm() {
+    local id="$1"
+    local dir="${DIR}/${id}"
+    local slurm_id
+    if [ -f "${dir}/external_id" ]; then
+        slurm_id=$(cat "${dir}/external_id" | tr -d '"') || true
+        if isint "$slurm_id"; then
+            if squeue -j $slurm_id; then
+                log "${id}: Slurm job ${slurm_id} is still running"
+            else
+                log_warning "${id}: Slurm job not found: ${slurm_id}"
+                return 1
+            fi
+        else
+            log_error "${id}: Failed to read Slurm job ID"
+            return 1
+        fi
+    else
+        log_warning "${id}: File not found: ${dir}/external_id"
+        return 1
     fi
     return 0
 }
@@ -125,10 +152,8 @@ function is_active() {
 function clean_dir() {
     local id="$1"
     local dir="${DIR}/${id}"
-    log "removing: $dir"
-    if ! $DRY_RUN; then
-        rm -rf "$dir" || log_error "Removal failed: ${id}"
-    fi
+    log "${id}: Removing: $dir"
+    $DRY_RUN || rm -rf "$dir"
 }
 
 
@@ -143,20 +168,29 @@ function clean() {
         hours=$(hours)
     fi
     min_mtime=$(date --date="$hours hours ago" '+%s')
-    log "at $(date), $DIR is ${PERCENT}% full; scratch dirs older than $(date --date="$hours hours ago") ($hours hours) will be removed"
+    log "At $(date), $DIR is ${PERCENT}% full; scratch dirs older than $(date --date="$hours hours ago") ($hours hours) will be removed"
     while read mtime id; do
         isint "$id" || error "dir is not an integer, is $DIR a staging dir?: $id"
         if is_active "$id"; then
             if [[ $(($now - $mtime)) -gt $(($LIMIT_HOURS * 60 * 60)) ]]; then
-                log_warning "supposedly active job dir older than limit $LIMIT_HOURS hours, removing: $id"
-                clean_dir "$id"
+                log_warning "${id}: Supposedly active job dir older than limit $LIMIT_HOURS hours"
+                if is_active_slurm "$id"; then
+                    log "${id}: Resetting dir mtime for active job still in Slurm"
+                    $DRY_RUN || touch "${DIR}/${id}"
+                else
+                    clean_dir "$id" || log_error "Removal failed: ${id}"
+                fi
             elif [[ $(($now - $mtime)) -gt $(($WARN_HOURS * 60 * 60)) ]]; then
-                log_warning "supposedly active job dir older than warn $WARN_HOURS hours: $id"
+                log_warning "${id}: Supposedly active job dir older than warn $WARN_HOURS hours"
+                if is_active_slurm "$id"; then
+                    log "${id}: Resetting dir mtime for active job still in Slurm"
+                    $DRY_RUN || touch "${DIR}/${id}"
+                fi
             else
-                log "ignoring active: $id"
+                log "${id}: Ignoring active"
             fi
         else
-            clean_dir "$id"
+            clean_dir "$id" || log_error "Removal failed: ${id}"
         fi
     done < <(ls -lrt --time-style=+%s "$DIR" | tail -n +2 | awk "\$6 < $min_mtime {print \$6, \$7}")
 }
