@@ -18,6 +18,15 @@
         name: [cvmfs-server, cvmfs-libs]
         state: present
       when: ansible_kernel_version == "BrandZ virtual linux"
+  tags: cvmfs
+
+- name: CVMFS SSL Servers
+  hosts: cvmfs_ssl_servers
+  roles:
+    - role: usegalaxy_org.cvmfs_ssl
+  tags:
+    - cvmfs
+    - cvmfs_ssl
 
 - name: SSH Tunnel Servers
   hosts: ssh_tunnel_servers

@@ -1,0 +1,39 @@
+---
+
+- name: Install Certbot Apache provider and Apache SSL deps
+  ansible.builtin.dnf:
+    name:
+      - augeas-libs
+      - mod_ssl
+
+- name: Install Certbot Apache provider
+  ansible.builtin.pip:
+    name:
+      - certbot-apache
+    virtualenv_command: "{{ certbot_virtualenv_command | default(pip_virtualenv_command | default(omit)) }}"
+    virtualenv: "{{ certbot_dir }}"
+
+- name: Include Certbot role
+  ansible.builtin.import_role:
+    name: usegalaxy_eu.certbot
+
+- name: Generate options-ssl-apache.conf
+  ansible.builtin.command: "{{ certbot_dir }}/bin/certbot certonly --apache --dry-run -d {{ certbot_domains[0] }}"
+  args:
+    creates: "/etc/letsencrypt/options-ssl-apache.conf"
+  ignore_errors: true
+
+- name: Set SSL Options
+  ansible.builtin.lineinfile:
+    path: /etc/httpd/conf.d/ssl.conf
+    regexp: "{{ item.regexp | default(omit) }}"
+    line: "{{ item.line }}"
+    insertbefore: '^\</VirtualHost\>'
+  loop:
+    - regexp: '^SSLCertificateFile\s+'
+      line: 'SSLCertificateFile "/etc/letsencrypt/live/{{ certbot_domains[0] }}/fullchain.pem"'
+    - regexp: '^SSLCertificateKeyFile\s+'
+      line: 'SSLCertificateKeyFile "/etc/letsencrypt/live/{{ certbot_domains[0] }}/privkey.pem"'
+    - line: 'Include "/etc/letsencrypt/options-ssl-apache.conf"'
+  notify:
+    - Restart Apache

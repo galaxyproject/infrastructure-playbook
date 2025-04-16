@@ -1,0 +1,7 @@
+---
+
+cvmfs_ssl_servers_group_packages:
+  - augeas-libs
+
+certbot_domains:
+  - "{{ inventory_hostname }}"

@@ -161,6 +161,12 @@ all:
     letsencrypt_clients:
       children:
         letsencrypt_http01_clients:
+        letsencrypt_dns01_clients:
+
+    # Provides Certbot config for DNS-01 challenges
+    letsencrypt_dns01_clients:
+      children:
+        cvmfs_ssl_servers:
 
     # Provides Certbot config for HTTP-01 challenges
     letsencrypt_http01_clients:
@@ -176,6 +182,7 @@ all:
     certbot_tsig_key_consumers:
       children:
         dns_primary_servers:
+        letsencrypt_dns01_clients:
 
     # these are deployed via the standalone web servers playbook and not as part of another system
     standalone_web_servers:
@@ -229,6 +236,11 @@ all:
         cvmfs1-iu0.galaxyproject.org:
         # use inventory/tacc.yaml
         #cvmfs1-tacc0.galaxyproject.org:
+
+    cvmfs_ssl_servers:
+      hosts:
+        cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
 
     cvmfs_clients:
       children:

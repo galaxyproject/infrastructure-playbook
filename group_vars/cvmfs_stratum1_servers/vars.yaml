@@ -140,6 +140,7 @@ cvmfs_keys:
 cvmfs_repositories:
   - repository: test.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
+    stratum0_url_scheme: https
     owner: g2test
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -147,6 +148,7 @@ cvmfs_repositories:
     client_options: []
   - repository: main.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
+    stratum0_url_scheme: https
     owner: g2main
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -154,6 +156,7 @@ cvmfs_repositories:
     client_options: []
   - repository: data.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: data
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -161,6 +164,7 @@ cvmfs_repositories:
     client_options: []
   - repository: sandbox.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: sandbox
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -175,6 +179,7 @@ cvmfs_repositories:
     client_options: []
   - repository: usegalaxy.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: usegalaxy
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -182,6 +187,7 @@ cvmfs_repositories:
     client_options: []
   - repository: cvmfs-config.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: root
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -189,6 +195,7 @@ cvmfs_repositories:
     client_options: []
   - repository: refgenomes-databio.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: refgenie
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -196,6 +203,7 @@ cvmfs_repositories:
     client_options: []
   - repository: cloud.galaxyproject.org
     stratum0: cvmfs0-psu1.galaxyproject.org
+    stratum0_url_scheme: https
     owner: cloud
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -203,6 +211,7 @@ cvmfs_repositories:
     client_options: []
   - repository: idc.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: idc
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
@@ -210,6 +219,7 @@ cvmfs_repositories:
     client_options: []
   - repository: brc.galaxyproject.org
     stratum0: cvmfs0-psu0.galaxyproject.org
+    stratum0_url_scheme: https
     owner: brc
     key_dir: /etc/cvmfs/keys/galaxyproject.org
     server_options:
