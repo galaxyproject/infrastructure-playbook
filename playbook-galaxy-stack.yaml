@@ -164,6 +164,52 @@
       loop: "{{ __galaxy_cron_jobs.files | map(attribute='path') }}"
   tags: galaxy
 
+# TODO: make a role
+- name: Hashicorp Vault
+  hosts: hashicorp_vault_servers
+  # vault is installed through inheritance_chain vars so we just need to start it here
+  handlers:
+    - name: Restart Hashicorp Vault
+      ansible.builtin.service:
+        name: vault
+        state: restarted
+  roles:
+    # FIXME: this could be problematic for Test
+    - role: usegalaxy_eu.certbot
+  post_tasks:
+    - name: Deploy Hashicorp Vault configuration
+      ansible.builtin.copy:
+        src: files/hashicorp_vault/vault.hcl
+        dest: /etc/vault.d/vault.hcl
+        owner: vault
+        group: vault
+        mode: "0644"
+      notify: Restart Hashicorp Vault
+    - name: Flush Handlers
+      ansible.builtin.meta: flush_handlers
+    - name: Ensure Hashicorp Vault is enabled and running
+      ansible.builtin.service:
+        name: vault
+        state: started
+        enabled: true
+    # TODO: manual steps
+    # - vault operator init -key-shares=1 -key-threshold=1
+    # - vault operator unseal
+    # - vault login
+    # - cat > galaxy-policy.hcl <<EOF
+    #   path "*" {
+    #     capabilities = ["create", "read", "update", "patch", "delete", "list"]
+    #   }
+    #   EOF
+    # - vault policy write galaxy-user-prefs galaxy-policy.hcl
+    # - vault auth enable userpass
+    # - vault write auth/userpass/users/galaxyprefs password="..." policies="galaxy-user-prefs"
+    # - vault secrets enable -path secret kv
+    # - vault login -method=userpass password="..." username="galaxyprefs"
+  tags:
+    - galaxy
+    - vault
+
 - name: Gravity Tasks
   hosts: galaxy_servers
   tasks:

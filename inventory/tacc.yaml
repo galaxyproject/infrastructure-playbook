@@ -69,6 +69,8 @@ all:
     letsencrypt_dns01_clients:
       hosts:
         galaxy-control.tacc.utexas.edu:
+        # for Vault
+        galaxy-db.tacc.utexas.edu:
       children:
         galaxy_servers:
         galaxy_main_load_balancers:
@@ -189,6 +191,12 @@ all:
     slurm_dbd_servers:
       hosts:
         galaxy-control.tacc.utexas.edu:
+
+    # Deploys Hashicorp Vault and configuration
+    hashicorp_vault_servers:
+      hosts:
+        galaxy-test.tacc.utexas.edu:
+        galaxy-db.tacc.utexas.edu:
 
     # Configures as a cluster node
     galaxy_nodes:

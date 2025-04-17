@@ -1,0 +1,19 @@
+---
+
+hashicorp_vault_servers_group_rpm_keys:
+  - key: https://rpm.releases.hashicorp.com/gpg
+
+hashicorp_vault_servers_group_yum_repositories:
+  - name: hashicorp
+    description: Hashicorp Stable - $basearch
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
+
+hashicorp_vault_servers_group_packages:
+  - vault
+
+# TODO: if other galaxy server roles set this you'd have collisions
+certbot_share_key_users:
+  - vault

@@ -10,3 +10,9 @@ host_mounts: ["{{ _var_lib_pgsql }}"]
 
 redis_requirepass: "{{ vault_redis_requirepass }}"
 redis_bind_interface: 0.0.0.0
+
+certbot_post_renewal: |
+  systemctl restart vault || true
+
+certbot_domains:
+  - vault.usegalaxy.org
