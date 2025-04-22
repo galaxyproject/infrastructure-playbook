@@ -12,6 +12,7 @@ rabbitmq_config:
   disk_free_limit:
     absolute: 1GB
   consumer_timeout: 3600000 # one hour in milliseconds
+  max_message_size: 134217728 # 128 MB in bytes
   listeners:
     tcp: none
     ssl:
