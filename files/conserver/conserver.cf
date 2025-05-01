@@ -129,10 +129,10 @@ console smart5 {
 #    host nn0.m.galaxyproject.org;
 #}
 
-#console orval {
-#    include ipmisol;
-#    host orval.m.galaxyproject.org;
-#}
+console orval {
+    include ipmisol;
+    host orval.m.galaxyproject.org;
+}
 
 console rochefort {
     include ipmisol;

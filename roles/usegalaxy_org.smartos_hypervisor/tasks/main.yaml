@@ -8,6 +8,38 @@
     success_msg: "Required var is defined: {{ item }}"
   loop: "{{ smartos_hypervisor_role_required_vars }}"
 
+- name: Loader configuration block
+  when: smartos_hypervisor_loader_options is defined and smartos_hypervisor_loader_options
+  block:
+
+    - name: Create /zones/boot/custom
+      ansible.builtin.file:
+        path: "/zones/boot/custom"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Set loader options
+      ansible.builtin.copy:
+        content: |
+          {% for option in smartos_hypervisor_loader_options %}
+          {{ option }}
+          {% endfor %}
+        dest: "/zones/boot/custom/loader.conf.local"
+        owner: root
+        group: root
+        mode: "0644"
+
+    # piadm links this for any new platform images you install
+    - name: Ensure loader.conf.local is linked
+      ansible.builtin.file:
+        state: link
+        src: "../custom/loader.conf.local"
+        dest: "/zones/boot/boot/loader.conf.local"
+        owner: root
+        group: root
+
 - name: Set SmartOS GZ config options
   ansible.builtin.lineinfile:
     dest: "/usbkey/config"

@@ -1,0 +1,5 @@
+---
+
+smartos_hypervisor_loader_options:
+  - os_console="ttyb"
+  - boot_verbose="YES"

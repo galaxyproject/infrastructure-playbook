@@ -16,6 +16,8 @@ dhcpd_groups:
         ethernet: 18:66:da:59:13:e5
       - name: westvleteren.m
         ethernet: 00:1d:09:c0:ff:ef
+      - name: orval.m
+        ethernet: 7c:c2:55:8d:5b:e9
   # SmartOS iPXE
   - params:
       - 'if exists user-class and option user-class = "iPXE" { filename "menu.ipxe"; } else { filename "undionly.kpxe"; }'
@@ -63,3 +65,8 @@ dhcpd_groups:
         options:
           - 'smartos.console "ttya"'
           - 'smartos.version "20240502T000615Z"'
+      - name: orval.p
+        ethernet: 90:5a:08:2d:b8:73
+        options:
+          - 'smartos.console "ttyb"'
+          - 'smartos.version "20250501T000434Z"'

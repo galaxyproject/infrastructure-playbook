@@ -135,6 +135,7 @@ all:
         rochefort.p.galaxyproject.org:
         westvleteren.p.galaxyproject.org:
         voyager.p.galaxyproject.org:
+        orval.p.galaxyproject.org:
       vars:
         ansible_python_interpreter: /opt/tools/bin/python3
 
