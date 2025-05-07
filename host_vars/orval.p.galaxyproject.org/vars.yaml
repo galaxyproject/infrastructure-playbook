@@ -3,3 +3,51 @@
 smartos_hypervisor_loader_options:
   - os_console="ttyb"
   - boot_verbose="YES"
+
+smartos_hypervisor_nic_tags:
+  - name: external
+    mac: "90:5a:08:2d:b8:72"
+    mtu: 9000
+
+zfs_filesystems:
+  - name: data
+    compression: lz4
+    atime: "off"
+  - name: data/cvmfs1-psu0
+    zoned: "on"
+
+# NOTE: dataset manually attached via zonecfg:
+# zonecfg -z ...
+# add dataset
+# set name=data/cvmfs1-psu0
+# end
+# verify
+# commit
+# exit
+
+smartos_images:
+  # rocky-9.5 20250407 linux lx-dataset 2025-04-07
+  - uuid: deb80d2a-88a7-40d6-b733-f0b766c6a9ec
+    state: present
+
+smartos_vms:
+  - alias: cvmfs1-psu0
+    brand: lx
+    kernel_version: 5.14.0-503.38.1.el9_5.x86_64
+    image_uuid: deb80d2a-88a7-40d6-b733-f0b766c6a9ec
+    hostname: cvmfs1-psu0
+    max_physical_memory: 8192
+    quota: 32768
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        #ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
+        #netmask: 255.255.255.224
+        #gateway: 128.118.250.1
+        #vlan_id: 306
+        ip: 172.18.2.222
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

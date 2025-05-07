@@ -6,6 +6,8 @@ all:
   hosts:
     cvmfs1-psu0.galaxyproject.org:
       hostname_strategy: file
+      # FIXME FIXME TEMP
+      ansible_host: 172.18.2.222
 
     cvmfs-stratum0.galaxyproject.eu:
       ansible_user: centos
@@ -54,7 +56,7 @@ all:
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
-        cvmfs1-psu0.galaxyproject.org:
+        #cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
       children:
         # to exclude EU stratum0
@@ -122,8 +124,8 @@ all:
 
     ssh_tunnel_servers:
       hosts:
-        cvmfs0-psu1.galaxyproject.org:
-        cvmfs1-psu0.galaxyproject.org:
+        #cvmfs0-psu1.galaxyproject.org:
+        #cvmfs1-psu0.galaxyproject.org:
 
     smartos_hypervisors:
       hosts:

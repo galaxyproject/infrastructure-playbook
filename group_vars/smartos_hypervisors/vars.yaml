@@ -11,3 +11,8 @@ smartos_resolvers:
   - 128.118.250.8
   - 3.14.178.173
   - 3.136.94.7
+
+# /opt/tools/bin isn't on the default path so the packages module fails
+all_packages: []
+smartos_hypervisor_packages:
+  - smartmontools

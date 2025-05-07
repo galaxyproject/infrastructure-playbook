@@ -67,6 +67,22 @@
       {{ ssh_public_keys[user] }}
       {% endfor %}
 
+- name: Create nic tags
+  community.general.nictagadm:
+    name: "{{ item.name }}"
+    mac: "{{ item.mac }}"
+    mtu: "{{ item.mtu | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+  loop: "{{ smartos_hypervisor_nic_tags }}"
+  when: smartos_hypervisor_nic_tags is defined and smartos_hypervisor_nic_tags
+
+- name: Install GZ packages
+  community.general.pkgin:
+    name: "{{ smartos_hypervisor_packages }}"
+  when: smartos_hypervisor_packages is defined and smartos_hypervisor_packages
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/opt/tools/bin"
+
 - name: Enable compression on zones
   community.general.zfs:
     name: zones

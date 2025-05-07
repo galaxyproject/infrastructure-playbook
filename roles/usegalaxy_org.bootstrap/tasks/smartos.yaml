@@ -10,20 +10,20 @@
 
 - name: Bootstrap GZ pkgsrc tools
   ansible.builtin.raw: >-
-    bash -c 'test -e /opt/tools/bin/pkgin || (
+    bash -c '[ `zonename` = global ] && ! test -e /opt/tools/bin/pkgin && (
     cd /var/tmp &&
     curl -kO https://pkgsrc.smartos.org/packages/SmartOS/bootstrap/{{ smartos_hypervisor_pkgsrc_bootstrap_tar }} &&
     [ "{{ smartos_hypervisor_pkgsrc_bootstrap_sha }}" = "$(/bin/digest -a sha1 {{ smartos_hypervisor_pkgsrc_bootstrap_tar }})" ] &&
     tar -zxpf {{ smartos_hypervisor_pkgsrc_bootstrap_tar }} -C /
-    )'
+    ) || true'
   register: __smartos_hypervisor_bootstrap_pkgsrc_result
   changed_when: __smartos_hypervisor_bootstrap_pkgsrc_result.stdout != ""
 
-- name: Bootstrap Python for Ansible
+- name: Bootstrap GZ Python for Ansible
   ansible.builtin.raw: >-
-    bash -c 'test -e /opt/tools/bin/python3 || (
+    bash -c '[ `zonename` = global ] && ! test -e /opt/tools/bin/python3 && (
     /opt/tools/bin/pkgin -y update ;
-    /opt/tools/bin/pkgin -y install python39
-    )'
+    /opt/tools/bin/pkgin -y install {{ smartos_hypervisor_python_package | default("python313") }}
+    ) || true'
   register: __smartos_hypervisor_bootstrap_python_result
   changed_when: __smartos_hypervisor_bootstrap_python_result.stdout != ""
