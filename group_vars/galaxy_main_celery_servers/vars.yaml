@@ -1,5 +1,7 @@
 ---
 
+galaxy_memory_limit: 10
+
 galaxy_main_celery_servers_group_gravity_config:
   celery:
     enable: true
