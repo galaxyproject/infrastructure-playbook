@@ -127,6 +127,7 @@ telegraf_cvmfs_check_servers:
     - idc.galaxyproject.org
     - cloud.galaxyproject.org
     - brc.galaxyproject.org
+    - vgp.galaxyproject.org
   combined:
     - host: cvmfs0-psu1.galaxyproject.org
       repos:
@@ -149,3 +150,6 @@ telegraf_cvmfs_check_servers:
     - host: cvmfs0-psu0.galaxyproject.org
       repos:
         - brc.galaxyproject.org
+    - host: cvmfs0-psu0.galaxyproject.org
+      repos:
+        - vgp.galaxyproject.org

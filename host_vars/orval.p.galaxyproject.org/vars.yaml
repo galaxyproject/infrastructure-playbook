@@ -41,13 +41,9 @@ smartos_vms:
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
-        #ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
-        #netmask: 255.255.255.224
-        #gateway: 128.118.250.1
-        #vlan_id: 306
-        ip: 172.18.2.222
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
+        ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

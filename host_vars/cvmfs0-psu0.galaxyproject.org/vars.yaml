@@ -32,6 +32,7 @@ host_users:
   - "{{ galaxyproject_users.refgenie }}"
   - "{{ galaxyproject_users.idc }}"
   - "{{ galaxyproject_users.brc }}"
+  - "{{ galaxyproject_users.vgp }}"
 
 host_groups:
   - "{{ galaxyproject_groups.data }}"
@@ -41,6 +42,7 @@ host_groups:
   - "{{ galaxyproject_groups.refgenie }}"
   - "{{ galaxyproject_groups.idc }}"
   - "{{ galaxyproject_groups.brc }}"
+  - "{{ galaxyproject_groups.vgp }}"
 
 host_directories:
   - path: /srv/idc
@@ -65,6 +67,13 @@ telegraf_plugins_extra:
     plugin: "exec"
     config:
       - commands = ["/bin/bash -c 'echo brc-genomes-cvmfs count=$(cat /cvmfs/brc.galaxyproject.org/config/dbkeys.loc | wc -l)'"]
+      - timeout = "30s"
+      - data_format = "influx"
+      - interval = "5m"
+  vgp_genomes_cvmfs:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash -c 'echo vgp-genomes-cvmfs count=$(cat /cvmfs/vgp.galaxyproject.org/config/dbkeys.loc | wc -l)'"]
       - timeout = "30s"
       - data_format = "influx"
       - interval = "5m"
@@ -151,6 +160,22 @@ cvmfs_repositories:
       minute: 45
       hour: 0
       weekday: 2
+  - repository: vgp.galaxyproject.org
+    stratum0: cvmfs0-psu0.galaxyproject.org
+    owner: vgp
+    server_options:
+      - CVMFS_AUTO_TAG=false
+      - CVMFS_GARBAGE_COLLECTION=true
+      - CVMFS_AUTO_GC=false
+      - CVMFS_GENERATE_LEGACY_BULK_CHUNKS=false
+      - CVMFS_IGNORE_XDIR_HARDLINKS=false
+      - CVMFS_FILE_MBYTE_LIMIT=32768
+    client_options: []
+    prune_snapshots_count: 100
+    prune_snapshots_time:
+      minute: 45
+      hour: 0
+      weekday: 3
 
 cvmfs_keys:
   - path: /etc/cvmfs/keys/data.galaxyproject.org.pub
@@ -295,4 +320,29 @@ cvmfs_keys:
       cB4+Rf8jhaPAQucF+YGHXAbvbWvwUfU72+f4My8Zc2M57NtTPacKlnP2UfjQUpqL
       6jeUVeFViddr6scU6Ce2U5VVH4386Y/J6DiGv9zCEsOj4m0+yCENHskN9H5uCboH
       xA==
+      -----END CERTIFICATE-----
+  - path: /etc/cvmfs/keys/vgp.galaxyproject.org.pub
+    owner: vgp
+    key: "{{ cvmfs_site_keys.pub }}"
+  - path: /etc/cvmfs/keys/vgp.galaxyproject.org.crt
+    owner: vgp
+    key: |
+      -----BEGIN CERTIFICATE-----
+      MIIDJTCCAg2gAwIBAgIUGaMjZrqkRytChPlTLXEj9fh2anAwDQYJKoZIhvcNAQEL
+      BQAwOzE5MDcGA1UEAwwwdmdwLmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBS
+      ZWxlYXNlIE1hbmFnZXJzMB4XDTI1MDUwNzIwMjQzNVoXDTI2MDUwNzIwMjQzNVow
+      OzE5MDcGA1UEAwwwdmdwLmdhbGF4eXByb2plY3Qub3JnIENlcm5WTS1GUyBSZWxl
+      YXNlIE1hbmFnZXJzMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxDmE
+      wsxrWFOSxpUucvZJ6nJBg5SyLNTq8JQXLHZPlcM1EdAYC4su4DHVkgVg5rYlEKU+
+      EQukGE364XtOY5uLG/B29tJMhXwE5SQAvRUGEvAisWR8bIbZnu7HGe/QsytLewEH
+      DLvFHA7gJW5j3kA9jXCDrpIBSfP2KX5NxE6uUVz8SqU732YeCKwWsb2k9+RBGeAo
+      S8OXeM1ESQ71s9H1nMB7PwpFkYr2oFipJuFkwkEoZXRlYKXdY7col7mm5hWV+nog
+      2akZ6UMkBSMhGWmTWJX/ZuVNQEIdKz0l717KZD/9x9pXQe+5wUlXL5AdTvvON8IA
+      afJbuj9Qs9zt5p58GwIDAQABoyEwHzAdBgNVHQ4EFgQUiP6KAHQzyfFqSkQjhDQ+
+      p8YHiGEwDQYJKoZIhvcNAQELBQADggEBAJl4xR9/txA+bZw94BD62riusUxX+u1t
+      MjiH8dMCcRzZb+dlETWO6wclHHLsc4k8oYeyMoAecLJMzVgxDKoWBbMv3WWM2omF
+      lPmy/axU/+MNo4MzcurOt8BfxAhX64sGZtTN30BSzJHARSQRXSYFuBAPA5WXGsct
+      hWBvpAjdKmtfO2N7c6ebmLqLkGeRYsy+45MJWjMsTyKv2Mlxeu3lEG6nBEIE4Q2H
+      gZifwbhzT40vI+64xXoRmNDtsZVeC9kJlgu1/WpLyS4iOfFJPAgcQjAlBcH3Pvea
+      KIObCtYiw6n/r3Pza+JwwOpyT5UTfTO/Iom09ef0WiQUweuISPZiqvk=
       -----END CERTIFICATE-----
