@@ -80,4 +80,4 @@ nginx_enable_default_server: false
 nginx_configs:
   - datacache
 
-cvmfs_quota_limit: 2048
+cvmfs_quota_limit: 4096
