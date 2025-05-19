@@ -42,7 +42,7 @@ smartos_vms:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: cvmfs0-psu1
     brand: bhyve
-    ram: 8192
+    ram: 12288
     vcpus: 4
     resolvers: "{{ smartos_resolvers }}"
     nics:
