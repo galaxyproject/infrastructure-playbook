@@ -35,6 +35,11 @@ server {
         alias /cvmfs/brc.galaxyproject.org;
         autoindex on;
     }
+
+    location /vgp {
+        alias /cvmfs/vgp.galaxyproject.org;
+        autoindex on;
+    }
 }
 
 # vim: set filetype=nginx
