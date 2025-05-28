@@ -44,8 +44,6 @@ galaxy_main_handler_servers_group_telegraf_plugins_extra:
     config:
       - pattern = "main\\.py.*workflow_scheduler0"
       - 'user = "{{ galaxy_user }}"'
-
-galaxy_main_handler_servers_group_telegraf_plugins_extra:
   statsd:
     config:
       - service_address = "127.0.0.1:8125"
