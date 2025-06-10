@@ -6,6 +6,22 @@
 # https://github.com/openssl/openssl/discussions/22690
 ssl_conf_command Options IgnoreUnexpectedEOF;
 
+# CORS-related maps for Avivator
+map $http_origin $cors_origin {
+    default "";
+    "~^https?://avivator\.gehlenborglab\.org$" $http_origin;
+}
+
+map $http_origin $cors_methods {
+    default "";
+    "~^https?://avivator\.gehlenborglab\.org$" "GET";
+}
+
+map $http_origin $cors_headers {
+    default "";
+    "~^https?://avivator\.gehlenborglab\.org$" "Range";
+}
+
 # Redirect www -> root
 server {
     listen       *:443 ssl;
@@ -73,6 +89,26 @@ server {
     # usegalaxy.org link shortening
     include {{ nginx_conf_dir }}/usegalaxy_rewrites.conf;
     include {{ nginx_conf_dir }}/usegalaxy_proxy.conf;
+
+    # Avivator display application
+    location ~* ^/display_application/.+/avivator/main/ {
+        proxy_pass http://galaxy;
+
+        # Add CORS headers only here
+        add_header 'Access-Control-Allow-Origin'  $cors_origin always;
+        add_header 'Access-Control-Allow-Methods' $cors_methods always;
+        add_header 'Access-Control-Allow-Headers' $cors_headers always;
+
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Headers' 'Range' always;
+            add_header 'Access-Control-Allow-Methods' 'GET,OPTIONS' always;
+            add_header 'Access-Control-Allow-Origin'  $http_origin always;
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain; charset=UTF-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+    }
 
     # TIaaS
     location /tiaas {
