@@ -70,7 +70,7 @@ function trap_handler() {
     $MUTEX_ACQUIRED && { rmdir "$MUTEX"; log_debug "Cleared $MUTEX"; }
     return 0
 }
-trap "trap_handler" SIGTERM SIGINT ERR EXIT
+trap "trap_handler" EXIT
 
 
 function log() {
