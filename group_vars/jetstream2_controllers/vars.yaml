@@ -89,6 +89,7 @@ slurm_slurp_partitions:
 
 slurm_scale_ssh_user: rocky
 slurm_scale_playbook_repo: https://github.com/galaxyproject/slurmscale-playbook.git
+slurm_scale_virtualenv_command: /usr/bin/python3.11 -m venv
 slurm_scale_vars:
   - slurm_scale_tailscale_authkey
   - ceph_mounts

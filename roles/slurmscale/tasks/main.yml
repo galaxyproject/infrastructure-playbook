@@ -17,7 +17,7 @@
       - pip
       - setuptools
     virtualenv: "{{ slurm_scale_root }}"
-    virtualenv_command: /usr/bin/python3 -m venv
+    virtualenv_command: "{{ slurm_scale_virtualenv_command }}"
     state: latest
   become: yes
   become_user: "{{ slurm_scale_user }}"

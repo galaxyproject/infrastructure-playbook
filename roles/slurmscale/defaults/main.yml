@@ -3,3 +3,4 @@
 slurm_scale_user: slurm
 slurm_scale_root: /opt/slurmscale
 slurm_scale_playbook_path: "{{ slurm_scale_root }}/etc/playbook"
+slurm_scale_virtualenv_command: /usr/bin/python3 -m venv
