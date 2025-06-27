@@ -1,0 +1,11 @@
+model_list:
+{% for model in litellm_models %}
+  - model_name: {{ model.model_name }}
+    litellm_params:
+{% for param_key, param_value in model.litellm_params.items() %}
+      {{ param_key }}: {{ param_value | to_json }}
+{% endfor %}
+{% endfor %}
+
+general_settings:
+  debug: {{ litellm_debug | lower }}

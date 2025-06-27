@@ -1,0 +1,4 @@
+---
+
+litellm_database_password: "CHANGEME_SECURE_PASSWORD"
+litellm_master_key: "sk-litellm-CHANGEME-SECURE-MASTER-KEY"

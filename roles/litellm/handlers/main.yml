@@ -1,0 +1,21 @@
+---
+
+- name: restart litellm
+  systemd:
+    name: litellm
+    state: restarted
+    daemon_reload: true
+  become: true
+
+- name: reload litellm
+  systemd:
+    name: litellm
+    state: reloaded
+  become: true
+
+- name: start litellm
+  systemd:
+    name: litellm
+    state: started
+    enabled: true
+  become: true

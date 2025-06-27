@@ -1,0 +1,93 @@
+---
+
+- name: Create litellm system group
+  group:
+    name: "{{ litellm_group }}"
+    system: true
+  become: true
+
+- name: Create litellm system user
+  user:
+    name: "{{ litellm_user }}"
+    group: "{{ litellm_group }}"
+    system: true
+    home: "{{ litellm_home }}"
+    shell: /bin/bash
+    create_home: true
+  become: true
+
+- name: Create litellm directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ litellm_user }}"
+    group: "{{ litellm_group }}"
+    mode: '0755'
+  loop:
+    - "{{ litellm_home }}"
+    - "{{ litellm_config_dir }}"
+    - "{{ litellm_log_dir }}"
+    - "{{ litellm_db_dir }}"
+  become: true
+
+- name: Create Python virtual environment for LiteLLM
+  command: python3 -m venv {{ litellm_venv_dir }}
+  args:
+    creates: "{{ litellm_venv_dir }}/bin/activate"
+  become: true
+  become_user: "{{ litellm_user }}"
+
+- name: Upgrade pip in virtual environment
+  pip:
+    name: pip
+    state: latest
+    executable: "{{ litellm_venv_dir }}/bin/pip"
+  become: true
+  become_user: "{{ litellm_user }}"
+
+- name: Install Python packages for LiteLLM in virtual environment
+  pip:
+    name: "{{ litellm_python_packages }}"
+    state: present
+    executable: "{{ litellm_venv_dir }}/bin/pip"
+  become: true
+  become_user: "{{ litellm_user }}"
+
+- name: Generate LiteLLM configuration
+  template:
+    src: litellm_config.yaml.j2
+    dest: "{{ litellm_config_dir }}/config.yaml"
+    owner: "{{ litellm_user }}"
+    group: "{{ litellm_group }}"
+    mode: '0640'
+  become: true
+  notify: restart litellm
+
+- name: Create LiteLLM systemd service
+  template:
+    src: litellm.service.j2
+    dest: /etc/systemd/system/litellm.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - restart litellm
+
+- name: Create LiteLLM environment file
+  template:
+    src: litellm.env.j2
+    dest: "{{ litellm_config_dir }}/litellm.env"
+    owner: "{{ litellm_user }}"
+    group: "{{ litellm_group }}"
+    mode: '0600'
+  become: true
+  notify: restart litellm
+
+- name: Start and enable LiteLLM service
+  systemd:
+    name: litellm
+    state: started
+    enabled: true
+    daemon_reload: true
+  become: true

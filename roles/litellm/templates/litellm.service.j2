@@ -1,0 +1,28 @@
+[Unit]
+Description=LiteLLM Proxy Server
+After=network.target{% if litellm_database_type == 'postgresql' %} postgresql.service{% endif %}
+
+Wants=network.target{% if litellm_database_type == 'postgresql' %} postgresql.service{% endif %}
+
+[Service]
+Type=simple
+User={{ litellm_user }}
+Group={{ litellm_group }}
+WorkingDirectory={{ litellm_home }}
+EnvironmentFile={{ litellm_config_dir }}/litellm.env
+ExecStart={{ litellm_venv_dir }}/bin/litellm --config {{ litellm_config_dir }}/config.yaml --host {{ litellm_host }} --port {{ litellm_port }} --workers {{ litellm_workers }}
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=litellm
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ litellm_home }} {{ litellm_log_dir }} {{ litellm_db_dir }} {{ litellm_venv_dir }}
+
+[Install]
+WantedBy=multi-user.target

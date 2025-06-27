@@ -1,0 +1,36 @@
+---
+
+# LiteLLM Installation
+litellm_version: "1.51.8"
+litellm_user: "litellm"
+litellm_group: "litellm"
+litellm_home: "/opt/litellm"
+litellm_venv_dir: "{{ litellm_home }}/venv"
+litellm_config_dir: "{{ litellm_home }}/config"
+litellm_log_dir: "/var/log/litellm"
+litellm_db_dir: "{{ litellm_home }}/db"
+
+# Service Configuration
+litellm_port: 4000
+litellm_host: "0.0.0.0"
+litellm_workers: 1
+
+# Database Configuration
+litellm_database_type: "postgresql"
+litellm_database_host: "localhost"
+litellm_database_port: 5432
+litellm_database_name: "litellm"
+litellm_database_user: "litellm"
+litellm_sqlite_path: "{{ litellm_db_dir }}/litellm.db"
+
+# Security
+litellm_enable_auth: true
+litellm_debug: false
+
+# Model Configuration
+litellm_models: []
+
+# System Configuration
+litellm_python_packages:
+  - "litellm=={{ litellm_version }}"
+  - psycopg2-binary

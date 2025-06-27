@@ -59,3 +59,8 @@ all:
     telegraf_agents:
       children:
         jetstream2_persistent_hosts:
+
+    litellm_servers:
+      hosts:
+        jetstream2.galaxyproject.org:
+
