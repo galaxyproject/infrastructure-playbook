@@ -1,0 +1,32 @@
+---
+
+# meta_jetstream2 stuff we don't want
+all_groups: []
+all_users: []
+os_key_name: nate-treehouse
+
+os_image: Featured-RockyLinux9
+os_flavor: m3.small
+
+os_security_groups:
+  - default
+  - ssh-http-https
+
+os_floating_ips:
+  - "{{ lookup('dig', inventory_hostname) }}"
+
+os_volumes:
+  - name: "{{ inventory_hostname_short }}-postgres"
+    size: 8
+    fstype: xfs
+
+#filesystems: is set automatically by the playbook in os_volume_devices.yml
+filesystems:
+  - dev: /dev/sdb
+    fstype: xfs
+
+# this is parallel with os_volumes and filesystems
+host_mounts:
+  - path: /var/lib/pgsql
+    src: "{{ filesystems[0].dev }}"
+    fstype: "{{ os_volumes[0].fstype }}"

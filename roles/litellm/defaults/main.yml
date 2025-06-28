@@ -1,7 +1,8 @@
 ---
 
 # LiteLLM Installation
-litellm_version: "1.51.8"
+#litellm_state: present
+#litellm_version: omit
 litellm_user: "litellm"
 litellm_group: "litellm"
 litellm_home: "/opt/litellm"
@@ -21,7 +22,17 @@ litellm_database_host: "localhost"
 litellm_database_port: 5432
 litellm_database_name: "litellm"
 litellm_database_user: "litellm"
+litellm_database_socket_dir: null
 litellm_sqlite_path: "{{ litellm_db_dir }}/litellm.db"
+
+# NOTE: socket doesn't actually work - it works for prisma but LiteLLM itself doesn't understand the syntax. Leaving it
+# here though in case it works some time
+__litellm_database_url: >-
+  {{ litellm_database_socket_dir | ternary(
+    "postgresql://" ~ litellm_database_user ~ "@localhost/" ~ litellm_database_name ~ "?host=" ~ litellm_database_socket_dir,
+    "postgresql://" ~ litellm_database_user ~ ":" ~ litellm_database_password ~ "@" ~ litellm_database_host ~ ":" ~ litellm_database_port ~ "/" ~ litellm_database_name
+    )
+  }}
 
 # Security
 litellm_enable_auth: true
@@ -31,6 +42,7 @@ litellm_debug: false
 litellm_models: []
 
 # System Configuration
+litellm_python_package: 'litellm[proxy]'
 litellm_python_packages:
-  - "litellm=={{ litellm_version }}"
   - psycopg2-binary
+  - prisma

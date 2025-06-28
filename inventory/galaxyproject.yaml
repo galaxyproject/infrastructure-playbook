@@ -11,6 +11,10 @@ all:
       ansible_user: centos
       ansible_become: true
 
+    litellm.galaxyproject.org:
+      ansible_user: rocky
+      ansible_become: true
+
     # for lx-brand zones, use:
     #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
@@ -157,6 +161,7 @@ all:
         depot_servers:
         list_servers:
         standalone_web_servers:
+        litellm_servers:
 
     # Not fully usable on its own but provides vars common to both ACME challenge methods
     letsencrypt_clients:
@@ -178,6 +183,7 @@ all:
         depot_servers:
         list_servers:
         standalone_web_servers:
+        litellm_servers:
 
     # Provides the Certbot TSIG key for DNS-01 challenges
     certbot_tsig_key_consumers:
@@ -286,3 +292,7 @@ all:
       hosts:
         thumper.galaxyproject.org:
         westvleteren.galaxyproject.org:
+
+    litellm_servers:
+      hosts:
+        litellm.galaxyproject.org:

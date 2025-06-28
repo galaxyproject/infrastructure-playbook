@@ -9,6 +9,7 @@ all:
       hosts:
         # mainly configured through the galaxyproject inventory so excluded from jetstream2_persistent_hosts
         cvmfs1-iu0.galaxyproject.org:
+        litellm.galaxyproject.org:
       vars:
         ansible_user: rocky
         ansible_become: true
@@ -17,6 +18,8 @@ all:
         jetstream2_persistent_hosts:
 
     meta_jetstream2:
+      hosts:
+        litellm.galaxyproject.org:
       children:
         jetstream2_openstack_initializer:
         jetstream2_persistent_hosts:
@@ -59,8 +62,3 @@ all:
     telegraf_agents:
       children:
         jetstream2_persistent_hosts:
-
-    litellm_servers:
-      hosts:
-        jetstream2.galaxyproject.org:
-

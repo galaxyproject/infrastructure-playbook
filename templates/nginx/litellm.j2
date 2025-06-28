@@ -1,0 +1,22 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+server {
+    listen      *:443 ssl http2 default_server;
+    server_name litellm.galaxyproject.org;
+
+    access_log  /var/log/nginx/litellm_access.log;
+    error_log   /var/log/nginx/litellm_error.log;
+
+    location / {
+        proxy_pass          http://127.0.0.1:{{ litellm_port }};
+        proxy_set_header    Host $host;
+        proxy_set_header    X-Real-IP $remote_addr;
+        proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header    X-Forwarded-Proto $scheme;
+        proxy_buffering     off;
+    }
+}
+
+# vim: set filetype=nginx

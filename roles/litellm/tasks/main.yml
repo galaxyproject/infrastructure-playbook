@@ -24,32 +24,33 @@
     group: "{{ litellm_group }}"
     mode: '0755'
   loop:
-    - "{{ litellm_home }}"
     - "{{ litellm_config_dir }}"
     - "{{ litellm_log_dir }}"
     - "{{ litellm_db_dir }}"
   become: true
 
 - name: Create Python virtual environment for LiteLLM
-  command: python3 -m venv {{ litellm_venv_dir }}
-  args:
-    creates: "{{ litellm_venv_dir }}/bin/activate"
-  become: true
-  become_user: "{{ litellm_user }}"
-
-- name: Upgrade pip in virtual environment
   pip:
     name: pip
     state: latest
-    executable: "{{ litellm_venv_dir }}/bin/pip"
+    virtualenv: "{{ litellm_venv_dir }}"
   become: true
   become_user: "{{ litellm_user }}"
 
-- name: Install Python packages for LiteLLM in virtual environment
+- name: Install LiteLLM
+  pip:
+    name: "{{ litellm_python_package }}"
+    state: "{{ litellm_state | default('present') }}"
+    version: "{{ litellm_version | default(omit) }}"
+    virtualenv: "{{ litellm_venv_dir }}"
+  become: true
+  become_user: "{{ litellm_user }}"
+
+- name: Install additional Python packages for LiteLLM in virtual environment
   pip:
     name: "{{ litellm_python_packages }}"
     state: present
-    executable: "{{ litellm_venv_dir }}/bin/pip"
+    virtualenv: "{{ litellm_venv_dir }}"
   become: true
   become_user: "{{ litellm_user }}"
 
@@ -83,6 +84,16 @@
     mode: '0600'
   become: true
   notify: restart litellm
+
+# TODO: figure out how to skip if not necessary
+# FIXME: python version
+- name: Update LiteLLM database schema
+  command: "prisma db push --accept-data-loss --schema {{ litellm_venv_dir }}/lib/python3.9/site-packages/litellm/proxy/schema.prisma"
+  environment:
+    PATH: "{{ litellm_venv_dir }}/bin:{{ ansible_env.PATH }}"
+    DATABASE_URL: "{{ __litellm_database_url }}"
+  become: true
+  become_user: "{{ litellm_user }}"
 
 - name: Start and enable LiteLLM service
   systemd:

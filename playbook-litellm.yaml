@@ -3,30 +3,22 @@
 - name: Deploy LiteLLM Proxy Server
   hosts: litellm_servers
   become: true
-  vars:
-    __postgresql_version: "{{ postgresql_version | default('15') }}"
-    __postgresql_version_dotless: "{{ __postgresql_version | replace('.', '') }}"
   roles:
+    - role: galaxyproject.general.firewall
+      tags: firewall
     - role: galaxyproject.postgresql
       when: litellm_database_type == 'postgresql'
       tags: postgresql
     - role: galaxyproject.postgresql_objects
       when: litellm_database_type == 'postgresql'
+      become_user: postgres
       tags: postgresql
     - role: litellm
       tags: litellm
-    - role: usegalaxy_eu.certbot
-      tags: certbot
     - role: galaxyproject.nginx
       tags: nginx
   post_tasks:
-    - name: Configure firewall for LiteLLM
-      ufw:
-        rule: "{{ item.rule }}"
-        port: "{{ item.port }}"
-        proto: "{{ item.proto }}"
-        comment: "{{ item.comment | default(omit) }}"
-      loop: "{{ (litellm_firewall_ports | default([])) + (litellm_additional_firewall_ports | default([])) }}"
-      tags: firewall
-
-
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
+      tags: post

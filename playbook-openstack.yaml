@@ -7,4 +7,4 @@
     OS_CLOUD: "{{ os_cloud_id }}"
     OS_IDENTITY_API_VERSION: '3'
   roles:
-    - openstack
+    - galaxyproject.general.openstack
