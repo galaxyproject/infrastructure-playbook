@@ -10,10 +10,11 @@ set -o pipefail
 # /usr/bin/flock
 # /usr/bin/getconf
 # /usr/bin/mount
+# /usr/bin/mountpoint
 
 # arguments
 EXPECTED_JOB_PARTITION='resize-shm'
-MOUNTPOINT='/dev/shm'
+MOUNTPOINT='/mnt/shm'
 NEEDED_SIZE='470g'
 
 export POSIXLY_CORRECT=1
@@ -83,7 +84,7 @@ total_bytes=-1
     }
 }
 
-[ "$total_bytes" = "-1" ] && {
+[ "$total_bytes" = "-1" ] && [ "$MOUNTPOINT" = '/dev/shm' ] && {
     echo "unable to find mountpoint \"${MOUNTPOINT}\" using df"
     exit 1
 }
@@ -125,9 +126,17 @@ fi
 ##
 ## try to remount MOUNTPPOINT
 ##
-mount -o "remount,size=${new_total_bytes}" "${MOUNTPOINT}" || {
-    echo "unable to resize \"${MOUNTPOINT}\""
-    exit 1
-}
+if [ -e "$MOUNTPOINT" ] && mountpoint -q -- "$MOUNTPOINT"; then
+    mount -o "remount,size=${new_total_bytes}" "${MOUNTPOINT}" || {
+        echo "unable to resize \"${MOUNTPOINT}\""
+        exit 1
+    }
+else
+    mkdir -p "$MOUNTPOINT"
+    mount -t tmpfs -o "rw,nosuid,nodev,size=${new_total_bytes}" tmpfs "$MOUNTPOINT" || {
+        echo "unable to create \"${MOUNTPOINT}\""
+        exit 1
+    }
+fi
 
 exit 0
