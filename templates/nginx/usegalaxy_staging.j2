@@ -34,7 +34,7 @@ server {
 
     set $gx_host                $host;
     set $gx_x_real_ip           $remote_addr;
-    set $gx_x_forwarded_for     $proxy_add_x_forwarded_for;
+    set $gx_x_forwarded_for     $remote_addr;
     set $gx_x_forwarded_proto   $scheme;
 
     include {{ nginx_conf_dir }}/usegalaxy_staging_proxy.conf;

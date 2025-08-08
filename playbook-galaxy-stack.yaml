@@ -141,6 +141,7 @@
         entity: G-815688
         etype: group
         permissions: rx
+        default: true
         recalculate_mask: no_mask
         recursive: true
         state: present
