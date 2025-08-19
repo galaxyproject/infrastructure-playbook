@@ -258,7 +258,7 @@ slurm_partitions:
     #Nodes: "js2-tiny[2-3],js2-small[2-3],js2-quad[2-3],js2-medium[2-3],js2-large[2-7],js2-xl[2-7]"
     Nodes: "js2-medium[2-3],js2-large[2-7],js2-xl[2-7],js2-mem-large[6-15],js2-mem-xl[6-15]"
     DefaultTime: "06:00:00"
-    MaxTime: "96:00:00"
+    MaxTime: "30-00:20:00"
     MaxNodes: 1
     State: UP
   - name: tpv
@@ -266,13 +266,13 @@ slurm_partitions:
     #Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
     Nodes: "js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
     DefaultTime: "06:00:00"
-    MaxTime: "96:00:00"
+    MaxTime: "30-00:20:00"
     MaxNodes: 1
     State: UP
   - name: resize-shm
     Nodes: "js2-mem-large16"
     DefaultTime: "06:00:00"
-    MaxTime: "96:00:00"
+    MaxTime: "7-00:20:00"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
