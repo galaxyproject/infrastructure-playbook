@@ -99,3 +99,4 @@ slurm_scale_vars:
 slurm_scale_images:
   - usegalaxy-node
   - usegalaxy-gxit-node
+  - usegalaxy-gpu-xl-node
