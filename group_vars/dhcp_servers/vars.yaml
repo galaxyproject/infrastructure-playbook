@@ -42,7 +42,7 @@ dhcpd_groups:
         ethernet: 18:66:da:59:13:e2
         options:
           - 'smartos.console "ttyb"'
-          - 'smartos.version "20221020T001410Z"'
+          - 'smartos.version "20250501T000434Z"'
       - name: thumper.p
         ethernet: 00:14:4f:f2:b5:24
         options:
