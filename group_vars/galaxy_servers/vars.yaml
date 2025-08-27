@@ -67,6 +67,22 @@ galaxy_servers_group_files:
     owner: "{{ galaxy_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
+  - content: |
+      #!/bin/bash
+      .  {{ galaxy_venv_dir }}/bin/activate
+      GALAXY_CONFIG_FILE={{ galaxy_config_file }} python3 {{ galaxy_server_dir }}/scripts/secret_decoder_ring.py encode "$1"
+    dest: /home/{{ galaxy_user }}/bin/gxencode
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+  - content: |
+      #!/bin/bash
+      .  {{ galaxy_venv_dir }}/bin/activate
+      GALAXY_CONFIG_FILE={{ galaxy_config_file }} python3 {{ galaxy_server_dir }}/scripts/secret_decoder_ring.py decode "$1"
+    dest: /home/{{ galaxy_user }}/bin/gxdecode
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
 
 # TODO: remove
 #galaxy_servers_group_packages:
