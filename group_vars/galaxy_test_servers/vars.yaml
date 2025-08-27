@@ -125,10 +125,8 @@ galaxy_test_servers_group_telegraf_plugins_extra:
       - delete_timings = true
       - percentiles = [90]
       - metric_separator = "_"
-      - parse_data_dog_tags = false
       - allowed_pending_messages = 10000
       - percentile_limit = 1000
-      - udp_packet_size = 1500
       - '[inputs.statsd.tags]'
       - '  influxdb_database = "telegraf"'
   nginx:
