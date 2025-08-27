@@ -1,12 +1,12 @@
 ---
 
-galaxy_memory_limit: 10
+galaxy_memory_limit: 14
 
 galaxy_main_celery_servers_group_gravity_config:
   celery:
     enable: true
     enable_beat: true
-    concurrency: 8
+    concurrency: 2
     environment:
       TMPDIR: /corral4/main/celery-scratch
       # TODO: this can be removed once the base OS version of pango is >= 1.44.0
