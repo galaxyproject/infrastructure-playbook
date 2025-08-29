@@ -3,9 +3,6 @@
 host_packages:
   # for brc
   - parallel
-  # for litellm
-  - python3-pip
-  - python3-venv
 
 host_crontabs:
   - id: pulsar_clean_jobs
