@@ -10,7 +10,7 @@ os_flavor: m3.small
 
 os_security_groups:
   - default
-  - ssh-http-https
+  - litellm
 
 os_floating_ips:
   - "{{ lookup('dig', inventory_hostname) }}"
