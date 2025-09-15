@@ -29,6 +29,9 @@ smartos_images:
   # rocky-9.5 20250407 linux lx-dataset 2025-04-07
   - uuid: deb80d2a-88a7-40d6-b733-f0b766c6a9ec
     state: present
+    # base-64-lts 24.4.1 smartos zone-dataset 2025-01-06
+  - uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
+    state: present
 
 smartos_vms:
   - alias: cvmfs1-psu0
@@ -47,3 +50,21 @@ smartos_vms:
         vlan_id: 306
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: orval
+    brand: joyent
+    image_uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
+    hostname: orval
+    max_physical_memory: 8192
+    quota: 32768
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'orval.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+    # data/orval is added by hand with zonecfg
+    #delegate_dataset: true
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+      user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys ; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"

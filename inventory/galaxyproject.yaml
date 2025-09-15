@@ -50,6 +50,7 @@ all:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
         thumper.galaxyproject.org:
+        orval.galaxyproject.org:
         rochefort.galaxyproject.org:
         westvleteren.galaxyproject.org:
 
@@ -146,6 +147,7 @@ all:
     smartos_os_zones:
       hosts:
         thumper.galaxyproject.org:
+        orval.galaxyproject.org:
         rochefort.galaxyproject.org:
         westvleteren.galaxyproject.org:
       vars:
