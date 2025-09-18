@@ -19,9 +19,13 @@ RestartPreventExitStatus=51
 RestartForceExitStatus=52
 User=splunk
 Group=splunk
+{% if splunk_chown_cgroups %}
+NoNewPrivileges=yes
+AmbientCapabilities=CAP_DAC_READ_SEARCH
 Delegate=true
 CPUWeight=20
 MemoryMax=2G
+{% endif %}
 PermissionsStartOnly=true
 {% if splunk_chown_cgroups | default(true) %}
 {% if (splunk_cgroups_version | default(1)) < 2 %}
