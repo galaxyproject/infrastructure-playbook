@@ -12,6 +12,8 @@ server {
     access_log  /var/log/nginx/training.galaxyproject.org_access.log;
     error_log   /var/log/nginx/training.galaxyproject.org_error.log;
 
+    limit_req   zone=default burst=5 nodelay;
+
     #client_max_body_size 8M;
 
     #root        /srv/nginx/training.galaxyproject.org/root;

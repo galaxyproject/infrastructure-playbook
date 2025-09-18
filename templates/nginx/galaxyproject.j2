@@ -2,7 +2,9 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
+{# moved to nginx_conf_http
 proxy_cache_path    /var/lib/nginx/cache levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m use_temp_path=off;
+#}
 
 server {
     listen      *:443 ssl;

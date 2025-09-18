@@ -11,6 +11,9 @@ nginx_conf_http:
   #proxy_read_timeout: 3600
   client_max_body_size: 128m
   proxy_read_timeout: 300
+  proxy_cache_path: /var/lib/nginx/cache levels=1:2 keys_zone=s3_cache:10m max_size=128m inactive=60m use_temp_path=off
+  limit_req_zone: $binary_remote_addr zone=default:10m rate=1r/s
+  limit_req_status: 429
 
 nginx_flavor: light
 
@@ -27,9 +30,9 @@ certbot_domains:
   - artifact.galaxyproject.org
   - galaxyproject.org
   - www.galaxyproject.org
-  - training.galaxyproject.org
-  - iwc.galaxyproject.org
   - biostar.usegalaxy.org
   - biostar.galaxyproject.org
+  - training.galaxyproject.org
+  - iwc.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/

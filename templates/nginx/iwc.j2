@@ -9,6 +9,8 @@ server {
     access_log  /var/log/nginx/iwc.galaxyproject.org_access.log;
     error_log   /var/log/nginx/iwc.galaxyproject.org_error.log;
 
+    limit_req   zone=default burst=5 nodelay;
+
     location / {
         proxy_http_version     1.1;
         proxy_set_header       Host galaxyproject.github.io;
