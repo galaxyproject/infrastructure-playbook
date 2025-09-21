@@ -45,6 +45,7 @@ rabbitmq_servers_group_telegraf_plugins_extra:
       - password = "{{ telegraf_rabbitmq_password }}"
       - queue_name_include = ["*__setup", "*__kill", "*__status_update"]
       - queue_name_exclude = ["*_nagios__setup", "*_nagios__kill", "*_nagios__status_update"]
+      - metric_exclude = ["federation"]
 
 telegraf_x509_cert_port: 5671
 
