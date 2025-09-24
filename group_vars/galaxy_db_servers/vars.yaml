@@ -1,5 +1,17 @@
 ---
 
+galaxy_db_servers_group_templates:
+  - src: templates/telegraf/workflow_landing_requests.sh.j2
+    dest: "/srv/galaxy/{{ galaxy_instance_codename }}/workflow_landing_requests.sh"
+    owner: root
+    group: root
+    mode: '0755'
+  - src: templates/telegraf/tool_landing_requests.sh.j2
+    dest: "/srv/galaxy/{{ galaxy_instance_codename }}/tool_landing_requests.sh"
+    owner: root
+    group: root
+    mode: '0755'
+
 # Always restart PostgreSQL on exit
 galaxy_db_servers_group_systemd_overrides:
   - name: "postgresql-{{ __postgresql_version_dotless }}"
@@ -167,6 +179,24 @@ galaxy_db_servers_group_telegraf_plugins_extra:
       - timeout = "15s"
       - data_format = "influx"
       - interval = "1m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_workflow_landing_requests:
+    plugin: "exec"
+    config:
+      - commands = ["/srv/galaxy/{{ galaxy_instance_codename }}/workflow_landing_requests.sh"]
+      - timeout = "30s"
+      - data_format = "influx"
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_tool_landing_requests:
+    plugin: "exec"
+    config:
+      - commands = ["/srv/galaxy/{{ galaxy_instance_codename }}/tool_landing_requests.sh"]
+      - timeout = "30s"
+      - data_format = "influx"
+      - interval = "5m"
       - '[inputs.exec.tags]'
       - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_disk_usage:
