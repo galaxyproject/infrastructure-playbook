@@ -35,12 +35,12 @@ miniconda_channels:
   - conda-forge
   - bioconda
 miniconda_conda_environments:
-  __python@3.11:
+  __python@3.13:
     packages:
-      - python=3.11
-  __curl@7.71:
-    packages:
-      - curl=7.71
+      - python=3.13
+  #__curl@7.71:
+  #  packages:
+  #    - curl=7.71
   colabfold_msa_server:
     channels:
       - conda-forge
@@ -57,6 +57,8 @@ miniconda_conda_environments:
 #  - "{{ galaxy_instance_codename }}_pulsar"
 #
 #supervisord_unprivileged_command: "{ date; pgrep -u {{ ansible_user }} supervisord || /bin/bash '{{ _rockfish_home_root }}/bin/supervisord-launch.sh'; } >> {{ supervisord_log_dir }}/supervisord-launch.log 2>&1"
+
+pulsar_package_version: "0.15.10"
 
 pulsar_root: "{{ _rockfish_instance_root }}/pulsar"
 #pulsar_restart_handler_name: supervisor restart pulsar
@@ -80,7 +82,7 @@ pulsar_systemd_unit_options: "{{ colabfold_msa_server_systemd_unit_options }}"
 
 galaxy_user: galaxy
 pulsar_privsep_user: "{{ galaxy_user }}"
-pip_virtualenv_command: "{{ miniconda_prefix }}/envs/__python@3.11/bin/python3 -m venv"
+pip_virtualenv_command: "{{ miniconda_prefix }}/envs/__python@3.13/bin/python3 -m venv"
 pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url https://pypi.org/simple"
 
 pulsar_pycurl_ssl_library: openssl
@@ -95,6 +97,7 @@ pulsar_job_metrics_plugins:
   - type: cgroup
 
 pulsar_optional_dependencies:
+  - setuptools
   - pycurl
   - kombu
 
