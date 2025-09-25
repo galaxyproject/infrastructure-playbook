@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+# Query workflow_landing_request table for metrics
+# Output in InfluxDB line protocol format for Telegraf
+
+PGDATABASE="galaxy_{{ galaxy_instance_codename }}"
+
+# Total workflow landing requests
+total=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request;")
+echo "workflow_landing_requests_total value=${total}i"
+
+# Requests by day (last 30 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day count; do
+SELECT
+    DATE(create_time) as day,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '30 days'
+GROUP BY DATE(create_time)
+ORDER BY day;
+EOF
+    echo "workflow_landing_requests_daily,day=${day} count=${count}i"
+done
+
+# Requests by workflow_id (top 10)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_id count; do
+SELECT
+    COALESCE(workflow_id::text, 'null') as workflow_id,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '7 days'
+GROUP BY workflow_id
+ORDER BY count DESC
+LIMIT 10;
+EOF
+    workflow_id_escaped=$(echo "$workflow_id" | sed 's/[,= ]/\\&/g')
+    echo "workflow_landing_requests_by_workflow,workflow_id=${workflow_id_escaped} count=${count}i"
+done
+
+# Public vs Private requests (last 24 hours)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r visibility count; do
+SELECT
+    CASE WHEN public THEN 'public' ELSE 'private' END as visibility,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '24 hours'
+GROUP BY public;
+EOF
+    echo "workflow_landing_requests_visibility,visibility=${visibility} count=${count}i"
+done
+
+# Requests with user vs anonymous (last 24 hours)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r user_type count; do
+SELECT
+    CASE WHEN user_id IS NULL THEN 'anonymous' ELSE 'registered' END as user_type,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '24 hours'
+GROUP BY (user_id IS NULL);
+EOF
+    echo "workflow_landing_requests_user_type,user_type=${user_type} count=${count}i"
+done
+
+# Recent activity (last 1 hour, 24 hours, 7 days)
+recent_1h=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request WHERE create_time >= NOW() - INTERVAL '1 hour';")
+recent_24h=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request WHERE create_time >= NOW() - INTERVAL '24 hours';")
+recent_7d=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request WHERE create_time >= NOW() - INTERVAL '7 days';")
+
+echo "workflow_landing_requests_recent,period=1h value=${recent_1h}i"
+echo "workflow_landing_requests_recent,period=24h value=${recent_24h}i"
+echo "workflow_landing_requests_recent,period=7d value=${recent_7d}i"
