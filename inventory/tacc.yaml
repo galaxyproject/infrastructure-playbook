@@ -230,9 +230,7 @@ all:
         galaxy-main4.tacc.utexas.edu:
           ansible_become: true
         galaxy-db.tacc.utexas.edu:
-          # annoyingly, this overrides become on plays
-          #ansible_become: false
-          ansible_user: root
+          ansible_become: true
         galaxy-vgp.tacc.utexas.edu:
           #ansible_become: false
           ansible_user: root
