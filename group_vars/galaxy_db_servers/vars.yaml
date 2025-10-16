@@ -29,6 +29,12 @@ galaxy_db_servers_group_authorized_key_users:
       - marius_van_den_beek
       - john_davis
 
+galaxy_db_servers_group_templates:
+  # a quote mess
+  - src: templates/telegraf/galaxy_tool_usage.sh.j2
+    dest: /usr/local/bin/galaxy_tool_usage.sh
+    mode: "0755"
+
 galaxy_db_servers_group_packages:
   # for gxadmin
   - make
@@ -66,6 +72,15 @@ galaxy_db_servers_group_telegraf_plugins_extra:
   #    - interval = "30m"
   #    - '[inputs.exec.tags]'
   #    - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
+  galaxy_tool_usage:
+    plugin: "exec"
+    config:
+      - commands = ["/bin/bash /usr/local/bin/galaxy_tool_usage.sh"]
+      - timeout = "300s"
+      - data_format = "influx"
+      - interval = "24h"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "{{ galaxy_instance_codename }}_sql"'
   galaxy_tools_likely_broken_1w:
     plugin: "exec"
     config:
