@@ -1,17 +1,5 @@
 ---
 
-galaxy_db_servers_group_templates:
-  - src: templates/telegraf/workflow_landing_requests.sh.j2
-    dest: "/usr/local/bin/workflow_landing_requests.sh"
-    owner: root
-    group: root
-    mode: '0755'
-  - src: templates/telegraf/tool_landing_requests.sh.j2
-    dest: "/usr/local/bin/tool_landing_requests.sh"
-    owner: root
-    group: root
-    mode: '0755'
-
 # Always restart PostgreSQL on exit
 galaxy_db_servers_group_systemd_overrides:
   - name: "postgresql-{{ __postgresql_version_dotless }}"
@@ -46,6 +34,13 @@ galaxy_db_servers_group_templates:
   - src: templates/telegraf/galaxy_tool_usage.sh.j2
     dest: /usr/local/bin/galaxy_tool_usage.sh
     mode: "0755"
+  - src: templates/telegraf/workflow_landing_requests.sh.j2
+    dest: "/usr/local/bin/workflow_landing_requests.sh"
+    mode: "0755"
+  - src: templates/telegraf/tool_landing_requests.sh.j2
+    dest: "/usr/local/bin/tool_landing_requests.sh"
+    mode: "0755"
+
 
 galaxy_db_servers_group_packages:
   # for gxadmin
@@ -53,6 +48,9 @@ galaxy_db_servers_group_packages:
   # for Enis
   - jq
   - zip
+
+# Doesn't run https, the cert is for Vault
+telegraf_x509_cert_port: 8200
 
 _override_telegraf_agent_output:
   - type: influxdb

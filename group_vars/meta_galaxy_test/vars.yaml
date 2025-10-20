@@ -59,6 +59,7 @@ certbot_domains:
 
 certbot_post_renewal: |
     systemctl restart nginx || true
+    pkill -HUP vault || true
 
 ## Used by: nginx template
 galaxy_server_dir: /cvmfs/test.galaxyproject.org/galaxy
