@@ -6,7 +6,7 @@ galaxy_main_celery_servers_group_gravity_config:
   celery:
     enable: true
     enable_beat: true
-    concurrency: 2
+    concurrency: 4
     environment:
       TMPDIR: /corral4/main/celery-scratch
       # TODO: this can be removed once the base OS version of pango is >= 1.44.0
