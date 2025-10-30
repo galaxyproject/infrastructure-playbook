@@ -3,7 +3,7 @@
 ##
 
 # Rate limiting
-limit_req_zone $rate_limit_key zone=strict:10m rate=1r/s;
+limit_req_zone $rate_limit_key zone=strict:10m rate=4r/s;
 
 # Map for conditional rate limiting - exclude tusd and job_files from rate limiting
 map $request_uri $rate_limit_key {
