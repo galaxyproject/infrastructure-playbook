@@ -13,6 +13,7 @@ nginx_ssl_servers:
 
 certbot_domains:
   - vgp.usegalaxy.org
+  - '*.ep.interactivetool.vgp.usegalaxy.org'
 
 nginx_upload_module_url: false
 nginx_load_modules: []
