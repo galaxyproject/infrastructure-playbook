@@ -1,0 +1,15 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# Rate limiting
+limit_req_zone $rate_limit_key zone=strict:10m rate=1r/s;
+
+# Map for conditional rate limiting - exclude tusd and job_files from rate limiting
+map $request_uri $rate_limit_key {
+    ~^/api/upload/resumable_upload "";
+    ~^/api/job_files "";
+    default $binary_remote_addr;
+}
+
+# vim: set filetype=nginx

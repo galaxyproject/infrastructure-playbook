@@ -2,13 +2,6 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-# Map for conditional rate limiting - exclude tusd and job_files from rate limiting
-map $request_uri $rate_limit_key {
-    ~^/api/upload/resumable_upload "";
-    ~^/api/job_files "";
-    default $binary_remote_addr;
-}
-
 # server {
 
     # SEMrush crawler keeps submitting hundreds of jobs
@@ -36,8 +29,8 @@ map $request_uri $rate_limit_key {
     # Enable HSTS (age is 180 days)
     add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
-    access_log  /var/log/nginx/main.access.log;
-    error_log   /var/log/nginx/main.error.log;
+    #access_log  /var/log/nginx/main.access.log;
+    #error_log   /var/log/nginx/main.error.log;
 
     location / {
         try_files false @galaxy;
@@ -54,7 +47,13 @@ map $request_uri $rate_limit_key {
 
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
     location /api/ {
-        limit_req zone=strict burst=20 nodelay;
+        limit_req zone=strict burst=25 nodelay;
+        limit_req_status 429;
+        try_files false @galaxy;
+    }
+
+    location /api/invocations/ {
+        limit_req zone=strict burst=50 nodelay;
         limit_req_status 429;
         try_files false @galaxy;
     }

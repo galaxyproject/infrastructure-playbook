@@ -28,3 +28,4 @@ nginx_ssl_servers:
 nginx_extra_configs:
   - usegalaxy_rewrites.conf
   - usegalaxy_proxy.conf
+  - conf.d/rate_limit.conf
