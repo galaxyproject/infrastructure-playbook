@@ -57,7 +57,7 @@ nginx_default_redirect_uri: https://usegalaxy.org$request_uri
 _nginx_conf_http:
   client_max_body_size: 10g
   proxy_read_timeout: 600
-  limit_req_zone: $binary_remote_addr zone=strict:10m rate=1r/s
+  limit_req_zone: $rate_limit_key zone=strict:10m rate=1r/s
 
 nginx_servers:
   - default
