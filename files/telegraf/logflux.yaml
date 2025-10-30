@@ -1,0 +1,27 @@
+---
+
+last_timestamp_file: /var/lib/telegraf/logflux_last_timestamp
+
+filters:
+  - key: _SYSTEMD_UNIT
+    value: nginx.service
+
+rules:
+  - name: nginx_rate_limit
+    match:
+      key: MESSAGE
+      regex: '^.*\[error\].* limiting requests, excess: (?P<excess>\d+\.\d+) by zone "(?P<zone>[^"]+)", client: (?P<client>[^,]+), server: [^,]+, request: "(?P<method>\S+) (?P<path>\S+) \S+", host: "[^"]+"'
+    fields:
+      value:
+        lookup: MESSAGE.excess
+        type: float
+    tags:
+      zone: MESSAGE.zone
+      client: MESSAGE.client
+      path:
+        lookup: MESSAGE.path
+        transform:
+          - match: '(?<=/)[0-9a-fA-F]{16,}(?=(?:/|$|[/?]))'
+            sub: 'ID'
+          - match: '\?.*'
+            sub: ''

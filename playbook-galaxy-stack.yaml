@@ -148,6 +148,7 @@
   roles:
     - role: galaxyproject.tusd
     - role: galaxyproject.general.cron
+    - role: galaxyproject.general.systemd  # for persistent journald
   post_tasks:
     - name: Collect list of ansible_cron_galaxy_* cron jobs
       ansible.builtin.find:
@@ -164,6 +165,51 @@
       when: "(item | basename | regex_replace('^ansible_cron_', '')) not in ([lookup('galaxyproject.general.inheritance_chain', 'crontabs')] | flatten | map(attribute='id'))"
       loop: "{{ __galaxy_cron_jobs.files | map(attribute='path') }}"
   tags: galaxy
+
+- name: Galaxy Load Balancers Additional Tasks
+  hosts: galaxy_test_servers:galaxy_main_load_balancers
+  tasks:
+    - name: Create logflux venv
+      ansible.builtin.pip:
+        name:
+          - git+https://github.com/natefoo/logflux.git@journald#egg=logflux
+          - tzlocal
+        virtualenv: /opt/logflux
+        virtualenv_command: python3 -m venv --system-site-packages
+    - name: Create logflux config
+      ansible.builtin.copy:
+        src: files/telegraf/logflux.yaml
+        dest: /etc/telegraf/logflux.yaml
+        mode: "0644"
+        owner: telegraf
+        group: telegraf
+    - name: Set default ACL granting journal access
+      ansible.posix.acl:
+        path: /var/log/journal
+        entity: "{{ item }}"
+        etype: group
+        permissions: rx
+        default: true
+        recalculate_mask: no_mask
+        state: present
+      loop:
+        - telegraf
+        - G-815688
+    - name: Set ACLs granting journal access
+      ansible.posix.acl:
+        path: /var/log/journal
+        entity: "{{ item }}"
+        etype: group
+        permissions: rx
+        recalculate_mask: no_mask
+        recursive: true
+        state: present
+      loop:
+        - telegraf
+        - G-815688
+  roles:
+    - role: galaxyproject.general.systemd  # for persistent journald
+  tags: load_balancers
 
 # TODO: make a role
 - name: Hashicorp Vault

@@ -1,5 +1,7 @@
 ---
 
+systemd_journald_persistent: true
+
 # gxsrc for static and error documents
 galaxy_main_load_balancers_group_groups:
   - "{{ tacc_groups.gxsrc }}"
@@ -17,6 +19,18 @@ galaxy_main_load_balancers_group_directories:
     owner: gxsrc
     group: G-803372
     mode: "0755"
+
+
+galaxy_main_load_balancers_group_telegraf_plugins_extra:
+  nginx_rate_limit:
+    plugin: "exec"
+    config:
+      - commands = ["/opt/logflux/bin/logflux --telegraf --config /etc/telegraf/logflux.yaml"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "1m"
+      #- '[inputs.exec.tags]'
+      #- '  influxdb_database = "telegraf"'
 
 # must run as g2main for x-accel-redirect
 #nginx_conf_user: nginx

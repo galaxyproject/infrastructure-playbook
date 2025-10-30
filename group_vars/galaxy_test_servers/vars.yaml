@@ -132,3 +132,12 @@ galaxy_test_servers_group_telegraf_plugins_extra:
   nginx:
     config:
       - urls = ["http://localhost/_status"]
+  nginx_rate_limit:
+    plugin: "exec"
+    config:
+      - commands = ["/opt/logflux/bin/logflux --telegraf --config /etc/telegraf/logflux.yaml"]
+      - timeout = "60s"
+      - data_format = "influx"
+      - interval = "1m"
+      #- '[inputs.exec.tags]'
+      #- '  influxdb_database = "telegraf"'

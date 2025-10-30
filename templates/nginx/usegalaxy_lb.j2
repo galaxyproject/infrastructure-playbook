@@ -68,6 +68,9 @@ server {
     access_log  /var/log/nginx/main.access.log;
     error_log   /var/log/nginx/main.error.log;
 
+    # logflux logger
+    error_log syslog:server=unix:/run/systemd/journal/dev-log error;
+
     client_max_body_size 50g;
 
     # usegalaxy.org link shortening

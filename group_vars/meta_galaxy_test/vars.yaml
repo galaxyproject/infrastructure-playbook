@@ -28,6 +28,9 @@ nginx_job_files_upload_store: "/corral4/{{ galaxy_instance_codename }}/upload_jo
 ## Used by: gravity_config
 galaxy_interactivetools_map: "/srv/galaxy/{{ galaxy_instance_codename }}/var/interactivetools_map.sqlite"
 
+# default, can be overridden
+galaxy_memory_limit: 4
+
 # Test-specific TIaaS vars
 tiaas_galaxy_db_host: "/var/run/postgresql/"
 tiaas_disassociate_training_roles:
