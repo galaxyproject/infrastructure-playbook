@@ -2,14 +2,33 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-# Rate limiting
-limit_req_zone $rate_limit_key zone=strict:10m rate=4r/s;
+# Chained maps for rate limiting:
+# 1. First check if path should be exempted (tusd, job_files)
+# 2. Then use session cookie if present, otherwise IP address
+# 3. Finally prefer API key if present, otherwise use result from step 2
 
-# Map for conditional rate limiting - exclude tusd and job_files from rate limiting
-map $request_uri $rate_limit_key {
-    ~^/api/upload/resumable_upload "";
-    ~^/api/job_files "";
-    default $binary_remote_addr;
+# Exempt specific paths from rate limiting entirely
+map $request_uri $path_exempt {
+    ~^/api/upload/resumable_upload "exempt";
+    ~^/api/job_files "exempt";
+    default "not_exempt";
 }
+
+# Use session cookie if present, otherwise IP address
+map $cookie_galaxysession $cookie_key {
+    default $binary_remote_addr;
+    "~.+" $cookie_galaxysession;
+}
+
+# Prefer API key, then cookie/IP, but exempt if path is exempted
+map $http_x_api_key:$path_exempt $zone_key {
+    ~^.+:exempt "";
+    ~^:exempt "";
+    ~^.+:not_exempt $http_x_api_key;
+    default $cookie_key;
+}
+
+# Rate limiting zone
+limit_req_zone $zone_key zone=strict:10m rate=4r/s;
 
 # vim: set filetype=nginx

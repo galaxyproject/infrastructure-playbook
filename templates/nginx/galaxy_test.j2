@@ -19,11 +19,30 @@
 #    }
 #}
 
-# Map for conditional rate limiting - exclude tusd and job_files from rate limiting
-map $request_uri $rate_limit_key {
-    ~^/api/upload/resumable_upload "";
-    ~^/api/job_files "";
+# Chained maps for rate limiting:
+# 1. First check if path should be exempted (tusd, job_files)
+# 2. Then use session cookie if present, otherwise IP address
+# 3. Finally prefer API key if present, otherwise use result from step 2
+
+# Exempt specific paths from rate limiting entirely
+map $request_uri $path_exempt {
+    ~^/api/upload/resumable_upload "exempt";
+    ~^/api/job_files "exempt";
+    default "not_exempt";
+}
+
+# Use session cookie if present, otherwise IP address
+map $cookie_galaxysession $cookie_key {
     default $binary_remote_addr;
+    "~.+" $cookie_galaxysession;
+}
+
+# Prefer API key, then cookie/IP, but exempt if path is exempted
+map $http_x_api_key:$path_exempt $zone_key {
+    ~^.+:exempt "";
+    ~^:exempt "";
+    ~^.+:not_exempt $http_x_api_key;
+    default $cookie_key;
 }
 
 map $status $log_404 {
@@ -31,7 +50,7 @@ map $status $log_404 {
     default 0;
 }
 
-limit_req_zone $rate_limit_key zone=limit_test:10m rate=1r/s;
+limit_req_zone $zone_key zone=limit_test:10m rate=4r/s;
 
 #log_format status_req_only '__logflux_access_log $status "$request"';
 
@@ -70,7 +89,7 @@ server {
 
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
     location /api/ {
-        limit_req zone=limit_test burst=20 nodelay;
+        limit_req zone=limit_test burst=40 nodelay;
         limit_req_status 429;
         try_files false @galaxy;
     }
