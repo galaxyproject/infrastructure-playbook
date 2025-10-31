@@ -1,0 +1,10 @@
+---
+# AWS Services (not EC2 instances)
+
+all:
+  vars:
+    ansible_connection: local
+  children:
+    cloudfront_lambda:
+      hosts:
+        cloudfront-gtn:

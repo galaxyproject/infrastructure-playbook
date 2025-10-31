@@ -1,0 +1,118 @@
+---
+
+# If the Lambda function is updated, the CloudFront distribution will be updated, updating
+# cloudfront_distribution_version is only necessary when an updated is needed without changing the function.
+
+# There is no correlation between this version and the Lambda ARN version
+lambda_function_version: "1"
+cloudfront_distribution_version: "1"
+
+aws_region: us-east-1
+
+# Lambda function configuration
+lambda_function_name: training-gh-pages-rewrite
+lambda_function_file: files/lambda/training-gh-pages-rewrite/index.mjs
+
+lambda_function_description: "GTN Rewrites v{{ lambda_function_version }}"
+lambda_runtime: nodejs22.x
+lambda_handler: index.handler
+
+# This role is not managed by this playbook
+lambda_role_arn: arn:aws:iam::601244181253:role/service-role/training-gh-pages-rewrite-role-fn1cfol1
+
+# CloudFront configuration
+cloudfront_distribution_id: EKU89P483XVTT
+cloudfront_distribution_comment: "Galaxy Training Network v{{ cloudfront_distribution_version }}"
+cloudfront_enabled: true
+cloudfront_price_class: PriceClass_100
+cloudfront_http_version: http2
+cloudfront_ipv6_enabled: true
+
+cloudfront_aliases:
+  - training.galaxyproject.org
+
+cloudfront_viewer_certificate:
+  acm_certificate_arn: arn:aws:acm:us-east-1:601244181253:certificate/48aa2f79-1422-417b-974e-4fb1c5503d98
+  minimum_protocol_version: TLSv1.2_2021
+  ssl_support_method: sni-only
+
+cloudfront_origins:
+  - id: galaxy-training.s3-website.us-east-1.amazonaws.com
+    domain_name: galaxy-training.s3-website.us-east-1.amazonaws.com
+    custom_origin_config:
+      http_port: 80
+      https_port: 443
+      origin_protocol_policy: http-only
+      origin_ssl_protocols:
+        items:
+          - SSLv3
+          - TLSv1
+          - TLSv1.1
+          - TLSv1.2
+      origin_read_timeout: 30
+      origin_keepalive_timeout: 5
+  - id: galaxyproject.github.io-training
+    domain_name: galaxyproject.github.io
+    custom_origin_config:
+      http_port: 80
+      https_port: 443
+      origin_protocol_policy: https-only
+      origin_ssl_protocols:
+        items:
+          - TLSv1.2
+      origin_read_timeout: 30
+      origin_keepalive_timeout: 5
+
+cloudfront_default_cache_behavior:
+  target_origin_id: galaxyproject.github.io-training
+  viewer_protocol_policy: redirect-to-https
+  allowed_methods:
+    items:
+      - HEAD
+      - DELETE
+      - POST
+      - GET
+      - OPTIONS
+      - PUT
+      - PATCH
+    cached_methods:
+      - HEAD
+      - GET
+  compress: true
+  smooth_streaming: false
+  # Managed-CachingOptimized
+  cache_policy_id: 658327ea-f89d-4fab-a63d-7e88639e58f6
+  # Managed-AllViewerExceptHostHeader
+  origin_request_policy_id: b689b0a8-53d0-40ab-baf2-68738e2966ac
+  #lambda_function_associations: [{'lambda_function_arn': lambda_arn_to_use, 'event_type': 'origin-request'}]
+
+cloudfront_cache_behaviors:
+  - path_pattern: /archive/*
+    target_origin_id: galaxy-training.s3-website.us-east-1.amazonaws.com
+    viewer_protocol_policy: redirect-to-https
+    allowed_methods:
+      items:
+        - HEAD
+        - GET
+      cached_methods:
+        - HEAD
+        - GET
+    compress: true
+    smooth_streaming: false
+    # Managed-CachingOptimized
+    cache_policy_id: 658327ea-f89d-4fab-a63d-7e88639e58f6
+  - path_pattern: /videos/topic/*
+    target_origin_id: galaxy-training.s3-website.us-east-1.amazonaws.com
+    viewer_protocol_policy: redirect-to-https
+    allowed_methods:
+      items:
+        - HEAD
+        - GET
+      cached_methods:
+        - HEAD
+        - GET
+    compress: true
+    smooth_streaming: false
+    # Managed-CachingOptimized
+    cache_policy_id: 658327ea-f89d-4fab-a63d-7e88639e58f6
+

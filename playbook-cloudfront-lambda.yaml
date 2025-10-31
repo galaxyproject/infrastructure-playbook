@@ -1,0 +1,184 @@
+---
+
+# This playbook deploys CloudFront distributions with associated Lambda@Edge functions
+#
+# The Lambda and CloudFront modules provide limited idempotency. As a result, version vars control whether updates are
+# performed.
+#
+# Prerequisites:
+#
+# - This playbook assumes the Lambda@Edge function is to be used as the origin-request function on the default cache
+#   behavior but could be updated for more general use easily enough.
+# - The Lambda function itself does not need to exist beforehand, this playbook can create it. However, the function's
+#   execution role must already exist (and be modified to allow edgelambda.amazonaws.com).
+# - The CloudFront distribution must already exist, although this playbook will mostly configure it as long as it does
+#   exist.
+# - The ACM certificate must already exist
+# - Your Ansible venv must contain: pip install boto3 awscli
+#
+# The playbook runs locally, use with:
+#
+#   ansible-playbook -i inventory/aws.yaml playbook-cloudfront-lambda.yaml [--limit=<inventory_hostname>]
+#
+# There is no deployer credential handling in the playbook, this is expected to be done externally
+
+- name: Deploy Lambda@Edge and Update CloudFront Distribution
+  hosts: cloudfront_lambda
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: block
+      block:
+
+        # https://github.com/ansible-collections/amazon.aws/issues/2754
+        - name: Check if Lambda function exists
+          ansible.builtin.command:
+            cmd: >
+              aws lambda get-function
+              --function-name {{ lambda_function_name }}
+              --region {{ aws_region }}
+          register: __current_lambda
+          failed_when: "__current_lambda is failed and 'ResourceNotFoundException' not in __current_lambda.stderr"
+          changed_when: false
+
+        - name: Get current Lambda function info
+          amazon.aws.lambda_info:
+            function_name: "{{ lambda_function_name }}"
+            region: "{{ aws_region }}"
+          when: "__current_lambda is not failed and 'ResourceNotFoundException' not in __current_lambda.stderr"
+          register: __current_lambda_info
+
+        - name: Get current Lambda version
+          ansible.builtin.set_fact:
+            __lambda_current_version: "{{ __current_lambda_info.functions[0].tags.ansible_idempotency_version | default('0.0.0') }}"
+
+        - name: Check if Lambda code needs update
+          ansible.builtin.set_fact:
+            __lambda_needs_update: "{{ __lambda_current_version != lambda_function_version }}"
+
+        - name: Display Lambda update status
+          ansible.builtin.debug:
+            msg: >-
+              Lambda code {{ 'needs update' if __lambda_needs_update else 'is up to date' }}
+              (Current version: {{ __lambda_current_version }}, Desired version: {{ lambda_function_version }})
+
+        - name: Create temporary directory for packaging
+          ansible.builtin.tempfile:
+            state: directory
+            suffix: lambda
+          register: __lambda_temp_dir
+          when: __lambda_needs_update | bool
+
+        - name: Copy Lambda function to temp directory
+          ansible.builtin.copy:
+            src: "{{ lambda_function_file }}"
+            dest: "{{ __lambda_temp_dir.path }}/index.mjs"
+          when: __lambda_needs_update | bool
+
+        - name: Create Lambda deployment package
+          community.general.archive:
+            path: "{{ __lambda_temp_dir.path }}/index.mjs"
+            dest: "{{ __lambda_temp_dir.path }}/lambda.zip"
+            format: zip
+          when: __lambda_needs_update | bool
+
+        - name: Update Lambda function code and description
+          amazon.aws.lambda:
+            name: "{{ lambda_function_name }}"
+            region: "{{ aws_region }}"
+            zip_file: "{{ __lambda_temp_dir.path }}/lambda.zip"
+            description: "{{ lambda_function_description }}"
+            role: "{{ lambda_role_arn }}"
+            runtime: "{{ lambda_runtime }}"
+            handler: "{{ lambda_handler }}"
+            tags:
+              ansible_idempotency_version: "{{ lambda_function_version }}"
+            state: present
+          register: __lambda_update
+          when: __lambda_needs_update | bool
+
+        - name: Wait for Lambda function to be updated
+          amazon.aws.lambda_info:
+            function_name: "{{ lambda_function_name }}"
+            region: "{{ aws_region }}"
+          register: __lambda_status
+          until: (__lambda_status.functions[0].last_update_status | default("Undefined")) == "Successful"
+          retries: 30
+          delay: 2
+          #when: __lambda_needs_update | bool
+
+        - name: Set Lambda version ARN
+          ansible.builtin.set_fact:
+            __lambda_function_arn: "{{ __lambda_status.functions[0].versions[-1].function_arn }}"
+            __lambda_function_description: "{{ __lambda_status.functions[0].versions[-1].description }}"
+
+        # Insurance for relying on the ordering of __lambda_status.functions[0].versions
+        - name: Ensure that Lambda ARN version is not $LATEST
+          ansible.builtin.assert:
+            that:
+              - not __lambda_function_arn.endswith("$LATEST")
+              - __lambda_function_description == lambda_function_description
+
+        - name: Display Lambda version ARN
+          ansible.builtin.debug:
+            msg: "Using Lambda version: {{ __lambda_function_arn }}"
+
+        # This doesn't return tags so we just use the comment comparison =(
+        - name: Get CloudFront distribution info
+          community.aws.cloudfront_distribution_info:
+            distribution_id: "{{ cloudfront_distribution_id }}"
+            distribution: true
+          register: __cloudfront_state
+
+        - name: Set Cloudfront current facts
+          ansible.builtin.set_fact:
+            __cloudfront_current_function_arn: "{{ __cloudfront_state.cloudfront[cloudfront_distribution_id].Distribution.DistributionConfig.DefaultCacheBehavior.LambdaFunctionAssociations.Items[0].LambdaFunctionARN }}"
+            __cloudfront_current_version: "{{ __cloudfront_state.cloudfront[cloudfront_distribution_id].Distribution.DistributionConfig.Comment.split()[-1].strip('v') }}"
+
+        - name: Check if CloudFront distribution needs update
+          ansible.builtin.set_fact:
+            __cloudfront_needs_update: >-
+              {{
+                (
+                  __cloudfront_current_function_arn != __lambda_function_arn
+                ) or (
+                  __cloudfront_current_version != cloudfront_distribution_version
+                )
+              }}
+
+        - name: Display CloudFront update status
+          ansible.builtin.debug:
+            msg: >-
+              CloudFront distribution {{ 'needs update' if __cloudfront_needs_update else 'is up to date' }}
+              (Current version: {{ __cloudfront_current_version }}, Desired version: {{ cloudfront_distribution_version }})
+
+        - name: Update CloudFront distribution
+          community.aws.cloudfront_distribution:
+            distribution_id: "{{ cloudfront_distribution_id }}"
+            #caller_reference: "{{ cloudfront_caller_reference }}"
+            comment: "{{ cloudfront_distribution_comment }}"
+            aliases: "{{ cloudfront_aliases }}"
+            enabled: "{{ cloudfront_enabled }}"
+            price_class: "{{ cloudfront_price_class }}"
+            http_version: "{{ cloudfront_http_version }}"
+            ipv6_enabled: "{{ cloudfront_ipv6_enabled }}"
+            viewer_certificate: "{{ cloudfront_viewer_certificate }}"
+            origins: "{{ cloudfront_origins }}"
+            default_cache_behavior: "{{ cloudfront_default_cache_behavior | combine({'lambda_function_associations': [{'lambda_function_arn': __lambda_function_arn, 'event_type': 'origin-request'}]}) }}"
+            cache_behaviors: "{{ cloudfront_cache_behaviors }}"
+            tags:
+              ansible_idempotency_version: "{{ cloudfront_distribution_version }}"
+            state: present
+            wait: true
+            wait_timeout: 600
+          when: __cloudfront_needs_update
+          register: __cloudfront_update
+
+      always:
+
+        - name: Clean up temporary directory
+          ansible.builtin.file:
+            path: "{{ __lambda_temp_dir.path }}"
+            state: absent
+          when: __lambda_temp_dir is defined and __lambda_temp_dir.path is defined
