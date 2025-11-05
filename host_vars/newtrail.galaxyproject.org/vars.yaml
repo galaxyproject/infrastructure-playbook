@@ -35,8 +35,6 @@ nginx_ssl_servers:
   - my.galaxy.training
   - status
   - charts
-  - training
-  - iwc
 
 certbot_domains:
   - newtrail.galaxyproject.org
@@ -59,8 +57,6 @@ certbot_domains:
   - my.gat.galaxy.training
   - status.galaxyproject.org
   - charts.galaxyproject.org
-  - training.galaxyproject.org
-  - iwc.galaxyproject.org
 
 nginx_extra_configs:
   - wiki_hub_rewrites.conf

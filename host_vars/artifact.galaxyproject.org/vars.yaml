@@ -22,8 +22,6 @@ nginx_servers:
 
 nginx_ssl_servers:
   - galaxyproject
-  - training
-  - iwc
   - biostar
 
 certbot_domains:
@@ -32,7 +30,5 @@ certbot_domains:
   - www.galaxyproject.org
   - biostar.usegalaxy.org
   - biostar.galaxyproject.org
-  - training.galaxyproject.org
-  - iwc.galaxyproject.org
 
 nginx_default_redirect_uri: https://galaxyproject.org/
