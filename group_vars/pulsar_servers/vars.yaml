@@ -6,6 +6,9 @@ pulsar_servers_group_directories:
     mode: "0755"
 
 pulsar_servers_group_templates:
+  - src: admin/pulsar-scratch-full.j2
+    dest: "bin/pulsar-scratch-full"
+    mode: "0755"
   - src: admin/pulsar-clean-jobs.j2
     dest: "bin/pulsar-clean-jobs"
     mode: "0755"
