@@ -52,12 +52,6 @@
         try_files false @galaxy;
     }
 
-    location /api/invocations/ {
-        limit_req zone=strict burst=50 nodelay;
-        limit_req_status 429;
-        try_files false @galaxy;
-    }
-
     location @galaxy {
         proxy_pass         http://galaxy;
         proxy_redirect     off;
