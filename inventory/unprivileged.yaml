@@ -17,6 +17,9 @@ all:
     login4.frontera.tacc.utexas.edu:
       ansible_user: xcgalaxy
       ansible_ssh_executable: ./.ssh-keyboard-interactive
+    login2.ls6.tacc.utexas.edu:
+      ansible_user: xcgalaxy
+      ansible_ssh_executable: ./.ssh-keyboard-interactive
     # ssh keys distributed administratively, so we use a common key in the password store
     #   https://www.psc.edu/about-using-ssh/
     vm030.bridges2.psc.edu:
@@ -29,5 +32,6 @@ all:
         #rflogin03.rockfish.jhu.edu:
         login01.anvil.rcac.purdue.edu:
         login3.stampede3.tacc.utexas.edu:
+        login2.ls6.tacc.utexas.edu:
         login4.frontera.tacc.utexas.edu:
         vm030.bridges2.psc.edu:

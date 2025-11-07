@@ -1,0 +1,23 @@
+---
+
+# LS6 scratch is BeeGFS
+pulsar_clean_jobs_percent_full_function: |
+  python <<EOF
+  import subprocess, sys, traceback
+  try:
+      line = subprocess.check_output("beegfs-ctl --getquota --uid xcgalaxy --csv".split(), text=True).splitlines()[-1].strip()
+      line_a = line.strip().split(",")
+      line_a[3] = "0" if line_a[3] == "unlimited" else line_a[3]
+      line_a[5] = "0" if line_a[5] == "unlimited" else line_a[5]
+      used_bytes, limit_bytes, used_inodes, limit_inodes = (int(x) for x in line_a[2:6])
+      size_ratio = 0
+      inodes_ratio = 0
+      if limit_bytes != 0:
+          size_ratio = used_bytes / limit_bytes
+      if limit_inodes != 0:
+          inodes_ratio = used_inodes / limit_inodes
+      print(round(100 * max(size_ratio, inodes_ratio)))
+  except Exception as exc:
+      traceback.print_exc(file=sys.stderr)
+      print(0)
+  EOF
