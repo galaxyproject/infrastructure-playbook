@@ -83,14 +83,14 @@ host_gravity_config:
       hooks_http: /api/job_files/tus_hooks
       memory_limit: 2
   handlers:
-    main_vgp_handler:
+    vgp_handler:
       name_template: "{name}{process}"
       processes: 1
       pools:
         - job-handlers.vgp
       environment:
         HDF5_USE_FILE_LOCKING: "FALSE"
-    main_vgp_workflow_scheduler:
+    vgp_workflow_scheduler:
       name_template: "{name}{process}"
       processes: 1
       pools:
