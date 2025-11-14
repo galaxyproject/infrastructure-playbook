@@ -1,6 +1,7 @@
 ---
 
-galaxy_memory_limit: 14
+galaxy_memory_limit: 24
+galaxy_memory_high: 22
 
 galaxy_main_celery_servers_group_gravity_config:
   celery:

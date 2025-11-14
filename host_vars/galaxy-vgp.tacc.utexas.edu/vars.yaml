@@ -1,6 +1,6 @@
 ---
 
-tacc_corral_gateway_address: 129.114.52.152
+#tacc_corral_gateway_address: 129.114.52.152
 
 galaxy_cleanup_hour: 7
 galaxy_tus_upload_store: "/corral4/{{ galaxy_instance_codename }}/_upload_vgp"
@@ -22,7 +22,8 @@ tusd_version: v1.10.0
 
 slurm_drmaa_rpm_url: https://depot.galaxyproject.org/yum/el/8/x86_64/slurm-drmaa-1.1.4-1.el8.x86_64.rpm
 
-galaxy_memory_limit: 6
+galaxy_memory_limit: 12
+galaxy_memory_high: 10
 
 #gravity_config:
 host_gravity_config:
@@ -48,7 +49,7 @@ host_gravity_config:
       timeout: 600
       restart_timeout: 600
       preload: true
-      extra_args: --max-requests 50000 --max-requests-jitter 10000 --worker-tmp-dir /dev/shm
+      extra_args: --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:
         LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
         HDF5_USE_FILE_LOCKING: "FALSE"
@@ -58,7 +59,7 @@ host_gravity_config:
       timeout: 600
       restart_timeout: 600
       preload: true
-      extra_args: --max-requests 50000 --max-requests-jitter 10000 --worker-tmp-dir /dev/shm
+      extra_args: --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:
         LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
         HDF5_USE_FILE_LOCKING: "FALSE"

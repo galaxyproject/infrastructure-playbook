@@ -6,6 +6,26 @@ all:
   #vars:
   #  ansible_user: root
 
+  hosts:
+    #galaxy-main1.tacc.utexas.edu:
+    #  ansible_host: galaxy-main-1r.tacc.utexas.edu
+    #  nginx_check_conf: false
+    #galaxy-main2.tacc.utexas.edu:
+    #  ansible_host: galaxy-main2r.tacc.utexas.edu
+    #  nginx_check_conf: false
+    #galaxy-main3.tacc.utexas.edu:
+    #  ansible_host: galaxy-main3r.tacc.utexas.edu
+    #  nginx_check_conf: false
+    #galaxy-main4.tacc.utexas.edu:
+    #  ansible_host: galaxy-main4r.tacc.utexas.edu
+    #  nginx_check_conf: false
+    #galaxy-vgp.tacc.utexas.edu:
+    #  ansible_host: galaxy-vgpr.tacc.utexas.edu
+    #  nginx_check_conf: false
+    galaxy-test.tacc.utexas.edu:
+      ansible_host: galaxy-testr.tacc.utexas.edu
+      nginx_check_conf: false
+
   children:
 
     # Provides TACC-specific values for group vars
@@ -207,34 +227,20 @@ all:
     galaxy_vms:
       vars:
         ansible_user: gxadm
-        # FIXME: this can be set once galaxy-db and galaxy-vgp have the same auth config as the rest of the VMs
-        #ansible_become: true
+        ansible_become: true
         ansible_ssh_executable: ./.ssh-keyboard-interactive
       hosts:
         galaxy-jump.tacc.utexas.edu:
-          ansible_become: true
         galaxy-control.tacc.utexas.edu:
-          ansible_become: true
         galaxy-cvmfs.tacc.utexas.edu:
-          ansible_become: true
         galaxy-test.tacc.utexas.edu:
-          ansible_become: true
         galaxy-main.tacc.utexas.edu:
-          ansible_become: true
         galaxy-main1.tacc.utexas.edu:
-          ansible_become: true
         galaxy-main2.tacc.utexas.edu:
-          ansible_become: true
         galaxy-main3.tacc.utexas.edu:
-          ansible_become: true
         galaxy-main4.tacc.utexas.edu:
-          ansible_become: true
         galaxy-db.tacc.utexas.edu:
-          ansible_become: true
         galaxy-vgp.tacc.utexas.edu:
-          # annoyingly, this overrides become on plays
-          #ansible_become: false
-          ansible_user: root
 
     # Galaxy nodes from the Cyclone cloud
     cyclone_nodes:

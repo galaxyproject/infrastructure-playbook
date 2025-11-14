@@ -83,6 +83,12 @@ galaxy_servers_group_files:
     owner: "{{ galaxy_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
+  - src: files/telegraf/galaxy-telegraf.sh
+    dest: /usr/local/bin/galaxy-telegraf
+    owner: root
+    group: root
+    mode: "0755"
+
 
 # TODO: remove
 #galaxy_servers_group_packages:
@@ -159,6 +165,7 @@ all_gravity_config:
   #log_dir: "{{ galaxy_log_dir }}"
   virtualenv: "{{ galaxy_venv_dir }}"
   memory_limit: "{{ galaxy_memory_limit }}"
+  memory_high: "{{ galaxy_memory_high }}"
   gunicorn:
     enable: false
   celery:
@@ -174,7 +181,8 @@ tusd_systemd: false
 
 ## used by: gravity tasks in playbook-galaxy-stack
 gravity_venv_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/gravity"
-gravity_package: "gravity==1.0.7"
+#gravity_package: "gravity==1.0.7"
+gravity_package: "git+https://github.com/natefoo/gravity.git@memory-high#egg=gravity"
 gravity_config_file: "/etc/galaxy/gravity.d/galaxy_{{ galaxy_instance_codename }}.yml"
 galaxy_gravity_command: "{{ gravity_venv_dir }}/bin/galaxyctl"
 

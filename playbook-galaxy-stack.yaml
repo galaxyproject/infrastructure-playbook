@@ -289,7 +289,7 @@
           #!/usr/bin/env sh
           export GRAVITY_CONFIG_FILE={{ gravity_config_file | quote }}
           exec {{ galaxy_gravity_command | quote }} "$@"
-        dest: "/usr/local/bin/galaxyctl-{{ galaxy_instance_codename }}"
+        dest: "/usr/sbin/galaxyctl-{{ galaxy_instance_codename }}"
         owner: root
         group: root
         mode: "0755"

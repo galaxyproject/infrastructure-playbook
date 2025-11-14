@@ -1,5 +1,8 @@
 ---
 
+galaxy_memory_limit: 6
+galaxy_memory_high: 4
+
 galaxy_main_handler_servers_group_gravity_config:
   handlers:
     handler:
@@ -57,3 +60,10 @@ galaxy_main_handler_servers_group_telegraf_plugins_extra:
       - percentile_limit = 1000
       - '[inputs.statsd.tags]'
       - '  influxdb_database = "telegraf"'
+  handler_memory_high:
+    plugin: "exec"
+    config:
+      - commands = ["/usr/local/bin/galaxy-telegraf handler_memory_high"]
+      - timeout = "10s"
+      - data_format = "influx"
+      - interval = "1m"
