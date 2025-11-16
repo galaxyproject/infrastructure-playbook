@@ -13,3 +13,9 @@ galaxy_vms_group_users:
 galaxy_vms_group_authorized_key_users:
   - name: gxadm
     authorized: "{{ tacc_root_users }}"
+
+galaxy_vms_group_lines:
+  - line: ':programname, isequal, "galaxyctl" ~'
+    insertbefore: '^.*\s+/var/log/messages$'
+    firstmatch: true
+    dest: "/etc/rsyslog.conf"

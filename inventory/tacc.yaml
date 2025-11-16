@@ -7,24 +7,9 @@ all:
   #  ansible_user: root
 
   hosts:
-    #galaxy-main1.tacc.utexas.edu:
-    #  ansible_host: galaxy-main-1r.tacc.utexas.edu
+    #galaxy-test.tacc.utexas.edu:
+    #  ansible_host: galaxy-testr.tacc.utexas.edu
     #  nginx_check_conf: false
-    #galaxy-main2.tacc.utexas.edu:
-    #  ansible_host: galaxy-main2r.tacc.utexas.edu
-    #  nginx_check_conf: false
-    #galaxy-main3.tacc.utexas.edu:
-    #  ansible_host: galaxy-main3r.tacc.utexas.edu
-    #  nginx_check_conf: false
-    #galaxy-main4.tacc.utexas.edu:
-    #  ansible_host: galaxy-main4r.tacc.utexas.edu
-    #  nginx_check_conf: false
-    #galaxy-vgp.tacc.utexas.edu:
-    #  ansible_host: galaxy-vgpr.tacc.utexas.edu
-    #  nginx_check_conf: false
-    galaxy-test.tacc.utexas.edu:
-      ansible_host: galaxy-testr.tacc.utexas.edu
-      nginx_check_conf: false
 
   children:
 
