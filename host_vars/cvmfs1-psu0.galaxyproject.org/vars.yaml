@@ -1,79 +1,70 @@
 ---
 
-host_packages:
-  - 'dnf-command(versionlock)'
+zfs_zpools:
+  - name: data
+    pool_properties:
+      # 8k blocks
+      ashift: 13
+      # this allows you to increase the dataset, instructions are in GZ host vars
+      autoexpand: true
+    filesystem_properties:
+      compression: lz4
+    vdevs:
+      - disks:
+          - /dev/vdb
 
 zfs_filesystems:
-  - name: data/cvmfs1-psu0/srv
+  - name: data
+    mountpoint: "none"
+  - name: data/srv
     mountpoint: /srv
-  - name: data/cvmfs1-psu0/srv/cvmfs
+  - name: data/srv/cvmfs
     mountpoint: /srv/cvmfs
-  - name: data/cvmfs1-psu0/srv/cvmfs/test.galaxyproject.org
+  - name: data/srv/cvmfs/test.galaxyproject.org
     mountpoint: /srv/cvmfs/test.galaxyproject.org
     owner: g2test
     group: G-803372
-  - name: data/cvmfs1-psu0/srv/cvmfs/main.galaxyproject.org
+  - name: data/srv/cvmfs/main.galaxyproject.org
     mountpoint: /srv/cvmfs/main.galaxyproject.org
     owner: g2main
     group: G-803372
-  - name: data/cvmfs1-psu0/srv/cvmfs/data.galaxyproject.org
+  - name: data/srv/cvmfs/data.galaxyproject.org
     mountpoint: /srv/cvmfs/data.galaxyproject.org
     owner: data
     group: data
-  - name: data/cvmfs1-psu0/srv/cvmfs/refgenomes-databio.galaxyproject.org
+  - name: data/srv/cvmfs/refgenomes-databio.galaxyproject.org
     mountpoint: /srv/cvmfs/refgenomes-databio.galaxyproject.org
     owner: refgenie
     group: refgenie
-  - name: data/cvmfs1-psu0/srv/cvmfs/sandbox.galaxyproject.org
+  - name: data/srv/cvmfs/sandbox.galaxyproject.org
     mountpoint: /srv/cvmfs/sandbox.galaxyproject.org
     owner: sandbox
     group: sandbox
-  - name: data/cvmfs1-psu0/srv/cvmfs/singularity.galaxyproject.org
+  - name: data/srv/cvmfs/singularity.galaxyproject.org
     mountpoint: /srv/cvmfs/singularity.galaxyproject.org
     owner: singularity
     group: singularity
-  - name: data/cvmfs1-psu0/srv/cvmfs/usegalaxy.galaxyproject.org
+  - name: data/srv/cvmfs/usegalaxy.galaxyproject.org
     mountpoint: /srv/cvmfs/usegalaxy.galaxyproject.org
     owner: usegalaxy
     group: usegalaxy
-  - name: data/cvmfs1-psu0/srv/cvmfs/cvmfs-config.galaxyproject.org
+  - name: data/srv/cvmfs/cvmfs-config.galaxyproject.org
     mountpoint: /srv/cvmfs/cvmfs-config.galaxyproject.org
-  - name: data/cvmfs1-psu0/srv/cvmfs/cloud.galaxyproject.org
+  - name: data/srv/cvmfs/cloud.galaxyproject.org
     mountpoint: /srv/cvmfs/cloud.galaxyproject.org
     owner: cloud
     group: cloud
-  - name: data/cvmfs1-psu0/srv/cvmfs/idc.galaxyproject.org
+  - name: data/srv/cvmfs/idc.galaxyproject.org
     mountpoint: /srv/cvmfs/idc.galaxyproject.org
     owner: idc
     group: idc
-  - name: data/cvmfs1-psu0/srv/cvmfs/brc.galaxyproject.org
+  - name: data/srv/cvmfs/brc.galaxyproject.org
     mountpoint: /srv/cvmfs/brc.galaxyproject.org
     owner: brc
     group: brc
-  - name: data/cvmfs1-psu0/srv/cvmfs/vgp.galaxyproject.org
+  - name: data/srv/cvmfs/vgp.galaxyproject.org
     mountpoint: /srv/cvmfs/vgp.galaxyproject.org
     owner: vgp
     group: vgp
 
-# This foreground-only setup worked on the older EL7 LX zone, where squid can't bind port 80 when run in standard
-# daemon/forking mode (and iptables and setcap aren't possible in LX, and systemd-socket-proxyd yields a strange arp
-# error in squid). The EL8 zone exhibits the same bind issue but squid further fails with:
-#   2024/05/25 04:31:00| assertion failed: peer_digest.cc:418: "fetch->pd && receivedData.data"
-# It looks kind of like this bug, except that's on 6.x and EL8 runs 4.15:
-#   https://forum.opnsense.org/index.php?topic=37128.0
-#   https://bugs.squid-cache.org/show_bug.cgi?id=5318
-# If this was working you would probably also want to set `eui_lookup off` to avoid:
-#   2024/05/25 04:23:00| ARP query 127.0.0.1 failed: eth0: (95) Operation not supported
-# I am not entirely sure what is to be gained from squid on a stratum 1 anyway (see
-# https://github.com/galaxyproject/ansible-cvmfs/pull/68) so am just leaving it disabled and we can revisit if it
-# becomes a problem.
-#host_files:
-#  - src: files/cvmfs/squid-foreground.service
-#    dest: /etc/systemd/system/squid.service
-#    state: absent
-
-cvmfs_stratum1_squid_enabled: false
-
-cvmfs_stratum1_cache_mem: 2048
-cvmfs_quota_limit: 1024
 #cvmfs_x509_cert_bundle: /etc/pki/tls/cert.pem

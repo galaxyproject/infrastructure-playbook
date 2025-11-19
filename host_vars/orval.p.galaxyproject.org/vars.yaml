@@ -26,28 +26,81 @@ zfs_filesystems:
 # exit
 
 smartos_images:
-  # rocky-9.5 20250407 linux lx-dataset 2025-04-07
-  - uuid: deb80d2a-88a7-40d6-b733-f0b766c6a9ec
+  # rocky-9 20250403 linux zvol 2025-04-03
+  - uuid: 8bfddfe8-842c-486c-904c-fe8f96cfe330
     state: present
-    # base-64-lts 24.4.1 smartos zone-dataset 2025-01-06
+  # base-64-lts 24.4.1 smartos zone-dataset 2025-01-06
   - uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
     state: present
 
 smartos_vms:
-  - alias: cvmfs1-psu0
-    brand: lx
-    kernel_version: 5.14.0-503.38.1.el9_5.x86_64
-    image_uuid: deb80d2a-88a7-40d6-b733-f0b766c6a9ec
-    hostname: cvmfs1-psu0
-    max_physical_memory: 8192
-    quota: 32768
+  - name: cvmfs1-psu0-bhyve
+    brand: bhyve
+    ram: 16384
+    vcpus: 4
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
         ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
-        netmask: 255.255.255.224
+        netmask: 255.255.224.0
         gateway: 128.118.250.1
         vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: 8bfddfe8-842c-486c-904c-fe8f96cfe330
+        boot: true
+        model: virtio
+        size: 24576
+      # the zpool option doesn't work properly, I used the following vmadm update manually, which times out but does in
+      # fact work as long as you create the parent in zfs first:
+      #
+      # {
+      #   "add_disks": [
+      #     {
+      #       "boot": false,
+      #       "model": "virtio",
+      #       "zpool": "data",
+      #       "block_size": 8192,
+      #       "size": 16777216
+      #    }
+      #  ]
+      # }
+      #
+      # and then as a test to make sure it's possible to grow in the future, expanded with:
+      #
+      # {
+      #   "update_disks": [
+      #     {
+      #       "path": "/dev/zvol/rdsk/data/cbb6df7f-b63c-4f48-bad6-4a0349320882/disk1",
+      #       "size": 33554432
+      #    }
+      #  ]
+      # }
+      #
+      # as with adding, this times out:
+      #
+      # [root@orval /usbkey/vmspec]# vmadm update -f update-data-disk.json cbb6df7f-b63c-4f48-bad6-4a0349320882
+      # first of 1 error: vminfod watchForChanges "VM.js update (cbb6df7f-b63c-4f48-bad6-4a0349320882)" timeout exceeded
+      #
+      # it also updates the zfs properties but not zonecfg, if that matters, so:
+      #
+      # [root@orval /usbkey/vmspec]# zonecfg -z cbb6df7f-b63c-4f48-bad6-4a0349320882
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882> info
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882> select device match=/dev/zvol/rdsk/data/cbb6df7f-b63c-4f48-bad6-4a0349320882/disk1
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882:device> add property (name=size,value="33554432")
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882:device> remove property (name=size,value="16777216")
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882:device> info
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882:device> end
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882> verify
+      # zonecfg:cbb6df7f-b63c-4f48-bad6-4a0349320882> commit
+      #
+      # then zpool export data && zpool import data in the guest
+      #
+      #- boot: false
+      #  model: virtio
+      #  zpool: data
+      #  block_size: 8192
+      #  size: 33554432
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: orval

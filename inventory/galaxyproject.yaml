@@ -4,9 +4,6 @@
 all:
 
   hosts:
-    cvmfs1-psu0.galaxyproject.org:
-      hostname_strategy: file
-
     cvmfs-stratum0.galaxyproject.eu:
       ansible_user: centos
       ansible_become: true
@@ -86,14 +83,10 @@ all:
         psu_public_hosts:
 
     splunk_agents:
-      hosts:
-        cvmfs1-psu0.galaxyproject.org:
       children:
         psu_public_hosts:
 
     nessus_agents:
-      hosts:
-        cvmfs1-psu0.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -109,6 +102,7 @@ all:
         duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
         jeltz.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
