@@ -138,6 +138,7 @@ server {
 
     # GTN proxy for the GTN in Galaxy webhook
     location /training-material/ {
+        proxy_ssl_server_name on;
         proxy_pass https://training.galaxyproject.org/training-material/;
     }
 
