@@ -1,11 +1,13 @@
 ---
 
-splunk_deb: http://admin.bx.psu.edu/splunk/splunkforwarder-8.2.6-a6fe1ee8894b-linux-2.6-amd64.deb
+splunk_user: splunkfwd
+splunk_server_name: splunkforwarder
 
+splunk_version: "9.2.6"
 splunk_packages:
   - acl
-  - splunkforwarder
-
+  - https://admin.bx.psu.edu/splunk/splunkforwarder-9.2.6-bfd122d7f8fc.x86_64.rpm
+splunk_disable_gpg_check: true
 splunk_cgroups_version: 2
 
 splunk_root_dir: /opt/splunkforwarder
@@ -17,9 +19,6 @@ splunk_apps:
   - 999-DS-SSL-certs_uf
   - 999_uf-output_to-idx_ssl
   - DS-Splunk-deployment_client
-  - DS-SSL-base_uf
-  - DS-SSL-certs_cacert_uf
-  - DS-SSL-certs_uf
 
 splunk_deploymentclient_dest: "{{ splunk_root_dir }}/etc/system/local/deploymentclient.conf"
 splunk_launch_dest: "{{ splunk_root_dir }}/etc/splunk-launch.conf"

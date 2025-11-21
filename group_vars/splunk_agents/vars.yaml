@@ -6,9 +6,11 @@ _splunk_lx_brand: "{{ ansible_system == 'Linux' and 'zone' in ansible_virtualiza
 splunk_chown_cgroups: "{{ not _splunk_lx_brand }}"
 splunk_set_acls: "{{ not _splunk_lx_brand }}"
 
+splunk_user: splunkfwd
+
 splunk_agents_group_users:
-  - name: splunk
-    comment: "Splunk Server"
+  - name: "{{ splunk_user }}"
+    comment: "Splunk Forwarder"
     home: /opt/splunkforwarder
     shell: /bin/bash
     system: yes

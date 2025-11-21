@@ -1,7 +1,7 @@
 ---
 
 - name: gather os specific variables
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
@@ -14,62 +14,61 @@
         - ../vars
 
 - name: splunk | install splunk packages (deb)
-  apt:
+  ansible.builtin.apt:
     deb: "{{ splunk_deb }}"
   when: splunk_deb is defined
 
 - name: splunk | install splunk packages (apt)
-  apt:
+  ansible.builtin.apt:
     name: "{{ splunk_packages }}"
     state: present
   when: ansible_os_family == "Debian"
 
 - name: splunk | install splunk packages (dnf)
-  dnf:
+  ansible.builtin.dnf:
     name: "{{ splunk_packages }}"
     disable_gpg_check: "{{ splunk_disable_gpg_check | default(omit) }}"
     state: present
   when: ansible_os_family == "RedHat"
 
-## TODO: Check files under /opt/splunkforwarder/etc/apps/999_uf-output_to-idx_ssl
-
 - name: splunk | install apps files
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ splunk_apps_dir }}"
-    owner: splunk
-    group: splunk
+    owner: "{{ splunk_user }}"
+    group: "{{ splunk_user }}"
     directory_mode: u=rwx,g=rx,o=rx,u-s,g-s,o-t
     mode: u=rw,g=r,o=r,u-s,g-s,o-t
+    force: false
   loop: "{{ splunk_apps|flatten(levels=1) }}"
 
 - name: splunk | install local deploymentclient.conf
-  template:
+  ansible.builtin.template:
     src: deploymentclient.conf.j2
     dest: "{{ splunk_deploymentclient_dest }}"
-    owner: splunk
-    group: splunk
+    owner: "{{ splunk_user }}"
+    group: "{{ splunk_user }}"
     mode: u=rw,g=r,o=r,u-s,g-s,o-t
 
 ## Need to do this to coax "splunk enable boot-start" to create
 ## directories with the correct permissions
 - name: splunk | install local splunk-launch.conf.j2
-  template:
+  ansible.builtin.template:
     src: splunk-launch.conf.j2
     dest: "{{ splunk_launch_dest }}"
-    owner: splunk
-    group: splunk
+    owner: "{{ splunk_user }}"
+    group: "{{ splunk_user }}"
     mode: u=rw,g=r,o=r,u-s,g-s,o-t
 
 - name: splunk | enable splunk boot-start
-  command: "{{ splunk_root_dir }}/bin/splunk --accept-license --no-prompt --answer-yes enable boot-start -systemd-managed 1 -user splunk -group splunk -systemd-unit-file-name splunk"
+  ansible.builtin.command: "{{ splunk_root_dir }}/bin/splunk --accept-license --no-prompt --answer-yes enable boot-start -systemd-managed 1 -user {{ splunk_user }} -group {{ splunk_user }} -systemd-unit-file-name {{ splunk_server_name }}"
   args:
-    creates: /etc/systemd/system/splunk.service
+    creates: "/etc/systemd/system/{{ splunk_server_name }}.service"
 
 - name: splunk | install splunk systemd unit file
-  template:
+  ansible.builtin.template:
     src: splunk.service.j2
-    dest: /etc/systemd/system/splunk.service
+    dest: "/etc/systemd/system/{{ splunk_server_name }}.service"
     owner: root
     group: root
     mode: u=r,g=r,o=r,u-s,g-s,o-t
@@ -77,27 +76,28 @@
   register: systemd_config
 
 - name: splunk | reload the systemd configuration
-  command: systemctl daemon-reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
   when: systemd_config is defined and systemd_config.changed
 
 - name: splunk | find directories under /var/log
-  find:
+  ansible.builtin.find:
     paths: /var/log
     file_type: directory
     recurse: yes
   register: splunk_var_log_dirs
 
 - name: splunk | set splunk_acl_dirs
-  set_fact:
+  ansible.builtin.set_fact:
     splunk_acl_dirs: "{{ splunk_var_log_dirs.files|map(attribute='path')|list|union(['/var/log']) }}"
   when: (splunk_set_acls | default(true)) and splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
 
 - block:
   - name: splunk | set default directory acls
-    acl:
+    ansible.posix.acl:
       path: "{{ item }}"
       etype: user
-      entity: splunk
+      entity: "{{ splunk_user }}"
       permissions: rx
       default: yes
       state: present
@@ -105,10 +105,10 @@
     notify: restart splunk
 
   - name: splunk | set directory acls
-    acl:
+    ansible.posix.acl:
       path: "{{ item }}"
       etype: user
-      entity: splunk
+      entity: "{{ splunk_user }}"
       permissions: rx
       state: present
     loop: "{{ splunk_acl_dirs }}"
@@ -116,7 +116,7 @@
   when: splunk_acl_dirs is defined
 
 - name: splunk | find files under /var/log
-  find:
+  ansible.builtin.find:
     paths: /var/log
     file_type: file
     recurse: yes
@@ -126,15 +126,15 @@
 # setfacl -m user:splunk:x /root
 
 - name: splunk | set splunk_acl_files
-  set_fact:
+  ansible.builtin.set_fact:
     splunk_acl_files: "{{ splunk_var_log_files.files|map(attribute='path')|list|union(['/root/.bash_history']) }}"
   when: (splunk_set_acls | default(true)) and splunk_var_log_dirs is defined and splunk_var_log_dirs.files is defined
 
 - name: splunk | set file acls
-  acl:
+  ansible.posix.acl:
     path: "{{ item }}"
     etype: user
-    entity: splunk
+    entity: "{{ splunk_user }}"
     permissions: r
     state: present
   loop: "{{ splunk_acl_files }}"
@@ -142,7 +142,7 @@
   notify: restart splunk
 
 - name: Ensure splunk is enabled and started
-  systemd:
-    name: splunk
-    enabled: yes
+  ansible.builtin.systemd_service:
+    name: "{{ splunk_server_name }}"
+    enabled: true
     state: started
