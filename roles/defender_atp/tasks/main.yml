@@ -4,7 +4,7 @@
 # mdatp = Microsoft Defender Advanced Threat Protection
 
 - name: gather os specific variables
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - files:
         - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
@@ -16,10 +16,12 @@
       paths:
         - ../vars
 
-- block:
+- name: Install block
+  when: mdatp_packages is defined
+  block:
 
   - name: mdatp | create directories
-    file:
+    ansible.builtin.file:
       path: "{{ mdatp_root }}"
       state: directory
       mode: u=rwx,g=rx,o=rx,u-s,g-s,o-t
@@ -27,7 +29,7 @@
       group: root
 
   - name: mdatp | install standard onboarding file
-    template:
+    ansible.builtin.template:
       src: mdatp_onboard.json.j2
       dest: "{{ mdatp_onboard_json_dest }}"
       owner: root
@@ -36,28 +38,30 @@
     diff: false
 
   - name: Debian block
+    when: ansible_os_family == "Debian"
     block:
 
       - name: mdatp | install gpg
-        apt:
+        ansible.builtin.apt:
           name: gnupg
 
       - name: mdatp | add microsoft apt key
-        apt_key:
+        ansible.builtin.get_url:
           url: "{{ mdatp_apt_key_url }}"
+          checksum: "sha256:2fa9c05d591a1582a9aba276272478c262e95ad00acf60eaee1644d93941e3c6"
+          dest: "/etc/apt/trusted.gpg.d/{{ mdatp_apt_key_url | basename }}"
 
       - name: mdatp | add microsoft apt repo
-        apt_repository:
-          repo: "deb {{ mdatp_apt_repo_url }} {{ mdatp_apt_repo_channel }} main"
+        ansible.builtin.apt_repository:
+          repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/{{ mdatp_apt_key_url | basename }}] {{ mdatp_apt_repo_url }} {{ mdatp_apt_repo_channel }} main"
           filename: "microsoft-{{ mdatp_apt_repo_channel }}"
 
-    when: ansible_os_family == "Debian"
-
   - name: Redhat block
+    when: ansible_os_family == "RedHat"
     block:
 
       - name: mdatp | add mdatp yum repository
-        yum_repository:
+        ansible.builtin.yum_repository:
           name: "{{ mdatp_yum_repo }}"
           description: "{{ mdatp_yum_repo_description }}"
           baseurl: "{{ mdatp_yum_repo_baseurl }}"
@@ -68,15 +72,13 @@
             - mdatp
             - mde-netfilter
 
-    when: ansible_os_family == "RedHat"
-
   - name: mdatp | install mdatp packages
-    package:
+    ansible.builtin.package:
       name: "{{ mdatp_packages }}"
       state: latest
 
   - name: mdatp | install managed file
-    template:
+    ansible.builtin.template:
       src: mdatp_managed.json.j2
       dest: "{{ mdatp_managed_json_dest }}"
       owner: root
@@ -86,9 +88,7 @@
       - restart mdatp
 
   - name: mdatp | ensure mdatp is enabled and started
-    systemd:
+    ansible.builtin.systemd_service:
       name: mdatp
       enabled: true
       state: started
-
-  when: mdatp_packages is defined
