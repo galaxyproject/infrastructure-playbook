@@ -1,0 +1,6 @@
+---
+
+nessus_deb: https://admin.bx.psu.edu/nessus/NessusAgent-11.0.2-debian10_amd64.deb
+nessus_packages:
+  - nessusagent
+

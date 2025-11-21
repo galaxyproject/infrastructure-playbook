@@ -79,7 +79,7 @@
 
 - name: nessus | link nessus agent
   command:
-    cmd: /opt/nessus_agent/sbin/nessuscli agent link --key={{ nessus_agent_key }} --groups=ECS --cloud
+    cmd: /opt/nessus_agent/sbin/nessuscli agent link --key={{ nessus_agent_key }} --groups=BX --cloud
     creates: /opt/nessus_agent/var/nessus/uuid
 
 - name: nessus | determine if plugin database needs to be updated
