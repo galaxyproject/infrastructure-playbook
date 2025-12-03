@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# set -eo pipefail not used here because removals in scratch dirs while running cause find to exit nonzero
+set -u
 
 MUTEX="$HOME/.galaxy-clean.lock"
 MUTEX_ACQUIRED=false
