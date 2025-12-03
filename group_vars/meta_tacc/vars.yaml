@@ -93,6 +93,8 @@ meta_tacc_group_mounts:
     opts: "rw,nosuid,noatime,rsize=1048576,wsize=1048576,intr,nfsvers=3,tcp,soft,nolock,addr={{ tacc_corral_gateway_address | default(tacc_corral_gateway_address_default) }}"
     owner: ndc
     group: G-803372
+    # this can be used to create the mount but not mount it when provisioning new VMs on an IP without access
+    #state: present
 
 postfix_relayhost: "[relay02.tacc.utexas.edu]"
 postfix_aliases:
