@@ -27,7 +27,9 @@ roles:
   - name: galaxyproject.miniconda
     version: 0.3.1
   - name: dj-wasabi.telegraf
-    version: 0.14.1
+    version: 0.14.2
+    # 0.14.2 not uploaded to Galaxy
+    src: https://github.com/dj-wasabi/ansible-telegraf
   - name: galaxyproject.gxadmin
     version: 0.0.13
   - name: artis3n.tailscale

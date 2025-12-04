@@ -1,5 +1,10 @@
 ---
 
+# FIXME upstream: The debian `telegraf` package now depends on inlfluxdata-archive-keyring, which installs its own
+# sources list at influxdata.list, and this uses signed-by=/usr/share/keyrings/influxdata-archive.gpg vs. the role's
+# .asc, causing a conflict and apt failure. This is a temporary workaround and breaks things for new installs.
+telegraf_agent_package_method: manual
+
 influxdb_client_pass: "{{ vault_influxdb_client_pass }}"
 
 # run telegraf on everything

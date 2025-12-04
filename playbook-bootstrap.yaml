@@ -30,6 +30,13 @@
 
 - name: Install telegraf
   hosts: telegraf_agents
+  pre_tasks:
+    # FIXME: see FIXME comment in group_vars/telegraf_agents/vars.yaml
+    - name: Remove conflicting telegraf sources.list
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/telegraf.list
+        state: absent
+      when: ansible_os_family == "Debian" and telegraf_agent_package_method == "manual"
   roles:
     - role: dj-wasabi.telegraf
   tags: telegraf
