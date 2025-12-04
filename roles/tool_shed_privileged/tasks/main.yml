@@ -101,54 +101,54 @@
   when: tool_shed_additional_venv_packages
   tags: update
 
-- name: Collect Tool Shed Node.js version file
-  ansible.builtin.slurp:
-    src: "{{ tool_shed_server_dir }}/client/.node_version"
-  register: __tool_shed_node_version_file
-  tags: update
-
-- name: Set Tool Shed Node.js version fact
-  ansible.builtin.set_fact:
-    tool_shed_node_version: "{{ __tool_shed_node_version_file['content'] | b64decode | trim }}"
-  tags: update
-
-- name: Check if node is installed
-  ansible.builtin.stat:
-    path: "{{ tool_shed_venv_dir }}/bin/node"
-  register: __tool_shed_node_is_installed
-  tags: update
-
-- name: Collect installed node version
-  ansible.builtin.command: "{{ tool_shed_venv_dir }}/bin/node --version"
-  when: __tool_shed_node_is_installed.stat.exists
-  changed_when: false
-  register: __tool_shed_installed_node_version
-  tags: update
-
-- name: Remove node_modules directory when upgrading node
-  ansible.builtin.file:
-    path: "{{ tool_shed_venv_dir }}/lib/node_modules"
-    state: absent
-  when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
-
-- name: Install or upgrade node
-  ansible.builtin.command: "nodeenv -n {{ tool_shed_node_version }} -p"
-  environment:
-    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
-    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
-  when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
-
-- name: Install yarn
-  ansible.builtin.npm:
-    executable: "{{ tool_shed_venv_dir }}/bin/npm"
-    name: yarn
-    global: yes
-  environment:
-    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
-    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
-
 - name: Tool Shed v1 Block
   block:
+
+    - name: Collect Tool Shed Node.js version file
+      ansible.builtin.slurp:
+        src: "{{ tool_shed_server_dir }}/client/.node_version"
+      register: __tool_shed_node_version_file
+      tags: update
+
+    - name: Set Tool Shed Node.js version fact
+      ansible.builtin.set_fact:
+        tool_shed_node_version: "{{ __tool_shed_node_version_file['content'] | b64decode | trim }}"
+      tags: update
+
+    - name: Check if node is installed
+      ansible.builtin.stat:
+        path: "{{ tool_shed_venv_dir }}/bin/node"
+      register: __tool_shed_node_is_installed
+      tags: update
+
+    - name: Collect installed node version
+      ansible.builtin.command: "{{ tool_shed_venv_dir }}/bin/node --version"
+      when: __tool_shed_node_is_installed.stat.exists
+      changed_when: false
+      register: __tool_shed_installed_node_version
+      tags: update
+
+    - name: Remove node_modules directory when upgrading node
+      ansible.builtin.file:
+        path: "{{ tool_shed_venv_dir }}/lib/node_modules"
+        state: absent
+      when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
+
+    - name: Install or upgrade node
+      ansible.builtin.command: "nodeenv -n {{ tool_shed_node_version }} -p"
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+      when: (not __tool_shed_node_is_installed.stat.exists) or (('v' ~ tool_shed_node_version) != __tool_shed_installed_node_version.stdout)
+
+    - name: Install yarn
+      ansible.builtin.npm:
+        executable: "{{ tool_shed_venv_dir }}/bin/npm"
+        name: yarn
+        global: yes
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
 
     - name: Build Tool Shed v1 Client
       ansible.builtin.command: make client-production-maps
@@ -178,6 +178,15 @@
 - name: Tool Shed v2 Block
   block:
 
+    - name: Install yarn
+      ansible.builtin.npm:
+        executable: "{{ tool_shed_venv_dir }}/bin/npm"
+        name: yarn
+        global: yes
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+
     #- name: Build Tool Shed v2 Client
     #  community.general.yarn:
     #    path: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
@@ -186,7 +195,7 @@
     #    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
 
     - name: Build Tool Shed v2 Client
-      ansible.builtin.command: yarn build
+      ansible.builtin.command: "{{ tool_shed_yarn_command }} build"
       args:
         chdir: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
       environment:

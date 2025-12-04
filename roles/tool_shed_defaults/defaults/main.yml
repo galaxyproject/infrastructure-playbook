@@ -13,6 +13,8 @@ tool_shed_repo: https://github.com/galaxyproject/galaxy.git
 tool_shed_version: stable
 tool_shed_api_version: v1
 
+tool_shed_yarn_command: "{{ (tool_shed_api_version == 'v2') | ternary('corepack yarn', 'yarn') }}"
+
 tool_shed_additional_venv_packages: []
 
 tool_shed_config_default:
@@ -25,6 +27,7 @@ tool_shed_config_default:
     openid_consumer_cache_path: "{{ tool_shed_mutable_data_dir }}/tool_shed_openid_consumer_cache"
     citation_cache_data_dir: "{{ tool_shed_mutable_data_dir }}/tool_shed_citations/data"
     citation_cache_lock_dir: "{{ tool_shed_mutable_data_dir }}/tool_shed_citations/locks"
+    model_cache_dir: "{{ tool_shed_mutable_data_dir }}/model_cache"
 
 tool_shed_config_merged: "{{ tool_shed_config_default | combine(tool_shed_config | default({}), recursive=True) }}"
 
