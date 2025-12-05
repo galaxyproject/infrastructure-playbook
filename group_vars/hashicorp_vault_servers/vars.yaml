@@ -1,19 +1,26 @@
 ---
 
-hashicorp_vault_servers_group_rpm_keys:
-  - key: https://rpm.releases.hashicorp.com/gpg
-
-hashicorp_vault_servers_group_yum_repositories:
-  - name: hashicorp
-    description: Hashicorp Stable - $basearch
-    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
-    enabled: 1
-    gpgcheck: 1
-    gpgkey: https://rpm.releases.hashicorp.com/gpg
-
-hashicorp_vault_servers_group_packages:
-  - vault
-
 # TODO: if other galaxy server roles set this you'd have collisions
 certbot_share_key_users:
   - vault
+
+hashicorp_vault_policies:
+  - name: galaxy-user-prefs
+    value: |
+      path "*" {
+        capabilities = ["create", "read", "update", "patch", "delete", "list"]
+      }
+
+hashicorp_vault_auth_methods:
+  userpass:
+    users:
+      - name: galaxyprefs
+        password: "{{ hashicorp_vault_user_password }}"
+        policies: galaxy-user-prefs
+
+hashicorp_vault_secrets:
+  # technically Galaxy writes using a v2 write method, but the store was created v1 and this does work, it just stores
+  # under data/
+  secret:
+    type: kv
+    secrets: "{{ hashicorp_vault_secret_values }}"

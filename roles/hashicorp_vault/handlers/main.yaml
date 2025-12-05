@@ -1,0 +1,6 @@
+---
+
+- name: Restart Hashicorp Vault
+  ansible.builtin.service:
+    name: vault
+    state: restarted

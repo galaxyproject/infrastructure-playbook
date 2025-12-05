@@ -1,0 +1,207 @@
+---
+
+- name: Add Hashicorp RPM key
+  ansible.builtin.rpm_key:
+    key: https://rpm.releases.hashicorp.com/gpg
+
+- name: Add Hashicorp YUM repo
+  ansible.builtin.yum_repository:
+    name: hashicorp
+    description: Hashicorp Stable - $basearch
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
+
+- name: Install Vault
+  ansible.builtin.dnf:
+    name:
+      - vault
+      #- python3-hvac  # for community.hashi_vault
+
+- name: Deploy Vault configuration
+  ansible.builtin.copy:
+    src: vault.hcl
+    dest: /etc/vault.d/vault.hcl
+    owner: vault
+    group: vault
+    mode: "0644"
+  notify: Restart Hashicorp Vault
+
+- name: Flush Handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure Vault is enabled and running
+  ansible.builtin.service:
+    name: vault
+    state: started
+    enabled: true
+
+# NOTE: this wouldn't actually work without the certs being present first
+
+- name: Initialize Vault operator
+  ansible.builtin.command: "vault operator init {{ hashicorp_vault_operator_init_args }}"
+  args:
+    creates: /opt/vault/data/core
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+
+# We would fail here on first run w/o the unseal key, which should be generated above
+
+- name: Get Vault status
+  ansible.builtin.command: vault status -format=yaml
+  register: __hashicorp_vault_status
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+  changed_when: false
+
+- name: Set sealed fact
+  ansible.builtin.set_fact:
+    __hashicorp_vault_is_sealed: "{{ (__hashicorp_vault_status.stdout | from_yaml).sealed }}"
+
+- name: Unseal Vault
+  ansible.builtin.command: "vault operator unseal {{ hashicorp_vault_unseal_key }}"
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+  changed_when: false
+  when: __hashicorp_vault_is_sealed
+
+- name: Policy block
+  when: hashicorp_vault_policies is defined
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+    VAULT_TOKEN: "{{ hashicorp_vault_root_token }}"
+  block:
+
+    - name: Get Vault policies
+      ansible.builtin.command: "vault policy list -format=yaml"
+      changed_when: false
+      register: __hashicorp_vault_policy_list
+
+    - name: Set policies fact
+      ansible.builtin.set_fact:
+        __hashicorp_vault_policies: "{{ (__hashicorp_vault_policy_list.stdout | from_yaml) }}"
+
+    # TODO: support updating
+
+    - name: Create Vault policies
+      ansible.builtin.command: "vault policy write {{ item.name }} /dev/stdin"
+      args:
+        stdin: "{{ item.value }}"
+      loop: "{{ hashicorp_vault_policies }}"
+      when: "item.name not in __hashicorp_vault_policies"
+
+- name: Auth block
+  when: hashicorp_vault_auth_methods is defined
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+    VAULT_TOKEN: "{{ hashicorp_vault_root_token }}"
+  block:
+
+    - name: Get Vault auth methods
+      ansible.builtin.command: "vault auth list -format=yaml"
+      changed_when: false
+      register: __hashicorp_vault_auth_list
+
+    - name: Set auth methods fact
+      ansible.builtin.set_fact:
+        __hashicorp_vault_auth_methods: "{{ (__hashicorp_vault_auth_list.stdout | from_yaml) }}"
+
+    - name: Enable Vault auth methods
+      ansible.builtin.command: "vault auth enable {{ item.key }}"
+      loop: "{{ hashicorp_vault_auth_methods | dict2items }}"
+      when: "item.key + '/' not in __hashicorp_vault_auth_methods"
+
+    - name: Userpass block
+      when: "'userpass' in hashicorp_vault_auth_methods.keys()"
+      block:
+
+        - name: Get Vault userpass users
+          ansible.builtin.command: "vault list -format=yaml auth/userpass/users"
+          changed_when: false
+          register: __hashicorp_vault_list_userpass_users
+
+        - name: Set userpass users fact
+          ansible.builtin.set_fact:
+            __hashicorp_vault_userpass_users: "{{ (__hashicorp_vault_list_userpass_users.stdout | from_yaml) }}"
+
+        - name: Create userpass users
+          ansible.builtin.command: "vault write auth/userpass/users/{{ item.name }} password={{ item.password }} policies={{ item.policies }}"
+          loop: "{{ hashicorp_vault_auth_methods.userpass.users }}"
+          when: "item.name not in __hashicorp_vault_userpass_users"
+
+- name: Secrets block
+  when: hashicorp_vault_secrets is defined
+  become: true
+  become_user: vault
+  environment:
+    VAULT_ADDR: "{{ hashicorp_vault_addr }}"
+    VAULT_TOKEN: "{{ hashicorp_vault_root_token }}"
+  block:
+
+    - name: Get Vault secret stores
+      ansible.builtin.command: "vault secrets list -format=yaml"
+      changed_when: false
+      register: __hashicorp_vault_secrets_list
+
+    - name: Set secrets fact
+      ansible.builtin.set_fact:
+        __hashicorp_vault_secrets: "{{ (__hashicorp_vault_secrets_list.stdout | from_yaml) }}"
+
+    - name: Enable Vault secrets
+      ansible.builtin.command: "vault secrets enable -path {{ item.key }} {{ (item.version is defined) | ternary('-version=' ~ item.version, '') }} {{ item.value.type }}"
+      loop: "{{ hashicorp_vault_secrets | dict2items }}"
+      when: "item.key + '/' not in __hashicorp_vault_secrets"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: KV secrets values block
+      when: "(hashicorp_vault_secrets | dict2items | map(attribute='value') | selectattr('type', 'eq', 'kv')) is truthy"
+      block:
+
+        # Looks like you get this using vault_kv2_write when writing to a v1 store, but there's no v1 write
+        # TypeError: Value of unknown type: <class 'requests.models.Response'>, <Response [204]>
+        #
+        #- name: Write secrets
+        #  community.hashi_vault.vault_kv2_write:
+        #    path: "{{ item.path }}"
+        #    data: "{{ item.data }}"
+        #  loop: "{{ hashicorp_vault_secrets.secret.secrets }}"
+        #  loop_control:
+        #    label: "{{ item.path }}"
+
+        - name: Get Vault kv values
+          ansible.builtin.command: "vault kv get -format=yaml -mount={{ item.0.key }} {{ item.1.path }}"
+          changed_when: false
+          failed_when: "(__hashicorp_vault_kv_get is failed) and not __hashicorp_vault_kv_get.stderr.startswith('No value found at ')"
+          register: __hashicorp_vault_kv_get
+          loop: "{{ q('ansible.builtin.subelements', (hashicorp_vault_secrets | dict2items), 'value.secrets') }}"
+          when: "item.0.value.type == 'kv'"
+          loop_control:
+            label: "{{ item.1.path }}"
+
+        - name: Set Vault kv fact
+          ansible.builtin.set_fact:
+            __hashicorp_vault_kv_secrets: "{{ (__hashicorp_vault_kv_secrets | default([])) + [(item.item.0.key, item.item.1, ((item.stdout | from_yaml) or {}).data | default({}) )] }}"
+          loop: "{{ __hashicorp_vault_kv_get.results }}"
+          loop_control:
+            label: "{{ item.item.1.path }}"
+
+        - name: Set Vault kv values
+          ansible.builtin.command: "vault kv put -mount={{ item.0 }} {{ item.1.path }} @/dev/stdin"
+          args:
+            stdin: "{{ item.1.data | to_json }}"
+          loop: "{{ __hashicorp_vault_kv_secrets }}"
+          when: "item.1.data != item.2"
+          loop_control:
+            label: "{{ item.1.path }}"

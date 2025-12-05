@@ -2,6 +2,20 @@
 # This is included for Galaxy Test hosts to provide Test-specific values
 
 galaxy_config_id_secret: "{{ vault_galaxy_config_id_secret }}"  # needed by tiaas
+hashicorp_vault_unseal_key: "{{ vault_hashicorp_vault_unseal_key }}"
+hashicorp_vault_root_token: "{{ vault_hashicorp_vault_root_token }}"
+hashicorp_vault_user_password: "{{ vault_hashicorp_vault_user_password }}"
+hashicorp_vault_secret_values:
+  #- path: data/galaxy/file_source_secrets/dropbox/app_client_id
+  #  data: {data: {value: "{{ vault_dropbox_client_id }}"}, options: {}}
+  #- path: data/galaxy/file_source_secrets/dropbox/app_client_secret
+  #  data: {data: {value: "{{ vault_dropbox_client_secret }}"}, options: {}}
+  - path: data/galaxy/file_source_secrets/google_drive/app_client_id
+    data: {data: {value: "{{ vault_google_drive_client_id }}"}, options: {}}
+  - path: data/galaxy/file_source_secrets/google_drive/app_client_secret
+    data: {data: {value: "{{ vault_google_drive_client_secret }}"}, options: {}}
+
+hashicorp_vault_addr: "https://{{ galaxy_instance_hostname }}:8200"
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"

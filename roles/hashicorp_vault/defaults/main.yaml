@@ -1,0 +1,5 @@
+---
+
+hashicorp_vault_storage: /opt/vault/data
+hashicorp_vault_operator_init_args: -key-shares=1 -key-threshold=1
+hashicorp_vault_addr: "https://{{ inventory_hostname }}:8200"
