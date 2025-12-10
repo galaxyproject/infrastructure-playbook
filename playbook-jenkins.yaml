@@ -7,6 +7,8 @@
       tags: general
     - role: galaxyproject.general.kernel_params
       tags: general
+    - role: galaxyproject.general.systemd
+      tags: general
     - role: galaxyproject.general.packages
       tags: general
     - role: galaxyproject.general.users
@@ -18,29 +20,47 @@
     - role: galaxyproject.postfix
       tags: postfix
 
-- name: Jenkins Servers
-  hosts: jenkins_servers
-  tasks:
-    # this is specific to the Debian package
-    - name: Set $JENKINS_HOME
-      lineinfile:
-        path: /etc/default/jenkins
-        regexp: '^JENKINS_HOME=.*$'
-        line: "JENKINS_HOME={{ jenkins_home }}"
-        backup: true
-      when: jenkins_home is defined
-      notify: Restart Jenkins
-  handlers:
-    - name: Restart Jenkins
-      service:
-        name: jenkins
-        state: restarted
-  tags: jenkins
+#- name: Jenkins Servers
+#  hosts: jenkins_servers
+#  tasks:
+#    # this is specific to the Debian package
+#    # The file is still created but is ignored?
+#    #- name: Set $JENKINS_HOME
+#    #  lineinfile:
+#    #    path: /etc/default/jenkins
+#    #    regexp: '^JENKINS_HOME=.*$'
+#    #    line: "JENKINS_HOME={{ jenkins_home }}"
+#    #    backup: true
+#    #  when: jenkins_home is defined
+#    #  notify: Restart Jenkins
+#    #- name: Create Jenkins systemd override directory
+#    #  ansible.builtin.file:
+#    #    path: /etc/systemd/system/jenkins.service.d
+#    #    state: directory
+#    #    mode: "0755"
+#    #    owner: root
+#    #    group: root
+#    #  when: jenkins_home is defined
+#    #- name: Set $JENKINS_HOME
+#    #  ansible.builtin.copy:
+#    #    content: |
+#    #      [Service]
+#    #      Environment="JENKINS_HOME={{ jenkins_home }}"
+#    #      WorkingDirectory={{ jenkins_home }}
+#    #  when: jenkins_home is defined
+#    #  notify:
+#    #    Restart Jenkins
+#  handlers:
+#    - name: Restart Jenkins
+#      service:
+#        name: jenkins
+#        state: restarted
+#  tags: jenkins
 
 - name: Jenkins Agents
   hosts: jenkins_agents
   roles:
-    - role: docker
+    #- role: docker
     - role: artis3n.tailscale
       when: tailscale_authkey is defined and tailscale_authkey is not none
     - role: galaxyproject.cvmfs

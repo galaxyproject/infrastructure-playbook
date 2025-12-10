@@ -4,12 +4,11 @@ jenkins_servers_group_authorized_key_users: "{{ vault_jenkins_servers_group_auth
 jenkins_servers_group_private_key_users: "{{ vault_jenkins_servers_group_private_key_users }}"
 
 jenkins_servers_group_apt_keys:
-  - url: 'https://pkg.jenkins.io/debian/jenkins.io.key'
+  - url: https://pkg.jenkins.io/debian/jenkins.io-2023.key
+    dest: /etc/apt/keyrings/jenkins-keyring.asc
 
 jenkins_servers_group_apt_repositories:
-  # For Debian 10
-  #- repo: 'deb http://httpredir.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free'
-  - repo: 'deb http://pkg.jenkins-ci.org/debian binary/'
+  - repo: "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
 
 jenkins_servers_group_packages:
   - gpg
@@ -17,9 +16,18 @@ jenkins_servers_group_packages:
   - rsync
   - jenkins
   ## for jenkins
-  - openjdk-11-jre-headless
+  - openjdk-25-jre-headless
+
+jenkins_servers_group_systemd_overrides:
+  - name: jenkins
+    override:
+      Environment: '"JENKINS_HOME={{ jenkins_home }}"'
+      WorkingDirectory: "{{ jenkins_home }}"
 
 postfix_role: "null-client"
+
+# TODO: i guess they changed it back from a service instance in trixie?
+__postfix_service_names: [postfix]
 
 jenkins_home: /data/jenkins
 

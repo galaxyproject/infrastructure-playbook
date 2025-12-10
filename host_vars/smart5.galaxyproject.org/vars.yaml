@@ -13,6 +13,10 @@ smartos_images:
   # debian-11 20220228 linux zvol
   - uuid: 6ae6054a-95f7-4f8e-a3f7-88d1d22301bf
     state: present
+  # debian-12 20250403 linux zvol 2025-04-03
+  - uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
+    state: present
+
 
 # authorized keys are only on launch, the playbook manages the keys once run on the guest
 smartos_vms:
@@ -29,9 +33,10 @@ smartos_vms:
         vlan_id: 406
         model: virtio
     disks:
-      - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+      - image_uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
         boot: true
         model: virtio
+        size: 24576
       - boot: false
         model: virtio
         size: 1048576
@@ -79,26 +84,3 @@ smartos_vms:
         size: 32768
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: ask-app
-    brand: bhyve
-    ram: 4096
-    vcpus: 1
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        ip: "{{ lookup('dig', 'ask-app.galaxyproject.org') }}"
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
-        model: virtio
-    disks:
-      - image_uuid: 6ae6054a-95f7-4f8e-a3f7-88d1d22301bf
-        boot: true
-        model: virtio
-      - boot: false
-        model: virtio
-        size: 16384
-    customer_metadata:
-      root_authorized_keys: |
-        {{ ssh_public_keys.nate_coraor }}
-        {{ ssh_public_keys.kaivan_kamali }}
