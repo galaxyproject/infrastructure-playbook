@@ -32,6 +32,7 @@
     - role: galaxyproject.miniconda
       become: true
       become_user: "{{ tool_shed_privileged_user }}"
+      when: miniconda_prefix is defined
       tags: conda
     - role: tool_shed_privileged
       become: true

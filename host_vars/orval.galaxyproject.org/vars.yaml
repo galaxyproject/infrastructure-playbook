@@ -1,0 +1,117 @@
+---
+
+zfs_filesystems:
+  - name: data/orval/backup
+    exec: "off"
+    setuid: "off"
+    compression: lz4
+  - name: data/orval/backup/tool-shed-test
+  - name: data/orval/backup/tool-shed-test/postgresql
+    owner: backup-tts
+    group: backup-tts
+  - name: data/orval/backup/tool-shed-test/repos
+    owner: backup-tts
+    group: backup-tts
+  - name: data/orval/backup/tool-shed-main
+  - name: data/orval/backup/tool-shed-main/postgresql
+    owner: backup-mts
+    group: backup-mts
+  - name: data/orval/backup/tool-shed-main/repos
+    owner: backup-mts
+    group: backup-mts
+
+# FIXME: the wal_archive dir should be created by the backup script but there's a bug when it's remote and it's created
+# as a file, fix upstream
+host_directories:
+  - path: /data/orval/backup/tool-shed-test/postgresql/wal_archive
+    owner: backup-tts
+    group: backup-tts
+    mode: "0755"
+  - path: /data/orval/backup/tool-shed-main/postgresql/wal_archive
+    owner: backup-mts
+    group: backup-mts
+    mode: "0755"
+
+host_packages:
+  # galaxyproject.postgresql backup can't clean the archive when it's remote, but pg_archivecleanup can run directly on
+  # the backup server without DB access
+  - postgresql16-client
+
+host_users:
+  - "{{ galaxyproject_users.backup_tts }}"
+  - "{{ galaxyproject_users.backup_mts }}"
+  - "{{ galaxyproject_users.depot_singularity }}"
+
+host_groups:
+  - "{{ galaxyproject_groups.backup_tts }}"
+  - "{{ galaxyproject_groups.backup_mts }}"
+  - "{{ galaxyproject_groups.depot_singularity }}"
+
+host_authorized_key_users:
+  - name: backup-tts
+    authorized:
+      - backup_tts_rsync
+      - backup_tts_zfs
+  - name: backup-mts
+    authorized:
+      - backup_mts_rsync
+      - backup_mts_zfs
+  - name: singularity
+    authorized:
+      - nate_coraor
+      - bjoern_gruening
+
+host_files:
+  - src: roles/galaxyproject.postgresql/files/backup.py
+    dest: /usr/local/bin/ansible-postgresql-backup.py
+    mode: "0755"
+
+# cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
+host_crontabs:
+  - id: clean_tts_postgresql_wal_archives
+    name: Clean Test Tool Shed PostgreSQL WAL Archives
+    use_cron_file: false
+    user: "{{ zfs_backup.tts.user }}"
+    hour: 20
+    minute: 0
+    job: /opt/local/bin/python3.12 /usr/local/bin/ansible-postgresql-backup.py -v --clean-archive /{{ zfs_backup.tts.dataset }}/postgresql
+  - id: clean_mts_postgresql_wal_archives
+    name: Clean Main Tool Shed PostgreSQL WAL Archives
+    use_cron_file: false
+    user: "{{ zfs_backup.mts.user }}"
+    hour: 21
+    minute: 0
+    job: /opt/local/bin/python3.12 /usr/local/bin/ansible-postgresql-backup.py -v --clean-archive /{{ zfs_backup.mts.dataset }}/postgresql
+
+zfs_admin_permissions:
+  - name: "{{ zfs_backup.tts.dataset }}"
+    users: "{{ zfs_backup.tts.user }}"
+    permissions: snapshot
+  - name: "{{ zfs_backup.mts.dataset }}"
+    users: "{{ zfs_backup.mts.user }}"
+    permissions: snapshot
+
+sanoid_configs:
+  "tts-postgresql":
+    data/orval/backup/tool-shed-test/postgresql:
+      use_template: daily
+  "tts-repos":
+    data/orval/backup/tool-shed-test/repos:
+      use_template: daily
+  "mts-postgresql":
+    data/orval/backup/tool-shed-main/postgresql:
+      use_template: daily
+  "mts-repos":
+    data/orval/backup/tool-shed-main/repos:
+      use_template: daily
+
+sanoid_templates:
+  daily:
+    frequently: 0
+    hourly: 0
+    daily: 30
+    weekly: 8
+    monthly: 24
+    yearly: 4
+    autosnap: "yes"
+    autoprune: "yes"

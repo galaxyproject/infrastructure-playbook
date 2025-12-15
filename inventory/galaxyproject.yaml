@@ -78,6 +78,12 @@ all:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
 
+    postfix_clients:
+      children:
+        jenkins_servers:
+        jenkins_agents:
+        tool_shed_servers:
+
     auto_update_hosts:
       children:
         psu_public_hosts:
@@ -287,6 +293,7 @@ all:
     zfs_backup_servers:
       hosts:
         thumper.galaxyproject.org:
+        orval.galaxyproject.org:
         westvleteren.galaxyproject.org:
 
     litellm_servers:

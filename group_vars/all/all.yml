@@ -30,15 +30,15 @@ postfix_aliases:
 zfs_backup:
   tts:
     user: backup-tts
-    server: thumper.galaxyproject.org
-    dataset: zones/thumper/backup/tool-shed-test
+    server: orval.galaxyproject.org
+    dataset: data/orval/backup/tool-shed-test
     sanoid_configs:
       repos: tts-repos
       postgresql: tts-postgresql
   mts:
     user: backup-mts
-    server: thumper.galaxyproject.org
-    dataset: zones/thumper/backup/tool-shed-main
+    server: orval.galaxyproject.org
+    dataset: data/orval/backup/tool-shed-main
     sanoid_configs:
       repos: mts-repos
       postgresql: mts-postgresql
