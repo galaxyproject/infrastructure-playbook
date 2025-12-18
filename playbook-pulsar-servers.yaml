@@ -5,3 +5,8 @@
   roles:
     - role: galaxyproject.general.paths
     - role: galaxyproject.general.copy
+    - role: galaxyproject.miniconda
+    - role: galaxyproject.pulsar
+      tags: pulsar
+    - role: galaxyproject.cvmfsexec
+      when: "'hpc_pulsar_servers' in group_names"

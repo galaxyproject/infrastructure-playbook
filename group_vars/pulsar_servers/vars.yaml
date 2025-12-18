@@ -1,14 +1,32 @@
 ---
-# NOTE: only the unprivileged/HPC Pulsar servers
 
-pulsar_servers_group_directories:
-  - path: "bin"
-    mode: "0755"
+pulsar_sentry_dsn: "{{ vault_pulsar_sentry_dsn }}"
+pulsar_amqp_credentials: "{{ vault_pulsar_amqp_credentials }}"
 
-pulsar_servers_group_templates:
-  - src: admin/pulsar-scratch-full.j2
-    dest: "bin/pulsar-scratch-full"
-    mode: "0755"
-  - src: admin/pulsar-clean-jobs.j2
-    dest: "bin/pulsar-clean-jobs"
-    mode: "0755"
+pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials }}@mq.galaxyproject.org:5671//main_pulsar?ssl=1"
+
+pulsar_package_version: "0.15.12"
+pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url https://pypi.org/simple"
+
+pulsar_job_metrics_plugins:
+  - type: core
+  - type: cpuinfo
+    verbose: true
+  - type: meminfo
+  - type: uname
+  - type: cgroup
+
+pulsar_venv_dir: "{{ pulsar_root }}/venv"
+pulsar_persistence_dir: "{{ pulsar_root }}/var"
+pulsar_config_dir: "{{ pulsar_root }}/config"
+pulsar_optional_dependencies:
+  - setuptools
+  # actual optional things
+  - sentry-sdk
+  - pyOpenSSL
+  - pycurl
+  - drmaa
+  - kombu
+  - requests
+  #- poster
+  #- psutil

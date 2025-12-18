@@ -20,6 +20,7 @@
     - role: galaxyproject.slurm
       tags: slurm
     - role: galaxyproject.general.copy
+      tags: copy
     - role: galaxyproject.general.cron
     - role: tc_limit
   post_tasks:

@@ -26,7 +26,8 @@ all:
       ansible_user: xcgalaxy
 
   children:
-    pulsar_servers:
+
+    hpc_pulsar_servers:
       hosts:
         login01.expanse.sdsc.edu:
         #rflogin03.rockfish.jhu.edu:
@@ -35,3 +36,7 @@ all:
         login2.ls6.tacc.utexas.edu:
         login4.frontera.tacc.utexas.edu:
         vm030.bridges2.psc.edu:
+
+    pulsar_servers:
+      children:
+        hpc_pulsar_servers:

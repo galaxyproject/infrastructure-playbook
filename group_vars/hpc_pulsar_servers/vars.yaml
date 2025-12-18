@@ -1,0 +1,152 @@
+---
+
+# to use:
+#
+# set:
+# - hpc_home_root
+# - hpc_project_root
+# - hpc_scratch_root
+# - hpc_pulsar_managers
+#
+# optionally:
+# - hpc_pulsar_prepend_path
+# - hpc_pulsar_append_ld_library_path
+# - hpc_pulsar_env
+#
+# anything can of course be overridden in host_vars
+#
+# slurm-drmaa must be installed by hand
+#
+# for configless slurm, you can determine where the slurm.conf is with `scontrol write config` with no path arg
+
+authorized_keys_unprivileged:
+  authorized: "{{ galaxy_team_users }}"
+
+hpc_pulsar_servers_group_directories:
+  - path: "{{ hpc_home_root }}/bin"
+    mode: "0755"
+  - path: "{{ pulsar_root }}/log"
+    mode: "0750"
+
+hpc_pulsar_servers_group_templates:
+  - src: admin/pulsar-scratch-full.j2
+    dest: "bin/pulsar-scratch-full"
+    mode: "0755"
+  - src: admin/pulsar-clean-jobs.j2
+    dest: "bin/pulsar-clean-jobs"
+    mode: "0755"
+
+hpc_pulsar_servers_group_files:
+  - src: "files/pulsar/el8/tmpwatch"
+    dest: "{{ hpc_home_root }}/bin/tmpwatch"
+    mode: "0755"
+
+pulsar_python_version: "3.13"
+pulsar_curl_version: "8.14"
+
+miniconda_prefix: "{{ hpc_project_root }}/conda"
+miniconda_channels:
+  - conda-forge
+miniconda_conda_environments:
+  "__python@{{ pulsar_python_version }}":
+    packages:
+      - "python={{ pulsar_python_version }}"
+  "__curl@{{ pulsar_curl_version }}":
+    packages:
+      - "curl={{ pulsar_curl_version }}"
+
+#supervisord_install: virtualenv-unprivileged
+##supervisord_prefix: "{{ _expanse_project_root }}/supervisor"
+#supervisord_prefix: "{{ _expanse_nfs_root }}/supervisor"
+#supervisord_conf_path: "{{ supervisord_prefix }}/etc/supervisord.conf"
+#supervisord_conf_dir: "{{ supervisord_prefix }}/etc/supervisord.d"
+#supervisord_log_dir: "{{ supervisord_prefix }}/var/log"
+#supervisord_run_dir: "{{ supervisord_prefix }}/var/run"
+#host_supervisor_configs:
+#  - "{{ galaxy_instance_codename }}_pulsar"
+#supervisord_unprivileged_command: "{ date; pgrep -u {{ ansible_user }} supervisord || '{{ supervisord_prefix }}/bin/supervisord' -c '{{ supervisord_conf_path }}'; } >> {{ supervisord_log_dir }}/supervisord-launch.log 2>&1"
+#pulsar_restart_handler_name: supervisor restart pulsar
+
+pulsar_systemd: true
+pulsar_systemd_root: false
+pulsar_systemd_wanted_by: default.target
+pulsar_systemd_runner: pulsar-main
+pulsar_systemd_unit_options:
+  ConditionHost: "|{{ inventory_hostname_short }}"
+
+pulsar_root: "{{ hpc_project_root }}/pulsar"
+pulsar_staging_dir: "{{ hpc_scratch_root }}/jobs"
+
+pulsar_systemd_environment: "{{ pulsar_env_default + hpc_pulsar_env }}"
+pulsar_env_default:
+  - "PATH={{ pulsar_venv_dir }}/bin{{ (hpc_pulsar_prepend_path is defined) | ternary(':' + (hpc_pulsar_prepend_path | join(':')), '') }}:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+  - "LD_LIBRARY_PATH={{ miniconda_prefix }}/envs/__curl@{{ pulsar_venv_dir }}/lib{{ (hpc_pulsar_append_ld_library_path is defined) | ternary(':' + (hpc_pulsar_append_ld_library_path | join(':')), '') }}"
+  - "DRMAA_LIBRARY_PATH={{ pulsar_drmaa_library_path }}"
+
+# FIXME: this should not be necessary when we're not even using privsep
+galaxy_user: "{{ ansible_user }}"
+pulsar_privsep_user: "{{ galaxy_user }}"
+pip_virtualenv_command: "{{ miniconda_prefix }}/envs/__python@{{ pulsar_python_version }}/bin/python3 -m venv"
+pulsar_persistence_dir: "{{ hpc_scratch_root }}/pulsar"
+
+pulsar_pycurl_ssl_library: openssl
+pulsar_drmaa_library_path: "{{ hpc_project_root }}/slurm-drmaa/lib/libdrmaa.so"
+
+pulsar_yaml_config:
+  staging_directory: "{{ pulsar_staging_dir }}/_default_"
+  persistence_directory: "{{ pulsar_persistence_dir }}"
+  message_queue_url: "{{ pulsar_message_queue_url }}"
+  sentry_dsn: "{{ pulsar_sentry_dsn }}"
+  maximum_stream_size: 1048576  # 1 MB
+  amqp_acknowledge: true
+  amqp_ack_republish_time: 180
+  amqp_publish_retry: true
+  amqp_publish_retry_max_retries: 5
+  amqp_publish_retry_interval_start: 10
+  amqp_publish_retry_interval_step: 10
+  amqp_publish_retry_interval_max: 60
+  preprocess_action_max_retries: 10
+  preprocess_action_interval_start: 2
+  preprocess_action_interval_step: 2
+  preprocess_action_interval_max: 60
+  postprocess_action_max_retries: 10
+  postprocess_action_interval_start: 2
+  postprocess_action_interval_step: 2
+  postprocess_action_interval_max: 60
+  min_polling_interval: 15
+  dependency_resolution:
+    resolvers:
+      - type: conda
+        prefix: "{{ miniconda_prefix }}"
+        auto_init: false
+        auto_install: false
+  managers: "{{ hpc_pulsar_managers }}"
+
+# don't prepopulate any cvmfs config
+cvmfsexec_source: none
+# avoid aggressive scratch cleaning of the contents of the cvmfsexec archive before the job finishes
+cvmfsexec_url: https://github.com/natefoo/cvmfsexec/archive/refs/heads/untar-no-preserve-times.tar.gz
+
+cvmfsexec_files:
+  - src: files/cvmfsexec/galaxyproject.org.pub
+    dest: /etc/cvmfs/keys/galaxyproject.org/galaxyproject.org.pub
+  - src: files/cvmfsexec/data.galaxyproject.org.pub
+    dest: /etc/cvmfs/keys/galaxyproject.org/data.galaxyproject.org.pub
+  - content: ""
+    dest: /etc/cvmfs/default.d/50-cern.conf
+  - content: |
+      CVMFS_SERVER_URL='http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@;http://cvmfs1-psu0.galaxyproject.org/cvmfs/@fqrn@;http://cvmfs1-tacc0.galaxyproject.org/cvmfs/@fqrn@'
+      CVMFS_KEYS_DIR=/etc/cvmfs/keys/galaxyproject.org
+    dest: /etc/cvmfs/domain.d/galaxyproject.org.conf
+
+cvmfsexec_local_options:
+  - key: CVMFS_ALIEN_CACHE
+    value: "{{ hpc_scratch_root }}/cvmfs_cache"
+  - key: CVMFS_QUOTA_LIMIT
+    value: "-1"
+  - key: CVMFS_SHARED_CACHE
+    value: "no"
+  - key: CVMFS_CLAIM_OWNERSHIP
+    value: "yes"
+  - key: CVMFS_HTTP_PROXY
+    value: "DIRECT"

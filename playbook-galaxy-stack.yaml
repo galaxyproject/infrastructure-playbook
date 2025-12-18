@@ -99,6 +99,11 @@
 
 - name: Galaxy Servers Additional Tasks
   hosts: galaxy_servers
+  handlers:
+    - name: Restart systemd-journald
+      ansible.builtin.systemd:
+        name: systemd-journald
+        state: restarted
   tasks:
     - name: Install PolicyKit rule for gxsrc systemctl privileges
       ansible.builtin.template:
@@ -145,6 +150,15 @@
         recalculate_mask: no_mask
         recursive: true
         state: present
+    - name: Disable journald rate limits
+      community.general.ini_file:
+        path: /etc/systemd/journald.conf
+        section: Journal
+        option: RateLimitIntervalSec
+        value: "0"
+        no_extra_spaces: true
+      notify:
+        - Restart systemd-journald
   roles:
     - role: galaxyproject.tusd
     - role: galaxyproject.general.cron
@@ -259,6 +273,8 @@
   handlers:
     - name: galaxyctl update
       ansible.builtin.command: "{{ galaxy_gravity_command }} update"
+      environment:
+        GRAVITY_CONFIG_FILE: "{{ gravity_config_file }}"
   tags:
     - gravity
 

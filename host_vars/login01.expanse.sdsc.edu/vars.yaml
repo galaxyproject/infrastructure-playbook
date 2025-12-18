@@ -1,7 +1,59 @@
 ---
 
-authorized_keys_unprivileged:
-  authorized: "{{ galaxy_team_users }}"
+hpc_home_root: "/home/xgalaxy"
+hpc_project_root: "/expanse/projects/qstore/pen160/xgalaxy"
+hpc_scratch_root: "/expanse/lustre/scratch/xgalaxy/temp_project"
+
+# This is the rebased commit on top of the cvmfsexec-singularity branch
+pulsar_package_name: "git+https://github.com/natefoo/pulsar.git@fc782f691311defbe1bb79e3b9577f28ece5cf47#egg=pulsar-app"
+pulsar_package_version: "{{ omit }}"
+
+hpc_pulsar_prepend_path:
+  - /cm/shared/apps/slurm/current/sbin
+  - /cm/shared/apps/slurm/current/bin
+
+hpc_pulsar_append_ld_library_path:
+  - /cm/shared/apps/slurm/current/lib64
+
+hpc_pulsar_env:
+  - SLURM_CONF=/cm/shared/apps/slurm/var/etc/expanse/slurm.conf
+
+# TODO: move staging dirs to pulsar_staging_dir if you redeploy with full downtime
+
+hpc_pulsar_managers:
+  test_expanse:
+    type: queued_drmaa
+    staging_directory: "{{ pulsar_staging_dir }}/test"
+    # TODO: test if the global retry settings are working
+  expanse:
+    type: queued_drmaa
+    staging_directory: "{{ hpc_scratch_root }}/main/staging"
+    preprocess_action_max_retries: 10
+    preprocess_action_interval_start: 2
+    preprocess_action_interval_step: 2
+    preprocess_action_interval_max: 60
+    postprocess_action_max_retries: 10
+    postprocess_action_interval_start: 2
+    postprocess_action_interval_step: 2
+    postprocess_action_interval_max: 60
+    min_polling_interval: 15
+
+#host_crontabs:
+#  - id: "pulsar-clean-{{ galaxy_instance_codename }}-scratch"
+#    use_cron_file: false
+#    minute: "{{ 59 | random(seed=galaxy_instance_codename) }}"
+#    hour: "*/6"
+#    job: "{{ _nfs_home_root }}/bin/pulsar-clean-jobs {{ pulsar_staging_dir }} >> {{ pulsar_root }}/log/pulsar-clean-jobs.log 2>&1"
+#  - id: "pulsar-clean-{{ galaxy_instance_codename }}-amqp-consume"
+#    use_cron_file: false
+#    minute: "15"
+#    hour: "2"
+#    job: "{{ _nfs_home_root }}/bin/tmpwatch 7d {{ pulsar_persistence_dir }}/amqp_ack-expanse/consume"
+#  - id: "pulsar-clean-cvmfs-cache"
+#    use_cron_file: false
+#    minute: "30"
+#    hour: "*/6"
+#    job: "{{ _nfs_home_root }}/bin/tmpwatch --nodirs 7d {{ _expanse_scratch_root }}/cvmfs_cache"
 
 pulsar_clean_jobs_percent_full_function: |
   python3.11 <<EOF
