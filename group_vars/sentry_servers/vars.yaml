@@ -6,7 +6,20 @@ sentry_superuser_password: "{{ vault_sentry_superuser_password }}"
 sentry_repo: https://github.com/natefoo/sentry-self-hosted.git
 sentry_repo_version: 24.8.0+gx0
 
+sentry_servers_group_apt_keys:
+  - url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+
+sentry_servers_group_apt_repositories:
+  - repo: "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+
 sentry_servers_group_packages:
+  - gpg
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
   - python3-docker
   - python3-pip
   - python3-venv

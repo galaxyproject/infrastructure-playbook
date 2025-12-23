@@ -5,20 +5,16 @@
 
 # FIXME: SmartOS auto-formats this ext4 and mounts it, so the task for this fails. Rather than enable the force option
 # here and potentially overwrite data on this volume in some future run of this playbook I just ran
-# `umount /data && mkfs.btrfs -f /dev/vdb` by hand.
+# `umount /data && mkfs.xfs -f /dev/vdb` by hand.
 filesystems:
   - dev: /dev/vdb
-    fstype: btrfs
+    fstype: xfs
 
 mounts:
   - name: /data
     src: /dev/vdb
     fstype: auto
     mode: "0755"
-
-jenkins_agents_group_btrfs_subvolumes:
-  - path: /data/docker
-  - path: /data/jenkins
 
 docker_daemon_option_list:
   - -H fd://
@@ -34,11 +30,29 @@ jenkins_agents_group_private_key_users: "{{ vault_jenkins_agents_group_private_k
 # hopefully overrides config-repo in cvmfsclients.yml
 galaxy_cvmfs_repos_enabled: true
 
+jenkins_agents_group_apt_keys:
+  - url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+
+jenkins_agents_group_apt_repositories:
+  - repo: "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+
+jenkins_agents_group_systemd_overrides:
+  - name: docker
+    override:
+      - "ExecStart="
+      - "ExecStart=/usr/bin/dockerd {{ docker_daemon_option_list | join(' ') }}"
+
 jenkins_agents_group_packages:
   - gpg
-  - btrfs-progs
+  - xfsprogs
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
   - git
-  - openjdk-11-jre-headless
+  - openjdk-25-jre-headless
   - build-essential
   - curl
   - python3-venv
@@ -106,5 +120,8 @@ jenkins_agents_group_kernel_params:
     value: 30
   - name: net.ipv4.tcp_keepalive_probes
     value: 40
+
+# TODO: i guess they changed it back from a service instance in trixie?
+__postfix_service_names: [postfix]
 
 postfix_role: "null-client"

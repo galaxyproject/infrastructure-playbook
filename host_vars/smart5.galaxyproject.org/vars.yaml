@@ -1,18 +1,6 @@
 ---
 
 smartos_images:
-  # debian-10 20200508 linux zvol
-  - uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
-    state: present
-  # ubuntu-22.04 20220923 linux lx-dataset
-  - uuid: d0e36a16-1fed-4974-a24e-a29245070445
-    state: present
-  # centos-7 20200508 linux zvol
-  - uuid: 9f948454-a09b-40c3-9027-ac8093879c6b
-    state: present
-  # debian-11 20220228 linux zvol
-  - uuid: 6ae6054a-95f7-4f8e-a3f7-88d1d22301bf
-    state: present
   # debian-12 20250403 linux zvol 2025-04-03
   - uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
     state: present
@@ -22,7 +10,7 @@ smartos_images:
 smartos_vms:
   - name: leeroy
     brand: bhyve
-    ram: 4096
+    ram: 2048
     vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
@@ -42,45 +30,46 @@ smartos_vms:
         size: 1048576
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: jenkins0
+  #- name: jenkins1
+  #  brand: bhyve
+  #  ram: 1024
+  #  vcpus: 1
+  #  resolvers: "{{ smartos_resolvers }}"
+  #  nics:
+  #    - nic_tag: external
+  #      ip: "{{ lookup('dig', 'jenkins1.galaxyproject.org') }}"
+  #      netmask: 255.255.255.0
+  #      gateway: 172.18.2.1
+  #      vlan_id: 406
+  #      model: virtio
+  #  disks:
+  #    - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+  #      boot: true
+  #      model: virtio
+  #    - boot: false
+  #      model: virtio
+  #      size: 32768
+  #  customer_metadata:
+  #    root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: sentry
     brand: bhyve
-    ram: 4096
-    vcpus: 2
+    ram: 49152
+    vcpus: 12
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
-        ip: "{{ lookup('dig', 'jenkins0.galaxyproject.org') }}"
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
+        ip: "{{ lookup('dig', 'sentry.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
+      - image_uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
         boot: true
-        model: virtio
-      - boot: false
-        model: virtio
-        size: 524288
-    customer_metadata:
-      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: jenkins1
-    brand: bhyve
-    ram: 1024
-    vcpus: 1
-    resolvers: "{{ smartos_resolvers }}"
-    nics:
-      - nic_tag: external
-        ip: "{{ lookup('dig', 'jenkins1.galaxyproject.org') }}"
-        netmask: 255.255.255.0
-        gateway: 172.18.2.1
-        vlan_id: 406
-        model: virtio
-    disks:
-      - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
-        boot: true
-        model: virtio
-      - boot: false
         model: virtio
         size: 32768
+      - boot: false
+        model: virtio
+        size: 1048576
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

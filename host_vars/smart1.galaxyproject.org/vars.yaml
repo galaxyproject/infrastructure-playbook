@@ -26,6 +26,9 @@ smartos_images:
   # debian-12 20231127 linux zvol 2023-11-27
   - uuid: d89041d8-41b9-481d-918a-722be4598dd1
     state: present
+  # debian-12 20250403 linux zvol 2025-04-03
+  - uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
+    state: present
 
 smartos_vms:
   - name: jeltz
@@ -74,23 +77,22 @@ smartos_vms:
         size: 131072
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
-  - name: sentry
+  - name: jenkins0
     brand: bhyve
-    ram: 32768
-    vcpus: 6
+    ram: 8192
+    vcpus: 2
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
-        ip: "{{ lookup('dig', 'sentry.galaxyproject.org') }}"
-        netmask: 255.255.255.224
-        gateway: 128.118.250.1
-        vlan_id: 306
+        ip: "{{ lookup('dig', 'jenkins0.galaxyproject.org') }}"
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
         model: virtio
     disks:
       - image_uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
         boot: true
         model: virtio
-        size: 24576
       - boot: false
         model: virtio
         size: 262144

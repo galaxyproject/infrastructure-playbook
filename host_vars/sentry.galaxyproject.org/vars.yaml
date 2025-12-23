@@ -20,6 +20,12 @@ mounts:
     fstype: auto
     mode: "0755"
 
+host_systemd_overrides:
+  - name: docker
+    override:
+      - "ExecStart="
+      - "ExecStart=/usr/bin/dockerd {{ docker_daemon_option_list | join(' ') }}"
+
 docker_daemon_option_list:
   - -H fd://
   - --containerd=/run/containerd/containerd.sock

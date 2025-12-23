@@ -71,12 +71,15 @@ all:
     # FIXME: is this group necessary?
     virtual_hosts:
       hosts:
-        cvmfs0-psu0.galaxyproject.org:
-        cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
+        sentry.galaxyproject.org:
+      children:
+        jenkins_servers:
+        jenkins_agents:
+        cvmfs_stratum0_servers:
 
     postfix_clients:
       children:

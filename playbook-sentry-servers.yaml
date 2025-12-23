@@ -3,13 +3,15 @@
 - name: Sentry Servers
   hosts: sentry_servers
   roles:
+    - role: galaxyproject.general.systemd
+      tags: systemd
     - role: galaxyproject.general.packages
       tags: general
     - role: galaxyproject.general.firewall
       tags: general
     - role: galaxyproject.nginx
       tags: nginx
-    - role: sentry
-      tags: sentry
+    #- role: sentry
+    #  tags: sentry
     - role: galaxyproject.general.cron
       tags: sentry
