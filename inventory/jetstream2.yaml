@@ -3,6 +3,10 @@
 
 all:
 
+  hosts:
+    jetstream2.galaxyproject.org:
+      ansible_python_interpreter: /usr/bin/python3.9
+
   children:
 
     openstack_instances:
