@@ -48,7 +48,7 @@
       - name: mdatp | add microsoft apt key
         ansible.builtin.get_url:
           url: "{{ mdatp_apt_key_url }}"
-          checksum: "sha256:2fa9c05d591a1582a9aba276272478c262e95ad00acf60eaee1644d93941e3c6"
+          checksum: "{{ mdatp_apt_key_checksum }}"
           dest: "/etc/apt/trusted.gpg.d/{{ mdatp_apt_key_url | basename }}"
 
       - name: mdatp | add microsoft apt repo

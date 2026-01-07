@@ -9,7 +9,8 @@ mdatp_managed_json_dest: "{{ mdatp_root }}/managed/mdatp_managed.json"
 #mdatp_managed_json_broken_dest: "{{ mdatp_root }}/managed/mdatp_onboard.json"
 
 
-mdatp_apt_key_url: https://packages.microsoft.com/keys/microsoft.asc
+mdatp_apt_key_url: https://packages.microsoft.com/keys/microsoft-2025.asc
+mdatp_apt_key_checksum: "sha256:d45224d594d969f084232deaaf97c58ca502a9d964c362d7aaef5a76e16b3dd1"
 
 mdatp_apt_repo_distro: "{{ ansible_distribution|lower }}"
 mdatp_apt_repo_version: "{{ ansible_distribution_major_version }}"
