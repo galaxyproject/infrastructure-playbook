@@ -27,7 +27,7 @@ hpc_pulsar_managers:
     # TODO: test if the global retry settings are working
   expanse:
     type: queued_drmaa
-    staging_directory: "{{ hpc_scratch_root }}/main/staging"
+    staging_directory: "{{ pulsar_staging_dir }}/main"
     preprocess_action_max_retries: 10
     preprocess_action_interval_start: 2
     preprocess_action_interval_step: 2
@@ -38,22 +38,6 @@ hpc_pulsar_managers:
     postprocess_action_interval_max: 60
     min_polling_interval: 15
 
-#host_crontabs:
-#  - id: "pulsar-clean-{{ galaxy_instance_codename }}-scratch"
-#    use_cron_file: false
-#    minute: "{{ 59 | random(seed=galaxy_instance_codename) }}"
-#    hour: "*/6"
-#    job: "{{ _nfs_home_root }}/bin/pulsar-clean-jobs {{ pulsar_staging_dir }} >> {{ pulsar_root }}/log/pulsar-clean-jobs.log 2>&1"
-#  - id: "pulsar-clean-{{ galaxy_instance_codename }}-amqp-consume"
-#    use_cron_file: false
-#    minute: "15"
-#    hour: "2"
-#    job: "{{ _nfs_home_root }}/bin/tmpwatch 7d {{ pulsar_persistence_dir }}/amqp_ack-expanse/consume"
-#  - id: "pulsar-clean-cvmfs-cache"
-#    use_cron_file: false
-#    minute: "30"
-#    hour: "*/6"
-#    job: "{{ _nfs_home_root }}/bin/tmpwatch --nodirs 7d {{ _expanse_scratch_root }}/cvmfs_cache"
 
 pulsar_clean_jobs_percent_full_function: |
   python3.11 <<EOF

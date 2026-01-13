@@ -1,0 +1,24 @@
+;;
+;; This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+;;
+[Unit]
+Description={{ item.description }} (timer)
+{% if "Requires" not in (item.target_unit | default({})) %}
+Requires={{ item.id }}.service
+{% endif %}
+{% for key, value in (item.target_unit | default({})).items() %}
+{% if value is not string and value is not mapping and value is iterable %}
+{{ key }}={{ value.join(' ') }}
+{% else %}
+{{ key }}={{ value }}
+{% endif %}
+{% endfor %}
+
+[Timer]
+Unit={{ item.id }}.service
+{% for key, value in (item.timer | default({})).items() %}
+{{ key }}={{ value }}
+{% endfor %}
+
+[Install]
+WantedBy=timers.target

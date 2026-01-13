@@ -9,18 +9,18 @@ HOURS=
 WARN_HOURS=$((3 * 24))
 LIMIT_HOURS=$((7 * 24))
 DRY_RUN=false
-MUTEX_ID=$(echo -n "${1:-}" | md5sum | awk '{print $1}')
-MUTEX="$HOME/pulsar-clean-jobs-${MUTEX_ID}.lock"
+DIR=
+MUTEX="$HOME/pulsar-clean-jobs.lock"
 MUTEX_ACQUIRED=false
 
 function usage() {
-    echo "usage: $0 [-hn] DIR"
+    echo "usage: $0 [-hn] DIR..."
     if [ "${1:-}" = 'help' ]; then
         cat <<EOF
     -h      print help
     -n      dry run
     -r      override hours
-    DIR     staging dir to clean
+    DIR     staging dir(s) to clean
 EOF
     fi
 }
@@ -41,8 +41,7 @@ while getopts ":hnr:" opt; do
 done
 shift $((OPTIND-1))
 
-DIR="${1:-}"
-[ -n "$DIR" ] || { usage; exit 2; }
+[ -n "${1:-}" ] || { usage; exit 2; }
 
 
 function trap_handler() {
@@ -197,13 +196,15 @@ function clean() {
 
 
 function main() {
-    [ -d "$DIR" ] || error "Invalid directory: $DIR"
-    if mkdir "$MUTEX"; then
-        log "Acquired mutex: $MUTEX"
-        MUTEX_ACQUIRED=true
+    for DIR in "$@"; do
+        [ -d "$DIR" ] || error "Invalid directory: $DIR"
         clean
-    fi
+    done
 }
 
 
-main
+if mkdir "$MUTEX"; then
+    log "Acquired mutex: $MUTEX"
+    MUTEX_ACQUIRED=true
+    main "$@"
+fi

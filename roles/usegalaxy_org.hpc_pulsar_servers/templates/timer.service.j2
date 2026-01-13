@@ -1,0 +1,22 @@
+;;
+;; This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+;;
+[Unit]
+Description={{ item.description }} (service)
+{% if "Wants" not in (item.service_unit | default({})) %}
+Wants={{ item.id }}.timer
+{% endif %}
+{% for key, value in (item.service_unit | default({})).items() %}
+{% if value is not string and value is not mapping and value is iterable %}
+{{ key }}={{ value.join(' ') }}
+{% else %}
+{{ key }}={{ value }}
+{% endif %}
+{% endfor %}
+
+[Service]
+Type=oneshot
+ExecStart={{ item.command }}
+{% for key, value in (item.service | default({})).items() %}
+{{ key }}={{ value }}
+{% endfor %}

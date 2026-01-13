@@ -22,11 +22,12 @@
 authorized_keys_unprivileged:
   authorized: "{{ galaxy_team_users }}"
 
+hpc_pulsar_log_dir: "{{ pulsar_root }}/log"
+
+# TODO: move these to the role
 hpc_pulsar_servers_group_directories:
   - path: "{{ hpc_home_root }}/bin"
     mode: "0755"
-  - path: "{{ pulsar_root }}/log"
-    mode: "0750"
 
 hpc_pulsar_servers_group_templates:
   - src: admin/pulsar-scratch-full.j2
@@ -41,8 +42,45 @@ hpc_pulsar_servers_group_files:
     dest: "{{ hpc_home_root }}/bin/tmpwatch"
     mode: "0755"
 
+hpc_pulsar_servers_systemd_timers:
+  - id: "pulsar-clean-scratch"
+    description: "Clean Pulsar Scratch directories"
+    command: "{{ hpc_home_root }}/bin/pulsar-clean-jobs {{ hpc_pulsar_managers.values() | map(attribute='staging_directory') | join(' ') }}"
+    timer:
+      OnActiveSec: "{{ 6 * 60 * 60 }}"
+    service:
+      TimeoutStartSec: 4h
+      StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-scratch.log"
+  - id: "pulsar-clean-amqp-consume"
+    description: "Clean Pulsar AMQP consumer directories"
+    command: "{{ hpc_home_root }}/bin/tmpwatch --verbose 7d {{ hpc_pulsar_managers.keys() | map('regex_replace', '^', pulsar_persistence_dir ~ '/amqp_ack-') | map('regex_replace', '$', '/consume') | join(' ') }}/"
+    timer:
+      OnActiveSec: "{{ 24 * 60 * 60 }}"
+      RandomizedDelaySec: 300
+    service:
+      TimeoutStartSec: 2h
+      StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-amqp-consume.log"
+  - id: "pulsar-clean-cvmfs-cache"
+    description: "Clean Pulsar CVMFS Cache"
+    command: "{{ hpc_home_root }}/bin/tmpwatch --verbose --nodirs 7d {{ hpc_scratch_root }}/cvmfs_cache"
+    timer:
+      OnActiveSec: "{{ 24 * 60 * 60 }}"
+      RandomizedDelaySec: 300
+    service:
+      TimeoutStartSec: 2h
+      StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-cvmfs-cache.log"
+  - id: "pulsar-logrotate"
+    description: "Rotate Pulsar logs"
+    command: "logrotate -s %h/.local/state/logrotate/pulsar.state %h/.config/logrotate/pulsar.conf"
+    timer:
+      OnCalendar: daily
+
 pulsar_python_version: "3.13"
 pulsar_curl_version: "8.14"
+
+# user journald appears to have a hardcoded 10MB limit
+pulsar_systemd_service_options:
+  StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar.log"
 
 miniconda_prefix: "{{ hpc_project_root }}/conda"
 miniconda_channels:

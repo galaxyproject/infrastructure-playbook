@@ -1,0 +1,13 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+{{ hpc_pulsar_log_dir }}/*.log {
+    size 50M
+    rotate 10
+    compress
+    delaycompress
+    copytruncate
+    missingok
+    notifempty
+}

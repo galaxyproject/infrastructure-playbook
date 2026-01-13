@@ -1,0 +1,74 @@
+---
+
+- name: Enable lingering
+  ansible.builtin.command: loginctl enable-linger {{ pulsar_user }}
+  args:
+    creates: "/var/lib/systemd/linger/{{ pulsar_user }}"
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode | default('0755') }}"
+  loop:
+    - path: "~/.config/systemd/user"
+    - path: "~/.config/logrotate"
+    - path: "~/.local/state/logrotate"
+    - path: "{{ hpc_pulsar_log_dir }}"
+      mode: "0750"
+
+- name: Template configs
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - src: logrotate.conf.j2
+      dest: ".config/logrotate/pulsar.conf"
+
+- name: Create systemd timer service units
+  ansible.builtin.template:
+    src: timer.service.j2
+    dest: "~/.config/systemd/user/{{ item.id }}.service"
+    mode: "0644"
+  loop: "{{ hpc_pulsar_servers_systemd_timers }}"
+  register: __hpc_pulsar_servers_timer_services_result
+  notify:
+    - Reload user systemd
+
+- name: Create systemd timer timer units
+  ansible.builtin.template:
+    src: timer.timer.j2
+    dest: "~/.config/systemd/user/{{ item.id }}.timer"
+    mode: "0644"
+  loop: "{{ hpc_pulsar_servers_systemd_timers }}"
+  register: __hpc_pulsar_servers_timer_timers_result
+  notify:
+    - Reload user systemd
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Set changed timer list
+  ansible.builtin.set_fact:
+    __hpc_pulsar_servers_changed_timers: >-
+      {{
+        ((__hpc_pulsar_servers_timer_services_result.results | select('changed')) +
+         (__hpc_pulsar_servers_timer_timers_result.results | select('changed')))
+          | map(attribute='item') | map(attribute='id') | unique
+      }}
+
+- name: Restart changed timers
+  ansible.builtin.systemd_service:
+    name: "{{ item }}.timer"
+    state: restarted
+    scope: user
+  loop: "{{ __hpc_pulsar_servers_changed_timers }}"
+
+- name: Ensure timers are enabled
+  ansible.builtin.systemd_service:
+    name: "{{ item.id }}.timer"
+    state: started
+    enabled: true
+    scope: user
+  loop: "{{ hpc_pulsar_servers_systemd_timers }}"

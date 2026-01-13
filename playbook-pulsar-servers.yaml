@@ -10,3 +10,5 @@
       tags: pulsar
     - role: galaxyproject.cvmfsexec
       when: "'hpc_pulsar_servers' in group_names"
+    - role: usegalaxy_org.hpc_pulsar_servers
+      when: "'hpc_pulsar_servers' in group_names"
