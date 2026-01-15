@@ -18,8 +18,6 @@ hpc_pulsar_append_ld_library_path:
 hpc_pulsar_env:
   - SLURM_CONF=/cm/shared/apps/slurm/var/etc/expanse/slurm.conf
 
-# TODO: move staging dirs to pulsar_staging_dir if you redeploy with full downtime
-
 hpc_pulsar_managers:
   test_expanse:
     type: queued_drmaa

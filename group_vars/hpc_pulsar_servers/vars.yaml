@@ -28,6 +28,9 @@ hpc_pulsar_log_dir: "{{ pulsar_root }}/log"
 hpc_pulsar_servers_group_directories:
   - path: "{{ hpc_home_root }}/bin"
     mode: "0755"
+  # FIXME: the pulsar role needs to create this
+  - path: "~/.config/systemd/user"
+    mode: "0755"
 
 hpc_pulsar_servers_group_templates:
   - src: admin/pulsar-scratch-full.j2
@@ -115,10 +118,10 @@ pulsar_systemd_unit_options:
 pulsar_root: "{{ hpc_project_root }}/pulsar"
 pulsar_staging_dir: "{{ hpc_scratch_root }}/jobs"
 
-pulsar_systemd_environment: "{{ pulsar_env_default + hpc_pulsar_env }}"
+pulsar_systemd_environment: "{{ pulsar_env_default + (hpc_pulsar_env | default([])) }}"
 pulsar_env_default:
-  - "PATH={{ pulsar_venv_dir }}/bin{{ (hpc_pulsar_prepend_path is defined) | ternary(':' + (hpc_pulsar_prepend_path | join(':')), '') }}:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
-  - "LD_LIBRARY_PATH={{ miniconda_prefix }}/envs/__curl@{{ pulsar_venv_dir }}/lib{{ (hpc_pulsar_append_ld_library_path is defined) | ternary(':' + (hpc_pulsar_append_ld_library_path | join(':')), '') }}"
+  - "PATH={{ pulsar_venv_dir }}/bin{{ (hpc_pulsar_prepend_path is defined) | ternary(':' + ((hpc_pulsar_prepend_path | default([])) | join(':')), '') }}:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin"
+  - "LD_LIBRARY_PATH={{ miniconda_prefix }}/envs/__curl@{{ pulsar_venv_dir }}/lib{{ (hpc_pulsar_append_ld_library_path is defined) | ternary(':' + ((hpc_pulsar_append_ld_library_path | default([])) | join(':')), '') }}"
   - "DRMAA_LIBRARY_PATH={{ pulsar_drmaa_library_path }}"
 
 # FIXME: this should not be necessary when we're not even using privsep

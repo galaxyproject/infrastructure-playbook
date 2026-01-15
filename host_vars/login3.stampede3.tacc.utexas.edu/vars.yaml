@@ -3,6 +3,30 @@
 authorized_keys_unprivileged:
   authorized: "{{ ['stampede3_auto_key'] + galaxy_team_users }}"
 
+hpc_home_root: "/home1/03166/xcgalaxy"
+hpc_project_root: "/work2/03166/xcgalaxy/stampede3"
+hpc_scratch_root: "/scratch/03166/xcgalaxy"
+
+hpc_pulsar_managers:
+  test_stampede3:
+    type: queued_drmaa
+    staging_directory: "{{ pulsar_staging_dir }}/test"
+  stampede3:
+    type: queued_drmaa
+    staging_directory: "{{ pulsar_staging_dir }}/main"
+    preprocess_action_max_retries: 10
+    preprocess_action_interval_start: 2
+    preprocess_action_interval_step: 2
+    preprocess_action_interval_max: 60
+    postprocess_action_max_retries: 10
+    postprocess_action_interval_start: 2
+    postprocess_action_interval_step: 2
+    postprocess_action_interval_max: 60
+    min_polling_interval: 15
+
+pulsar_systemd_unit_options:
+  ConditionHost: "|{{ inventory_hostname }}"
+
 pulsar_clean_jobs_percent_full_function: |
   python <<EOF
   import subprocess, sys, traceback

@@ -11,7 +11,6 @@
     state: directory
     mode: "{{ item.mode | default('0755') }}"
   loop:
-    - path: "~/.config/systemd/user"
     - path: "~/.config/logrotate"
     - path: "~/.local/state/logrotate"
     - path: "{{ hpc_pulsar_log_dir }}"
