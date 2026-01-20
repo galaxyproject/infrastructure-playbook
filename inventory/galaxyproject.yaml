@@ -12,6 +12,32 @@ all:
       ansible_user: rocky
       ansible_become: true
 
+    newtrail.galaxyproject.org: {ansible_user: root}
+    artifact.galaxyproject.org: {ansible_user: root}
+    duvel.galaxyproject.org: {ansible_user: root}
+    llv.galaxyproject.org: {ansible_user: root}
+    cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
+    cvmfs0-psu1.galaxyproject.org: {ansible_user: root}
+    cvmfs1-psu0.galaxyproject.org: {ansible_user: root}
+    cvmfs1-iu0.galaxyproject.org: {ansible_user: root}
+    eddie.galaxyproject.org: {ansible_user: root}
+    radegast.galaxyproject.org: {ansible_user: root}
+    thumper.galaxyproject.org: {ansible_user: root}
+    orval.galaxyproject.org: {ansible_user: root}
+    rochefort.galaxyproject.org: {ansible_user: root}
+    westvleteren.galaxyproject.org: {ansible_user: root}
+    leeroy.galaxyproject.org: {ansible_user: root}
+    jenkins0.galaxyproject.org: {ansible_user: root}
+    jenkins1.galaxyproject.org: {ansible_user: root}
+    stats.galaxyproject.org: {ansible_user: root}
+    sentry.galaxyproject.org: {ansible_user: root}
+    rodenbach.galaxyproject.org: {ansible_user: root}
+    jeltz.galaxyproject.org: {ansible_user: root}
+    smart1.galaxyproject.org: {ansible_user: root}
+    smart2.galaxyproject.org: {ansible_user: root}
+    smart3.galaxyproject.org: {ansible_user: root}
+    smart5.galaxyproject.org: {ansible_user: root}
+
     # for lx-brand zones, use:
     #example:
       # this updates /etc/hostname, which is what is used for the LX Rocky 9 image as of now
@@ -27,8 +53,9 @@ all:
     #  ansible_user: admin
     #  ansible_become: true
 
-  vars:
-    ansible_user: root
+  # can't override for vmhosting
+  #vars:
+  #  ansible_user: root
 
   children:
 
@@ -50,6 +77,7 @@ all:
         orval.galaxyproject.org:
         rochefort.galaxyproject.org:
         westvleteren.galaxyproject.org:
+        e1-galaxy-mx1.vmhost.psu.edu:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -115,6 +143,15 @@ all:
         jeltz.galaxyproject.org:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
+        sentry.galaxyproject.org:
+        e1-galaxy-mx1.vmhost.psu.edu:
+
+    psu_vmhosting_hosts:
+      vars:
+        ansible_port: 1855
+        ansible_become: true
+      hosts:
+        e1-galaxy-mx1.vmhost.psu.edu:
 
     # Grants access to ssh private keys
     ssh_clients:
@@ -226,6 +263,7 @@ all:
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
+        e1-galaxy-mx1.vmhost.psu.edu:
 
     jenkins_servers:
       hosts:

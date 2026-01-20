@@ -6,6 +6,7 @@
     - role: galaxyproject.general.virtual
       # postfix here to get the elastic IP
       tags: [general, postfix]
+      when: "'psu_vmhosting_hosts' not in group_names"
     - role: galaxyproject.general.packages
       tags: general
     - role: galaxyproject.general.paths
@@ -24,3 +25,14 @@
       notify:
         - restart postfix
       tags: postfix
+    - name: Allow SMTP traffic in ufw
+      community.general.ufw:
+        #name: Postfix
+        #delete: true
+        rule: allow
+        direction: in
+        proto: tcp
+        from_ip: any
+        to_port: "25"
+      when: "'psu_vmhosting_hosts' in group_names"
+      tags: ufw

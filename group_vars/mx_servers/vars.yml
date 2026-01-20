@@ -12,6 +12,7 @@ mx_servers_group_users:
 mx_servers_group_packages:
   - cron
   - tmpreaper
+  - inetutils-telnet
 
 #
 # galaxyproject.opendkim
@@ -61,13 +62,13 @@ postfix_virtual_domains:
   - usegalaxy.org
 
 postfix_config:
-  compatibility_level: 3.6
+  compatibility_level: 3.8
   alias_database: hash:/etc/postfix/aliases
   alias_maps: hash:/etc/postfix/aliases
   local_recipient_maps: $alias_maps
   mnetworks_style: null
   mynetworks: "127.0.0.0/8 {{ (ansible_default_ipv4.network ~ '/' ~ ansible_default_ipv4.netmask) | ansible.utils.ipaddr('network/prefix') }} [::1]/128 [fe80::]/64"
-  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  #proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
   recipient_delimiter: +
   relay_recipient_maps: hash:{{ mailman3_distribute_maps_dir }}/postfix_lmtp
   relay_domains: "{{ mailman3_domains | join(', ') }}"
@@ -78,6 +79,7 @@ postfix_config:
   sender_canonical_classes: envelope_sender
   recipient_canonical_maps: tcp:localhost:10002
   recipient_canonical_classes: envelope_recipient,header_recipient
+  relayhost: "[smtp.psu.edu]"
   # This config allows you to bypass the content_filter, but it's not needed since amavisd-new is configured to do the bypass
   #content_filter: null
   #smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
