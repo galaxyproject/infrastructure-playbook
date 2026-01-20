@@ -2,6 +2,11 @@
 
 - name: Mail (MX) Servers
   hosts: mx_servers
+  handlers:
+    - name: restart postsrsd
+      ansible.builtin.service:
+        name: postsrsd
+        state: restarted
   roles:
     - role: galaxyproject.general.virtual
       # postfix here to get the elastic IP
@@ -25,6 +30,14 @@
       notify:
         - restart postfix
       tags: postfix
+    - name: Configure postsrsd domain
+      ansible.builtin.lineinfile:
+        path: /etc/default/postsrsd
+        regexp: '^SRS_DOMAIN=.*'
+        line: 'SRS_DOMAIN=galaxyproject.org'
+      notify:
+        - restart postsrsd
+      tags: postsrsd
     - name: Allow SMTP traffic in ufw
       community.general.ufw:
         #name: Postfix
