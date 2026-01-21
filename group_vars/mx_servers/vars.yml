@@ -60,6 +60,7 @@ postfix_virtual_aliases: "{{ vault_postfix_virtual_aliases }}"
 postfix_virtual_domains:
   - brc-analytics.org
   - usegalaxy.org
+  - genomeark2.org
 
 postfix_config:
   compatibility_level: 3.8
