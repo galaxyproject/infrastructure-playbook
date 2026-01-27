@@ -8,3 +8,10 @@ all:
     cloudfront_lambda:
       hosts:
         cloudfront-gtn:
+        # Currently the Hub is (manually) configured in CloudFront, until HTTPS Alias Mode support hits browsers it is
+        # mostly unusable. Details and bugs to track can be found here: https://kalfeher.com/https-current-state/
+        #
+        # Once support exists you should be able to translate the existing config to the playbook using GTN as a
+        # reference. Even once supported you will need to keep the A record serving for some time (possibly forever) for
+        # older clients, but its stability matters less once most clients use the CDN.
+        #cloudfront-hub:
