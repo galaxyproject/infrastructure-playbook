@@ -1,8 +1,21 @@
 ---
 
+tor_exit_addresses_file_path: /srv/nginx/galaxyproject.org/_tor-exit-addresses/list.txt
+
 host_directories:
   - path: /srv/nginx
   - path: /srv/nginx/galaxyproject.org/alias
+  - path: "{{ tor_exit_addresses_file_path | dirname }}"
+    owner: www-data
+    group: www-data
+
+host_crontabs:
+  - id: fetch_tor_exit_node_addresses
+    name: Fetch Tor exit node addresses
+    user: www-data
+    hour: "*/6"
+    minute: 15
+    job: /usr/bin/curl --silent -o {{ tor_exit_addresses_file_path }} https://check.torproject.org/exit-addresses
 
 nginx_conf_http:
   server_names_hash_bucket_size: 128

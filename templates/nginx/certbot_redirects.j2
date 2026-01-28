@@ -7,10 +7,12 @@ server {
     listen       *:80;
     server_name  {{ certbot_redirect_domains |join(" ") }};
 
+{% if certbot_auth_method | default("--standalone") == "--webroot" %}
     location /.well-known/ {
         root {{ certbot_well_known_root }};
     }
 
+{% endif %}
     location / {
         return 301 https://$host$request_uri;
     }

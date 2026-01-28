@@ -2,3 +2,7 @@
 
 # override changing root keys
 meta_galaxyproject_group_authorized_key_users: []
+
+# combined with inheritance_chain in mx_servers
+psu_vmhosting_hosts_group_postfix_config:
+  relayhost: "[smtp.psu.edu]"

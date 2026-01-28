@@ -3,9 +3,9 @@
 - name: List Servers
   hosts: list_servers
   roles:
-    - role: galaxyproject.general.virtual
-      # postfix here to get the elastic IP
-      tags: [general, postfix]
+    #- role: galaxyproject.general.virtual
+    #  # postfix here to get the elastic IP
+    #  tags: [general, postfix]
     - role: galaxyproject.general.packages
       tags: [general, mailman]
     - role: galaxyproject.general.paths
@@ -64,9 +64,20 @@
       loop:
         - galaxy
         - anvil
+    - name: Allow SMTP traffic in ufw
+      community.general.ufw:
+        #name: Postfix
+        #delete: true
+        rule: allow
+        direction: in
+        proto: tcp
+        from_ip: any
+        to_port: "25"
+      when: "'psu_vmhosting_hosts' in group_names"
+      tags: ufw
 
-- name: MX Servers
-  hosts: mx_servers
-  roles:
-    - role: galaxyproject.general.users
-      tags: [general, mailman]
+#- name: MX Servers
+#  hosts: mx_servers
+#  roles:
+#    - role: galaxyproject.general.users
+#      tags: [general, mailman]

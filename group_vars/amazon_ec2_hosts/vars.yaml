@@ -1,0 +1,5 @@
+---
+
+# combined with inheritance_chain in mx_servers
+amazon_ec2_hosts_group_postfix_config:
+  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"

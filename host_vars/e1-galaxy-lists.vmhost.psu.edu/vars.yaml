@@ -1,10 +1,13 @@
 ---
 
+host_packages:
+  - xfsprogs
+
 filesystems:
   - dev: /dev/sdb
     fstype: xfs
 
-mounts:
+host_mounts:
   - name: /var/lib/mailman3
     src: /dev/sdb
     fstype: xfs

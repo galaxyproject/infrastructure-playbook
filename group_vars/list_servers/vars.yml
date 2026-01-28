@@ -9,16 +9,6 @@ nginx_tor_exit_deny_conf: "/etc/nginx/conf.d/tor-exit-deny.conf"
 # galaxyproject.general.users
 #
 
-list_servers_group_users:
-  - "{{ galaxyproject_users.michelle }}"
-
-list_servers_group_groups:
-  - "{{ galaxyproject_groups.michelle }}"
-
-list_servers_group_authorized_key_users:
-  - name: michelle
-    authorized: [michelle_savage]
-
 list_servers_group_templates:
   # NOTE: this would fail on first run
   - src: templates/nginx/tor-exit-deny-list.bash.j2
@@ -32,6 +22,7 @@ list_servers_group_crontabs:
     name: Update Tor exit node deny list for NGINX
     user: root
     hour: "*/6"
+    minute: 20
     job: "bash -c '{ bash /etc/nginx/tor-exit-deny-list.bash | tee >(logger -p cron.info); } &>>/var/log/tor-exit-deny-list.log'"
   - id: mailman_set_dmarc_mitigate_action
     name: Set Mailman DMARC Mitigate Action
@@ -44,11 +35,11 @@ list_servers_group_crontabs:
 # usegalaxy_org.postgresql_relocate_pgdata
 #
 
-# Relocate PostgreSQL data dir on to the EBS volume. If Mailman were to run on a host where another service also needed
+# Relocate PostgreSQL data dir on to the extra volume. If Mailman were to run on a host where another service also needed
 # PostgreSQL, this would not be appropriate. But for Mailman, we want to keep everything contained on one volume that
 # can be easily attached to another instance.
 postgresql_relocate_pgdata_dest: /var/lib/mailman3/postgresql
-postgresql_relocate_pgdata_service_name: postgresql@14-main
+postgresql_relocate_pgdata_service_name: postgresql@16-main
 
 #
 # galaxyproject.postgresql_objects
@@ -57,22 +48,11 @@ postgresql_relocate_pgdata_service_name: postgresql@14-main
 postgresql_objects_users:
   - name: mailman3-web
   - name: list
-  - name: michelle
 postgresql_objects_databases:
   - name: mailman3_web
     owner: mailman3-web
   - name: mailman3_core
     owner: list
-postgresql_objects_privileges:
-  - database: mailman3_web
-    objs: ALL_IN_SCHEMA
-    roles: michelle
-    privs: SELECT
-  - database: mailman3_web
-    objs: ALL_IN_SCHEMA
-    roles: michelle
-    privs: SELECT
-    type: sequence
 
 #
 # galaxyproject.mailman3
@@ -131,8 +111,15 @@ mailman3_django_config:
   #debug: true
 
 mailman3_extra_packages:
+  # For https://gitlab.com/mailman/mailman-web/-/merge_requests/58 and other allauth changes
+  - mailman-web>=0.0.10.dev16
   - psycopg2-binary
-  - xapian-haystack
+  # https://github.com/notanumber/xapian-haystack/pull/238
+  - git+https://github.com/anarcat/xapian-haystack.git@long-term
+  #   File "/opt/mailman3/lib/python3.12/site-packages/xapian_backend.py", line 692, in search
+  #     app_label, model_name, pk, model_data = pickle.loads(self._get_document_data(database, match.document))
+  # ModuleNotFoundError: No module named 'pytz'
+  - pytz
 
 # These are set in the distribute maps playbook's inventory file in [vars:all] and on the host
 mailman3_distribute_maps:
@@ -141,6 +128,8 @@ mailman3_distribute_maps:
     mailman3_postmap_command: /usr/sbin/postmap
   - host: artifact.galaxyproject.org
   - host: newtrail.galaxyproject.org
+  - host: e1-galaxy-mx1.vmhost.psu.edu
+    ansible_port: 1855
 
 mailman3_distribute_map_frequency: 30
 
@@ -162,8 +151,8 @@ postfix_mailname: "{{ inventory_hostname }}"
 
 postfix_mailman3_var_dir: /var/lib/mailman3/data
 postfix_config:
-  compatibility_level: 3.6
-  proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"
+  compatibility_level: 3.8
+  relayhost: "[smtp.psu.edu]"
   transport_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   local_recipient_maps: hash:{{ postfix_mailman3_var_dir }}/postfix_lmtp
   relay_domains: hash:{{ postfix_mailman3_var_dir }}/postfix_domains

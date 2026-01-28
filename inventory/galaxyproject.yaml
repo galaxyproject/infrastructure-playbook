@@ -15,7 +15,6 @@ all:
     newtrail.galaxyproject.org: {ansible_user: root}
     artifact.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
-    llv.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu1.galaxyproject.org: {ansible_user: root}
     cvmfs1-psu0.galaxyproject.org: {ansible_user: root}
@@ -66,7 +65,6 @@ all:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
-        llv.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
@@ -78,6 +76,7 @@ all:
         rochefort.galaxyproject.org:
         westvleteren.galaxyproject.org:
         e1-galaxy-mx1.vmhost.psu.edu:
+        e1-galaxy-lists.vmhost.psu.edu:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
@@ -145,6 +144,12 @@ all:
         radegast.galaxyproject.org:
         sentry.galaxyproject.org:
         e1-galaxy-mx1.vmhost.psu.edu:
+        e1-galaxy-lists.vmhost.psu.edu:
+
+    amazon_ec2_hosts:
+      hosts:
+        newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
 
     psu_vmhosting_hosts:
       vars:
@@ -152,6 +157,7 @@ all:
         ansible_become: true
       hosts:
         e1-galaxy-mx1.vmhost.psu.edu:
+        e1-galaxy-lists.vmhost.psu.edu:
 
     # Grants access to ssh private keys
     ssh_clients:
@@ -242,7 +248,7 @@ all:
 
     list_servers:
       hosts:
-        llv.galaxyproject.org:
+        e1-galaxy-lists.vmhost.psu.edu:
 
     dns_servers:
       hosts:

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-debug=true
+debug=false
 
 conf={{ nginx_tor_exit_deny_conf | quote }}
 new_conf_written=false
@@ -42,7 +42,7 @@ echo "INFO: Fetching updated tor exit node list"
 # merge lists, die on any failures
 {
     $curl --fail 'https://www.dan.me.uk/torlist/?exit' ;
-    $curl --fail 'https://check.torproject.org/exit-addresses' | grep ExitAddress | cut -d ' ' -f 2 ;
+    $curl --fail 'https://galaxyproject.org/_tor-exit-addresses/list.txt' | grep ExitAddress | cut -d ' ' -f 2 ;
 } | grep -v ':' | sort | uniq | sed 's/^/deny /g; s/$/;/g' > "$tmp"
 
 if [[ ! -f $conf ]]; then

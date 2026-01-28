@@ -20,6 +20,16 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
    }
 }
+
+# Avoids bots generating errors in Django logs
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name {{ inventory_hostname }} {{ lookup('dig', inventory_hostname) }};
+
+    return 302 https://{{ mailman3_domains[0] }};
+}
 {% for domain in mailman3_web_domains | default(mailman3_domains) %}
 
 server {
@@ -29,9 +39,6 @@ server {
     server_name {{ domain }};
 
     client_max_body_size 16M;
-
-    # the wildcard allows this to work before the file is created
-    include {{ nginx_conf_dir }}/block-list*.conf;
 
     location /static/ {
         alias {{ mailman3_django_static_dir }}/;

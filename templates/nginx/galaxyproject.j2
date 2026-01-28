@@ -141,6 +141,12 @@ server {
         proxy_set_header       Host shiltemann.github.io;
         proxy_pass             https://shiltemann.github.io/gcc2021-training/;
     }
+
+    location ^~ /_tor-exit-addresses/ {
+        allow   {{ lookup('dig', groups.list_servers[0]) }};
+        deny    all;
+        alias   {{ tor_exit_addresses_file_path | dirname }}/;
+    }
 }
 
 # vim: set filetype=nginx

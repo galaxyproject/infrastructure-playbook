@@ -11,13 +11,14 @@
     - role: galaxyproject.general.virtual
       # postfix here to get the elastic IP
       tags: [general, postfix]
-      when: "'psu_vmhosting_hosts' not in group_names"
-    - role: galaxyproject.general.packages
-      tags: general
-    - role: galaxyproject.general.paths
-      tags: general
-    - role: galaxyproject.general.users
-      tags: general
+      when: "'amazon_ec2_hosts' in group_names"
+    # should be done by bootstrap now
+    #- role: galaxyproject.general.packages
+    #  tags: general
+    #- role: galaxyproject.general.paths
+    #  tags: general
+    #- role: galaxyproject.general.users
+    #  tags: general
     - role: galaxyproject.opendkim
       tags: [postfix, opendkim]
     - role: galaxyproject.postfix
@@ -38,14 +39,21 @@
       notify:
         - restart postsrsd
       tags: postsrsd
-    - name: Allow SMTP traffic in ufw
-      community.general.ufw:
-        #name: Postfix
-        #delete: true
-        rule: allow
-        direction: in
-        proto: tcp
-        from_ip: any
-        to_port: "25"
+    - name: VM Hosting Block
       when: "'psu_vmhosting_hosts' in group_names"
-      tags: ufw
+      tags: vmhosting
+      block:
+        - name: Allow SMTP traffic in ufw
+          community.general.ufw:
+            #name: Postfix
+            #delete: true
+            rule: allow
+            direction: in
+            proto: tcp
+            from_ip: any
+            to_port: "25"
+        - name: Allow list user login from list server
+          ansible.builtin.lineinfile:
+            path: /etc/security/access.conf
+            line: "+ : list : {{ lookup('dig', groups.list_servers[0]) }}"
+            insertbefore: "- : ALL : ALL"

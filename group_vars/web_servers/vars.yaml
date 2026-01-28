@@ -12,6 +12,8 @@ nginx_conf_worker_processes: 4
 nginx_enable_default_ipv6: false
 #nginx_ssl_config_profile: intermediate
 nginx_ssl_config_profile: modern
+# https://letsencrypt.org/2024/12/05/ending-ocsp
+nginx_conf_ssl_stapling: ""
 #nginx_conf_ssl_protocols:
 #  - TLSv1.2
 #  - TLSv1.3
