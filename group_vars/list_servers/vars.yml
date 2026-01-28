@@ -219,6 +219,7 @@ postfix_aliases:
   security: root
   postorius: root
   listmaster: root
+  mailman3-web: root
   root: root@galaxyproject.org
 
 #
