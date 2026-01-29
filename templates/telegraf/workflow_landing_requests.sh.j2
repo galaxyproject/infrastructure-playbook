@@ -140,7 +140,10 @@ psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r dbkey count; do
 WITH reqs AS (
     SELECT
         COALESCE(
-            jsonb_path_query_first(request_state::jsonb, '$.** ? (@.dbkey)')->>'dbkey',
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey)'
+            )->>'dbkey',
             'unknown'
         ) as dbkey
     FROM workflow_landing_request
@@ -161,7 +164,10 @@ WITH reqs AS (
     SELECT
         DATE(create_time) as day,
         COALESCE(
-            jsonb_path_query_first(request_state::jsonb, '$.** ? (@.dbkey)')->>'dbkey',
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey)'
+            )->>'dbkey',
             'unknown'
         ) as dbkey
     FROM workflow_landing_request
@@ -185,7 +191,10 @@ WITH reqs AS (
     SELECT
         DATE_TRUNC('month', create_time)::date as month,
         COALESCE(
-            jsonb_path_query_first(request_state::jsonb, '$.** ? (@.dbkey)')->>'dbkey',
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey)'
+            )->>'dbkey',
             'unknown'
         ) as dbkey
     FROM workflow_landing_request
@@ -211,7 +220,10 @@ WITH reqs AS (
         COALESCE(workflow_id::text, 'null') as workflow_id,
         COALESCE(origin, 'unknown') as origin,
         COALESCE(
-            jsonb_path_query_first(request_state::jsonb, '$.** ? (@.dbkey)')->>'dbkey',
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey)'
+            )->>'dbkey',
             'unknown'
         ) as dbkey
     FROM workflow_landing_request
