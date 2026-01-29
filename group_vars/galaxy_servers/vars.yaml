@@ -98,8 +98,8 @@ systemd_journald_persistent: true
 
 galaxy_cvmfs_repos_enabled: true
 
-# use 40% of /
-cvmfs_quota_limit: "{{ ((ansible_mounts | selectattr('mount', 'eq', '/') | first).size_total * 0.4 / 1024**2) | int }}"
+# use 20% of /
+cvmfs_quota_limit: "{{ ((ansible_mounts | selectattr('mount', 'eq', '/') | first).size_total * 0.2 / 1024**2) | int }}"
 
 # override so that the TACC stratum 1 is always first
 galaxy_cvmfs_server_urls:
