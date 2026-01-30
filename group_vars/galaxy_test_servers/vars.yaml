@@ -25,22 +25,22 @@ postgresql_conf:
   # # Connections num: 100
   # # Data Storage: san
   max_connections: 100
-  shared_buffers: 2GB
-  effective_cache_size: 6GB
-  maintenance_work_mem: 512MB
+  shared_buffers: 1GB
+  effective_cache_size: 3GB
+  maintenance_work_mem: 128MB
   checkpoint_completion_target: 0.9
   wal_buffers: 16MB
   default_statistics_target: 100
   random_page_cost: 1.1
   effective_io_concurrency: 300
-  work_mem: 8MB  # pgtune recommended 5242kB
+  work_mem: 4MB  # pgtune recommended 5242kB
   huge_pages: off
   min_wal_size: 1GB
   max_wal_size: 4GB
-  max_worker_processes: 4
-  max_parallel_workers_per_gather: 2
-  max_parallel_workers: 4
-  max_parallel_maintenance_workers: 2
+  max_worker_processes: 2
+  max_parallel_workers_per_gather: 1
+  max_parallel_workers: 2
+  max_parallel_maintenance_workers: 1
 
 redis_requirepass: "{{ vault_redis_requirepass }}"
 redis_bind_interface: 127.0.0.1
@@ -72,11 +72,11 @@ galaxy_test_servers_group_gravity_config:
     #    LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
     #    HDF5_USE_FILE_LOCKING: "FALSE"
     bind: localhost:8080
-    workers: 1
+    workers: 2
     timeout: 600
     restart_timeout: 900
     preload: true
-    extra_args: --max-requests 50000 --max-requests-jitter 10000
+    extra_args: --max-requests 100000 --max-requests-jitter 20000
     environment:
       LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
       HDF5_USE_FILE_LOCKING: "FALSE"
@@ -109,20 +109,21 @@ galaxy_test_servers_group_gravity_config:
       HOME: "/home/g2test"
       PATH: "/usr/pgsql-17/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
   handlers:
-    test_handler:
+    handler:
       name_template: "{name}{process}"
       processes: 1
       pools:
         - job-handlers
-      environment:
-        HDF5_USE_FILE_LOCKING: "FALSE"
-    test_workflow_scheduler:
-      name_template: "{name}{process}"
-      processes: 1
-      pools:
         - workflow-schedulers
       environment:
         HDF5_USE_FILE_LOCKING: "FALSE"
+    #workflow_scheduler:
+    #  name_template: "{name}{process}"
+    #  processes: 1
+    #  pools:
+    #    - workflow-schedulers
+    #  environment:
+    #    HDF5_USE_FILE_LOCKING: "FALSE"
 
 galaxy_test_servers_group_telegraf_plugins_extra:
   statsd:
