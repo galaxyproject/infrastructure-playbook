@@ -89,11 +89,12 @@ server {
     }
 
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
-    location /api/ {
-        limit_req zone=limit_test burst=40 nodelay;
-        limit_req_status 429;
-        try_files false @galaxy;
-    }
+    # FIXME: somehow this is also hitting /_job_files (even with /api/jobs/<job_id>/files exempt) but not on Main??
+    #location /api/ {
+    #    limit_req zone=limit_test burst=40 nodelay;
+    #    limit_req_status 429;
+    #    try_files false @galaxy;
+    #}
 
     location @galaxy {
         proxy_pass         http://galaxy;
