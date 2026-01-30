@@ -6,9 +6,25 @@ set -euo pipefail
 
 PGDATABASE="galaxy_{{ galaxy_instance_codename }}"
 
+escape_tag() {
+    echo "$1" | sed 's/[,= ]/\\&/g'
+}
+
 # Total workflow landing requests
 total=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request;")
 echo "workflow_landing_requests_total value=${total}i"
+
+# Total workflow landing requests by origin (all time)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r origin count; do
+SELECT
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+GROUP BY origin;
+EOF
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_total_by_origin,origin=${origin_tag} count=${count}i"
+done
 
 # Requests by day (last 30 days)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day count; do
@@ -23,6 +39,36 @@ EOF
     echo "workflow_landing_requests_daily,day=${day} count=${count}i"
 done
 
+# Requests by day and origin (last 90 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day origin count; do
+SELECT
+    DATE(create_time) as day,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '90 days'
+GROUP BY DATE(create_time), origin
+ORDER BY day, origin;
+EOF
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_daily_origin,day=${day},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by month and origin (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month origin count; do
+SELECT
+    DATE_TRUNC('month', create_time)::date as month,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+GROUP BY DATE_TRUNC('month', create_time), origin
+ORDER BY month, origin;
+EOF
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_monthly_origin,month=${month},origin=${origin_tag} count=${count}i"
+done
+
 # Requests by workflow_id (top 10)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_id count; do
 SELECT
@@ -31,11 +77,205 @@ SELECT
 FROM workflow_landing_request
 WHERE create_time >= NOW() - INTERVAL '7 days'
 GROUP BY workflow_id
-ORDER BY count DESC
+ORDER BY count DESC, workflow_id
 LIMIT 10;
 EOF
-    workflow_id_escaped=$(echo "$workflow_id" | sed 's/[,= ]/\\&/g')
+    workflow_id_escaped=$(escape_tag "$workflow_id")
     echo "workflow_landing_requests_by_workflow,workflow_id=${workflow_id_escaped} count=${count}i"
+done
+
+# Requests by workflow_id and origin (top 10, last 7 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_id origin count; do
+SELECT
+    COALESCE(workflow_id::text, 'null') as workflow_id,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '7 days'
+GROUP BY workflow_id, origin
+ORDER BY count DESC, workflow_id, origin
+LIMIT 10;
+EOF
+    workflow_id_tag=$(escape_tag "$workflow_id")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_by_workflow_origin,workflow_id=${workflow_id_tag},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by day, workflow_id, and origin (last 30 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_id origin count; do
+SELECT
+    DATE(create_time) as day,
+    COALESCE(workflow_id::text, 'null') as workflow_id,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '30 days'
+GROUP BY DATE(create_time), workflow_id, origin
+ORDER BY day, workflow_id, origin;
+EOF
+    workflow_id_tag=$(escape_tag "$workflow_id")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_daily_workflow_origin,day=${day},workflow_id=${workflow_id_tag},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by month, workflow_id, and origin (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_id origin count; do
+SELECT
+    DATE_TRUNC('month', create_time)::date as month,
+    COALESCE(workflow_id::text, 'null') as workflow_id,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+GROUP BY DATE_TRUNC('month', create_time), workflow_id, origin
+ORDER BY month, workflow_id, origin;
+EOF
+    workflow_id_tag=$(escape_tag "$workflow_id")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_monthly_workflow_origin,month=${month},workflow_id=${workflow_id_tag},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by dbkey (all time)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r dbkey count; do
+WITH reqs AS (
+    SELECT
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
+            'unknown'
+        ) as dbkey
+    FROM workflow_landing_request
+)
+SELECT
+    dbkey,
+    COUNT(*) as count
+FROM reqs
+GROUP BY dbkey;
+EOF
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_dbkey,dbkey=${dbkey_tag} count=${count}i"
+done
+
+# Requests by day and dbkey (last 90 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE(create_time) as day,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
+            'unknown'
+        ) as dbkey
+    FROM workflow_landing_request
+    WHERE create_time >= NOW() - INTERVAL '90 days'
+)
+SELECT
+    day,
+    dbkey,
+    COUNT(*) as count
+FROM reqs
+GROUP BY day, dbkey
+ORDER BY day, dbkey;
+EOF
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_daily_dbkey,day=${day},dbkey=${dbkey_tag} count=${count}i"
+done
+
+# Requests by month and dbkey (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE_TRUNC('month', create_time)::date as month,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
+            'unknown'
+        ) as dbkey
+    FROM workflow_landing_request
+    WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+)
+SELECT
+    month,
+    dbkey,
+    COUNT(*) as count
+FROM reqs
+GROUP BY month, dbkey
+ORDER BY month, dbkey;
+EOF
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_monthly_dbkey,month=${month},dbkey=${dbkey_tag} count=${count}i"
+done
+
+# Requests by day, workflow_id, origin, and dbkey (last 30 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_id origin dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE(create_time) as day,
+        COALESCE(workflow_id::text, 'null') as workflow_id,
+        COALESCE(origin, 'unknown') as origin,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
+            'unknown'
+        ) as dbkey
+    FROM workflow_landing_request
+    WHERE create_time >= NOW() - INTERVAL '30 days'
+)
+SELECT
+    day,
+    workflow_id,
+    origin,
+    dbkey,
+    COUNT(*) as count
+FROM reqs
+GROUP BY day, workflow_id, origin, dbkey
+ORDER BY day, workflow_id, origin, dbkey;
+EOF
+    workflow_id_tag=$(escape_tag "$workflow_id")
+    origin_tag=$(escape_tag "$origin")
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_daily_workflow_origin_dbkey,day=${day},workflow_id=${workflow_id_tag},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
+done
+
+# Requests by month, workflow_id, origin, and dbkey (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_id origin dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE_TRUNC('month', create_time)::date as month,
+        COALESCE(workflow_id::text, 'null') as workflow_id,
+        COALESCE(origin, 'unknown') as origin,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
+            'unknown'
+        ) as dbkey
+    FROM workflow_landing_request
+    WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+)
+SELECT
+    month,
+    workflow_id,
+    origin,
+    dbkey,
+    COUNT(*) as count
+FROM reqs
+GROUP BY month, workflow_id, origin, dbkey
+ORDER BY month, workflow_id, origin, dbkey;
+EOF
+    workflow_id_tag=$(escape_tag "$workflow_id")
+    origin_tag=$(escape_tag "$origin")
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_monthly_workflow_origin_dbkey,month=${month},workflow_id=${workflow_id_tag},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
 done
 
 # Public vs Private requests (last 24 hours)
