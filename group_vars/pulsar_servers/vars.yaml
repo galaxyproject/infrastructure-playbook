@@ -2,6 +2,7 @@
 
 pulsar_sentry_dsn: "{{ vault_pulsar_sentry_dsn }}"
 pulsar_amqp_credentials: "{{ vault_pulsar_amqp_credentials }}"
+pulsar_message_queue_password: "{{ vault_pulsar_message_queue_password }}"
 
 pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials }}@mq.galaxyproject.org:5671//main_pulsar?ssl=1"
 

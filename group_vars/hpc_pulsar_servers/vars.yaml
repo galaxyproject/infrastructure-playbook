@@ -137,6 +137,9 @@ pulsar_yaml_config:
   staging_directory: "{{ pulsar_staging_dir }}/_default_"
   persistence_directory: "{{ pulsar_persistence_dir }}"
   message_queue_url: "{{ pulsar_message_queue_url }}"
+  message_queue_username: "{{ pulsar_message_queue_username | default(none) }}"
+  message_queue_password: "{{ pulsar_message_queue_password | default(none) }}"
+  #relay_topic_prefix: "{{ pulsar_relay_topic_prefix | default(none) }}"
   sentry_dsn: "{{ pulsar_sentry_dsn }}"
   maximum_stream_size: 1048576  # 1 MB
   amqp_acknowledge: true

@@ -1,0 +1,45 @@
+---
+
+authorized_keys_unprivileged:
+  authorized: "{{ ['vista_auto_key'] + galaxy_team_users }}"
+
+hpc_home_root: "/home1/03166/xcgalaxy"
+hpc_project_root: "/work/03166/xcgalaxy/vista"
+hpc_scratch_root: "/scratch/03166/xcgalaxy"
+
+pulsar_message_queue_url: https://relay.usegalaxy.org
+pulsar_message_queue_username: pulsar
+#pulsar_message_queue_password: set in pulsar_servers group vars
+#pulsar_relay_topic_prefix: test
+
+hpc_pulsar_managers:
+  test_vista:
+    type: queued_drmaa
+    staging_directory: "{{ pulsar_staging_dir }}/test"
+    # FIXME: is this implemented?
+    #relay_topic_prefix: test
+
+pulsar_systemd_unit_options:
+  ConditionHost: "|{{ inventory_hostname }}"
+
+pulsar_clean_jobs_percent_full_function: |
+  python <<EOF
+  import subprocess, sys, traceback
+  try:
+      line = subprocess.check_output("quota -pf /scratch".split(), text=True).splitlines()[-1].strip()
+      line_a = line.strip().split()
+      if line[0] == " ":
+          used_blocks, limit_blocks, used_inodes, limit_inodes = [int(x) for x in (line_a[0], line_a[2], line_a[4], line_a[6])]
+      else:
+          used_blocks, limit_blocks, used_inodes, limit_inodes = [int(x) for x in (line_a[1], line_a[3], line_a[5], line_a[7])]
+      size_ratio = 0
+      inodes_ratio = 0
+      if limit_blocks != 0:
+          size_ratio = used_blocks / limit_blocks
+      if limit_inodes != 0:
+          inodes_ratio = used_inodes / limit_inodes
+      print(round(100 * max(size_ratio, inodes_ratio)))
+  except Exception as exc:
+      traceback.print_exception(exc, file=sys.stderr)
+      print(0)
+  EOF

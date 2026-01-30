@@ -1,0 +1,19 @@
+---
+
+pulsar_relay_servers_group_packages:
+  - python-3.12
+  - valkey
+
+pulsar_relay_servers_group_directories:
+  - path: /srv/relay
+    mode: "0755"
+    owner: "gxsrc"
+    group: "G-803372"
+
+#redis_databases: 1
+#redis_maxmemory: 536870912
+#redis_appendonly: "yes"
+
+# TODO:
+# - enable/start valkey
+# - create relay user
