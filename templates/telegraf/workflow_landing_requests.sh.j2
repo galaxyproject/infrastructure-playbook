@@ -142,7 +142,7 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey)'
+                '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
@@ -166,7 +166,7 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey)'
+                '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
@@ -193,7 +193,7 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey)'
+                '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
@@ -222,7 +222,7 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey)'
+                '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
@@ -253,7 +253,10 @@ WITH reqs AS (
         COALESCE(workflow_id::text, 'null') as workflow_id,
         COALESCE(origin, 'unknown') as origin,
         COALESCE(
-            jsonb_path_query_first(request_state::jsonb, '$.** ? (@.dbkey)')->>'dbkey',
+            jsonb_path_query_first(
+                convert_from(request_state, 'UTF8')::jsonb,
+                '$.** ? (@.dbkey != null)'
+            )->>'dbkey',
             'unknown'
         ) as dbkey
     FROM workflow_landing_request
