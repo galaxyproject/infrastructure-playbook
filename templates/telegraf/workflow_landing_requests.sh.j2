@@ -39,6 +39,7 @@ EOF
     echo "workflow_landing_requests_daily,day=${day} count=${count}i"
 done
 
+<<<<<<< Updated upstream
 # Requests by day and origin (last 90 days)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day origin count; do
 SELECT
@@ -69,11 +70,65 @@ EOF
     echo "workflow_landing_requests_monthly_origin,month=${month},origin=${origin_tag} count=${count}i"
 done
 
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 # Requests by workflow_id (top 10)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_id count; do
+=======
+# Requests by day and origin (last 90 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day origin count; do
 SELECT
-    COALESCE(workflow_id::text, 'null') as workflow_id,
+    DATE(create_time) as day,
+    COALESCE(origin, 'unknown') as origin,
     COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= NOW() - INTERVAL '90 days'
+GROUP BY DATE(create_time), origin
+ORDER BY day, origin;
+EOF
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_daily_origin,day=${day},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by month and origin (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month origin count; do
+SELECT
+    DATE_TRUNC('month', create_time)::date as month,
+    COALESCE(origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request
+WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+GROUP BY DATE_TRUNC('month', create_time), origin
+ORDER BY month, origin;
+EOF
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_monthly_origin,month=${month},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by workflow_name (top 10)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_name count; do
+>>>>>>> Stashed changes
+SELECT
+    COALESCE(
+        sw.name,
+        w.name,
+        CASE 
+            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                regexp_replace(
+                    substring(wlr.workflow_source from '/([^/]+)/versions'),
+                    '%23|%2F', '', 'g'
+                )
+            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+            WHEN wlr.workflow_source IS NOT NULL THEN
+                substring(wlr.workflow_source from '[^/]+$')
+            ELSE NULL
+        END,
+        'unknown'
+    ) as workflow_name,
+    COUNT(*) as count
+<<<<<<< Updated upstream
 FROM workflow_landing_request
 WHERE create_time >= NOW() - INTERVAL '7 days'
 GROUP BY workflow_id
@@ -84,6 +139,7 @@ EOF
     echo "workflow_landing_requests_by_workflow,workflow_id=${workflow_id_escaped} count=${count}i"
 done
 
+<<<<<<< Updated upstream
 # Requests by workflow_id and origin (top 10, last 7 days)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_id origin count; do
 SELECT
@@ -133,6 +189,124 @@ EOF
     workflow_id_tag=$(escape_tag "$workflow_id")
     origin_tag=$(escape_tag "$origin")
     echo "workflow_landing_requests_monthly_workflow_origin,month=${month},workflow_id=${workflow_id_tag},origin=${origin_tag} count=${count}i"
+=======
+=======
+FROM workflow_landing_request wlr
+LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+WHERE wlr.create_time >= NOW() - INTERVAL '7 days'
+GROUP BY workflow_name
+ORDER BY count DESC, workflow_name
+LIMIT 10;
+EOF
+    workflow_name_escaped=$(escape_tag "$workflow_name")
+    echo "workflow_landing_requests_by_workflow,workflow_name=${workflow_name_escaped} count=${count}i"
+done
+
+# Requests by workflow_name and origin (top 10, last 7 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_name origin count; do
+SELECT
+    COALESCE(
+        sw.name,
+        w.name,
+        CASE 
+            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                regexp_replace(
+                    substring(wlr.workflow_source from '/([^/]+)/versions'),
+                    '%23|%2F', '', 'g'
+                )
+            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+            WHEN wlr.workflow_source IS NOT NULL THEN
+                substring(wlr.workflow_source from '[^/]+$')
+            ELSE NULL
+        END,
+        'unknown'
+    ) as workflow_name,
+    COALESCE(wlr.origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request wlr
+LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+WHERE wlr.create_time >= NOW() - INTERVAL '7 days'
+GROUP BY workflow_name, origin
+ORDER BY count DESC, workflow_name, origin
+LIMIT 10;
+EOF
+    workflow_name_tag=$(escape_tag "$workflow_name")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_by_workflow_origin,workflow_name=${workflow_name_tag},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by day, workflow_name, and origin (last 30 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_name origin count; do
+SELECT
+    DATE(wlr.create_time) as day,
+    COALESCE(
+        sw.name,
+        w.name,
+        CASE 
+            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                regexp_replace(
+                    substring(wlr.workflow_source from '/([^/]+)/versions'),
+                    '%23|%2F', '', 'g'
+                )
+            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+            WHEN wlr.workflow_source IS NOT NULL THEN
+                substring(wlr.workflow_source from '[^/]+$')
+            ELSE NULL
+        END,
+        'unknown'
+    ) as workflow_name,
+    COALESCE(wlr.origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request wlr
+LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+WHERE wlr.create_time >= NOW() - INTERVAL '30 days'
+GROUP BY DATE(wlr.create_time), workflow_name, origin
+ORDER BY day, workflow_name, origin;
+EOF
+    workflow_name_tag=$(escape_tag "$workflow_name")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_daily_workflow_origin,day=${day},workflow_name=${workflow_name_tag},origin=${origin_tag} count=${count}i"
+done
+
+# Requests by month, workflow_name, and origin (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_name origin count; do
+SELECT
+    DATE_TRUNC('month', wlr.create_time)::date as month,
+    COALESCE(
+        sw.name,
+        w.name,
+        CASE 
+            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                regexp_replace(
+                    substring(wlr.workflow_source from '/([^/]+)/versions'),
+                    '%23|%2F', '', 'g'
+                )
+            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+            WHEN wlr.workflow_source IS NOT NULL THEN
+                substring(wlr.workflow_source from '[^/]+$')
+            ELSE NULL
+        END,
+        'unknown'
+    ) as workflow_name,
+    COALESCE(wlr.origin, 'unknown') as origin,
+    COUNT(*) as count
+FROM workflow_landing_request wlr
+LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+WHERE wlr.create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+GROUP BY DATE_TRUNC('month', wlr.create_time), workflow_name, origin
+ORDER BY month, workflow_name, origin;
+EOF
+    workflow_name_tag=$(escape_tag "$workflow_name")
+    origin_tag=$(escape_tag "$origin")
+    echo "workflow_landing_requests_monthly_workflow_origin,month=${month},workflow_name=${workflow_name_tag},origin=${origin_tag} count=${count}i"
+>>>>>>> Stashed changes
 done
 
 # Requests by dbkey (all time)
@@ -212,6 +386,7 @@ EOF
     echo "workflow_landing_requests_monthly_dbkey,month=${month},dbkey=${dbkey_tag} count=${count}i"
 done
 
+<<<<<<< Updated upstream
 # Requests by day, workflow_id, origin, and dbkey (last 30 days)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_id origin dbkey count; do
 WITH reqs AS (
@@ -222,20 +397,60 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
+=======
+# Requests by day, workflow_name, origin, and dbkey (last 30 days)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_name origin dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE(wlr.create_time) as day,
+        COALESCE(
+            sw.name,
+            w.name,
+            CASE 
+                WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                    regexp_replace(
+                        substring(wlr.workflow_source from '/([^/]+)/versions'),
+                        '%23|%2F', '', 'g'
+                    )
+                WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                    'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+                WHEN wlr.workflow_source IS NOT NULL THEN
+                    substring(wlr.workflow_source from '[^/]+$')
+                ELSE NULL
+            END,
+            'unknown'
+        ) as workflow_name,
+        COALESCE(wlr.origin, 'unknown') as origin,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(wlr.request_state, 'UTF8')::jsonb,
+>>>>>>> Stashed changes
                 '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
+<<<<<<< Updated upstream
     FROM workflow_landing_request
     WHERE create_time >= NOW() - INTERVAL '30 days'
 )
 SELECT
     day,
     workflow_id,
+=======
+    FROM workflow_landing_request wlr
+    LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+    LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+    WHERE wlr.create_time >= NOW() - INTERVAL '30 days'
+)
+SELECT
+    day,
+    workflow_name,
+>>>>>>> Stashed changes
     origin,
     dbkey,
     COUNT(*) as count
 FROM reqs
+<<<<<<< Updated upstream
 GROUP BY day, workflow_id, origin, dbkey
 ORDER BY day, workflow_id, origin, dbkey;
 EOF
@@ -255,20 +470,69 @@ WITH reqs AS (
         COALESCE(
             jsonb_path_query_first(
                 convert_from(request_state, 'UTF8')::jsonb,
+=======
+GROUP BY day, workflow_name, origin, dbkey
+ORDER BY day, workflow_name, origin, dbkey;
+EOF
+    workflow_name_tag=$(escape_tag "$workflow_name")
+    origin_tag=$(escape_tag "$origin")
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_daily_workflow_origin_dbkey,day=${day},workflow_name=${workflow_name_tag},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
+done
+
+# Requests by month, workflow_name, origin, and dbkey (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_name origin dbkey count; do
+WITH reqs AS (
+    SELECT
+        DATE_TRUNC('month', wlr.create_time)::date as month,
+        COALESCE(
+            sw.name,
+            w.name,
+            CASE 
+                WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+                    regexp_replace(
+                        substring(wlr.workflow_source from '/([^/]+)/versions'),
+                        '%23|%2F', '', 'g'
+                    )
+                WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+                    'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+                WHEN wlr.workflow_source IS NOT NULL THEN
+                    substring(wlr.workflow_source from '[^/]+$')
+                ELSE NULL
+            END,
+            'unknown'
+        ) as workflow_name,
+        COALESCE(wlr.origin, 'unknown') as origin,
+        COALESCE(
+            jsonb_path_query_first(
+                convert_from(wlr.request_state, 'UTF8')::jsonb,
+>>>>>>> Stashed changes
                 '$.** ? (@.dbkey != null)'
             )->>'dbkey',
             'unknown'
         ) as dbkey
+<<<<<<< Updated upstream
     FROM workflow_landing_request
     WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
 )
 SELECT
     month,
     workflow_id,
+=======
+    FROM workflow_landing_request wlr
+    LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
+    LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
+    WHERE wlr.create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+)
+SELECT
+    month,
+    workflow_name,
+>>>>>>> Stashed changes
     origin,
     dbkey,
     COUNT(*) as count
 FROM reqs
+<<<<<<< Updated upstream
 GROUP BY month, workflow_id, origin, dbkey
 ORDER BY month, workflow_id, origin, dbkey;
 EOF
@@ -278,6 +542,18 @@ EOF
     echo "workflow_landing_requests_monthly_workflow_origin_dbkey,month=${month},workflow_id=${workflow_id_tag},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
 done
 
+=======
+GROUP BY month, workflow_name, origin, dbkey
+ORDER BY month, workflow_name, origin, dbkey;
+EOF
+    workflow_name_tag=$(escape_tag "$workflow_name")
+    origin_tag=$(escape_tag "$origin")
+    dbkey_tag=$(escape_tag "$dbkey")
+    echo "workflow_landing_requests_monthly_workflow_origin_dbkey,month=${month},workflow_name=${workflow_name_tag},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
+done
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 # Public vs Private requests (last 24 hours)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r visibility count; do
 SELECT
