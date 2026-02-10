@@ -10,6 +10,60 @@ escape_tag() {
     echo "$1" | sed 's/[,= ]/\\&/g'
 }
 
+# Reusable SQL fragment for extracting workflow name
+# This can be used in SELECT clauses by referencing $WORKFLOW_NAME_SQL
+read -r -d '' WORKFLOW_NAME_SQL <<'SQL_FRAGMENT' || true
+COALESCE(
+    NULLIF(NULLIF(sw.name, 'Unnamed workflow'), 'unnamed workflow'),
+    NULLIF(NULLIF(w.name, 'Unnamed workflow'), 'unnamed workflow'),
+    CASE 
+        WHEN wlr.workflow_source ~ 'dockstore\.org.*#workflow/github\.com/[^/]+/[^/]+/' THEN
+            CASE
+                WHEN substring(wlr.workflow_source from '#workflow/github\.com/[^/]+/[^/]+/([^/]+)/versions') ~ '^(main|master)$' THEN
+                    substring(wlr.workflow_source from '#workflow/github\.com/[^/]+/([^/]+)/')
+                ELSE
+                    regexp_replace(
+                        substring(wlr.workflow_source from '#workflow/github\.com/[^/]+/[^/]+/([^/]+)/versions'),
+                        '%23|%2F|%20', '-', 'g'
+                    )
+            END
+        WHEN wlr.workflow_source ~ 'github\.com/[^/]+/[^/]+' THEN
+            regexp_replace(
+                substring(wlr.workflow_source from 'github\.com/([^/]+/[^/]+)'),
+                '/', '-', 'g'
+            )
+        WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
+            regexp_replace(
+                substring(wlr.workflow_source from '/([^/]+)/versions'),
+                '%23|%2F|%20', '-', 'g'
+            )
+        WHEN wlr.workflow_source ~ '/tools/\d+' THEN
+            'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
+        WHEN wlr.workflow_source IS NOT NULL THEN
+            regexp_replace(
+                regexp_replace(
+                    substring(wlr.workflow_source from '[^/]+$'),
+                    '%23|%2F|%20', '-', 'g'
+                ),
+                '\.(ga|yml|yaml)$', '', 'g'
+            )
+        ELSE NULL
+    END,
+    'unknown'
+)
+SQL_FRAGMENT
+
+# Reusable SQL fragment for extracting dbkey from request_state
+read -r -d '' DBKEY_SQL <<'SQL_FRAGMENT' || true
+COALESCE(
+    jsonb_path_query_first(
+        convert_from(wlr.request_state, 'UTF8')::jsonb,
+        '$.** ? (@.dbkey != null)'
+    )->>'dbkey',
+    'unknown'
+)
+SQL_FRAGMENT
+
 # Total workflow landing requests
 total=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM workflow_landing_request;")
 echo "workflow_landing_requests_total value=${total}i"
@@ -72,23 +126,7 @@ done
 # Requests by workflow_name (top 10)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_name count; do
 SELECT
-    COALESCE(
-        sw.name,
-        w.name,
-        CASE 
-            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                regexp_replace(
-                    substring(wlr.workflow_source from '/([^/]+)/versions'),
-                    '%23|%2F', '', 'g'
-                )
-            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-            WHEN wlr.workflow_source IS NOT NULL THEN
-                substring(wlr.workflow_source from '[^/]+$')
-            ELSE NULL
-        END,
-        'unknown'
-    ) as workflow_name,
+    ${WORKFLOW_NAME_SQL} as workflow_name,
     COUNT(*) as count
 FROM workflow_landing_request wlr
 LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
@@ -105,23 +143,7 @@ done
 # Requests by workflow_name and origin (top 10, last 7 days)
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r workflow_name origin count; do
 SELECT
-    COALESCE(
-        sw.name,
-        w.name,
-        CASE 
-            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                regexp_replace(
-                    substring(wlr.workflow_source from '/([^/]+)/versions'),
-                    '%23|%2F', '', 'g'
-                )
-            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-            WHEN wlr.workflow_source IS NOT NULL THEN
-                substring(wlr.workflow_source from '[^/]+$')
-            ELSE NULL
-        END,
-        'unknown'
-    ) as workflow_name,
+    ${WORKFLOW_NAME_SQL} as workflow_name,
     COALESCE(wlr.origin, 'unknown') as origin,
     COUNT(*) as count
 FROM workflow_landing_request wlr
@@ -141,23 +163,7 @@ done
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_name origin count; do
 SELECT
     DATE(wlr.create_time) as day,
-    COALESCE(
-        sw.name,
-        w.name,
-        CASE 
-            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                regexp_replace(
-                    substring(wlr.workflow_source from '/([^/]+)/versions'),
-                    '%23|%2F', '', 'g'
-                )
-            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-            WHEN wlr.workflow_source IS NOT NULL THEN
-                substring(wlr.workflow_source from '[^/]+$')
-            ELSE NULL
-        END,
-        'unknown'
-    ) as workflow_name,
+    ${WORKFLOW_NAME_SQL} as workflow_name,
     COALESCE(wlr.origin, 'unknown') as origin,
     COUNT(*) as count
 FROM workflow_landing_request wlr
@@ -176,23 +182,7 @@ done
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_name origin count; do
 SELECT
     DATE_TRUNC('month', wlr.create_time)::date as month,
-    COALESCE(
-        sw.name,
-        w.name,
-        CASE 
-            WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                regexp_replace(
-                    substring(wlr.workflow_source from '/([^/]+)/versions'),
-                    '%23|%2F', '', 'g'
-                )
-            WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-            WHEN wlr.workflow_source IS NOT NULL THEN
-                substring(wlr.workflow_source from '[^/]+$')
-            ELSE NULL
-        END,
-        'unknown'
-    ) as workflow_name,
+    ${WORKFLOW_NAME_SQL} as workflow_name,
     COALESCE(wlr.origin, 'unknown') as origin,
     COUNT(*) as count
 FROM workflow_landing_request wlr
@@ -211,14 +201,8 @@ done
 psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r dbkey count; do
 WITH reqs AS (
     SELECT
-        COALESCE(
-            jsonb_path_query_first(
-                convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey != null)'
-            )->>'dbkey',
-            'unknown'
-        ) as dbkey
-    FROM workflow_landing_request
+        ${DBKEY_SQL} as dbkey
+    FROM workflow_landing_request wlr
 )
 SELECT
     dbkey,
@@ -235,14 +219,8 @@ psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day dbkey count;
 WITH reqs AS (
     SELECT
         DATE(create_time) as day,
-        COALESCE(
-            jsonb_path_query_first(
-                convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey != null)'
-            )->>'dbkey',
-            'unknown'
-        ) as dbkey
-    FROM workflow_landing_request
+        ${DBKEY_SQL} as dbkey
+    FROM workflow_landing_request wlr
     WHERE create_time >= NOW() - INTERVAL '90 days'
 )
 SELECT
@@ -262,14 +240,8 @@ psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month dbkey coun
 WITH reqs AS (
     SELECT
         DATE_TRUNC('month', create_time)::date as month,
-        COALESCE(
-            jsonb_path_query_first(
-                convert_from(request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey != null)'
-            )->>'dbkey',
-            'unknown'
-        ) as dbkey
-    FROM workflow_landing_request
+        ${DBKEY_SQL} as dbkey
+    FROM workflow_landing_request wlr
     WHERE create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
 )
 SELECT
@@ -289,31 +261,9 @@ psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r day workflow_nam
 WITH reqs AS (
     SELECT
         DATE(wlr.create_time) as day,
-        COALESCE(
-            sw.name,
-            w.name,
-            CASE 
-                WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                    regexp_replace(
-                        substring(wlr.workflow_source from '/([^/]+)/versions'),
-                        '%23|%2F', '', 'g'
-                    )
-                WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                    'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-                WHEN wlr.workflow_source IS NOT NULL THEN
-                    substring(wlr.workflow_source from '[^/]+$')
-                ELSE NULL
-            END,
-            'unknown'
-        ) as workflow_name,
+        ${WORKFLOW_NAME_SQL} as workflow_name,
         COALESCE(wlr.origin, 'unknown') as origin,
-        COALESCE(
-            jsonb_path_query_first(
-                convert_from(wlr.request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey != null)'
-            )->>'dbkey',
-            'unknown'
-        ) as dbkey
+        ${DBKEY_SQL} as dbkey
     FROM workflow_landing_request wlr
     LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
     LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
@@ -340,31 +290,9 @@ psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month workflow_n
 WITH reqs AS (
     SELECT
         DATE_TRUNC('month', wlr.create_time)::date as month,
-        COALESCE(
-            sw.name,
-            w.name,
-            CASE 
-                WHEN wlr.workflow_source LIKE '%dockstore.org%' THEN
-                    regexp_replace(
-                        substring(wlr.workflow_source from '/([^/]+)/versions'),
-                        '%23|%2F', '', 'g'
-                    )
-                WHEN wlr.workflow_source ~ '/tools/\d+' THEN
-                    'workflow-' || substring(wlr.workflow_source from '/tools/(\d+)')
-                WHEN wlr.workflow_source IS NOT NULL THEN
-                    substring(wlr.workflow_source from '[^/]+$')
-                ELSE NULL
-            END,
-            'unknown'
-        ) as workflow_name,
+        ${WORKFLOW_NAME_SQL} as workflow_name,
         COALESCE(wlr.origin, 'unknown') as origin,
-        COALESCE(
-            jsonb_path_query_first(
-                convert_from(wlr.request_state, 'UTF8')::jsonb,
-                '$.** ? (@.dbkey != null)'
-            )->>'dbkey',
-            'unknown'
-        ) as dbkey
+        ${DBKEY_SQL} as dbkey
     FROM workflow_landing_request wlr
     LEFT JOIN stored_workflow sw ON wlr.workflow_id = sw.id
     LEFT JOIN workflow w ON wlr.stored_workflow_id = w.id
