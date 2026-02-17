@@ -80,6 +80,8 @@ postgresql_objects_databases:
 
 ## used by: other vars and various templates
 tool_shed_root: "/srv/toolshed/{{ tool_shed_instance_codename }}"
+tool_shed_mutable_data_dir: "{{ tool_shed_root }}/var"
+tool_shed_mutable_config_dir: "{{ tool_shed_mutable_data_dir }}/config"
 tool_shed_tmp_dir: "{{ tool_shed_mutable_data_dir }}/tmp"
 tool_shed_server_dir: "{{ tool_shed_root }}/server"
 tool_shed_log_dir: "{{ tool_shed_root }}/log"

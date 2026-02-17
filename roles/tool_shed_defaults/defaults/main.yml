@@ -11,9 +11,9 @@ tool_shed_config_file: "{{ tool_shed_config_dir }}/tool_shed.yml"
 tool_shed_force_checkout: true
 tool_shed_repo: https://github.com/galaxyproject/galaxy.git
 tool_shed_version: stable
-tool_shed_api_version: v1
+tool_shed_api_version: v2
 
-tool_shed_yarn_command: "{{ (tool_shed_api_version == 'v2') | ternary('corepack yarn', 'yarn') }}"
+tool_shed_pnpm_command: pnpm
 
 tool_shed_additional_venv_packages: []
 

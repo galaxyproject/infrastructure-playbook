@@ -178,24 +178,40 @@
 - name: Tool Shed v2 Block
   block:
 
-    - name: Install yarn
-      ansible.builtin.npm:
-        executable: "{{ tool_shed_venv_dir }}/bin/npm"
-        name: yarn
-        global: yes
+    - name: Enable corepack shims
+      ansible.builtin.command: "corepack enable --install-directory {{ tool_shed_venv_dir }}/bin"
       environment:
         PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
         VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
-    #- name: Build Tool Shed v2 Client
-    #  community.general.yarn:
-    #    path: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
+    #- name: Install yarn
+    #  ansible.builtin.npm:
+    #    executable: "{{ tool_shed_venv_dir }}/bin/npm"
+    #    name: yarn
+    #    global: yes
     #  environment:
     #    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
     #    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
 
+    ##- name: Build Tool Shed v2 Client
+    ##  community.general.yarn:
+    ##    path: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
+    ##  environment:
+    ##    PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+    ##    VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+
+    - name: Install Tool Shed v2 Client Packages
+      ansible.builtin.command: "{{ tool_shed_pnpm_command }} install"
+      args:
+        chdir: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
+      environment:
+        PATH: "{{ tool_shed_venv_dir }}/bin:{{ ansible_env.PATH }}"
+        VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
+      when: __tool_shed_git_update_result is changed
+
     - name: Build Tool Shed v2 Client
-      ansible.builtin.command: "{{ tool_shed_yarn_command }} build"
+      ansible.builtin.command: "{{ tool_shed_pnpm_command }} build"
       args:
         chdir: "{{ tool_shed_server_dir }}/lib/tool_shed/webapp/frontend"
       environment:

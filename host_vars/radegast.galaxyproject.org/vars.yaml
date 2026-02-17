@@ -99,24 +99,21 @@ tool_shed_backup_hour: 2
 # for TSv2.
 #
 # NOTE: I actually installed miniforge by hand, not via ansible, this is just in case everything blows up
-miniconda_prefix: /srv/toolshed/main/conda
-miniconda_version: 24.3.0
-miniconda_conda_environments:
-  python@3.9:
-    channels:
-      - conda-forge
-    packages:
-      - python=3.9
-tool_shed_virtualenv_command: "{{ miniconda_prefix }}/envs/python@3.9/bin/python3 -m venv"
+#miniconda_prefix: /srv/toolshed/main/conda
+#miniconda_version: 24.3.0
+#miniconda_conda_environments:
+#  python@3.9:
+#    channels:
+#      - conda-forge
+#    packages:
+#      - python=3.9
+#tool_shed_virtualenv_command: "{{ miniconda_prefix }}/envs/python@3.9/bin/python3 -m venv"
 
 tool_shed_dbname: tool_shed_main
 tool_shed_instance_codename: main
 tool_shed_instance_hostname: toolshed.g2.bx.psu.edu
-tool_shed_repo: https://github.com/mvdbeek/galaxy.git
-tool_shed_version: server_external_hgweb
-#tool_shed_version: release_23.1
+tool_shed_version: release_26.0
 tool_shed_config_ga_code: "UA-45719423-12"
-#tool_shed_api_version: v2
 tool_shed_gunicorn_memory_limit: 10G
 tool_shed_hgweb_memory_limit: 2G
 

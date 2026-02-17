@@ -91,7 +91,6 @@ tool_shed_instance_codename: test
 tool_shed_instance_hostname: testtoolshed.g2.bx.psu.edu
 tool_shed_version: dev
 tool_shed_config_ga_code: "UA-45719423-8"
-tool_shed_api_version: v2
 tool_shed_gunicorn_memory_limit: 10G
 tool_shed_hgweb_memory_limit: 2G
 
