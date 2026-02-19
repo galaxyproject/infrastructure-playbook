@@ -32,6 +32,10 @@ server {
         proxy_set_header   X-Forwarded-Proto $scheme;
         proxy_set_header   SCRIPT_NAME       {{ tool_shed_hgweb_prefix }};
     }
+
+    location ~ ^{{ tool_shed_hgweb_prefix.rstrip("/") }}/.*/annotate/ {
+        return 403;
+    }
 {% endif %}
 
 {% if tool_shed_api_version == "v2" %}

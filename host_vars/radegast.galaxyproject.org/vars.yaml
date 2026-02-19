@@ -114,8 +114,8 @@ tool_shed_instance_codename: main
 tool_shed_instance_hostname: toolshed.g2.bx.psu.edu
 tool_shed_version: release_26.0
 tool_shed_config_ga_code: "UA-45719423-12"
-tool_shed_gunicorn_memory_limit: 10G
-tool_shed_hgweb_memory_limit: 2G
+tool_shed_gunicorn_memory_limit: 4G
+tool_shed_hgweb_memory_limit: 1G
 
 ## used by: error_pages
 error_pages_title: "Galaxy Tool Shed"
