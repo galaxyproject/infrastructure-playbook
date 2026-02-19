@@ -88,14 +88,14 @@ tool_shed_log_dir: "{{ tool_shed_root }}/log"
 tool_shed_repos_dir: "{{ tool_shed_mutable_data_dir }}/repos"
 
 ## used by: systemd templates
-tool_shed_gunicorn_workers: 1
+tool_shed_gunicorn_workers: 2
 tool_shed_gunicorn_bind: "127.0.0.1:9009"
-tool_shed_gunicorn_max_requests: 50000
+tool_shed_gunicorn_max_requests: 500000
 tool_shed_gunicorn_max_requests_jitter: 5000
 tool_shed_hgweb_dir: "{{ tool_shed_root }}/hgweb"
 tool_shed_hgweb_user: shedweb
 tool_shed_hgweb_group: shed
-tool_shed_hgweb_gunicorn_workers: 2
+tool_shed_hgweb_gunicorn_workers: 4
 tool_shed_hgweb_gunicorn_bind: "127.0.0.1:3003"
 tool_shed_hgweb_max_requests: 500
 tool_shed_hgweb_max_requests_jitter: 50
