@@ -21,6 +21,13 @@ docker_daemon_option_list:
   - --containerd=/run/containerd/containerd.sock
   - --data-root=/data/docker
 
+docker_containerd_config:
+  # this is just restoring the default config shipped with the package
+  disabled_plugins:
+    - cri
+  # this overrides /var/lib/containerd
+  root: /data/containerd
+
 # End host-level stuff
 
 
@@ -78,6 +85,10 @@ jenkins_agents_group_directories:
     owner: root
     group: root
     mode: '0710'
+  - path: /data/containerd
+    owner: root
+    group: root
+    mode: '0700'
   - path: /data/jenkins
     owner: jenkins
     group: jenkins
@@ -108,6 +119,14 @@ jenkins_agents_group_files:
     owner: root
     group: root
     mode: '0755'
+
+jenkins_agents_group_templates:
+  # FIXME: would fail on first install
+  - src: templates/jenkins/containerd-config.toml.j2
+    dest: /etc/containerd/config.toml
+    owner: root
+    group: root
+    mode: '0600'
 
 jenkins_agents_group_links:
   - path: /usr/local/sbin/jenkins-umount-overlayfs
