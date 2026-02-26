@@ -8,3 +8,4 @@ host_packages:
   - make
   - bind-utils
   - openldap-clients
+  - python3.13
