@@ -18,10 +18,6 @@ server {
     access_log  syslog:server=unix:/dev/log,facility=local6;
     error_log   syslog:server=unix:/dev/log,facility=local6;
 
-    location /.well-known/ {
-        root {{ certbot_well_known_root }};
-    }
-
     location / {
         proxy_pass   http://grafana_app;
         proxy_set_header   Host             $http_host;
@@ -32,11 +28,28 @@ server {
 }
 
 server {
-    listen {{ ansible_default_ipv4.address }}:8086 ssl;
-    server_name stats.galaxyproject.org;
+    listen *:443 ssl;
+    server_name influx.galaxyproject.org;
 
     access_log  syslog:server=unix:/dev/log,facility=local6;
     error_log   syslog:server=unix:/dev/log,facility=local6;
+
+    location / {
+        proxy_pass   http://influxdb_app;
+        proxy_set_header   X-Forwarded-Host $host;
+        proxy_set_header   X-Forwarded-For  $remote_addr;
+    }
+
+}
+
+server {
+    listen {{ ansible_default_ipv4.address }}:8086 ssl;
+    server_name stats.galaxyproject.org;
+
+    #access_log  syslog:server=unix:/dev/log,facility=local6;
+    #error_log   syslog:server=unix:/dev/log,facility=local6;
+    access_log  /var/log/nginx/stats.galaxyproject.org-8086_access.log;
+    error_log   /var/log/nginx/stats.galaxyproject.org-8086_error.log;
 
     location / {
         proxy_pass   http://influxdb_app;
