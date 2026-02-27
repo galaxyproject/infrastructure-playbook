@@ -4,6 +4,11 @@
 
 # server {
 
+    include             /etc/nginx/mime.types;
+    types {
+        application/javascript js mjs;
+    }
+
     # SEMrush crawler keeps submitting hundreds of jobs
     deny 185.191.171.0/24;
     # seopowersuite same
