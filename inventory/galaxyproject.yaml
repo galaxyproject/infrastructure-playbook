@@ -143,6 +143,7 @@ all:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
         sentry.galaxyproject.org:
+        stats.galaxyproject.org:
         e1-galaxy-mx1.vmhost.psu.edu:
         e1-galaxy-lists.vmhost.psu.edu:
 
