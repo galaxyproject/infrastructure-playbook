@@ -121,21 +121,31 @@ server {
     rewrite ^/FTPUpload/?$ /ftp-upload;
     rewrite ^/news/2020-04-james-taylor/?$ /jxtx;
 
+    # Serve some assets directly from S3 to keep CF under the tier limits
+    location ~ ^/(images|media|astro)/ {
+        proxy_pass http://{{ galaxy_hub_bucket_hostname }};
+        proxy_set_header Host {{ galaxy_hub_bucket_hostname }};
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-meta-s3cmd-attrs;
+        proxy_intercept_errors on;
+    }
+
     location / {
         proxy_http_version     1.1;
-        proxy_set_header       Connection "";
-        proxy_set_header       Authorization '';
-        proxy_set_header       Host galaxy-hub.s3-website.us-east-2.amazonaws.com;
-        proxy_hide_header      x-amz-id-2;
-        proxy_hide_header      x-amz-request-id;
-        proxy_hide_header      x-amz-meta-server-side-encryption;
-        proxy_hide_header      x-amz-server-side-encryption;
-        proxy_hide_header      Set-Cookie;
-        proxy_ignore_headers   Set-Cookie;
-        proxy_intercept_errors on;
-        proxy_pass             http://galaxy-hub.s3-website.us-east-2.amazonaws.com/;
+        proxy_ssl_server_name  on;
+        proxy_ssl_name         {{ galaxy_hub_cloudfront_hostname }};
+        proxy_set_header       Host galaxyproject.org;
+        proxy_set_header       X-Forwarded-Proto $scheme;
+        proxy_set_header       X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header       X-Real-IP $remote_addr;
+        proxy_pass_request_headers on;
+        proxy_pass             https://{{ galaxy_hub_cloudfront_hostname }}/;
     }
-    
+
     location /events/gcc2021/training/ {
         proxy_http_version     1.1;
         proxy_set_header       Host shiltemann.github.io;
