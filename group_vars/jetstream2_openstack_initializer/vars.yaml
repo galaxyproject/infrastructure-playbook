@@ -13,9 +13,19 @@ os_network:
     interfaces:
       # the openstack router module will attempt to detach any unlisted subnets, so this needs to be exhaustive even if we don't configure all of these subnets here
       - "usegalaxy"
-      - "am-it-subnet"
+      - "development"
 
 os_security_group_rules:
+  - name: usegalaxy-node
+    rules:
+      - direction: ingress
+        protocol: any
+        ether_type: IPv4
+        remote_group: usegalaxy-node
+      - direction: ingress
+        protocol: any
+        ether_type: IPv6
+        remote_group: usegalaxy-node
   - name: usegalaxy-control
     rules:
       - protocol: tcp
@@ -64,5 +74,10 @@ os_security_group_rules:
         port_range_max: 80
       - protocol: tcp
         remote_ip_prefix: 129.114.60.0/24
+        port_range_min: 443
+        port_range_max: 443
+      # BRC VMs
+      - protocol: tcp
+        remote_ip_prefix: 129.114.102.0/24
         port_range_min: 443
         port_range_max: 443
