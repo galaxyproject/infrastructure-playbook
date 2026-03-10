@@ -12,6 +12,10 @@ all:
       ansible_user: rocky
       ansible_become: true
 
+    rodenbach.galaxyproject.org:
+      ansible_user: root
+      ansible_python_interpreter: /usr/bin/python3.8
+
     newtrail.galaxyproject.org: {ansible_user: root}
     artifact.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
@@ -30,7 +34,6 @@ all:
     jenkins1.galaxyproject.org: {ansible_user: root}
     stats.galaxyproject.org: {ansible_user: root}
     sentry.galaxyproject.org: {ansible_user: root}
-    rodenbach.galaxyproject.org: {ansible_user: root}
     jeltz.galaxyproject.org: {ansible_user: root}
     smart1.galaxyproject.org: {ansible_user: root}
     smart2.galaxyproject.org: {ansible_user: root}
