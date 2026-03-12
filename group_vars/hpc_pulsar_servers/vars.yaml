@@ -49,16 +49,20 @@ hpc_pulsar_servers_systemd_timers:
   - id: "pulsar-clean-scratch"
     description: "Clean Pulsar Scratch directories"
     command: "{{ hpc_home_root }}/bin/pulsar-clean-jobs {{ hpc_pulsar_managers.values() | map(attribute='staging_directory') | join(' ') }}"
+    timer_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     timer:
-      OnActiveSec: "{{ 6 * 60 * 60 }}"
+      OnUnitActiveSec: "{{ 6 * 60 * 60 }}"
     service:
       TimeoutStartSec: 4h
       StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-scratch.log"
   - id: "pulsar-clean-amqp-consume"
     description: "Clean Pulsar AMQP consumer directories"
     command: "{{ hpc_home_root }}/bin/tmpwatch --verbose 7d {{ hpc_pulsar_managers.keys() | map('regex_replace', '^', pulsar_persistence_dir ~ '/amqp_ack-') | map('regex_replace', '$', '/consume') | join(' ') }}/"
+    timer_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     timer:
-      OnActiveSec: "{{ 24 * 60 * 60 }}"
+      OnUnitActiveSec: "{{ 24 * 60 * 60 }}"
       RandomizedDelaySec: 300
     service:
       TimeoutStartSec: 2h
@@ -66,8 +70,10 @@ hpc_pulsar_servers_systemd_timers:
   - id: "pulsar-clean-cvmfs-cache"
     description: "Clean Pulsar CVMFS Cache"
     command: "{{ hpc_home_root }}/bin/tmpwatch --verbose --nodirs 7d {{ hpc_scratch_root }}/cvmfs_cache"
+    timer_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     timer:
-      OnActiveSec: "{{ 24 * 60 * 60 }}"
+      OnUnitActiveSec: "{{ 24 * 60 * 60 }}"
       RandomizedDelaySec: 300
     service:
       TimeoutStartSec: 2h
@@ -75,6 +81,8 @@ hpc_pulsar_servers_systemd_timers:
   - id: "pulsar-logrotate"
     description: "Rotate Pulsar logs"
     command: "logrotate -s %h/.local/state/logrotate/pulsar.state %h/.config/logrotate/pulsar.conf"
+    timer_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     timer:
       OnCalendar: daily
 
@@ -82,8 +90,8 @@ pulsar_python_version: "3.13"
 pulsar_curl_version: "8.14"
 
 # user journald appears to have a hardcoded 10MB limit
-pulsar_systemd_service_options:
-  StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar.log"
+#pulsar_systemd_service_options:
+#  StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar.log"
 
 miniconda_prefix: "{{ hpc_project_root }}/conda"
 miniconda_channels:
@@ -108,12 +116,14 @@ miniconda_conda_environments:
 #supervisord_unprivileged_command: "{ date; pgrep -u {{ ansible_user }} supervisord || '{{ supervisord_prefix }}/bin/supervisord' -c '{{ supervisord_conf_path }}'; } >> {{ supervisord_log_dir }}/supervisord-launch.log 2>&1"
 #pulsar_restart_handler_name: supervisor restart pulsar
 
-pulsar_systemd: true
-pulsar_systemd_root: false
-pulsar_systemd_wanted_by: default.target
-pulsar_systemd_runner: pulsar-main
-pulsar_systemd_unit_options:
-  ConditionHost: "|{{ inventory_hostname_short }}"
+# Duplicated to the hpc_pulsar_servers role so that we can pipe to log manager
+#pulsar_systemd: true
+pulsar_systemd: false
+#pulsar_systemd_root: false
+#pulsar_systemd_wanted_by: default.target
+#pulsar_systemd_runner: pulsar-main
+#pulsar_systemd_unit_options:
+#  ConditionHost: "|{{ ansible_nodename }}"
 
 pulsar_root: "{{ hpc_project_root }}/pulsar"
 pulsar_staging_dir: "{{ hpc_scratch_root }}/jobs"

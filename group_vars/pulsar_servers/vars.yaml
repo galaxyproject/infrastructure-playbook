@@ -6,7 +6,7 @@ pulsar_message_queue_password: "{{ vault_pulsar_message_queue_password }}"
 
 pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials }}@mq.galaxyproject.org:5671//main_pulsar?ssl=1"
 
-pulsar_package_version: "0.15.12"
+pulsar_package_version: "0.15.14"
 pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url https://pypi.org/simple"
 
 pulsar_job_metrics_plugins:

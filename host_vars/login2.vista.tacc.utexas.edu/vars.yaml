@@ -19,9 +19,6 @@ hpc_pulsar_managers:
     # FIXME: is this implemented?
     #relay_topic_prefix: test
 
-pulsar_systemd_unit_options:
-  ConditionHost: "|{{ inventory_hostname }}"
-
 pulsar_clean_jobs_percent_full_function: |
   python <<EOF
   import subprocess, sys, traceback

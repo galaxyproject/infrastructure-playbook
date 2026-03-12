@@ -3,10 +3,10 @@
 ;;
 [Unit]
 Description={{ item.description }} (timer)
-{% if "Requires" not in (item.target_unit | default({})) %}
+{% if "Requires" not in (item.timer_unit | default({})) %}
 Requires={{ item.id }}.service
 {% endif %}
-{% for key, value in (item.target_unit | default({})).items() %}
+{% for key, value in (item.timer_unit | default({})).items() %}
 {% if value is not string and value is not mapping and value is iterable %}
 {{ key }}={{ value.join(' ') }}
 {% else %}

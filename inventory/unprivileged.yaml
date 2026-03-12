@@ -14,12 +14,12 @@ all:
       ansible_user: xcgalaxy
       #ansible_ssh_common_args: -oProxyJump=galaxy04.tacc.utexas.edu
       ansible_ssh_executable: ./.ssh-keyboard-interactive
-    login4.frontera.tacc.utexas.edu:
-      ansible_user: xcgalaxy
-      ansible_ssh_executable: ./.ssh-keyboard-interactive
-    login2.ls6.tacc.utexas.edu:
-      ansible_user: xcgalaxy
-      ansible_ssh_executable: ./.ssh-keyboard-interactive
+    #login4.frontera.tacc.utexas.edu:
+    #  ansible_user: xcgalaxy
+    #  ansible_ssh_executable: ./.ssh-keyboard-interactive
+    #login2.ls6.tacc.utexas.edu:
+    #  ansible_user: xcgalaxy
+    #  ansible_ssh_executable: ./.ssh-keyboard-interactive
     login2.vista.tacc.utexas.edu:
       ansible_user: xcgalaxy
       ansible_ssh_executable: ./.ssh-keyboard-interactive

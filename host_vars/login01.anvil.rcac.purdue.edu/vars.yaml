@@ -24,8 +24,5 @@ hpc_pulsar_managers:
     postprocess_action_interval_max: 60
     min_polling_interval: 15
 
-pulsar_systemd_unit_options:
-  ConditionHost: "|{{ inventory_hostname }}"
-
 pulsar_clean_jobs_percent_full_function: |
   python3 -c "print(round(max($(/usr/local/bin/myquota | awk '$1 == "scratch" {print $5,$8}' | tr -d '%' | tr ' ' ,))))" || echo 0

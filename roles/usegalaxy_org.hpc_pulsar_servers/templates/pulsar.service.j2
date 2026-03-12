@@ -1,0 +1,28 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+[Unit]
+Description=Pulsar
+After=network.target
+After=time-sync.target
+After=syslog.target
+ConditionHost=|{{ ansible_nodename }}
+
+[Service]
+UMask=022
+Type=simple
+TimeoutStartSec=30
+ExecStart=/bin/bash -c '{{ pulsar_venv_dir }}/bin/pulsar-main -c {{ pulsar_config_dir }} 2>&1 | {{ pulsar_venv_dir }}/bin/python3 {{ hpc_home_root }}/bin/pulsar-log-manager.py {{ hpc_pulsar_log_dir }}/pulsar.log {{ pulsar_log_rotate_bytes | default(50 * 1024 * 1024) }} {{ pulsar_log_rotate_backups | default(10) }}'
+MemoryLimit=6G
+{% for env in pulsar_systemd_environment %}
+Environment={{ env }}
+{% endfor %}
+MemoryLimit={{ pulsar_systemd_memory_limit }}G
+Restart=always
+
+MemoryAccounting=yes
+CPUAccounting=yes
+BlockIOAccounting=yes
+
+[Install]
+WantedBy=default.target

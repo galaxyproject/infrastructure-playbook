@@ -16,6 +16,16 @@
     - path: "{{ hpc_pulsar_log_dir }}"
       mode: "0750"
 
+- name: Copy files
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - src: "pulsar-log-manager.py"
+      dest: "{{ hpc_home_root }}/bin/pulsar-log-manager.py"
+      mode: "0755"
+
 - name: Template configs
   ansible.builtin.template:
     src: "{{ item.src }}"
@@ -45,6 +55,15 @@
   notify:
     - Reload user systemd
 
+- name: Create systemd system service unit
+  ansible.builtin.template:
+    src: pulsar.service.j2
+    dest: "{{ ('~' ~ __pulsar_user_name ~ '/.config/systemd/user') }}/{{ pulsar_systemd_service_name }}.service"
+    mode: "0644"
+  notify:
+    - Reload user systemd
+    - Restart HPC Pulsar
+
 - name: Flush handlers
   meta: flush_handlers
 
@@ -71,3 +90,10 @@
     enabled: true
     scope: user
   loop: "{{ hpc_pulsar_servers_systemd_timers }}"
+
+- name: Ensure Pulsar is enabled
+  ansible.builtin.systemd_service:
+    name: pulsar.service
+    state: started
+    enabled: true
+    scope: user

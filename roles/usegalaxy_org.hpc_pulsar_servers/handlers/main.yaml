@@ -4,3 +4,9 @@
   ansible.builtin.systemd_service:
     daemon_reload: true
     scope: user
+
+- name: Restart HPC Pulsar
+  ansible.builtin.systemd_service:
+    name: "{{ pulsar_systemd_service_name }}.service"
+    state: restarted
+    scope: user
