@@ -26,6 +26,14 @@ smartos_vms:
         boot: true
         model: virtio
         size: 24576
+      # /var/spool/cvmfs
+      - boot: false
+        model: virtio
+        size: 4194304
+      # /srv
+      - boot: false
+        model: virtio
+        size: 50331648
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - alias: westvleteren
