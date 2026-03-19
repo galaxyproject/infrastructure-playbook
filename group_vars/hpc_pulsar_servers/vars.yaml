@@ -69,7 +69,8 @@ hpc_pulsar_servers_systemd_timers:
       StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-amqp-consume.log"
   - id: "pulsar-clean-cvmfs-cache"
     description: "Clean Pulsar CVMFS Cache"
-    command: "{{ hpc_home_root }}/bin/tmpwatch --verbose --nodirs 7d {{ hpc_scratch_root }}/cvmfs_cache"
+    # CVMFS cache consumes 100ks of inodes, so this is relatively short to try to control that
+    command: "{{ hpc_home_root }}/bin/tmpwatch --verbose --nodirs 4d {{ hpc_scratch_root }}/cvmfs_cache"
     timer_unit:
       ConditionHost: "|{{ ansible_nodename }}"
     timer:
