@@ -36,6 +36,10 @@ galaxy_main_load_balancers_group_telegraf_plugins_extra:
 #nginx_conf_user: nginx
 #nginx_conf_group: nginx
 
+nginx_conf_worker_connections: 4096
+nginx_conf_root_extra: |
+  worker_rlimit_nofile 8192;
+
 nginx_ssl_servers:
   - usegalaxy_lb
 
