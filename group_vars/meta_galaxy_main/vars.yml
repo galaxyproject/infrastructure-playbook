@@ -17,6 +17,7 @@ hashicorp_vault_secret_values:
     data: {data: {value: "{{ vault_google_drive_client_id }}"}, options: {}}
   - path: data/galaxy/file_source_secrets/google_drive/app_client_secret
     data: {data: {value: "{{ vault_google_drive_client_secret }}"}, options: {}}
+nginx_access_deny: "{{ vault_nginx_access_deny }}"
 
 hashicorp_vault_addr: "https://{{ galaxy_instance_hostname }}:8200"
 
