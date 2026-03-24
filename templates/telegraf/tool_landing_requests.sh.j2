@@ -70,3 +70,32 @@ recent_7d=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM tool_landing_re
 echo "tool_landing_requests_recent,period=1h value=${recent_1h}i"
 echo "tool_landing_requests_recent,period=24h value=${recent_24h}i"
 echo "tool_landing_requests_recent,period=7d value=${recent_7d}i"
+
+# Data landing requests (__DATA_FETCH__ tool)
+# Total data landing requests
+data_total=$(psql -d "$PGDATABASE" -t -A -c "SELECT COUNT(*) FROM tool_landing_request WHERE tool_id = '__DATA_FETCH__';")
+echo "data_landing_requests_total value=${data_total}i"
+
+# Data requests by month, origin, and dbkey (last 24 months)
+psql -d "$PGDATABASE" -t -A -F',' <<EOF | while IFS=',' read -r month origin dbkey count; do
+SELECT
+    DATE_TRUNC('month', create_time)::date as month,
+    COALESCE(origin, 'unknown') as origin,
+    COALESCE(
+        jsonb_path_query_first(
+            convert_from(request_state, 'UTF8')::jsonb,
+            '$.** ? (@.dbkey != null)'
+        )->>'dbkey',
+        'unknown'
+    ) as dbkey,
+    COUNT(*) as count
+FROM tool_landing_request
+WHERE tool_id = '__DATA_FETCH__'
+  AND create_time >= DATE_TRUNC('month', NOW()) - INTERVAL '24 months'
+GROUP BY DATE_TRUNC('month', create_time), origin, dbkey
+ORDER BY month, origin, dbkey;
+EOF
+    origin_tag=$(echo "$origin" | sed 's/[,= ]/\\&/g')
+    dbkey_tag=$(echo "$dbkey" | sed 's/[,= ]/\\&/g')
+    echo "data_landing_requests_monthly,month=${month},origin=${origin_tag},dbkey=${dbkey_tag} count=${count}i"
+done
