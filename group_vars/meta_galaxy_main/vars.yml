@@ -19,7 +19,7 @@ hashicorp_vault_secret_values:
     data: {data: {value: "{{ vault_google_drive_client_secret }}"}, options: {}}
 nginx_access_deny: "{{ vault_nginx_access_deny }}"
 
-hashicorp_vault_addr: "https://{{ galaxy_instance_hostname }}:8200"
+hashicorp_vault_addr: "https://vault.usegalaxy.org:8200"
 
 # Variables used by other group vars
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
