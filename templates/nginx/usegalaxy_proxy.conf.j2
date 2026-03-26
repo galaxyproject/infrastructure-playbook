@@ -17,8 +17,9 @@
     # Enable HSTS (age is 180 days)
     add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
-    #access_log  /var/log/nginx/main.access.log;
-    #error_log   /var/log/nginx/main.error.log;
+    limit_req zone=crawler burst=10 nodelay;
+    limit_req zone=relaxed burst=50 nodelay;
+    limit_req_status 429;
 
     location / {
         try_files false @galaxy;
@@ -35,6 +36,7 @@
 
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
     location /api/ {
+        limit_req zone=crawler burst=10 nodelay;
         limit_req zone=strict burst=50 nodelay;
         limit_req_status 429;
         try_files false @galaxy;

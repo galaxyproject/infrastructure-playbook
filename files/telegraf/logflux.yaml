@@ -1,12 +1,17 @@
 ---
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
 
 last_timestamp_file: /var/lib/telegraf/logflux_last_timestamp
+namespace: nginx
 
 filters:
   - key: _SYSTEMD_UNIT
     value: nginx.service
 
 rules:
+
   - name: nginx_rate_limit
     match:
       key: MESSAGE
@@ -21,7 +26,38 @@ rules:
       path:
         lookup: MESSAGE.path
         transform:
-          - match: '(?<=/)[0-9a-fA-F]{16,}(?=(?:/|$|[/?]))'
+          # this was '(?<=/)[0-9a-fA-F]{16,}(?=(?:/|$|[/?]))' but that misses stuff like `/display_application/.../galaxy_deadb33f.ext`, so just match all 16+ char hex strings instead, which is probably fine
+          - match: '[0-9a-fA-F]{16,}'
+            sub: 'ID'
+          - match: '\?.*'
+            sub: ''
+
+  - name: nginx_request_timing
+    match:
+      key: MESSAGE
+      regex: '^.*\[timing\] (?P<client>[0-9.]+) - (?P<request_time>[1-9][0-9]*\.[0-9]+) (?P<upstream_response_time>[0-9]+\.[0-9]+) (?P<method>[A-Z]+) (?P<path>/[^ ]*)'
+    fields:
+      request_time:
+        lookup: MESSAGE.request_time
+        type: float
+      upstream_response_time:
+        lookup: MESSAGE.upstream_response_time
+        type: float
+      buffered_time:
+        math: request_time - upstream_response_time
+        vars:
+          request_time:
+            lookup: MESSAGE.request_time
+            type: float
+          upstream_response_time:
+            lookup: MESSAGE.upstream_response_time
+            type: float
+    tags:
+      method: MESSAGE.method
+      path:
+        lookup: MESSAGE.path
+        transform:
+          - match: '[0-9a-fA-F]{16,}'
             sub: 'ID'
           - match: '\?.*'
             sub: ''

@@ -89,6 +89,10 @@ galaxy_servers_group_files:
     group: root
     mode: "0755"
 
+galaxy_servers_group_systemd_overrides:
+  - name: "nginx"
+    override:
+      LogNamespace: "nginx"
 
 # TODO: remove
 #galaxy_servers_group_packages:
@@ -149,6 +153,15 @@ _override_telegraf_agent_output:
       - 'tagexclude = ["influxdb_database"]'
       - '[outputs.influxdb.tagpass]'
       - '  influxdb_database = ["{{ galaxy_instance_codename }}_sql"]'
+  - type: influxdb
+    config:
+      - urls = ["https://influx.galaxyproject.org"]
+      - username = "client"
+      - password = "{{ influxdb_client_pass }}"
+      - database = "{{ galaxy_instance_codename }}_requests"
+      - 'tagexclude = ["influxdb_database"]'
+      - '[outputs.influxdb.tagpass]'
+      - '  influxdb_database = ["{{ galaxy_instance_codename }}_requests"]'
 
 nginx_upload_module_url: https://github.com/natefoo/nginx-upload-module-build/raw/refs/heads/main/nginx_v1.20.1.el9/build-module-artifacts/nginx-module-upload-1.20.1+1.0-1.el9.ngx.x86_64.rpm
 nginx_load_modules:

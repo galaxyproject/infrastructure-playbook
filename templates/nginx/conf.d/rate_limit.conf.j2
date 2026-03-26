@@ -28,7 +28,15 @@ map $http_x_api_key:$path_exempt $zone_key {
     default $cookie_key;
 }
 
-# Rate limiting zone
+# Rate limit some bad user agents
+map $http_user_agent $crawler_key {
+    default "";
+    "~*{{ nginx_crawler_user_agents }}" "crawler";
+}
+
+# Rate limiting zones
+limit_req_zone $zone_key zone=relaxed:10m rate=8r/s;
 limit_req_zone $zone_key zone=strict:10m rate=4r/s;
+limit_req_zone $crawler_key zone=crawler:10m rate=1r/s;
 
 # vim: set filetype=nginx

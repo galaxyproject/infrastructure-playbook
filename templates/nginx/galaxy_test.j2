@@ -52,7 +52,19 @@ map $status $log_404 {
     default 0;
 }
 
-limit_req_zone $zone_key zone=limit_test:10m rate=4r/s;
+# Exempt UCSC from rate limits
+geo $geo_exempt_key {
+    default 0;
+    128.114.119.0/24 1;
+}
+
+# Combine $zone_key and $geo_exempt_key
+map "$zone_key:$geo_exempt_key" $rate_limit_key {
+    default $zone_key;
+    "~.*:1" "";
+}
+
+limit_req_zone $rate_limit_key zone=limit_test:10m rate=4r/s;
 
 #log_format status_req_only '__logflux_access_log $status "$request"';
 
@@ -61,6 +73,8 @@ upstream galaxy {
     server 127.0.0.1:8080;
     #server 127.0.0.1:8081;
 }
+
+log_format timing '[timing] $remote_addr - $request_time $upstream_response_time $request';
 
 server {
     listen       *:443 ssl http2 default_server;
@@ -75,10 +89,9 @@ server {
 
     deny 185.191.171.0/24;
 
-    # logflux logger
-    error_log syslog:server=unix:/run/systemd/journal/dev-log error;
-    #error_log syslog:server=unix:/dev/log,facility=local6 error;
-    #access_log syslog:server=unix:/dev/log,facility=local6,severity=error status_req_only if=$log_404;
+    # logflux logging
+    error_log syslog:server=unix:/run/systemd/journal.nginx/dev-log error;
+    access_log syslog:server=unix:/run/systemd/journal.nginx/dev-log timing;
 
     location / {
         try_files false @galaxy;

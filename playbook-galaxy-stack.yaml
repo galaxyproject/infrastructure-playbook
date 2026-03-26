@@ -186,10 +186,17 @@
     - name: Create logflux venv
       ansible.builtin.pip:
         name:
-          - git+https://github.com/natefoo/logflux.git@journald#egg=logflux
-          - tzlocal
+          - pip
+          - setuptools
+          - wheel
+        state: latest
         virtualenv: /opt/logflux
         virtualenv_command: python3 -m venv --system-site-packages
+    - name: Install logflux
+      ansible.builtin.pip:
+        name: logflux
+        version: "{{ logflux_version | default(omit) }}"
+        virtualenv: /opt/logflux
     - name: Create logflux config
       ansible.builtin.copy:
         src: files/telegraf/logflux.yaml

@@ -20,17 +20,42 @@ galaxy_main_load_balancers_group_directories:
     group: G-803372
     mode: "0755"
 
+galaxy_main_load_balancers_group_systemd_overrides:
+  - name: "nginx"
+    override:
+      LogNamespace: "nginx"
+
+_override_telegraf_agent_output:
+  - type: influxdb
+    config:
+      - urls = ["https://influx.galaxyproject.org"]
+      - username = "client"
+      - password = "{{ influxdb_client_pass }}"
+      - database = "system"
+      - '[outputs.influxdb.tagdrop]'
+      - '  influxdb_database = ["*"]'
+  - type: influxdb
+    config:
+      - urls = ["https://influx.galaxyproject.org"]
+      - username = "client"
+      - password = "{{ influxdb_client_pass }}"
+      - database = "{{ galaxy_instance_codename }}_requests"
+      - 'tagexclude = ["influxdb_database"]'
+      - '[outputs.influxdb.tagpass]'
+      - '  influxdb_database = ["{{ galaxy_instance_codename }}_requests"]'
 
 galaxy_main_load_balancers_group_telegraf_plugins_extra:
-  nginx_rate_limit:
+  logflux_nginx:
     plugin: "exec"
     config:
-      - commands = ["/opt/logflux/bin/logflux --telegraf --config /etc/telegraf/logflux.yaml"]
-      - timeout = "60s"
+      - commands = ["/opt/logflux/bin/logflux --source journald --telegraf --config /etc/telegraf/logflux.yaml"]
+      # BEWARE THIS TIMEOUT VALUE if it's low, then a single run can never repeat and you create a cascading failure
+      # where there's more records to process on each subsequent run. Best to set it high.
+      - timeout = "30m"
       - data_format = "influx"
-      - interval = "1m"
-      #- '[inputs.exec.tags]'
-      #- '  influxdb_database = "telegraf"'
+      - interval = "5m"
+      - '[inputs.exec.tags]'
+      - '  influxdb_database = "main_requests"'
 
 # must run as g2main for x-accel-redirect
 #nginx_conf_user: nginx

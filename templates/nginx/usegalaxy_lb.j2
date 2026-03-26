@@ -64,6 +64,8 @@ upstream pulsar_relay {
     server 127.0.0.1:8181;
 }
 
+log_format timing '[timing] $remote_addr - $request_time $upstream_response_time $request';
+
 # Main server
 server {
     listen       *:443 ssl http2 default_server;
@@ -73,7 +75,8 @@ server {
     error_log   /var/log/nginx/main.error.log;
 
     # logflux logger
-    error_log syslog:server=unix:/run/systemd/journal/dev-log error;
+    error_log syslog:server=unix:/run/systemd/journal.nginx/dev-log error;
+    access_log syslog:server=unix:/run/systemd/journal.nginx/dev-log timing;
 
     client_max_body_size 50g;
 
@@ -200,6 +203,9 @@ server {
 
     access_log  /var/log/nginx/relay.access.log;
     error_log   /var/log/nginx/relay.error.log;
+
+    deny all;
+    allow 129.114.0.0/16;
 
     location / {
         proxy_redirect      off;
