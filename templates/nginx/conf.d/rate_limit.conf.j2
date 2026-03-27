@@ -34,9 +34,21 @@ map $http_user_agent $crawler_key {
     "~*{{ nginx_crawler_user_agents }}" "crawler";
 }
 
+# Exempt UCSC from rate limits
+geo $geo_exempt_key {
+    default 0;
+    128.114.119.0/24 1;
+}
+
+# Combine $zone_key and $geo_exempt_key
+map "$zone_key:$geo_exempt_key" $rate_limit_key {
+    default $zone_key;
+    "~.*:1" "";
+}
+
 # Rate limiting zones
-limit_req_zone $zone_key zone=relaxed:10m rate=8r/s;
-limit_req_zone $zone_key zone=strict:10m rate=4r/s;
+limit_req_zone $rate_limit_key zone=relaxed:10m rate=8r/s;
+limit_req_zone $rate_limit_key zone=strict:10m rate=4r/s;
 limit_req_zone $crawler_key zone=crawler:10m rate=1r/s;
 
 # vim: set filetype=nginx
