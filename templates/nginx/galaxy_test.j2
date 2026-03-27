@@ -52,6 +52,12 @@ map $status $log_404 {
     default 0;
 }
 
+# Rate limit some bad user agents
+map $http_user_agent $crawler_key {
+    default "";
+    "~*{{ nginx_crawler_user_agents }}" "crawler";
+}
+
 # Exempt UCSC from rate limits
 geo $geo_exempt_key {
     default 0;
@@ -64,7 +70,9 @@ map "$zone_key:$geo_exempt_key" $rate_limit_key {
     "~.*:1" "";
 }
 
-limit_req_zone $rate_limit_key zone=limit_test:10m rate=4r/s;
+limit_req_zone $rate_limit_key zone=relaxed:10m rate=8r/s;
+limit_req_zone $rate_limit_key zone=strict:10m rate=4r/s;
+limit_req_zone $crawler_key zone=crawler:10m rate=1r/s;
 
 #log_format status_req_only '__logflux_access_log $status "$request"';
 
@@ -87,7 +95,13 @@ server {
     access_log  /var/log/nginx/test.access.log;
     error_log   /var/log/nginx/test.error.log;
 
-    deny 185.191.171.0/24;
+{% for cidr in nginx_access_deny | default([]) %}
+    deny {{ cidr }};
+{% endfor %}
+
+    limit_req zone=crawler burst=10 nodelay;
+    limit_req zone=relaxed burst=50 nodelay;
+	limit_req_status 429;
 
     # logflux logging
     error_log syslog:server=unix:/run/systemd/journal.nginx/dev-log error;
@@ -104,7 +118,8 @@ server {
 
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
     location /api/ {
-        limit_req zone=limit_test burst=40 nodelay;
+        limit_req zone=crawler burst=10 nodelay;
+        limit_req zone=strict burst=40 nodelay;
         limit_req_status 429;
         try_files false @galaxy;
     }

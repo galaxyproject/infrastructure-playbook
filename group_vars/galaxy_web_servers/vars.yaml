@@ -1,0 +1,4 @@
+---
+
+nginx_access_deny: "{{ vault_nginx_access_deny }}"
+nginx_crawler_user_agents: "{{ vault_nginx_crawler_user_agents }}"

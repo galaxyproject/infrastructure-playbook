@@ -59,6 +59,16 @@ all:
         galaxy-test.tacc.utexas.edu:
         galaxy-db.tacc.utexas.edu:
 
+    # Includes load balancers
+    galaxy_web_servers:
+      children:
+        galaxy_test_servers:
+        galaxy_main_web_servers:
+        galaxy_main_staging_servers:
+        galaxy_main_handler_servers:
+        galaxy_main_celery_servers:
+        galaxy_main_load_balancers:
+
     # Deploys redis
     galaxy_redis_servers:
       hosts:
