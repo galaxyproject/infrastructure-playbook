@@ -204,8 +204,8 @@ server {
     access_log  /var/log/nginx/relay.access.log;
     error_log   /var/log/nginx/relay.error.log;
 
-    deny all;
     allow 129.114.0.0/16;
+    deny all;
 
     location / {
         proxy_redirect      off;
