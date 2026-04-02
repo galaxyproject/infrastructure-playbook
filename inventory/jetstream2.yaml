@@ -13,7 +13,7 @@ all:
       hosts:
         # mainly configured through the galaxyproject inventory so excluded from jetstream2_persistent_hosts
         cvmfs1-iu0.galaxyproject.org:
-        cvmfsproxy-iu:
+        cvmfsproxy.js2local:
         litellm.galaxyproject.org:
       vars:
         ansible_user: rocky
@@ -38,6 +38,7 @@ all:
       hosts:
         jetstream2.galaxyproject.org:
         jetstream2-vgp.galaxyproject.org:
+        cvmfsproxy.js2local:
       vars:
         ansible_user: rocky
         ansible_become: true
@@ -58,7 +59,7 @@ all:
 
     cvmfs_local_proxies:
       hosts:
-        cvmfsproxy-iu:
+        cvmfsproxy.js2local:
 
     cvmfs_clients:
       children:

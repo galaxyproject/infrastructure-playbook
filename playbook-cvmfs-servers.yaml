@@ -11,13 +11,6 @@
       tags: general
     - role: galaxyproject.cvmfs
       tags: cvmfs
-  #post_tasks:
-  #  # some kind of file operation on the catalog fails under >= 2.11 on LX currently
-  #  - name: Lock CVMFS version
-  #    community.general.dnf_versionlock:
-  #      name: [cvmfs-server, cvmfs-libs]
-  #      state: present
-  #    when: ansible_kernel_version == "BrandZ virtual linux"
   tags: cvmfs
 
 #- name: CVMFS SSL Servers

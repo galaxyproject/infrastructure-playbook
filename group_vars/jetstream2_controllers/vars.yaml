@@ -66,9 +66,8 @@ jetstream2_controllers_group_telegraf_plugins_extra:
   http_response:
     config:
       - urls = ["http://cvmfs1-iu0.js2local/cvmfs/info/v1/meta.json"]
-      - http_proxy = "http://localhost:3128"
+      - http_proxy = "http://cvmfsproxy.js2local:3128"
       - response_status_code = 200
-      - interface = "lo"
   pulsar_staging_fds:
     plugin: "file"
     config:
@@ -81,11 +80,14 @@ jetstream2_controllers_group_telegraf_plugins_extra:
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
 slurm_slurp_partitions:
-  - gpu-small
+  - gpu-medium
+  - gpu-large
+  - gpu-xl
   - gxit
   - tpv
   - vgp
   - priority
+  - resize-shm
 
 slurm_scale_ssh_user: rocky
 slurm_scale_playbook_repo: https://github.com/galaxyproject/slurmscale-playbook.git

@@ -1,0 +1,18 @@
+---
+
+os_image: Featured-RockyLinux9
+os_flavor: m3.small
+os_key_name: nate-treehouse
+os_auto_ip: false
+os_boot_from_volume: true
+os_terminate_volume: true
+os_volume_size: 64
+os_security_groups:
+  - default
+  - usegalaxy-control
+openstack_wait_timeout: 300
+
+cvmfs_localproxy_cache_mem: 6144
+cvmfs_localproxy_cache_dir:
+  dir: /var/spool/squid
+  size: 32768
