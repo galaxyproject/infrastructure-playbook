@@ -1,0 +1,7 @@
+---
+
+os_flavor: m3.small
+os_volume_size: 64
+os_security_groups:
+  - default
+  - usegalaxy-control
