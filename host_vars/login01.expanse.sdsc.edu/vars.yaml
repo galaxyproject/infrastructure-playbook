@@ -42,6 +42,9 @@ pulsar_clean_jobs_percent_full_function: |
   import subprocess, sys, traceback
   try:
       line = subprocess.check_output("lfs quota -q -u xgalaxy /expanse/lustre/scratch".split(), text=True).splitlines()[-1]
+      if '*' in line:
+          print(100)
+          sys.exit(0)
       line_a = line.strip().split()
       if line[0] == " ":
           used_kb, limit_kb, used_inodes, limit_inodes = [int(x) for x in (line_a[0], line_a[2], line_a[4], line_a[6])]
