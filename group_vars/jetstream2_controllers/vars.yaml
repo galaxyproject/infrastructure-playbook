@@ -79,15 +79,7 @@ jetstream2_controllers_group_telegraf_plugins_extra:
       - collection_offset = "10s"
 
 slurm_slurp_cluster_name: "{{ slurm_cluster_name }}"
-slurm_slurp_partitions:
-  - gpu-medium
-  - gpu-large
-  - gpu-xl
-  - gxit
-  - tpv
-  - vgp
-  - priority
-  - resize-shm
+slurm_slurp_partitions: "{{ slurm_partitions | map(attribute='name') }}"
 
 slurm_scale_ssh_user: rocky
 slurm_scale_playbook_repo: https://github.com/galaxyproject/slurmscale-playbook.git

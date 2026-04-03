@@ -269,6 +269,12 @@ slurm_partitions:
     MaxTime: "30-00:20:00"
     MaxNodes: 1
     State: UP
+  - name: tpv-lm
+    Nodes: "js2-mem-large[6-15],js2-mem-xl[6-15]"
+    DefaultTime: "06:00:00"
+    MaxTime: "30-00:20:00"
+    MaxNodes: 1
+    State: UP
   - name: resize-shm
     Nodes: "js2-mem-large16"
     DefaultTime: "06:00:00"
