@@ -53,6 +53,8 @@ hpc_pulsar_servers_systemd_timers:
       ConditionHost: "|{{ ansible_nodename }}"
     timer:
       OnUnitActiveSec: "{{ 6 * 60 * 60 }}"
+    service_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     service:
       TimeoutStartSec: 4h
       StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-scratch.log"
@@ -64,6 +66,8 @@ hpc_pulsar_servers_systemd_timers:
     timer:
       OnUnitActiveSec: "{{ 24 * 60 * 60 }}"
       RandomizedDelaySec: 300
+    service_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     service:
       TimeoutStartSec: 2h
       StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-amqp-consume.log"
@@ -76,6 +80,8 @@ hpc_pulsar_servers_systemd_timers:
     timer:
       OnUnitActiveSec: "{{ 24 * 60 * 60 }}"
       RandomizedDelaySec: 300
+    service_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
     service:
       TimeoutStartSec: 2h
       StandardOutput: "append:{{ hpc_pulsar_log_dir }}/pulsar-clean-cvmfs-cache.log"
@@ -86,6 +92,8 @@ hpc_pulsar_servers_systemd_timers:
       ConditionHost: "|{{ ansible_nodename }}"
     timer:
       OnCalendar: daily
+    service_unit:
+      ConditionHost: "|{{ ansible_nodename }}"
 
 pulsar_python_version: "3.13"
 pulsar_curl_version: "8.14"
