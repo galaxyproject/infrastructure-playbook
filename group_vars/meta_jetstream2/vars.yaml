@@ -264,7 +264,7 @@ slurm_partitions:
   - name: tpv
     Default: YES
     #Nodes: "js2-tiny[4-7],js2-small[4-7],js2-quad[4-7],js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-mem-large[6-15],js2-mem-xl[6-15]"
-    Nodes: "js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-2xl[0-3],js2-mem-large[10-15],js2-mem-xl[10-15]"
+    Nodes: "js2-medium[4-23],js2-large[8-23],js2-xl[8-15],js2-2xl[0-3]"
     DefaultTime: "06:00:00"
     MaxTime: "30-00:20:00"
     MaxNodes: 1
