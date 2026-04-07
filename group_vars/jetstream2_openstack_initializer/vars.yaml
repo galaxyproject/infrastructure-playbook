@@ -15,6 +15,23 @@ os_network:
       - "usegalaxy"
       - "development"
 
+# FUTURE WARNING: I had originally shared these with a test project using the CLI. When I then used this to share them
+# for production via the role, it updated the existing policies to the new project, which should not be correct. So if
+# we ever wanted to share with another project, that could be an issue.
+os_neutron_rbac_policies:
+  # usegalaxy network
+  - object_id: 343ca6f2-22b0-4744-8787-6b8105e71b04
+    object_type: network
+    project_id: 7f24a65ae719452baddb6aa0896b339f         # MCB140147
+    action: access_as_shared
+    target_project_id: 0e70a73d5a49406e8f47f2be62bec592  # BIO250460 (VGP)
+  # usegalaxy-node security group
+  - object_id: 2732c540-aa21-489b-9ce2-80be999cb1ff
+    object_type: security_group
+    project_id: 7f24a65ae719452baddb6aa0896b339f         # MCB140147
+    action: access_as_shared
+    target_project_id: 0e70a73d5a49406e8f47f2be62bec592  # BIO250460 (VGP)
+
 os_security_group_rules:
   - name: usegalaxy-node
     rules:
