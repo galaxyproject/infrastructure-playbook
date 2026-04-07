@@ -18,10 +18,6 @@ server {
     limit_req zone=default burst=40 nodelay;
     limit_req_status 429;
 
-{% for cidr in nginx_access_deny | default([]) %}
-    deny {{ cidr }};
-{% endfor %}
-
     location / {
         proxy_pass         http://{{ tool_shed_gunicorn_bind }};
         proxy_redirect     off;
@@ -33,6 +29,11 @@ server {
 {% if tool_shed_hgweb_gunicorn_bind is defined %}
 
     location {{ tool_shed_hgweb_prefix.rstrip("/") }}/ {
+
+{% for cidr in nginx_access_deny | default([]) %}
+        deny {{ cidr }};
+{% endfor %}
+
         proxy_pass         http://{{ tool_shed_hgweb_gunicorn_bind }};
         proxy_redirect     off;
         proxy_set_header   Host              $host;
