@@ -2,6 +2,8 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
+limit_req_zone $binary_remote_addr zone=default:10m rate=2r/s;
+
 # Galaxy Tool Shed
 server {
     listen       *:443 ssl;
@@ -12,6 +14,13 @@ server {
 
     access_log  /var/log/nginx/{{ tool_shed_instance_hostname }}.access.log;
     error_log   /var/log/nginx/{{ tool_shed_instance_hostname }}.error.log;
+
+    limit_req zone=default burst=40 nodelay;
+    limit_req_status 429;
+
+{% for cidr in nginx_access_deny | default([]) %}
+    deny {{ cidr }};
+{% endfor %}
 
     location / {
         proxy_pass         http://{{ tool_shed_gunicorn_bind }};
@@ -56,7 +65,8 @@ server {
 {% endif %}
 
     location /robots.txt {
-        alias {{ tool_shed_server_dir }}/static/robots.txt;
+        allow all;
+        alias {{ tool_shed_root }}/static/robots.txt;
     }
 
     location /favicon.ico {

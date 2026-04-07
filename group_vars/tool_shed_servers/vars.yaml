@@ -1,5 +1,7 @@
 ---
 
+nginx_access_deny: "{{ vault_nginx_access_deny }}"
+
 tool_shed_servers_group_apt_repositories:
   - repo: deb http://deb.debian.org/debian bookworm-proposed-updates main
     state: absent
@@ -35,6 +37,9 @@ tool_shed_servers_group_directories:
     group: root
     mode: "0755"
   - path: "{{ tool_shed_root }}"
+    owner: "{{ tool_shed_privileged_user }}"
+    group: "{{ tool_shed_privileged_group }}"
+  - path: "{{ tool_shed_root }}/static"
     owner: "{{ tool_shed_privileged_user }}"
     group: "{{ tool_shed_privileged_group }}"
   - path: "{{ tool_shed_tmp_dir }}"
@@ -114,6 +119,11 @@ tool_shed_virtualenv_command: python3 -m venv
 tool_shed_additional_venv_packages:
   - psycopg2-binary
   - sentry-sdk[fastapi]
+
+tool_shed_config_files:
+  - src: files/tool_shed/robots.txt
+    dest: "{{ tool_shed_root }}/static/robots.txt"
+    mode: "0644"
 
 tool_shed_config_file_mode: "0644"
 tool_shed_config:
