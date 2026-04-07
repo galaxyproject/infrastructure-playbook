@@ -105,8 +105,8 @@ tool_shed_hgweb_user: shed
 tool_shed_hgweb_group: shed
 tool_shed_hgweb_gunicorn_workers: 2
 tool_shed_hgweb_gunicorn_bind: "127.0.0.1:3003"
-tool_shed_hgweb_max_requests: 500
-tool_shed_hgweb_max_requests_jitter: 50
+tool_shed_hgweb_max_requests: 10000
+tool_shed_hgweb_max_requests_jitter: 500
 tool_shed_hgweb_config_dir: "{{ tool_shed_mutable_data_dir }}/hgweb_config_dir"
 
 ## used by: tool_shed_* roles
