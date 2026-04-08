@@ -12,7 +12,7 @@ os_security_groups:
   - usegalaxy-control
 openstack_wait_timeout: 300
 
-cvmfs_localproxy_cache_mem: 4096
+cvmfs_localproxy_cache_mem: 2048
 cvmfs_localproxy_cache_dir:
   dir: /var/spool/squid
   size: 32768
