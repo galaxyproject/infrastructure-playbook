@@ -9,6 +9,11 @@ cvmfs_local_proxies_group_files:
     owner: root
     group: root
 
+cvmfs_local_proxies_group_systemd_overrides:
+  - name: squid
+    override:
+      Restart: on-failure
+
 # CERN config examples use 128 KB for both local proxies and stratum 1, but data objects are larger than this. I started
 # with 4 (MB) but that still seems way too small for a good hit ratio for stuff in the data repo.
 cvmfs_localproxy_maximum_object_size_in_memory: 64

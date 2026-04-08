@@ -11,6 +11,8 @@
       tags: general
     - role: galaxyproject.cvmfs
       tags: cvmfs
+    - role: galaxyproject.general.systemd
+      tags: systemd
   tags: cvmfs
 
 #- name: CVMFS SSL Servers

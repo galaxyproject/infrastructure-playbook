@@ -25,6 +25,7 @@
   hosts: jetstream2_persistent_hosts
   roles:
     - role: galaxyproject.cvmfs
+    - role: galaxyproject.general.systemd
   tags: cvmfs
 
 # This has to be last for slurm elastic (everything must be configured/done when slurmd starts)

@@ -61,6 +61,11 @@ cvmfs_stratum1_servers_group_files:
     owner: root
     group: root
 
+cvmfs_stratum1_servers_group_systemd_overrides:
+  - name: squid
+    override:
+      Restart: on-failure
+
 cvmfs_role: stratum1
 
 galaxy_cvmfs_repos_enabled: false
