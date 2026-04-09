@@ -1,42 +1,41 @@
-body
-{
+body {
     font: 75% verdana, "Bitstream Vera Sans", geneva, arial, helvetica, helve, sans-serif;
-    background: white url({{ error_pages_prefix }}/content_bg.png) top repeat-x;
     color: #303030;
     padding: 0;
     border: 0;
     margin: 0;
-    margin-right: 0;
-    margin-left: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-div.pageTitle
-{
+div.pageTitle {
     font-size: x-large;
     font-weight: bold;
 }
 
-div.pageTitle a:link, div.pageTitle a:visited, div.pageTitle a:active, div.pageTitle a:hover
-{
+div.pageTitle a:link, div.pageTitle a:visited, div.pageTitle a:active, div.pageTitle a:hover {
     text-decoration: none;
     color: #ece7f2;
 }
-/*a:link, a:visited, a:active
-{
-}*/
-td.masthead
-{
+
+div.masthead {
     vertical-align: middle;
-    background: #023858 url({{ error_pages_prefix }}/masthead_bg.png) bottom;
+    background: #2c3143;
     height: 40px;
     padding-left: 10px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
-td.content
-{
+
+div.content {
     vertical-align: top;
+    background: #d2d9ed;
     padding: 10px;
+    flex: 1;
 }
-a:link, a:visited, a:active
-{
+
+a:link, a:visited, a:active {
     color: #303030;
 }

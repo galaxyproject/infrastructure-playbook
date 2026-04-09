@@ -12,15 +12,16 @@
 </div>
 
 <div class="content">
-    <h2>Not Found.</h2>
+    <h2>Forbidden.</h2>
     <p>
-        {% if error_pages_message_404 is defined -%}
-        {{ error_pages_message_404 }}
-        {% else %}
-        The requested page could not be found.
-        {% endif %}
+		{% if error_pages_message_403 is defined -%}
+		{{ error_pages_message_403 }}
+		{% else %}
+		You don't have permission to access this page.
+		{% endif %}
     </p>
 </div>
 
 </body>
 </html>
+

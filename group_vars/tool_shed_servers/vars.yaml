@@ -211,3 +211,4 @@ certbot_domains:
 ## used by: error_pages
 error_pages_support_url: "https://status.galaxyproject.org/"
 error_pages_masthead_url: "https://galaxyproject.org/"
+error_pages_message_403: Authentication is required to access this page.

@@ -36,10 +36,6 @@ server {
         proxy_set_header        Cookie           $http_cookie;
     }
 
-    location @repos_login_redirect {
-        return 302 /login;
-    }
-
     location / {
         proxy_pass         http://{{ tool_shed_gunicorn_bind }};
         proxy_redirect     off;
@@ -58,7 +54,6 @@ server {
 
         set                $auth_cmd $arg_cmd;
         auth_request       /_check_auth;
-        error_page         403 = @repos_login_redirect;
 
         proxy_pass         http://{{ tool_shed_hgweb_gunicorn_bind }};
         proxy_redirect     off;
@@ -101,6 +96,7 @@ server {
     }
 
     # error docs
+    error_page  403         /error/403.html;
     error_page  404         /error/404.html;
     error_page  413         /error/413.html;
     error_page  502 503 504 /error/502.html;
