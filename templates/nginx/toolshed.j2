@@ -18,6 +18,28 @@ server {
     limit_req zone=default burst=40 nodelay;
     limit_req_status 429;
 
+    location = /_check_auth {
+        internal;
+
+        if ($auth_cmd) {
+            return 200;
+        }
+
+        proxy_pass              http://{{ tool_shed_gunicorn_bind }}/api/users/current;
+        proxy_pass_request_body off;
+        proxy_set_header        Content-Length   "";
+        proxy_set_header        Host             $host;
+        proxy_set_header        X-Real-IP        $remote_addr;
+        proxy_set_header        X-Forwarded-For  $remote_addr;
+        # Forward the original URI and cookies so the Tool Shed can validate the session
+        proxy_set_header        X-Original-URI   $request_uri;
+        proxy_set_header        Cookie           $http_cookie;
+    }
+
+    location @repos_login_redirect {
+        return 302 /login;
+    }
+
     location / {
         proxy_pass         http://{{ tool_shed_gunicorn_bind }};
         proxy_redirect     off;
@@ -33,6 +55,10 @@ server {
 {% for cidr in nginx_access_deny | default([]) %}
         deny {{ cidr }};
 {% endfor %}
+
+        set                $auth_cmd $arg_cmd;
+        auth_request       /_check_auth;
+        error_page         403 = @repos_login_redirect;
 
         proxy_pass         http://{{ tool_shed_hgweb_gunicorn_bind }};
         proxy_redirect     off;
