@@ -32,6 +32,12 @@ litellm_models:
       api_base: "https://llm.jetstream-cloud.org/sglang/v1"
       api_key: "dummy-key"
       verify: "{{ litellm_model_api_verify_ssl }}"
+  - model_name: "gpt-oss-120b"
+    litellm_params:
+      model: "openai/gpt-oss-120b"
+      api_base: "https://llm.jetstream-cloud.org/gpt-oss-120b/v1"
+      api_key: "dummy-key"
+      verify: "{{ litellm_model_api_verify_ssl }}"
 
 litellm_master_key: "{{ vault_litellm_master_key }}"
 
