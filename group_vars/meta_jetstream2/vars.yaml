@@ -245,11 +245,21 @@ slurm_nodes:
     State: CLOUD
     CPUs: 8
     RealMemory: 29900  # same as js2-medium
+  - name: "js2-vgp-large[0-7]"
+    State: CLOUD
+    Weight: 30
+    CPUs: 64
+    RealMemory: 502000  # 503677 reported by slurmd
+  - name: "js2-vgp-xl[0-7]"
+    State: CLOUD
+    Weight: 90
+    CPUs: 128
+    RealMemory: 1004000  # 1007851 reported by slurmd
 
 slurm_partitions:
   - name: vgp
     #Nodes: "js2-tiny[0-1],js2-small[0-1],js2-quad[0-1],js2-medium[0-1],js2-large[0-1],js2-xl[0-1],js2-mem-large[0-5],js2-mem-xl[0-5]"
-    Nodes: "js2-medium[0-23],js2-large[0-23],js2-xl[0-7],js2-mem-large[0-15],js2-mem-xl[0-15]"
+    Nodes: "js2-vgp-large[0-7],js2-vgp-xl[0-7]"
     DefaultTime: "06:00:00"
     MaxTime: "UNLIMITED"
     MaxNodes: 1
@@ -270,7 +280,7 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: tpv-lm
-    Nodes: "js2-mem-large[6-15],js2-mem-xl[6-15]"
+    Nodes: "js2-mem-large[0-15],js2-mem-xl[0-15]"
     DefaultTime: "06:00:00"
     MaxTime: "30-00:20:00"
     MaxNodes: 1
