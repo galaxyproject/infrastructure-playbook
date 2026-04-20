@@ -47,7 +47,7 @@ host_gravity_config:
     - bind: localhost:8080
       workers: 1
       timeout: 600
-      restart_timeout: 600
+      restart_timeout: 900
       preload: true
       extra_args: --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:
@@ -57,7 +57,7 @@ host_gravity_config:
     - bind: localhost:8081
       workers: 1
       timeout: 600
-      restart_timeout: 600
+      restart_timeout: 900
       preload: true
       extra_args: --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:

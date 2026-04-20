@@ -18,7 +18,7 @@ galaxy_main_web_servers_group_gravity_config:
     - bind: 0.0.0.0:8080
       workers: 3
       timeout: 600
-      restart_timeout: 600
+      restart_timeout: 900
       preload: true
       extra_args: --forwarded-allow-ips={{ lookup('dig', groups['galaxy_main_load_balancers'][0]) }} --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:
@@ -29,7 +29,7 @@ galaxy_main_web_servers_group_gravity_config:
     - bind: 0.0.0.0:8081
       workers: 3
       timeout: 600
-      restart_timeout: 600
+      restart_timeout: 900
       preload: true
       extra_args: --forwarded-allow-ips={{ lookup('dig', groups['galaxy_main_load_balancers'][0]) }} --max-requests 100000 --max-requests-jitter 20000 --worker-tmp-dir /dev/shm
       environment:
