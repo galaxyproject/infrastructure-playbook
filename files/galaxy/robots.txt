@@ -1,0 +1,15 @@
+User-agent: *
+User-agent: AdsBot-Google
+User-agent: AdsBot-Google-Mobile
+User-agent: Google-InspectionTool
+User-agent: GoogleOther
+Disallow: /display?
+Disallow: /display_as?
+Disallow: /training-material/
+Disallow: /tool_runner?
+Disallow: /datasets
+Disallow: /histories
+Disallow: /api/datasets
+Disallow: /api/histories
+Disallow: /api/invocations
+Disallow: /api/jobs
