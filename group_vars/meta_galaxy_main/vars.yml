@@ -27,6 +27,8 @@ galaxy_db_postgresql_objects_groups: "{{ vault_galaxy_db_postgresql_objects_grou
 galaxy_db_postgresql_objects_databases: "{{ vault_galaxy_db_postgresql_objects_databases }}"
 galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_privileges }}"
 galaxy_user: g2main
+galaxy_group: G-803372
+galaxy_privileged_user: gxsrc
 galaxy_instance_codename: main
 galaxy_instance_hostname: usegalaxy.org
 galaxy_cvmfs_repo: main.galaxyproject.org

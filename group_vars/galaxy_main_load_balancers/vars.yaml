@@ -14,12 +14,6 @@ galaxy_main_load_balancers_group_authorized_key_users:
   - name: gxsrc
     authorized: "{{ galaxy_team_users }}"
 
-galaxy_main_load_balancers_group_directories:
-  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/error"
-    owner: gxsrc
-    group: G-803372
-    mode: "0755"
-
 galaxy_main_load_balancers_group_systemd_overrides:
   - name: "nginx"
     override:

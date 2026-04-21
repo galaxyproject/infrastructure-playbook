@@ -150,7 +150,8 @@ server {
     }
 
     location /robots.txt {
-        alias {{ galaxy_server_dir }}/static/robots.txt;
+        root {{ nginx_srv }}/{{ galaxy_instance_hostname }}/root;
+        try_files /robots.txt /static/robots.txt;
     }
 
     location /favicon.ico {

@@ -2,3 +2,20 @@
 
 nginx_access_deny: "{{ vault_nginx_access_deny }}"
 nginx_crawler_user_agents: "{{ vault_nginx_crawler_user_agents }}"
+
+galaxy_web_servers_group_directories:
+  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/root"
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/error"
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0755"
+
+galaxy_web_servers_group_files:
+  - src: files/galaxy/robots.txt
+    dest: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/root/robots.txt"
+    owner: "{{ galaxy_privileged_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0644"

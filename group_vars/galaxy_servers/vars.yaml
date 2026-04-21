@@ -18,10 +18,6 @@ galaxy_servers_group_authorized_key_users:
     authorized: "{{ galaxy_team_users }}"
 
 galaxy_servers_group_directories:
-  - path: /srv/nginx/{{ galaxy_instance_hostname }}/root
-    owner: "{{ galaxy_privileged_user }}"
-    group: "{{ galaxy_group }}"
-    mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}
     owner: "{{ galaxy_privileged_user }}"
     group: "{{ galaxy_group }}"
@@ -40,10 +36,6 @@ galaxy_servers_group_directories:
     mode: "0755"
   - path: /srv/galaxy/{{ galaxy_instance_codename }}/var
     owner: "{{ galaxy_user }}"
-    group: "{{ galaxy_group }}"
-    mode: "0755"
-  - path: "{{ nginx_srv }}/{{ galaxy_instance_hostname }}/error"
-    owner: "{{ galaxy_privileged_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
   - path: /home/{{ galaxy_user }}/bin
