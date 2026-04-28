@@ -2,7 +2,7 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
-limit_req_zone $binary_remote_addr zone=default:10m rate=2r/s;
+limit_req_zone $binary_remote_addr zone=default:10m rate=8r/s;
 
 # Galaxy Tool Shed
 server {
@@ -15,7 +15,7 @@ server {
     access_log  /var/log/nginx/{{ tool_shed_instance_hostname }}.access.log;
     error_log   /var/log/nginx/{{ tool_shed_instance_hostname }}.error.log;
 
-    limit_req zone=default burst=40 nodelay;
+    limit_req zone=default burst=80 nodelay;
     limit_req_status 429;
 
     location = /_check_auth {
