@@ -29,6 +29,9 @@ smartos_images:
   # debian-12 20250403 linux zvol 2025-04-03
   - uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
     state: present
+  # debian-13 20260414 linux zvol 2026-04-14
+  - uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+    state: present
 
 smartos_vms:
   - name: jeltz
@@ -63,7 +66,7 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: d89041d8-41b9-481d-918a-722be4598dd1
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
         boot: true
         model: virtio
         size: 24576

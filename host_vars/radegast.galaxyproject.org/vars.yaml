@@ -17,7 +17,7 @@ filesystems:
     fstype: xfs
     #force: true
 
-mounts:
+host_mounts:
   - src: /dev/vdb
     path: /var/lib/postgresql
     fstype: xfs

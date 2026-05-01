@@ -2,16 +2,15 @@
 
 nginx_access_deny: "{{ vault_nginx_access_deny }}"
 
-tool_shed_servers_group_apt_repositories:
-  - repo: deb http://deb.debian.org/debian bookworm-proposed-updates main
-    state: absent
+# TODO: i guess they changed it back from a service instance in trixie?
+__postfix_service_names: [postfix]
 
 tool_shed_servers_group_packages:
   - rsync
   - python3-venv
   - tmpreaper
   # for v1 client, not needed for v2
-  - make
+  #- make
 
 tool_shed_servers_group_users:
   - "{{ galaxyproject_users.shed }}"
@@ -64,7 +63,7 @@ tool_shed_servers_group_crontabs:
     job: rsync -av --delete -e "ssh -i $HOME/.ssh/id_backup_rsync" {{ tool_shed_repos_dir }}/ {{ tool_shed_hgweb_config_dir }}/hgweb.config {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:repos && ssh -T -i $HOME/.ssh/id_backup_zfs {{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }} -- {{ zfs_backup_profile.sanoid_configs.repos }}
 
 postgresql_flavor: pgdg
-postgresql_version: 16
+postgresql_version: 18
 postgresql_backup_dir: "{{ zfs_backup_profile.user }}@{{ zfs_backup_profile.server }}:postgresql"
 postgresql_backup_python_executable: python3
 
