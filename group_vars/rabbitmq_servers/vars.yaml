@@ -26,6 +26,10 @@ rabbitmq_config:
     versions:
       - tlsv1.3
       - tlsv1.2
+  # TODO: deprecated and disabled by default in RabbitMQ 4.3, Galaxy celery worker needs to be fixed
+  deprecated_features:
+    permit:
+      transient_nonexcl_queues: true
   # From EU:
   #management_agent:
   #  disable_metrics_collector: false
