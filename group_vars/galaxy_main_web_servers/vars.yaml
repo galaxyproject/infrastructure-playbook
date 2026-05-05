@@ -10,13 +10,13 @@ nginx_extra_configs:
   - usegalaxy_staging_proxy.conf
   - conf.d/rate_limit.conf
 
-galaxy_memory_limit: 14
-galaxy_memory_high: 12
+galaxy_memory_limit: 15
+galaxy_memory_high: 14
 
 galaxy_main_web_servers_group_gravity_config:
   gunicorn:
     - bind: 0.0.0.0:8080
-      workers: 3
+      workers: 4
       timeout: 600
       restart_timeout: 900
       preload: true
@@ -27,7 +27,7 @@ galaxy_main_web_servers_group_gravity_config:
         HDF5_USE_FILE_LOCKING: "FALSE"
         GALAXY_CONFIG_SERVER_NAME: "{{ inventory_hostname_short | regex_replace('^galaxy-', '') }}-0"
     - bind: 0.0.0.0:8081
-      workers: 3
+      workers: 4
       timeout: 600
       restart_timeout: 900
       preload: true
