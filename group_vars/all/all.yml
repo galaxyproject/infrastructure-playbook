@@ -16,6 +16,10 @@ all_packages:
   # NOTE: htop is in EPEL
   - htop
 
+# Mitigations
+mitigation_list:
+  - name: dirtyfrag
+
 postfix_role: null-client
 
 postfix_aliases:

@@ -1,0 +1,30 @@
+---
+
+- name: Block
+  when: ansible_system == "Linux"
+  block:
+
+    # h/t @cat-bro
+
+    - name: Disable loading of DirtyFrag-related modules
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/dirtyfrag.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          install esp4 /bin/false
+          install esp6 /bin/false
+          install rxrpc /bin/false
+      notify:
+        - Drop page caches
+
+    - name: Unload DirtyFrag-related modules if currently loaded
+      community.general.modprobe:
+        name:
+          - esp4
+          - esp6
+          - rxrpc
+        state: absent
+      notify:
+        - Drop page caches

@@ -1,0 +1,6 @@
+---
+
+- name: Apply mitigations
+  hosts: all
+  roles:
+    - role: usegalaxy_org.mitigate

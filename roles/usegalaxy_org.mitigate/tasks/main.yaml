@@ -1,0 +1,8 @@
+---
+
+- name: Include mitigation tasks
+  include_tasks: "mitigate_{{ mitigation_item.name }}.yaml"
+  when: "mitigation_item.when | default(true)"
+  loop: "{{ mitigation_list }}"
+  loop_control:
+    loop_var: mitigation_item

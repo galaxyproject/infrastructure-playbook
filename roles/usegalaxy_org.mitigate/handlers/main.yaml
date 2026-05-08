@@ -1,0 +1,4 @@
+---
+
+- name: Drop page caches
+  ansible.builtin.command: sysctl -w vm.drop_caches=3
