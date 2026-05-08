@@ -1,5 +1,10 @@
 ---
 
+keycloak_bootstrap_admin_username: "{{ vault_keycloak_bootstrap_admin_username }}"
+keycloak_bootstrap_admin_password: "{{ vault_keycloak_bootstrap_admin_password }}"
+keycloak_database_username: "{{ vault_keycloak_database_username }}"
+keycloak_database_password: "{{ vault_keycloak_database_password }}"
+
 # local service/system users used by other group_vars. UIDs/GIDs 100-200 avoids system and package conflicts
 tacc_users:
   gxadm:

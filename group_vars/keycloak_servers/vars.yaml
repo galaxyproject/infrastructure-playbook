@@ -1,0 +1,29 @@
+---
+
+keycloak_servers_group_rpm_keys:
+  - key: https://download.docker.com/linux/rhel/gpg
+    fingerprint: 060A 61C5 1B55 8A7F 742B 77AA C52F EB6B 621E 9F35
+
+keycloak_servers_group_yum_repositories:
+  - name: docker-ce-stable
+    file: docker-ce
+    description: Docker CE Stable - $basearch
+    baseurl: https://download.docker.com/linux/rhel/$releasever/$basearch/stable
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://download.docker.com/linux/rhel/gpg
+
+keycloak_servers_group_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+keycloak_servers_group_services:
+  - name: docker.service
+    state: started
+    enabled: true
+
+keycloak_database_url: jdbc:postgresql://galaxy-db.tacc.utexas.edu:5432/keycloak
+keycloak_hostname: auth.usegalaxy.org

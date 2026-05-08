@@ -160,6 +160,10 @@ all:
       hosts:
         galaxy-main4.tacc.utexas.edu:
 
+    keycloak_servers:
+      hosts:
+        galaxy-main4.tacc.utexas.edu:
+
     tiaas_servers:
       hosts:
         galaxy-test.tacc.utexas.edu:

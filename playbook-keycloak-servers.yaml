@@ -1,0 +1,52 @@
+---
+
+- name: Keycloak Servers
+  hosts: keycloak_servers
+  roles:
+    - galaxyproject.general.services
+  post_tasks:
+
+    - name: Create Keycloak directory
+      ansible.builtin.file:
+        path: /srv/keycloak/context
+        state: directory
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Copy context files
+      ansible.builtin.template:
+        src: "templates/keycloak/{{ item.name }}.j2"
+        dest: /srv/keycloak/context/{{ item.name }}
+        mode: "{{ item.mode | default('0644') }}"
+        owner: root
+        group: root
+      loop:
+        - name: Dockerfile
+        #- name: init-galaxy-scope.sh
+
+    - name: Create Keycloak Docker image
+      community.docker.docker_image_build:
+        name: galaxy-keycloak:latest
+        path: /srv/keycloak/context
+
+    - name: Run Keycloak
+      community.docker.docker_container:
+        name: galaxy-keycloak
+        image: galaxy-keycloak:latest
+        command:
+          - start
+          - --hostname={{ keycloak_hostname }}
+          - --http-enabled=true
+          - --proxy-headers=xforwarded
+          - --proxy-trusted-addresses={{ lookup('dig', groups.galaxy_main_load_balancers[0]) }}
+        ports:
+          - "8180:8180"
+        env:
+          KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
+          KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ keycloak_bootstrap_admin_password }}"
+          KC_HTTP_PORT: "8180"
+          KC_DB: postgres
+          KC_DB_URL: "{{ keycloak_database_url }}"
+          KC_DB_USERNAME: "{{ keycloak_database_username }}"
+          KC_DB_PASSWORD: "{{ keycloak_database_password }}"
