@@ -46,7 +46,7 @@ server {
     }
 
     # old static conference pages
-    rewrite (?i)^/(<path>dev2010|gcc2011)$ /$path/;
+    rewrite (?i)^/(?<gcc_path>dev2010|gcc2011)$ /$gcc_path/;
     location ~ (?i)^/(dev2010|gcc2011)/(.*) {
         alias /srv/nginx/galaxyproject.org/alias/$1/$2;
     }
