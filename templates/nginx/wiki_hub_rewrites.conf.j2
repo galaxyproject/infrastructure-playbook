@@ -1054,7 +1054,6 @@
         rewrite ^/nate/?$ https://galaxyproject.org/people/nate;
         rewrite ^/nate/Sandbox/?$ https://galaxyproject.org/people/nate/sandbox;
         rewrite ^/swp/?$ https://galaxyproject.org/swp;
-        rewrite ^/?$ https://galaxyproject.org;
-        rewrite ^/(.*)$ https://galaxyproject.org/$1;
+        rewrite ^.*$ https://galaxyproject.org;
 #    }
 #}

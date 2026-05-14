@@ -29,7 +29,7 @@
         rewrite ^/cloudlaunch/?$ http://launch.usegalaxy.org;
         rewrite ^/production/?$ https://galaxyproject.org/admin/config/performance/production-server/;
         rewrite ^/toolshed$ http://toolshed.g2.bx.psu.edu;
-        rewrite ^/toolshed/(.*)$ http://toolshed.g2.bx.psu.edu/$1;
+        rewrite ^/toolshed/(<ts_path>.*)$ http://toolshed.g2.bx.psu.edu/$ts_path;
         #rewrite ^/dev2010/?$ http://bitbucket.org/galaxy/galaxy-central/wiki/DevConf2010;
         rewrite ^/vm/?$ https://s3.amazonaws.com/usegalaxy/index.html;
         rewrite ^/screencast/?$ http://vimeo.com/galaxyproject; 
