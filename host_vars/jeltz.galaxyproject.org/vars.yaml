@@ -2,6 +2,15 @@
 
 selinux_state: disabled
 
+filesystems:
+  - dev: /dev/vdb
+    fstype: ext4
+
+host_mounts:
+  - path: /var/lib/cvmfs
+    src: /dev/vdb
+    fstype: ext4
+
 host_directories:
   - path: /srv/nginx/datacache.galaxyproject.org/root
 
@@ -80,4 +89,4 @@ nginx_enable_default_server: false
 nginx_configs:
   - datacache
 
-cvmfs_quota_limit: 4096
+cvmfs_quota_limit: 7168

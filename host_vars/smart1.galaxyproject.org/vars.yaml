@@ -1,36 +1,14 @@
 ---
 
 smartos_images:
-  # centos-7 20190122 linux zvol
-  - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
-    state: present
   # debian-10 20200508 linux zvol
   - uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
     state: present
-  # ubuntu-16.04 20170403 linux lx-dataset
-  # For manual upgrade to ubuntu-20.04 image from OmniOS
-  # Images from https://github.com/omniosorg/lx-images
-  # Process from https://smartos.topicbox.com/groups/smartos-discuss/T68ebed9ce2f20ae0/fresh-lx-zone-linux-images-for-ubuntu-18-04-and-20-04
-  #   1. Created a zone with the latest available Ubuntu 16.04 LX image as a base (7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b)
-  #   2. Moved the existing /zones/<UUID>/root directory elsewhere
-  #   3. Extracted the latest 20.04 dataset from https://github.com/omniosorg/lx-images/releases into /zones/<UUID>/root/
-  #   4. UNNECESSARY (created on boot): Copied missing SmartOS directories from the old root/ directory (e.g., "native/")
-  - uuid: 7b5981c4-1889-11e7-b4c5-3f3bdfc9b88b
-    state: present
-  # ubuntu-certified-18.04 20190627.1.1 linux zvol
-  - uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
-    state: present
-  # rocky-9 20231127 linux zvol
-  - uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
-    state: present
-  # debian-12 20231127 linux zvol 2023-11-27
-  - uuid: d89041d8-41b9-481d-918a-722be4598dd1
-    state: present
-  # debian-12 20250403 linux zvol 2025-04-03
-  - uuid: 0af17cba-b834-4c42-bc8a-35d0b53392cc
-    state: present
   # debian-13 20260414 linux zvol 2026-04-14
   - uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+    state: present
+  # almalinux-9 20260430 linux zvol 2026-04-30
+  - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
     state: present
 
 smartos_vms:
@@ -47,10 +25,14 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
+      - image_uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
         boot: true
         model: virtio
-        size: 16384
+        size: 24576
+      # /var/lib/cvmfs
+      - boot: false
+        model: virtio
+        size: 8192
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: eddie
