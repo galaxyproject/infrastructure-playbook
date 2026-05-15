@@ -22,9 +22,10 @@
 #  tags:
 #    - cvmfs
 #    - cvmfs_ssl
-#
-#- name: SSH Tunnel Servers
-#  hosts: ssh_tunnel_servers
-#  roles:
-#    - role: systemd_ssh_tunnel
-#  tags: ssh_tunnel
+
+- name: Tailnet
+  hosts: cvmfs_stratum0_servers:cvmfs_stratum1_servers
+  roles:
+    - role: artis3n.tailscale
+      when: "'galaxy_tailnet_hosts' in group_names"
+  tags: tailscale

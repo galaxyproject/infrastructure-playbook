@@ -10,7 +10,7 @@ cvmfs_private_keys: "{{ vault_cvmfs_private_keys }}"
 #  - dev: /dev/vdc
 #    fstype: ext4
 
-mounts:
+host_mounts:
   - src: /dev/vdb
     path: /var/spool/cvmfs
     fstype: ext4
