@@ -1,15 +1,6 @@
 ---
 
 smartos_images:
-  # ubuntu-certified-18.04 20190627.1.1 linux zvol
-  #- uuid: 9aa48095-da9d-41ca-a094-31d1fb476b98
-  #  state: present
-  # centos-7 20190122 linux zvol
-  - uuid: d6e56c0e-1e51-11e9-8ff1-2fecf38a5566
-    state: present
-  # centos-7 20180323 linux lx-dataset
-  - uuid: 3dbbdcca-2eab-11e8-b925-23bf77789921
-    state: present
   # rocky-9 20230711 linux zvol
   - uuid: 1e34ba45-9683-400a-9f99-571765962f94
     state: present
@@ -18,6 +9,9 @@ smartos_images:
     state: present
   # debian-12 20231127 linux zvol 2023-11-27
   - uuid: d89041d8-41b9-481d-918a-722be4598dd1
+    state: present
+  # almalinux-9 20260430 linux zvol 2026-04-30
+  - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
     state: present
 
 smartos_vms:
@@ -53,7 +47,7 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
+      - image_uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
         boot: true
         model: virtio
         size: 24576
@@ -72,8 +66,8 @@ smartos_vms:
   # to take the time to figure out the exact issue and whether it can be fixed) so moving to bhyve
   - name: stats
     brand: bhyve
-    ram: 16384
-    vcpus: 2
+    ram: 24576
+    vcpus: 4
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
@@ -83,10 +77,10 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: 1e34ba45-9683-400a-9f99-571765962f94
+      - image_uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
         boot: true
         model: virtio
-        size: 16384
+        size: 24576
       # /var/lib/influxdb
       - boot: false
         model: virtio

@@ -2,5 +2,14 @@
 
 - name: Apply mitigations
   hosts: all
+  pre_tasks:
+    - name: Group by OS Family
+      ansible.builtin.group_by:
+        key: "group_by_{{ ansible_os_family | lower }}"
+      changed_when: false
+    - name: Group by Distribution
+      ansible.builtin.group_by:
+        key: "group_by_{{ ansible_distribution | lower }}"
+      changed_when: false
   roles:
     - role: usegalaxy_org.mitigate

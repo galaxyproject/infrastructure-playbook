@@ -16,7 +16,7 @@ host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 #  - dev: /dev/vdc
 #    fstype: ext4
 
-mounts:
+host_mounts:
   - name: /var/spool/cvmfs
     src: /dev/vdb
     fstype: ext4

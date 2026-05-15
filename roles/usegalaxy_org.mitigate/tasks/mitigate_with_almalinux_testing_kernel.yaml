@@ -1,0 +1,10 @@
+---
+
+- name: Install almalinux-release-testing
+  ansible.builtin.command: dnf install -y almalinux-release-testing
+
+- name: Install testing kernel
+  ansible.builtin.command: dnf update -y kernel* --enablerepo=almalinux-testing
+
+- name: Disable testing repo
+  ansible.builtin.command: dnf config-manager --disable almalinux-testing
