@@ -3,10 +3,10 @@
 splunk_user: splunkfwd
 splunk_server_name: splunkforwarder
 
-splunk_version: "9.2.6"
+splunk_version: "9.4.6"
 splunk_packages:
   - acl
-  - https://admin.bx.psu.edu/splunk/splunkforwarder-9.2.6-bfd122d7f8fc.x86_64.rpm
+  - https://admin.bx.psu.edu/splunk/splunkforwarder-9.4.6-60284236e579.{{ ansible_architecture }}.rpm
 splunk_disable_gpg_check: true
 splunk_cgroups_version: 2
 

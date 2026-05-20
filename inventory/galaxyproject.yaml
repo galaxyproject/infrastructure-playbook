@@ -130,9 +130,6 @@ all:
     auto_update_hosts:
       vars:
         ansible_group_priority: 5
-      hosts:
-        newtrail.galaxyproject.org:
-        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -145,18 +142,12 @@ all:
     nessus_agents:
       vars:
         ansible_group_priority: 5
-      hosts:
-        newtrail.galaxyproject.org:
-        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
     sentinelone_agents:
       vars:
         ansible_group_priority: 5
-      hosts:
-        newtrail.galaxyproject.org:
-        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -171,8 +162,8 @@ all:
       vars:
         ansible_group_priority: 5
       hosts:
-        #newtrail.galaxyproject.org:
-        #artifact.galaxyproject.org:
+        newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:

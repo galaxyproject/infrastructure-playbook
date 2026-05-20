@@ -1,5 +1,5 @@
 ---
 
-nessus_deb: https://admin.bx.psu.edu/nessus/NessusAgent-11.0.2-ubuntu1604_amd64.deb
+nessus_deb: https://admin.bx.psu.edu/nessus/NessusAgent-11.1.3-ubuntu1604_amd64.deb
 nessus_packages:
   - nessusagent

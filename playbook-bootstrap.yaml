@@ -32,7 +32,6 @@
       when:
         - etc_hosts_stat.stat.exists
         - etc_hosts_stat.stat.size == 0
-      tags: pre
   roles:
     - role: galaxyproject.general.virtual
       when: "'virtual_hosts' in group_names"
