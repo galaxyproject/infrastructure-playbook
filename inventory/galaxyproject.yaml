@@ -20,8 +20,6 @@ all:
       ansible_user: rocky
       ansible_become: true
 
-    #newtrail.galaxyproject.org: {ansible_user: root}
-    artifact.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu1.galaxyproject.org: {ansible_user: root}
@@ -54,7 +52,7 @@ all:
     #newtrail.galaxyproject.org:
     #  ansible_host: 18.218.68.83
     #artifact.galaxyproject.org:
-    #  ansible_host: 18.220.147.32
+    #  ansible_host: 3.14.85.79
 
   # can't override for vmhosting
   #vars:
@@ -131,6 +129,9 @@ all:
     auto_update_hosts:
       vars:
         ansible_group_priority: 5
+      hosts:
+        newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -145,6 +146,7 @@ all:
         ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -153,6 +155,7 @@ all:
         ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
       children:
         psu_public_hosts:
 
@@ -168,7 +171,7 @@ all:
         ansible_group_priority: 5
       hosts:
         #newtrail.galaxyproject.org:
-        artifact.galaxyproject.org:
+        #artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
