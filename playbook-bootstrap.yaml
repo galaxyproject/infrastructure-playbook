@@ -14,6 +14,25 @@
       ansible.builtin.group_by:
         key: "group_by_{{ ansible_os_family | lower }}"
       changed_when: false
+    # TODO: 2026-05 SmartOS AlmaLinux 9 images are shipping with an empty /etc/hosts
+    - name: Check /etc/hosts
+      ansible.builtin.stat:
+        path: /etc/hosts
+      register: etc_hosts_stat
+      tags: pre
+    - name: Populate /etc/hosts if it exists but is empty
+      ansible.builtin.copy:
+        dest: /etc/hosts
+        content: |
+          127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+          ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - etc_hosts_stat.stat.exists
+        - etc_hosts_stat.stat.size == 0
+      tags: pre
   roles:
     - role: galaxyproject.general.virtual
       when: "'virtual_hosts' in group_names"
