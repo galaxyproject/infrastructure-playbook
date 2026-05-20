@@ -107,6 +107,7 @@ all:
       vars:
         ansible_group_priority: 5
       hosts:
+        duvel.galaxyproject.org:
         cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
         eddie.galaxyproject.org:
