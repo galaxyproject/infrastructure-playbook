@@ -12,7 +12,7 @@ dns_bind_views:
       - 'bx'
     recursion: yes
     includes:
-      - '{{ dns_config_dir }}/named.conf.default-zones'
+      - '{{ dns_config_dir }}/named.conf.root-hints'
     also_notify:
       - '3.136.94.7 key axfr-galaxy.'       # artifact
       - '128.118.250.8 key axfr-galaxy.'    # duvel

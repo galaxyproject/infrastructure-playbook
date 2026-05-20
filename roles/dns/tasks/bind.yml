@@ -15,11 +15,11 @@
     group: "{{ dns_group }}"
     mode: "0770"
 
-- name: Disable inclusion of named.conf.default-zones
+- name: Disable inclusion of named.conf.root-hints
   ansible.builtin.replace:
     dest: "{{ dns_config_dir }}/named.conf"
-    regexp: '^(include "/etc/bind/named.conf.default-zones";)'
-    replace: '#\1'
+    regexp: '^(include "/etc/bind/named.conf.root-hints";)'
+    replace: '//\1'
     backup: yes
   notify:
     - restart dns

@@ -1,0 +1,8 @@
+---
+
+sentinelone_packages: >-
+  {{ (ansible_architecture == 'aarch64') | ternary(
+    'https://admin.bx.psu.edu/sentinelone/SentinelAgent-aarch64_linux_aarch64_v25_4_2_21.rpm',
+    'https://admin.bx.psu.edu/sentinelone/SentinelAgent_linux_x86_64_v25_4_2_21.rpm'
+  ) }}
+sentinelone_disable_gpg_check: true

@@ -16,7 +16,7 @@ dns_bind_options:
      #- 54.172.173.123   # chouffe
      #- 128.118.250.8    # duvel
   - allow-query: ['any']
-  - query-source: 'address * port *'
+  - query-source: 'address *'
   # negative cache ttl
   - max-ncache-ttl: 3600        # 1 hour
 

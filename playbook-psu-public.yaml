@@ -25,3 +25,8 @@
     - role: defender_atp
   tags: [mdatp, defender]
 
+- name: Tasks for SentinelOne agents
+  hosts: sentinelone_agents
+  roles:
+    - role: sentinelone
+  tags: sentinelone

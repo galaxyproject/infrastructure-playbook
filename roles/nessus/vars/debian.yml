@@ -1,6 +1,11 @@
 ---
 
-nessus_deb: https://admin.bx.psu.edu/nessus/NessusAgent-11.0.2-debian10_amd64.deb
+# Tenable doesn't publish an aarch64 package for Debian, but the Ubuntu package appears to work unmodified
+nessus_deb: >-
+  {{ (ansible_architecture == 'aarch64') | ternary(
+    'https://admin.bx.psu.edu/nessus/NessusAgent-11.1.3-ubuntu1804_aarch64.deb',
+    'https://admin.bx.psu.edu/nessus/NessusAgent-11.1.3-debian10_amd64.deb'
+  ) }}
+
 nessus_packages:
   - nessusagent
-

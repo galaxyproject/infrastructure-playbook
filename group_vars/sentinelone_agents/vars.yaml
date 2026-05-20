@@ -1,0 +1,3 @@
+---
+
+sentinelone_site_token: "{{ vault_sentinelone_site_token }}"

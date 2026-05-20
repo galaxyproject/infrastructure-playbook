@@ -11,7 +11,7 @@ dns_bind_views:
       - 'bx'
     recursion: yes
     includes:
-      - '{{ dns_config_dir }}/named.conf.default-zones'
+      - '{{ dns_config_dir }}/named.conf.root-hints'
     zone_defaults:
       type: secondary
       primaries:

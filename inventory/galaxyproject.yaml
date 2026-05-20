@@ -20,7 +20,7 @@ all:
       ansible_user: rocky
       ansible_become: true
 
-    newtrail.galaxyproject.org: {ansible_user: root}
+    #newtrail.galaxyproject.org: {ansible_user: root}
     artifact.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
@@ -52,13 +52,9 @@ all:
 
     # initial set up
     #newtrail.galaxyproject.org:
-    #  ansible_host: 18.218.3.91
-    #  ansible_user: admin
-    #  ansible_become: true
+    #  ansible_host: 18.218.68.83
     #artifact.galaxyproject.org:
     #  ansible_host: 18.220.147.32
-    #  ansible_user: admin
-    #  ansible_become: true
 
   # can't override for vmhosting
   #vars:
@@ -69,6 +65,9 @@ all:
     # Provides galaxyproject-specific values for group vars, including:
     # - galaxyproject_users, galaxyproject_groups
     meta_galaxyproject:
+      vars:
+        # anything set in this group should be overrideable
+        ansible_group_priority: 1
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
@@ -88,6 +87,8 @@ all:
 
     # Provides telegraf config for the influxdb server on stats.galaxyproject.org
     telegraf_agents:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
@@ -105,6 +106,8 @@ all:
 
     # FIXME: is this group necessary?
     virtual_hosts:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
@@ -115,33 +118,56 @@ all:
         jenkins_servers:
         jenkins_agents:
         cvmfs_stratum0_servers:
+        amazon_ec2_hosts:
 
     postfix_clients:
+      vars:
+        ansible_group_priority: 5
       children:
         jenkins_servers:
         jenkins_agents:
         tool_shed_servers:
 
     auto_update_hosts:
+      vars:
+        ansible_group_priority: 5
       children:
         psu_public_hosts:
 
     splunk_agents:
+      vars:
+        ansible_group_priority: 5
       children:
         psu_public_hosts:
 
     nessus_agents:
-      children:
-        psu_public_hosts:
-
-    defender_agents:
-      # LX brand zones can't run Defender
-      children:
-        psu_public_hosts:
-
-    psu_public_hosts:
+      vars:
+        ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
+      children:
+        psu_public_hosts:
+
+    sentinelone_agents:
+      vars:
+        ansible_group_priority: 5
+      hosts:
+        newtrail.galaxyproject.org:
+      children:
+        psu_public_hosts:
+
+    #defender_agents:
+    #  vars:
+    #    ansible_group_priority: 5
+    #  # LX brand zones can't run Defender
+    #  children:
+    #    psu_public_hosts:
+
+    psu_public_hosts:
+      vars:
+        ansible_group_priority: 5
+      hosts:
+        #newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
         cvmfs0-psu0.galaxyproject.org:
@@ -156,12 +182,17 @@ all:
         e1-galaxy-lists.vmhost.psu.edu:
 
     amazon_ec2_hosts:
+      vars:
+        ansible_group_priority: 5
+        ansible_user: admin
+        ansible_become: true
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
 
     psu_vmhosting_hosts:
       vars:
+        ansible_group_priority: 5
         ansible_port: 1855
         ansible_become: true
       hosts:
@@ -170,6 +201,8 @@ all:
 
     # Grants access to ssh private keys
     ssh_clients:
+      vars:
+        ansible_group_priority: 5
       hosts:
         rochefort.galaxyproject.org:
       children:
@@ -180,12 +213,10 @@ all:
         ssh_tunnel_servers:
         tool_shed_servers:
 
-    ssh_tunnel_servers:
-      hosts:
-        #cvmfs0-psu1.galaxyproject.org:
-        #cvmfs1-psu0.galaxyproject.org:
-
     smartos_hypervisors:
+      vars:
+        ansible_group_priority: 5
+        ansible_python_interpreter: /opt/tools/bin/python3
       hosts:
         smart1.galaxyproject.org:
         smart2.galaxyproject.org:
@@ -196,20 +227,21 @@ all:
         westvleteren.p.galaxyproject.org:
         voyager.p.galaxyproject.org:
         orval.p.galaxyproject.org:
-      vars:
-        ansible_python_interpreter: /opt/tools/bin/python3
 
     smartos_os_zones:
+      vars:
+        ansible_group_priority: 5
+        ansible_python_interpreter: /opt/local/bin/python3
       hosts:
         thumper.galaxyproject.org:
         orval.galaxyproject.org:
         rochefort.galaxyproject.org:
         westvleteren.galaxyproject.org:
-      vars:
-        ansible_python_interpreter: /opt/local/bin/python3
 
     # Sets some default variables for nginx package/config
     web_servers:
+      vars:
+        ansible_group_priority: 5
       children:
         sentry_servers:
         stats_servers:
@@ -222,17 +254,23 @@ all:
 
     # Not fully usable on its own but provides vars common to both ACME challenge methods
     letsencrypt_clients:
+      vars:
+        ansible_group_priority: 5
       children:
         letsencrypt_http01_clients:
         letsencrypt_dns01_clients:
 
     # Provides Certbot config for DNS-01 challenges
     letsencrypt_dns01_clients:
+      vars:
+        ansible_group_priority: 5
       children:
         cvmfs_ssl_servers:
 
     # Provides Certbot config for HTTP-01 challenges
     letsencrypt_http01_clients:
+      vars:
+        ansible_group_priority: 5
       children:
         sentry_servers:
         stats_servers:
@@ -244,58 +282,80 @@ all:
 
     # Provides the Certbot TSIG key for DNS-01 challenges
     certbot_tsig_key_consumers:
+      vars:
+        ansible_group_priority: 5
       children:
         dns_primary_servers:
         letsencrypt_dns01_clients:
 
     # these are deployed via the standalone web servers playbook and not as part of another system
     standalone_web_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
 
     list_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         e1-galaxy-lists.vmhost.psu.edu:
 
     dns_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
 
     dns_primary_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
 
     dns_secondary_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         artifact.galaxyproject.org:
         duvel.galaxyproject.org:
 
     mx_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         newtrail.galaxyproject.org:
         artifact.galaxyproject.org:
         e1-galaxy-mx1.vmhost.psu.edu:
 
     jenkins_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         leeroy.galaxyproject.org:
 
     jenkins_agents:
+      vars:
+        ansible_group_priority: 5
       hosts:
         jenkins0.galaxyproject.org:
         jenkins1.galaxyproject.org:
 
     cvmfs_stratum0_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
         cvmfs-stratum0.galaxyproject.eu:
 
     cvmfs_stratum1_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs1-psu0.galaxyproject.org:
         cvmfs1-iu0.galaxyproject.org:
@@ -303,56 +363,80 @@ all:
         #cvmfs1-tacc0.galaxyproject.org:
 
     cvmfs_ssl_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
 
     cvmfs_clients:
+      vars:
+        ansible_group_priority: 5
       children:
         jenkins_agents:
         datacache_servers:
 
     # Deploys tailscale
     galaxy_tailnet_hosts:
+      vars:
+        ansible_group_priority: 5
       hosts:
         cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
 
     sentry_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         sentry.galaxyproject.org:
 
     stats_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         stats.galaxyproject.org:
 
     dhcp_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         rodenbach.galaxyproject.org:
 
     console_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         rodenbach.galaxyproject.org:
 
     datacache_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         jeltz.galaxyproject.org:
 
     depot_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         rochefort.galaxyproject.org:
 
     tool_shed_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
 
     zfs_backup_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         thumper.galaxyproject.org:
         orval.galaxyproject.org:
         westvleteren.galaxyproject.org:
 
     litellm_servers:
+      vars:
+        ansible_group_priority: 5
       hosts:
         litellm.galaxyproject.org:

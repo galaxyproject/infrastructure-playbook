@@ -1,5 +1,17 @@
 ---
 
+# FIXME:
+__postfix_service_names: "{{ __postfix_clamav_service_names + __postfix_amavisd_new_service_names + ['postfix'] }}"
+
+# override changing root keys
+meta_galaxyproject_group_authorized_key_users:
+  - name: admin
+    authorized: "{{ galaxyproject_root_users }}"
+
+amazon_ec2_hosts_group_packages:
+  # needed for the ansible pip module
+  - python3-packaging
+
 # combined with inheritance_chain in mx_servers
 amazon_ec2_hosts_group_postfix_config:
   proxy_interfaces: "{{ ansible_ec2_public_ipv4 }}"

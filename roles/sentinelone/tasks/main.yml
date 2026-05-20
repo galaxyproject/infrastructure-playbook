@@ -1,0 +1,45 @@
+---
+
+- name: gather os specific variables
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution|lower }}.yml"
+        - "{{ ansible_os_family|lower }}.yml"
+        - defaults.yml
+      paths:
+        - ../vars
+
+- name: sentinelone | install sentinelone packages (deb)
+  ansible.builtin.apt:
+    deb: "{{ sentinelone_deb }}"
+  when: sentinelone_deb is defined
+
+- name: sentinelone | install sentinelone packages (apt)
+  ansible.builtin.apt:
+    name: "{{ sentinelone_packages }}"
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: sentinelone | install sentinelone packages (dnf)
+  ansible.builtin.dnf:
+    name: "{{ sentinelone_packages }}"
+    disable_gpg_check: "{{ sentinelone_disable_gpg_check | default(omit) }}"
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: sentinelone | set site token
+  ansible.builtin.command: "/opt/sentinelone/bin/sentinelctl management token set {{ sentinelone_site_token }}"
+  args:
+    creates: /opt/sentinelone/configuration/basic.conf
+  when: sentinelone_site_token is defined
+
+- name: sentinelone | ensure sentlineone is enabled and started
+  ansible.builtin.service:
+    name: sentinelone
+    enabled: yes
+    state: started
+
