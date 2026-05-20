@@ -5,7 +5,7 @@
 
 # There is no correlation between this version and the Lambda ARN version
 lambda_function_version: "1"
-cloudfront_distribution_version: "1"
+cloudfront_distribution_version: "2"
 
 aws_region: us-east-1
 
@@ -101,7 +101,7 @@ cloudfront_cache_behaviors:
     smooth_streaming: false
     # Managed-CachingOptimized
     cache_policy_id: 658327ea-f89d-4fab-a63d-7e88639e58f6
-  - path_pattern: /videos/topic/*
+  - path_pattern: /videos/topics/*
     target_origin_id: galaxy-training.s3-website.us-east-1.amazonaws.com
     viewer_protocol_policy: redirect-to-https
     allowed_methods:
