@@ -13,6 +13,11 @@
       tags: cvmfs
     - role: galaxyproject.general.systemd
       tags: systemd
+  post_tasks:
+    - name: Mask setroubleshootd
+      ansible.builtin.systemd_service:
+        name: setroubleshootd.service
+        masked: true
   tags: cvmfs
 
 - name: CVMFS SSL Servers
