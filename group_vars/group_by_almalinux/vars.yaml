@@ -1,0 +1,10 @@
+---
+
+# Mitigations
+mitigation_list:
+  # DirtyFrag is covered by the kernels, but there's new 0-days through these modules coming out and we don't need them,
+  # so just block anyway
+  - name: dirtyfrag
+  # ssh-keysign-pwn kernel fixes now in production
+  #- name: with_almalinux_testing_kernel
+  - name: with_updates

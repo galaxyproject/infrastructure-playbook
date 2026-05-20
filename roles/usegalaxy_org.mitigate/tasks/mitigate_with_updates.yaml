@@ -1,0 +1,24 @@
+---
+
+- name: Apply updates (dnf)
+  when: ansible_os_family == "RedHat"
+  block:
+
+    - name: Clean metadata (dnf)
+      ansible.builtin.command: dnf clean -y metadata
+
+    - name: Update packages (dnf)
+      ansible.builtin.dnf:
+        name: '*'
+        state: latest
+        update_cache: true
+
+- name: Apply updates (apt)
+  when: ansible_os_family == "Debian"
+  block:
+
+    - name: Update packages (apt)
+      ansible.builtin.apt:
+        name: '*'
+        state: latest
+        update_cache: true
