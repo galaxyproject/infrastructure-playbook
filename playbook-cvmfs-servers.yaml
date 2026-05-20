@@ -15,13 +15,13 @@
       tags: systemd
   tags: cvmfs
 
-#- name: CVMFS SSL Servers
-#  hosts: cvmfs_ssl_servers
-#  roles:
-#    - role: usegalaxy_org.cvmfs_ssl
-#  tags:
-#    - cvmfs
-#    - cvmfs_ssl
+- name: CVMFS SSL Servers
+  hosts: cvmfs_ssl_servers
+  roles:
+    - role: usegalaxy_org.cvmfs_ssl
+  tags:
+    - cvmfs
+    - cvmfs_ssl
 
 - name: Tailnet
   hosts: cvmfs_stratum0_servers:cvmfs_stratum1_servers

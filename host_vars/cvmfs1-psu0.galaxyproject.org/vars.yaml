@@ -1,5 +1,11 @@
 ---
 
+# manual steps:
+# dnf install https://zfsonlinux.org/epel/zfs-release-3-0.el9.noarch.rpm
+# dnf config-manager --disable zfs
+# dnf config-manager --enable zfs-kmod
+# dnf install zfs
+
 zfs_zpools:
   - name: data
     pool_properties:

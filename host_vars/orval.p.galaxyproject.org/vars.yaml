@@ -32,9 +32,12 @@ smartos_images:
   # base-64-lts 24.4.1 smartos zone-dataset 2025-01-06
   - uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
     state: present
+  # almalinux-9 20260430 linux zvol 2026-04-30
+  - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
+    state: present
 
 smartos_vms:
-  - name: cvmfs1-psu0-bhyve
+  - name: cvmfs1-psu0
     brand: bhyve
     ram: 16384
     vcpus: 4
@@ -47,7 +50,7 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: 8bfddfe8-842c-486c-904c-fe8f96cfe330
+      - image_uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
         boot: true
         model: virtio
         size: 24576

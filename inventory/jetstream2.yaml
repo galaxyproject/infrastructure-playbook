@@ -25,6 +25,7 @@ all:
     meta_jetstream2:
       hosts:
         litellm.galaxyproject.org:
+        cvmfs1-iu0.galaxyproject.org:
       children:
         jetstream2_openstack_initializer:
         jetstream2_persistent_hosts:

@@ -16,13 +16,16 @@ all:
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3.8
 
+    cvmfs1-iu0.galaxyproject.org:
+      ansible_user: rocky
+      ansible_become: true
+
     newtrail.galaxyproject.org: {ansible_user: root}
     artifact.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu1.galaxyproject.org: {ansible_user: root}
     cvmfs1-psu0.galaxyproject.org: {ansible_user: root}
-    cvmfs1-iu0.galaxyproject.org: {ansible_user: root}
     eddie.galaxyproject.org: {ansible_user: root}
     radegast.galaxyproject.org: {ansible_user: root}
     thumper.galaxyproject.org: {ansible_user: root}
