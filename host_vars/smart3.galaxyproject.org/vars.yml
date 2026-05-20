@@ -7,11 +7,11 @@ smartos_images:
   # rocky-9 20231127 linux zvol
   - uuid: cb4f996d-df4b-4a83-95c0-11fa2d88abd3
     state: present
-  # debian-12 20231127 linux zvol 2023-11-27
-  - uuid: d89041d8-41b9-481d-918a-722be4598dd1
-    state: present
   # almalinux-9 20260430 linux zvol 2026-04-30
   - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
+    state: present
+  # debian-13 20260414 linux zvol 2026-04-14
+  - uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
     state: present
 
 smartos_vms:
@@ -28,7 +28,7 @@ smartos_vms:
         vlan_id: 306
         model: virtio
     disks:
-      - image_uuid: d89041d8-41b9-481d-918a-722be4598dd1
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
         boot: true
         model: virtio
         size: 24576
