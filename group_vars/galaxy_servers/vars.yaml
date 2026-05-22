@@ -85,6 +85,15 @@ galaxy_servers_group_files:
     owner: root
     group: root
     mode: "0755"
+  - content: |
+      ## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+      [Journal]
+      RateLimitIntervalSec=0
+      Audit=
+    dest: /etc/systemd/journald@galaxy.conf
+    owner: root
+    group: root
+    mode: "0644"
 
 galaxy_servers_group_systemd_overrides:
   - name: "nginx"
