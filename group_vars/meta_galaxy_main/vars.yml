@@ -71,9 +71,15 @@ nginx_default_redirect_uri: https://usegalaxy.org$request_uri
 #  - order: 50
 #    path: ngx_http_zip_module.so
 
+_nginx_tmp_dir: /var/cache/nginx
 _nginx_conf_http:
   client_max_body_size: 10g
   proxy_read_timeout: 600
+  client_body_temp_path: "{{ _nginx_tmp_dir }}/client_body"
+  proxy_temp_path: "{{ _nginx_tmp_dir }}/proxy"
+  fastcgi_temp_path: "{{ _nginx_tmp_dir }}/fastcgi"
+  uwsgi_temp_path: "{{ _nginx_tmp_dir }}/uwsgi"
+  scgi_temp_path: "{{ _nginx_tmp_dir }}/scgi"
 
 nginx_servers:
   - default

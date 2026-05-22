@@ -23,6 +23,13 @@ galaxy_main_load_balancers_group_systemd_overrides:
     override:
       LogNamespace: "nginx"
 
+galaxy_main_load_balancers_group_directories:
+  # the nginx-core package owns /var/lib/nginx and will change ownership on update
+  - path: "{{ _nginx_tmp_dir }}"
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0750"
+
 _override_telegraf_agent_output:
   - type: influxdb
     config:

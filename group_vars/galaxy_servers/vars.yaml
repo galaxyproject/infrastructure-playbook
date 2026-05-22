@@ -42,6 +42,11 @@ galaxy_servers_group_directories:
     owner: "{{ galaxy_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
+  # the nginx-core package owns /var/lib/nginx and will change ownership on update
+  - path: "{{ _nginx_tmp_dir }}"
+    owner: "{{ galaxy_user }}"
+    group: "{{ galaxy_group }}"
+    mode: "0750"
 
 galaxy_servers_group_templates:
   - src: templates/galaxy/helper.py.j2
