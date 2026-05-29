@@ -34,6 +34,7 @@
     name: pip
     state: latest
     virtualenv: "{{ litellm_venv_dir }}"
+    virtualenv_command: "{{ litellm_venv_command | default(omit) }}"
   become: true
   become_user: "{{ litellm_user }}"
 
@@ -88,7 +89,7 @@
 # TODO: figure out how to skip if not necessary
 # FIXME: python version
 - name: Update LiteLLM database schema
-  command: "prisma db push --accept-data-loss --schema {{ litellm_venv_dir }}/lib/python3.9/site-packages/litellm/proxy/schema.prisma"
+  command: "prisma db push --accept-data-loss --schema {{ litellm_venv_dir }}/lib/python3.13/site-packages/litellm/proxy/schema.prisma"
   environment:
     PATH: "{{ litellm_venv_dir }}/bin:{{ ansible_env.PATH }}"
     DATABASE_URL: "{{ __litellm_database_url }}"

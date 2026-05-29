@@ -1,5 +1,8 @@
 ---
 
+litellm_servers_group_packages:
+  - python3.13
+
 firewalld_state: absent
 
 # LiteLLM Server Configuration

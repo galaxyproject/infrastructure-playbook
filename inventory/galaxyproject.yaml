@@ -11,6 +11,7 @@ all:
     litellm.galaxyproject.org:
       ansible_user: rocky
       ansible_become: true
+      ansible_python_interpreter: /usr/bin/python3.9
 
     rodenbach.galaxyproject.org:
       ansible_user: root
