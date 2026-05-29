@@ -1,0 +1,25 @@
+---
+
+- name: Block
+  when: ansible_system == "Linux"
+  block:
+
+    - name: Disable loading of cifs module
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/cifswitch.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          install cifs /bin/false
+
+    - name: Unload cifs module if currently loaded
+      community.general.modprobe:
+        name:
+          - cifs
+        state: absent
+
+    - name: Uninstall cifs-utils
+      ansible.builtin.package:
+        name: cifs-utils
+        state: absent

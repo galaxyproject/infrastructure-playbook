@@ -19,6 +19,7 @@ all_packages:
 # Mitigations
 mitigation_list:
   - name: dirtyfrag
+  - name: cifswitch
 
 postfix_role: null-client
 
