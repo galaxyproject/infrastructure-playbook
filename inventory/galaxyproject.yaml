@@ -7,15 +7,15 @@ all:
     cvmfs-stratum0.galaxyproject.eu:
       ansible_user: centos
       ansible_become: true
+      ansible_python_interpreter: /usr/bin/python3.12
 
     litellm.galaxyproject.org:
       ansible_user: rocky
       ansible_become: true
-      ansible_python_interpreter: /usr/bin/python3.9
 
     rodenbach.galaxyproject.org:
       ansible_user: root
-      ansible_python_interpreter: /usr/bin/python3.8
+      #ansible_python_interpreter: /usr/bin/python3.8
 
     cvmfs1-iu0.galaxyproject.org:
       ansible_user: rocky
@@ -56,9 +56,11 @@ all:
     #artifact.galaxyproject.org:
     #  ansible_host: 3.14.85.79
 
-  # can't override for vmhosting
-  #vars:
-  #  ansible_user: root
+  vars:
+    # this is usually the right thing, override as needed
+    ansible_python_interpreter: /usr/bin/python3
+    # can't override for vmhosting
+    #ansible_user: root
 
   children:
 

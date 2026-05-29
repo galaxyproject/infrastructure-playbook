@@ -8,3 +8,6 @@ mitigation_list:
   # ssh-keysign-pwn kernel fixes now in production
   #- name: with_almalinux_testing_kernel
   - name: with_updates
+
+group_by_almalinux_group_packages:
+  - python3.13
