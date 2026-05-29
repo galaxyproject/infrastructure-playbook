@@ -32,6 +32,9 @@ smartos_images:
   # base-64-lts 24.4.1 smartos zone-dataset 2025-01-06
   - uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
     state: present
+  # debian-13 20260414 linux zvol 2026-04-14
+  - uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+    state: present
   # almalinux-9 20260430 linux zvol 2026-04-30
   - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
     state: present
@@ -124,3 +127,30 @@ smartos_vms:
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
       user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys ; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+  - name: dbdev
+    brand: bhyve
+    ram: 8192
+    vcpus: 4
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'dbdev.galaxyproject.org') }}"
+        netmask: 255.255.224.0
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+        boot: true
+        model: virtio
+        size: 24576
+      # turns out you *can* make zpool work if you find the new VM's uuid from /var/log/vm/logs and then:
+      #   zfs create data/UUID
+      # before the vmadm create times out
+      - boot: false
+        model: virtio
+        zpool: data
+        block_size: 8192
+        size: 4194304
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"

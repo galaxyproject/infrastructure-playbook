@@ -21,6 +21,7 @@ all:
       ansible_user: rocky
       ansible_become: true
 
+    dbdev.galaxyproject.org: {ansible_user: root}
     duvel.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu0.galaxyproject.org: {ansible_user: root}
     cvmfs0-psu1.galaxyproject.org: {ansible_user: root}
@@ -114,6 +115,7 @@ all:
         eddie.galaxyproject.org:
         radegast.galaxyproject.org:
         sentry.galaxyproject.org:
+        dbdev.galaxyproject.org:
       children:
         jenkins_servers:
         jenkins_agents:
