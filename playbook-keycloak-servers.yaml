@@ -30,6 +30,10 @@
       community.docker.docker_image_build:
         name: galaxy-keycloak:latest
         path: /srv/keycloak/context
+        # Default is rebuild=never, which skips the build when the tag already
+        # exists, so Dockerfile/script changes are never picked up. Always
+        # rebuild; Docker's layer cache keeps it cheap when nothing changed.
+        rebuild: always
 
     - name: Run Keycloak
       community.docker.docker_container:
