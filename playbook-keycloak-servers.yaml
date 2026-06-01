@@ -23,7 +23,8 @@
         group: root
       loop:
         - name: Dockerfile
-        #- name: init-galaxy-scope.sh
+        - name: init-galaxy-scope.sh
+          mode: "0755"
 
     - name: Create Keycloak Docker image
       community.docker.docker_image_build:
@@ -42,6 +43,7 @@
           - --proxy-trusted-addresses={{ lookup('dig', groups.galaxy_main_load_balancers[0]) }}
         ports:
           - "8180:8180"
+        restart_policy: unless-stopped
         env:
           KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
           KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ keycloak_bootstrap_admin_password }}"
@@ -50,3 +52,15 @@
           KC_DB_URL: "{{ keycloak_database_url }}"
           KC_DB_USERNAME: "{{ keycloak_database_username }}"
           KC_DB_PASSWORD: "{{ keycloak_database_password }}"
+
+    - name: Configure Galaxy API scopes and user federation
+      community.docker.docker_container_exec:
+        container: galaxy-keycloak
+        command: /opt/keycloak/init-galaxy-scope.sh
+        env:
+          GALAXY_DB_URL: "{{ keycloak_galaxy_db_url }}"
+          GALAXY_DB_USER: "{{ keycloak_galaxy_db_username }}"
+          GALAXY_DB_PASSWORD: "{{ keycloak_galaxy_db_password }}"
+      register: keycloak_init_galaxy_scope
+      # The script waits internally for Keycloak to accept admin logins.
+      changed_when: "'Created' in keycloak_init_galaxy_scope.stdout"

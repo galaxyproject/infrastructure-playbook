@@ -1,0 +1,180 @@
+#!/bin/bash
+# Configures the "{{ keycloak_realm }}" realm to (a) expose the Galaxy API
+# bearer-token scopes and (b) federate user logins against Galaxy's
+# galaxy_user table via the galaxy-user-provider User Storage SPI.
+#
+# Variant of brc-analytics' backend/keycloak/init-galaxy-scope.sh, adapted
+# for this playbook: parameterised by Ansible, authenticates with the
+# container's bootstrap-admin credentials instead of admin/admin, and drops
+# the brc-analytics-specific client assignment (made configurable instead).
+#
+# Rendered from templates/keycloak/init-galaxy-scope.sh.j2 and executed
+# inside the galaxy-keycloak container via `docker exec`. Idempotent: every
+# object is created only if absent, so it is safe to re-run on each deploy.
+
+set -euo pipefail
+
+KC_URL="http://localhost:8180"
+REALM="{{ keycloak_realm }}"
+KCADM="/opt/keycloak/bin/kcadm.sh"
+
+ADMIN_USER="${KC_BOOTSTRAP_ADMIN_USERNAME:?KC_BOOTSTRAP_ADMIN_USERNAME not set}"
+ADMIN_PASS="${KC_BOOTSTRAP_ADMIN_PASSWORD:?KC_BOOTSTRAP_ADMIN_PASSWORD not set}"
+
+OIDC_SCOPE_PREFIX="{{ keycloak_galaxy_oidc_scope_prefix }}"
+API_AUDIENCE="{{ keycloak_galaxy_api_audience }}"
+
+echo "Waiting for Keycloak to be ready..."
+until $KCADM config credentials --server "$KC_URL" --realm master \
+      --user "$ADMIN_USER" --password "$ADMIN_PASS" 2>/dev/null; do
+  sleep 2
+done
+echo "Keycloak is ready, authenticated as $ADMIN_USER."
+
+# Fail early with a clear message rather than silently creating objects in
+# the wrong place: the realm is expected to be provisioned out-of-band.
+if ! $KCADM get "realms/$REALM" >/dev/null 2>&1; then
+  echo "ERROR: realm '$REALM' does not exist; create it before running this script." >&2
+  exit 1
+fi
+
+# --- OIDC clients ----------------------------------------------------------
+# Created idempotently from keycloak_galaxy_clients, mirroring the client
+# definitions brc-analytics ships in realm-export.json. Existing clients are
+# left untouched (create-only); to change a client's config, delete it first
+# or edit it in the admin console.
+{% for c in keycloak_galaxy_clients | default([]) %}
+CID="{{ c.client_id }}"
+EXISTING_CLIENT=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
+  | grep ",${CID}$" | sed 's/,.*//' || true)
+if [ -n "$EXISTING_CLIENT" ]; then
+  echo "Client $CID already exists (id=$EXISTING_CLIENT), skipping creation."
+else
+  echo "Creating client $CID..."
+  $KCADM create clients -r "$REALM" \
+    -s clientId="$CID" \
+{% if c.name is defined %}    -s name="{{ c.name }}" \
+{% endif %}    -s enabled=true \
+    -s protocol=openid-connect \
+    -s publicClient={{ 'true' if c.public | default(false) else 'false' }} \
+    -s standardFlowEnabled={{ 'true' if c.standard_flow | default(true) else 'false' }} \
+    -s implicitFlowEnabled={{ 'true' if c.implicit_flow | default(false) else 'false' }} \
+    -s directAccessGrantsEnabled={{ 'true' if c.direct_access_grants | default(false) else 'false' }} \
+    -s serviceAccountsEnabled={{ 'true' if c.service_accounts | default(false) else 'false' }} \
+    -s frontchannelLogout={{ 'true' if c.frontchannel_logout | default(false) else 'false' }} \
+    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(true) else 'false' }} \
+{% if not c.public | default(false) %}    -s clientAuthenticatorType=client-secret \
+    -s secret="{{ c.secret }}" \
+{% endif %}    -s 'redirectUris=[{% for u in c.redirect_uris | default([]) %}"{{ u }}"{% if not loop.last %},{% endif %}{% endfor %}]' \
+    -s 'webOrigins=[{% for u in c.web_origins | default([]) %}"{{ u }}"{% if not loop.last %},{% endif %}{% endfor %}]' \
+{% if c.pkce is defined %}    -s 'attributes."pkce.code.challenge.method"={{ c.pkce }}' \
+{% endif %}{% if c.post_logout_redirect_uris is defined %}    -s 'attributes."post.logout.redirect.uris"={{ c.post_logout_redirect_uris | join('##') }}' \
+{% endif %}    -i
+fi
+{% endfor %}
+
+# --- galaxy-api-access scope + audience mapper -----------------------------
+SCOPE_ID=$($KCADM get client-scopes -r "$REALM" --fields id,name --format csv --noquotes 2>/dev/null \
+  | grep ',galaxy-api-access$' | sed 's/,.*//' || true)
+
+if [ -n "$SCOPE_ID" ]; then
+  echo "galaxy-api-access scope already exists (id=$SCOPE_ID)."
+else
+  echo "Creating galaxy-api-access client scope..."
+  SCOPE_ID=$($KCADM create client-scopes -r "$REALM" \
+    -s name=galaxy-api-access \
+    -s protocol=openid-connect \
+    -s 'attributes."include.in.token.scope"=true' \
+    -s 'attributes."display.on.consent.screen"=false' \
+    -i)
+  echo "Created scope id=$SCOPE_ID"
+fi
+
+HAS_MAPPER=$($KCADM get "client-scopes/$SCOPE_ID/protocol-mappers/models" -r "$REALM" \
+  --fields name --format csv --noquotes 2>/dev/null \
+  | grep '^galaxy-api-audience$' || true)
+
+if [ -n "$HAS_MAPPER" ]; then
+  echo "Audience mapper already exists, skipping."
+else
+  echo "Adding audience mapper (aud=$API_AUDIENCE)..."
+  $KCADM create "client-scopes/$SCOPE_ID/protocol-mappers/models" -r "$REALM" \
+    -s name=galaxy-api-audience \
+    -s protocol=openid-connect \
+    -s protocolMapper=oidc-audience-mapper \
+    -s consentRequired=false \
+    -s "config.\"included.client.audience\"=$API_AUDIENCE" \
+    -s 'config."id.token.claim"=false' \
+    -s 'config."access.token.claim"=true'
+fi
+
+# --- "<prefix>:*" scope that Galaxy checks for in bearer tokens ------------
+# Galaxy's default oidc_scope_prefix is "https://galaxyproject.org/api", and
+# it requires "<prefix>:*" in the token's scope claim.
+API_SCOPE_NAME="${OIDC_SCOPE_PREFIX}:*"
+API_SCOPE_ID=$($KCADM get client-scopes -r "$REALM" --fields id,name --format csv --noquotes 2>/dev/null \
+  | grep -F ",${API_SCOPE_NAME}" | sed 's/,.*//' || true)
+
+if [ -n "$API_SCOPE_ID" ]; then
+  echo "$API_SCOPE_NAME scope already exists (id=$API_SCOPE_ID)."
+else
+  echo "Creating $API_SCOPE_NAME client scope..."
+  API_SCOPE_ID=$($KCADM create client-scopes -r "$REALM" \
+    -s "name=$API_SCOPE_NAME" \
+    -s protocol=openid-connect \
+    -s 'attributes."include.in.token.scope"=true' \
+    -s 'attributes."display.on.consent.screen"=false' \
+    -i)
+  echo "Created scope id=$API_SCOPE_ID"
+fi
+
+# --- Assign both scopes as defaults to configured clients (optional) -------
+# brc-analytics hard-codes its own client here; in this playbook the target
+# clients are configurable via keycloak_galaxy_api_clients (default: none).
+{% for client in keycloak_galaxy_api_clients %}
+CLIENT_UUID=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
+  | grep ',{{ client }}$' | sed 's/,.*//' || true)
+if [ -n "$CLIENT_UUID" ]; then
+  echo "Assigning Galaxy API scopes as defaults to {{ client }} (uuid=$CLIENT_UUID)..."
+  $KCADM update "clients/$CLIENT_UUID/default-client-scopes/$SCOPE_ID" -r "$REALM"
+  $KCADM update "clients/$CLIENT_UUID/default-client-scopes/$API_SCOPE_ID" -r "$REALM"
+else
+  echo "WARNING: client {{ client }} not found in realm $REALM, skipping scope assignment." >&2
+fi
+{% endfor %}
+
+# --- Galaxy User Federation Provider ---------------------------------------
+# Configure the Galaxy User Storage SPI so Keycloak authenticates users
+# against Galaxy's galaxy_user table (PBKDF2-SHA256 password hashes).
+
+# Keycloak 26 enables VERIFY_PROFILE by default, which forces users to
+# complete their profile (first/last name) on first login. Federated Galaxy
+# users don't have these fields, so disable it.
+echo "Disabling VERIFY_PROFILE required action..."
+$KCADM update "authentication/required-actions/VERIFY_PROFILE" -r "$REALM" -s enabled=false
+
+GALAXY_DB_URL="${GALAXY_DB_URL:?GALAXY_DB_URL not set}"
+GALAXY_DB_USER="${GALAXY_DB_USER:?GALAXY_DB_USER not set}"
+GALAXY_DB_PASSWORD="${GALAXY_DB_PASSWORD:?GALAXY_DB_PASSWORD not set}"
+
+FED_ID=$($KCADM get components -r "$REALM" --fields id,name --format csv --noquotes 2>/dev/null \
+  | grep ',galaxy-users$' | sed 's/,.*//' || true)
+
+if [ -n "$FED_ID" ]; then
+  echo "Galaxy user federation provider already exists (id=$FED_ID)."
+else
+  echo "Creating Galaxy user federation provider..."
+  FED_ID=$($KCADM create components -r "$REALM" \
+    -s name=galaxy-users \
+    -s providerId=galaxy-user-provider \
+    -s providerType=org.keycloak.storage.UserStorageProvider \
+    -s 'config.jdbcUrl=["'"$GALAXY_DB_URL"'"]' \
+    -s 'config.dbUser=["'"$GALAXY_DB_USER"'"]' \
+    -s 'config.dbPassword=["'"$GALAXY_DB_PASSWORD"'"]' \
+    -s 'config.priority=["0"]' \
+    -s 'config.cachePolicy=["NO_CACHE"]' \
+    -i)
+  echo "Created Galaxy user federation provider (id=$FED_ID)."
+fi
+
+echo "Done."

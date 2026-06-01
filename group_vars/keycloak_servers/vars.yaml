@@ -27,3 +27,59 @@ keycloak_servers_group_services:
 
 keycloak_database_url: jdbc:postgresql://galaxy-db.tacc.utexas.edu:5432/keycloak
 keycloak_hostname: auth.usegalaxy.org
+
+# Realm holding the Galaxy clients and user federation (provisioned out-of-band).
+keycloak_realm: galaxy
+
+# Galaxy API bearer-token scope configuration (see templates/keycloak/init-galaxy-scope.sh.j2).
+keycloak_galaxy_oidc_scope_prefix: "https://galaxyproject.org/api"
+keycloak_galaxy_api_audience: galaxy-api
+# Clients in the realm that should receive the Galaxy API scopes as defaults.
+# Leave empty to create the scopes without assigning them to any client.
+keycloak_galaxy_api_clients:
+  - brc-analytics
+
+# OIDC clients to provision in the realm (idempotent; created only if absent,
+# never updated in place). Modeled on brc-analytics' realm-export.json, but
+# with production URLs and vaulted secrets instead of the localhost testbed
+# values. Add the referenced vault_* secrets, and confirm the galaxy-api
+# redirect URI matches Galaxy's oidc_backends_config.xml, before deploying.
+keycloak_galaxy_clients:
+  # BFF web-app client. Its access tokens get the galaxy-api audience + the
+  # "<prefix>:*" Galaxy API scope (see keycloak_galaxy_api_clients above).
+  - client_id: brc-analytics
+    name: "BRC Analytics"
+    secret: "{{ vault_keycloak_brc_analytics_client_secret }}"
+    public: false
+    standard_flow: true
+    direct_access_grants: false
+    service_accounts: false
+    frontchannel_logout: true
+    pkce: S256
+    redirect_uris:
+      - "https://brc-analytics.org/api/v1/auth/callback"
+    web_origins:
+      - "https://brc-analytics.org"
+    post_logout_redirect_uris:
+      - "https://brc-analytics.org/*"
+  # Resource-server client Galaxy uses as its OIDC provider and as the
+  # accepted bearer-token audience (keycloak_galaxy_api_audience). The
+  # redirect URI must match Galaxy's oidc_backends_config.xml redirect_uri.
+  - client_id: galaxy-api
+    name: "Galaxy API"
+    secret: "{{ vault_keycloak_galaxy_api_client_secret }}"
+    public: false
+    standard_flow: true
+    direct_access_grants: false
+    service_accounts: true
+    redirect_uris:
+      - "https://usegalaxy.org/authnz/keycloak/callback"
+    web_origins:
+      - "https://usegalaxy.org"
+
+# Galaxy database the user-federation provider authenticates users against.
+# Uses the dedicated "keycloak" role on the Galaxy main DB, whose password is
+# set to keycloak_database_password in vault_galaxy_db_postgresql_objects_users.
+keycloak_galaxy_db_url: "jdbc:postgresql://galaxy-db.tacc.utexas.edu:5432/galaxy_main"
+keycloak_galaxy_db_username: keycloak
+keycloak_galaxy_db_password: "{{ keycloak_database_password }}"
