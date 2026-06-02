@@ -1,5 +1,32 @@
 ---
 
+# Pre-flight: many core modules (pip, dnf version handling, the certbot role)
+# import the 'packaging' library on the target. A freshly installed python3.13
+# interpreter - now auto-discovered on AlmaLinux 9 hosts that don't pin
+# ansible_python_interpreter - ships without it (and often without pip), which
+# breaks those modules. Ensure it before any such module runs. Uses the bare
+# command module on purpose: the pip/dnf modules themselves require 'packaging'.
+- name: Pre-flight - ensure 'packaging' for the Ansible interpreter
+  hosts: all
+  gather_facts: true
+  become: true
+  tags: always
+  tasks:
+    - name: Check whether 'packaging' is importable by the Ansible interpreter
+      ansible.builtin.command: "{{ ansible_facts.python.executable }} -c 'import packaging'"
+      register: _ansible_packaging
+      changed_when: false
+      failed_when: false
+
+    - name: Install the 'packaging' library for the interpreter
+      # The system python RPM (python3-packaging), so we don't mix pip into the
+      # system interpreter. Run dnf as a subprocess rather than via the dnf
+      # module so this still works if the interpreter ever lacks dnf bindings.
+      ansible.builtin.command: "dnf install -y {{ ansible_facts.python.executable | basename }}-packaging"
+      register: _packaging_install
+      when: _ansible_packaging.rc != 0
+      changed_when: "'Installed:' in _packaging_install.stdout"
+
 - name: Galaxy DB Servers
   hosts: galaxy_db_servers
   roles:
