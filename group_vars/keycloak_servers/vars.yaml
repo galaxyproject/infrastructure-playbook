@@ -31,10 +31,12 @@ keycloak_hostname: auth.usegalaxy.org
 # Realm holding the Galaxy clients and user federation (provisioned out-of-band).
 keycloak_realm: galaxy
 
-# Decommission the static bootstrap admin. Leave false until the automation
+# Decommission the static bootstrap admin. Enabled now that the automation
 # admin + human MFA admins are verified working; the init script only acts on
-# this once it has authenticated AS the automation admin (never locks itself out).
-keycloak_disable_bootstrap_admin: false
+# this once it has authenticated AS the automation admin (never locks itself
+# out). Keep KC_BOOTSTRAP_ADMIN_* in the container env until this has run once
+# (the disable step reads the bootstrap username from it).
+keycloak_disable_bootstrap_admin: true
 
 # Galaxy API bearer-token scope configuration (see templates/keycloak/init-galaxy-scope.sh.j2).
 keycloak_galaxy_oidc_scope_prefix: "https://galaxyproject.org/api"
