@@ -1,0 +1,18 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+[Unit]
+Description=Restrict Keycloak published port to the load balancer(s) (DOCKER-USER)
+# Docker recreates the DOCKER-USER chain (default-allow) when it starts, so the
+# rules must be (re)applied after docker, and again whenever docker restarts.
+After=docker.service
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/restrict-keycloak-port.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

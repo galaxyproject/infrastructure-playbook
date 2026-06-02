@@ -68,3 +68,29 @@
       register: keycloak_init_galaxy_scope
       # The script waits internally for Keycloak to accept admin logins.
       changed_when: "'Created' in keycloak_init_galaxy_scope.stdout"
+
+    # Docker publishes 8180 via NAT, filtered in the DOCKER-USER chain rather
+    # than INPUT. Restrict it to the load balancer(s) so the plaintext port
+    # cannot be reached directly, bypassing the nginx allowlist/TLS/admin ACL.
+    - name: Install Keycloak port-restriction script
+      ansible.builtin.template:
+        src: templates/keycloak/restrict-keycloak-port.sh.j2
+        dest: /usr/local/sbin/restrict-keycloak-port.sh
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Install Keycloak port-restriction service
+      ansible.builtin.template:
+        src: templates/keycloak/restrict-keycloak-port.service.j2
+        dest: /etc/systemd/system/restrict-keycloak-port.service
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Enable and apply Keycloak port restriction
+      ansible.builtin.systemd:
+        name: restrict-keycloak-port.service
+        enabled: true
+        state: restarted
+        daemon_reload: true
