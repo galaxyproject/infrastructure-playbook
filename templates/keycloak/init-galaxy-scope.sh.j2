@@ -44,7 +44,7 @@ AUTHED_AS=""
 while [ -z "$AUTHED_AS" ]; do
   if kc_login "$ADMIN_USER" "$ADMIN_PASS"; then
     AUTHED_AS="$ADMIN_USER"
-  elif [ -n "$BOOTSTRAP_ADMIN_USER" ] && kc_login "$BOOTSTRAP_ADMIN_USER" "$BOOTSTRAP_ADMIN_PASS"; then
+  elif [ -n "$BOOTSTRAP_ADMIN_USER" ] && [ -n "$BOOTSTRAP_ADMIN_PASS" ] && kc_login "$BOOTSTRAP_ADMIN_USER" "$BOOTSTRAP_ADMIN_PASS"; then
     AUTHED_AS="$BOOTSTRAP_ADMIN_USER"
   else
     sleep 2

@@ -49,8 +49,11 @@
           - "8180:8180"
         restart_policy: unless-stopped
         env:
-          KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
-          KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ keycloak_bootstrap_admin_password }}"
+          # KC_BOOTSTRAP_ADMIN_* are intentionally NOT set here: while present,
+          # Keycloak re-establishes (re-enables) the bootstrap admin on every
+          # container start, undoing the script's disable. Admin accounts already
+          # exist in the DB, so no bootstrap is needed. (For a fresh/empty DB,
+          # temporarily re-add them for the first run only.)
           KC_HTTP_PORT: "8180"
           KC_DB: postgres
           KC_DB_URL: "{{ keycloak_database_url }}"
@@ -65,6 +68,10 @@
           KC_ADMIN_USERNAME: "{{ keycloak_admin_username }}"
           KC_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
           KC_DISABLE_BOOTSTRAP_ADMIN: "{{ keycloak_disable_bootstrap_admin | default(false) | string | lower }}"
+          # Username only (no password): lets the disable step identify the
+          # bootstrap account. It is no longer used to authenticate, and is no
+          # longer in the container env, so Keycloak won't re-create it.
+          KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
           GALAXY_DB_URL: "{{ keycloak_galaxy_db_url }}"
           GALAXY_DB_USER: "{{ keycloak_galaxy_db_username }}"
           GALAXY_DB_PASSWORD: "{{ keycloak_galaxy_db_password }}"
