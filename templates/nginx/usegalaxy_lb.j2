@@ -68,6 +68,12 @@ upstream keycloak {
     server {{ lookup('dig', groups.keycloak_servers[0]) }}:8180;
 }
 
+# Per-IP rate limit for Keycloak credential endpoints (login + token). Blunts
+# credential-stuffing / token-grinding volumetrically; per-account lockout is
+# handled separately by Keycloak brute-force detection. Tune rate/burst if
+# large NATed institutions hit 429s on the auth subdomain.
+limit_req_zone $binary_remote_addr zone=auth:10m rate=10r/s;
+
 log_format timing '[timing] $remote_addr - $request_time $upstream_response_time $request';
 
 # Main server
@@ -255,6 +261,15 @@ server {
         proxy_set_header    Upgrade             $http_upgrade;
         proxy_set_header    Connection          "upgrade";
         proxy_pass          http://keycloak;
+    }
+
+    # Rate-limit the credential-submission and token endpoints. Regex
+    # locations take precedence over the "/" prefix below, and this pattern
+    # never matches the admin REST API under /admin/realms/... .
+    location ~ ^/realms/[^/]+/(protocol/openid-connect/token$|login-actions/) {
+        limit_req         zone=auth burst=20 nodelay;
+        limit_req_status  429;
+        try_files false @keycloak;
     }
 
     location / {
