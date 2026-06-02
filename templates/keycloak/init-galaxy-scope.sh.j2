@@ -110,6 +110,26 @@ if ! $KCADM get "realms/$REALM" >/dev/null 2>&1; then
   exit 1
 fi
 
+# --- galaxy realm security defenses ----------------------------------------
+# Users are federated from Galaxy's DB, so disable Keycloak-side self-service:
+# registration, password reset and username editing all belong in Galaxy, and
+# Keycloak cannot (and must not) write back to the federated store. Brute-force
+# detection protects the federated login path - and the Galaxy DB behind it -
+# from credential stuffing; permanentLockout=false so real users are never
+# permanently locked out.
+echo "Hardening $REALM realm security defenses..."
+$KCADM update "realms/$REALM" \
+  -s registrationAllowed=false \
+  -s resetPasswordAllowed=false \
+  -s editUsernameAllowed=false \
+  -s sslRequired=external \
+  -s bruteForceProtected=true \
+  -s permanentLockout=false \
+  -s failureFactor=10 \
+  -s waitIncrementSeconds=60 \
+  -s maxFailureWaitSeconds=900 \
+  -s minimumQuickLoginWaitSeconds=60
+
 # --- OIDC clients ----------------------------------------------------------
 # Created idempotently from keycloak_galaxy_clients, mirroring the client
 # definitions brc-analytics ships in realm-export.json. Existing clients are
