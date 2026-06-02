@@ -87,6 +87,16 @@ $KCADM update realms/master \
   -s revokeRefreshToken=true \
   -s refreshTokenMaxReuse=0
 
+# Audit events: record logins + admin changes to the DB and emit them to the
+# server log (jboss-logging -> docker logs). eventsExpiration bounds login-event
+# retention; admin events have no separate TTL in Keycloak.
+$KCADM update events/config -r master \
+  -s eventsEnabled=true \
+  -s 'eventsListeners=["jboss-logging"]' \
+  -s eventsExpiration={{ (keycloak_events_expiration_days | default(90)) * 86400 }} \
+  -s adminEventsEnabled=true \
+  -s adminEventsDetailsEnabled=true
+
 # --- Decommission the bootstrap admin (gated) ------------------------------
 # Only when explicitly enabled AND we authenticated as the automation admin -
 # i.e. the replacement is proven working - so we cannot lock ourselves out.
@@ -142,6 +152,14 @@ $KCADM update "realms/$REALM" \
   -s refreshTokenMaxReuse=0 \
   -s offlineSessionMaxLifespanEnabled=true \
   -s offlineSessionMaxLifespan=2592000
+
+# Audit events for this realm (see the master block above for rationale).
+$KCADM update events/config -r "$REALM" \
+  -s eventsEnabled=true \
+  -s 'eventsListeners=["jboss-logging"]' \
+  -s eventsExpiration={{ (keycloak_events_expiration_days | default(90)) * 86400 }} \
+  -s adminEventsEnabled=true \
+  -s adminEventsDetailsEnabled=true
 
 # --- OIDC clients ----------------------------------------------------------
 # Created idempotently from keycloak_galaxy_clients, mirroring the client

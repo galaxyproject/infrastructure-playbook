@@ -41,6 +41,9 @@ keycloak_container_pids_limit: 4096
 keycloak_log_max_size: "20m"
 keycloak_log_max_file: "5"
 
+# Audit-event retention (days) for login events; admin events have no TTL.
+keycloak_events_expiration_days: 90
+
 # Realm holding the Galaxy clients and user federation (provisioned out-of-band).
 keycloak_realm: galaxy
 
