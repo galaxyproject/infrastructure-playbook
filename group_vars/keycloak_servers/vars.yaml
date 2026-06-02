@@ -28,6 +28,10 @@ keycloak_servers_group_services:
 keycloak_database_url: jdbc:postgresql://galaxy-db.tacc.utexas.edu:5432/keycloak
 keycloak_hostname: auth.usegalaxy.org
 
+# Pinned Keycloak base image tag (templates/keycloak/Dockerfile.j2). Bump
+# deliberately rather than tracking a floating minor tag like "26.0".
+keycloak_image_version: "26.6.2"
+
 # Realm holding the Galaxy clients and user federation (provisioned out-of-band).
 keycloak_realm: galaxy
 
