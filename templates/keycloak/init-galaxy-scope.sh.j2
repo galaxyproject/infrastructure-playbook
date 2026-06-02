@@ -83,7 +83,9 @@ $KCADM update realms/master \
   -s 'passwordPolicy=length(12) and upperCase(1) and lowerCase(1) and digits(1) and specialChars(1)' \
   -s ssoSessionIdleTimeout=1800 \
   -s ssoSessionMaxLifespan=36000 \
-  -s accessTokenLifespan=300
+  -s accessTokenLifespan=300 \
+  -s revokeRefreshToken=true \
+  -s refreshTokenMaxReuse=0
 
 # --- Decommission the bootstrap admin (gated) ------------------------------
 # Only when explicitly enabled AND we authenticated as the automation admin -
@@ -116,7 +118,11 @@ fi
 # Keycloak cannot (and must not) write back to the federated store. Brute-force
 # detection protects the federated login path - and the Galaxy DB behind it -
 # from credential stuffing; permanentLockout=false so real users are never
-# permanently locked out.
+# permanently locked out. Session/token lifespans pin the Keycloak defaults
+# (explicit + drift-proof, matching master); revokeRefreshToken +
+# refreshTokenMaxReuse=0 make refresh tokens one-time-use, so a replayed token
+# invalidates the session. offlineSession* bound offline tokens for the future
+# (no client requests offline_access today).
 echo "Hardening $REALM realm security defenses..."
 $KCADM update "realms/$REALM" \
   -s registrationAllowed=false \
@@ -128,7 +134,14 @@ $KCADM update "realms/$REALM" \
   -s failureFactor=10 \
   -s waitIncrementSeconds=60 \
   -s maxFailureWaitSeconds=900 \
-  -s minimumQuickLoginWaitSeconds=60
+  -s minimumQuickLoginWaitSeconds=60 \
+  -s ssoSessionIdleTimeout=1800 \
+  -s ssoSessionMaxLifespan=36000 \
+  -s accessTokenLifespan=300 \
+  -s revokeRefreshToken=true \
+  -s refreshTokenMaxReuse=0 \
+  -s offlineSessionMaxLifespanEnabled=true \
+  -s offlineSessionMaxLifespan=2592000
 
 # --- OIDC clients ----------------------------------------------------------
 # Created idempotently from keycloak_galaxy_clients, mirroring the client
