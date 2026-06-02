@@ -48,6 +48,21 @@
         ports:
           - "8180:8180"
         restart_policy: unless-stopped
+        # Container hardening: drop all Linux capabilities (a JVM on :8180 needs
+        # none) and block privilege escalation; bound memory/CPU/PIDs so a
+        # runaway can't starve the Galaxy worker sharing this host; and cap the
+        # otherwise-unbounded json-file logs with rotation. (Image runs non-root.)
+        cap_drop:
+          - all
+        security_opts:
+          - "no-new-privileges:true"
+        memory: "{{ keycloak_container_memory }}"
+        cpus: "{{ keycloak_container_cpus }}"
+        pids_limit: "{{ keycloak_container_pids_limit }}"
+        log_driver: json-file
+        log_options:
+          max-size: "{{ keycloak_log_max_size }}"
+          max-file: "{{ keycloak_log_max_file }}"
         env:
           # KC_BOOTSTRAP_ADMIN_* are intentionally NOT set here: while present,
           # Keycloak re-establishes (re-enables) the bootstrap admin on every

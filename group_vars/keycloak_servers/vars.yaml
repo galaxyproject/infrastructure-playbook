@@ -32,6 +32,15 @@ keycloak_hostname: auth.usegalaxy.org
 # deliberately rather than tracking a floating minor tag like "26.0".
 keycloak_image_version: "26.6.2"
 
+# Container resource/security limits (see the Run Keycloak task). Generous
+# defaults so logins/threads aren't throttled; raise if the JVM is OOM-killed
+# or logs CPU/thread starvation. galaxy-main4 is shared with the Galaxy worker.
+keycloak_container_memory: "4g"
+keycloak_container_cpus: 4.0
+keycloak_container_pids_limit: 4096
+keycloak_log_max_size: "20m"
+keycloak_log_max_file: "5"
+
 # Realm holding the Galaxy clients and user federation (provisioned out-of-band).
 keycloak_realm: galaxy
 
