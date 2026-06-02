@@ -145,9 +145,10 @@ $KCADM update "realms/$REALM" \
 
 # --- OIDC clients ----------------------------------------------------------
 # Created idempotently from keycloak_galaxy_clients, mirroring the client
-# definitions brc-analytics ships in realm-export.json. Existing clients are
-# left untouched (create-only); to change a client's config, delete it first
-# or edit it in the admin console.
+# definitions brc-analytics ships in realm-export.json. Client creation is
+# create-only (to change most config, delete and recreate, or edit in the
+# console), EXCEPT fullScopeAllowed, which is enforced below on every run so
+# least privilege cannot silently drift back to "full scope".
 {% for c in keycloak_galaxy_clients | default([]) %}
 CID="{{ c.client_id }}"
 EXISTING_CLIENT=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
@@ -167,7 +168,7 @@ else
     -s directAccessGrantsEnabled={{ 'true' if c.direct_access_grants | default(false) else 'false' }} \
     -s serviceAccountsEnabled={{ 'true' if c.service_accounts | default(false) else 'false' }} \
     -s frontchannelLogout={{ 'true' if c.frontchannel_logout | default(false) else 'false' }} \
-    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(true) else 'false' }} \
+    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(false) else 'false' }} \
 {% if not c.public | default(false) %}    -s clientAuthenticatorType=client-secret \
     -s secret="{{ c.secret }}" \
 {% endif %}    -s 'redirectUris=[{% for u in c.redirect_uris | default([]) %}"{{ u }}"{% if not loop.last %},{% endif %}{% endfor %}]' \
@@ -175,6 +176,16 @@ else
 {% if c.pkce is defined %}    -s 'attributes."pkce.code.challenge.method"={{ c.pkce }}' \
 {% endif %}{% if c.post_logout_redirect_uris is defined %}    -s 'attributes."post.logout.redirect.uris"={{ c.post_logout_redirect_uris | join('##') }}' \
 {% endif %}    -i
+fi
+
+# Enforce least-privilege token scope even on pre-existing clients (the create
+# above is skipped for them); updates only fullScopeAllowed via kcadm's merge,
+# leaving the rest of the client config untouched.
+CUUID=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
+  | grep ",${CID}$" | sed 's/,.*//' | head -n1 || true)
+if [ -n "$CUUID" ]; then
+  $KCADM update "clients/$CUUID" -r "$REALM" \
+    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(false) else 'false' }}
 fi
 {% endfor %}
 
