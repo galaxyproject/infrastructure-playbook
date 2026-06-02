@@ -18,18 +18,90 @@ KC_URL="http://localhost:8180"
 REALM="{{ keycloak_realm }}"
 KCADM="/opt/keycloak/bin/kcadm.sh"
 
-ADMIN_USER="${KC_BOOTSTRAP_ADMIN_USERNAME:?KC_BOOTSTRAP_ADMIN_USERNAME not set}"
-ADMIN_PASS="${KC_BOOTSTRAP_ADMIN_PASSWORD:?KC_BOOTSTRAP_ADMIN_PASSWORD not set}"
+# Optional first-run fallback: once the automation admin exists these can be
+# dropped from the container env without breaking the script.
+BOOTSTRAP_ADMIN_USER="${KC_BOOTSTRAP_ADMIN_USERNAME:-}"
+BOOTSTRAP_ADMIN_PASS="${KC_BOOTSTRAP_ADMIN_PASSWORD:-}"
+# Dedicated, non-interactive automation admin used by kcadm. Kept separate from
+# human admins (which are MFA-enforced and so cannot be used for password-grant
+# kcadm). The bootstrap admin is only a first-run fallback.
+ADMIN_USER="${KC_ADMIN_USERNAME:?KC_ADMIN_USERNAME not set}"
+ADMIN_PASS="${KC_ADMIN_PASSWORD:?KC_ADMIN_PASSWORD not set}"
 
 OIDC_SCOPE_PREFIX="{{ keycloak_galaxy_oidc_scope_prefix }}"
 API_AUDIENCE="{{ keycloak_galaxy_api_audience }}"
 
-echo "Waiting for Keycloak to be ready..."
-until $KCADM config credentials --server "$KC_URL" --realm master \
-      --user "$ADMIN_USER" --password "$ADMIN_PASS" 2>/dev/null; do
-  sleep 2
+kc_login() {
+  $KCADM config credentials --server "$KC_URL" --realm master \
+    --user "$1" --password "$2" 2>/dev/null
+}
+
+# Prefer the automation admin; fall back to the bootstrap admin only on the
+# first run (before the automation admin exists). Track which one succeeded so
+# we never disable the account we are currently authenticated as.
+echo "Waiting for Keycloak to accept admin logins..."
+AUTHED_AS=""
+while [ -z "$AUTHED_AS" ]; do
+  if kc_login "$ADMIN_USER" "$ADMIN_PASS"; then
+    AUTHED_AS="$ADMIN_USER"
+  elif [ -n "$BOOTSTRAP_ADMIN_USER" ] && kc_login "$BOOTSTRAP_ADMIN_USER" "$BOOTSTRAP_ADMIN_PASS"; then
+    AUTHED_AS="$BOOTSTRAP_ADMIN_USER"
+  else
+    sleep 2
+  fi
 done
-echo "Keycloak is ready, authenticated as $ADMIN_USER."
+echo "Authenticated as $AUTHED_AS."
+
+# --- Automation admin (master realm) ---------------------------------------
+# Ensure the dedicated automation admin exists with full admin. Created before
+# the password policy below so its programmatic password set is not rejected.
+ADMIN_ID=$($KCADM get users -r master -q username="$ADMIN_USER" --fields id,username --format csv --noquotes 2>/dev/null \
+  | grep ",${ADMIN_USER}$" | sed 's/,.*//' | head -n1 || true)
+if [ -n "$ADMIN_ID" ]; then
+  echo "Automation admin $ADMIN_USER already exists (id=$ADMIN_ID)."
+else
+  echo "Creating automation admin $ADMIN_USER..."
+  ADMIN_ID=$($KCADM create users -r master -s username="$ADMIN_USER" -s enabled=true -i)
+  $KCADM set-password -r master --userid "$ADMIN_ID" --new-password "$ADMIN_PASS"
+  $KCADM add-roles -r master --uusername "$ADMIN_USER" --rolename admin
+  echo "Created automation admin (id=$ADMIN_ID)."
+fi
+
+# --- master realm security defenses ----------------------------------------
+# permanentLockout=false so a stuck credential cannot permanently lock admins
+# out. Password policy applies on next change only; existing passwords keep
+# working (so the bootstrap admin stays usable until explicitly disabled).
+echo "Hardening master realm security defenses..."
+$KCADM update realms/master \
+  -s bruteForceProtected=true \
+  -s permanentLockout=false \
+  -s failureFactor=5 \
+  -s waitIncrementSeconds=60 \
+  -s maxFailureWaitSeconds=900 \
+  -s minimumQuickLoginWaitSeconds=60 \
+  -s sslRequired=external \
+  -s 'passwordPolicy=length(12) and upperCase(1) and lowerCase(1) and digits(1) and specialChars(1)' \
+  -s ssoSessionIdleTimeout=1800 \
+  -s ssoSessionMaxLifespan=36000 \
+  -s accessTokenLifespan=300
+
+# --- Decommission the bootstrap admin (gated) ------------------------------
+# Only when explicitly enabled AND we authenticated as the automation admin -
+# i.e. the replacement is proven working - so we cannot lock ourselves out.
+if [ "${KC_DISABLE_BOOTSTRAP_ADMIN:-false}" = "true" ]; then
+  if [ "$AUTHED_AS" != "$ADMIN_USER" ]; then
+    echo "Skipping bootstrap-admin disable: not authenticated as the automation admin." >&2
+  elif [ "$BOOTSTRAP_ADMIN_USER" = "$ADMIN_USER" ]; then
+    echo "Skipping bootstrap-admin disable: bootstrap and automation admin are the same user." >&2
+  else
+    BOOT_ID=$($KCADM get users -r master -q username="$BOOTSTRAP_ADMIN_USER" --fields id,username --format csv --noquotes 2>/dev/null \
+      | grep ",${BOOTSTRAP_ADMIN_USER}$" | sed 's/,.*//' | head -n1 || true)
+    if [ -n "$BOOT_ID" ]; then
+      echo "Disabling bootstrap admin $BOOTSTRAP_ADMIN_USER..."
+      $KCADM update "users/$BOOT_ID" -r master -s enabled=false
+    fi
+  fi
+fi
 
 # Fail early with a clear message rather than silently creating objects in
 # the wrong place: the realm is expected to be provisioned out-of-band.

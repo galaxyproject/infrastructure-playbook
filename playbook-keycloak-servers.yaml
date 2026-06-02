@@ -62,6 +62,9 @@
         container: galaxy-keycloak
         command: /opt/keycloak/init-galaxy-scope.sh
         env:
+          KC_ADMIN_USERNAME: "{{ keycloak_admin_username }}"
+          KC_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+          KC_DISABLE_BOOTSTRAP_ADMIN: "{{ keycloak_disable_bootstrap_admin | default(false) | string | lower }}"
           GALAXY_DB_URL: "{{ keycloak_galaxy_db_url }}"
           GALAXY_DB_USER: "{{ keycloak_galaxy_db_username }}"
           GALAXY_DB_PASSWORD: "{{ keycloak_galaxy_db_password }}"
