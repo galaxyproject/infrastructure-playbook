@@ -104,23 +104,23 @@
     # cannot be reached directly, bypassing the nginx allowlist/TLS/admin ACL.
     - name: Install Keycloak port-restriction script
       ansible.builtin.template:
-        src: templates/keycloak/restrict-keycloak-port.sh.j2
-        dest: /usr/local/sbin/restrict-keycloak-port.sh
+        src: templates/keycloak/keycloak-restrict-port.sh.j2
+        dest: /usr/local/sbin/keycloak-restrict-port.sh
         mode: "0755"
         owner: root
         group: root
 
     - name: Install Keycloak port-restriction service
       ansible.builtin.template:
-        src: templates/keycloak/restrict-keycloak-port.service.j2
-        dest: /etc/systemd/system/restrict-keycloak-port.service
+        src: templates/keycloak/keycloak-restrict-port.service.j2
+        dest: /etc/systemd/system/keycloak-restrict-port.service
         mode: "0644"
         owner: root
         group: root
 
     - name: Enable and apply Keycloak port restriction
       ansible.builtin.systemd:
-        name: restrict-keycloak-port.service
+        name: keycloak-restrict-port.service
         enabled: true
         state: restarted
         daemon_reload: true

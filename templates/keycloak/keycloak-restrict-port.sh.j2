@@ -9,7 +9,7 @@
 # route to this host on the port reaches Keycloak over plaintext HTTP,
 # bypassing the nginx allowlist, TLS and the /admin/ restriction.
 #
-# Re-applied on boot / Docker restart by restrict-keycloak-port.service,
+# Re-applied on boot / Docker restart by keycloak-restrict-port.service,
 # because Docker recreates DOCKER-USER (default-allow) when the daemon starts.
 # Every step is guarded by `iptables -C` so re-running is idempotent.
 set -eu
