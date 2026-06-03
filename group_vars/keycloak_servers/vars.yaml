@@ -38,6 +38,12 @@ keycloak_image_version: "26.6.2"
 # release (https://github.com/galaxyproject/galaxy-keycloak-theme/releases).
 keycloak_theme_version: "0.1.0"
 
+# Pinned galaxy-user-provider release tag (the User Storage SPI jar pulled in
+# templates/keycloak/Dockerfile.j2). The release tag's CI attaches the jar as
+# a download asset. v0.1.1 fixes the federated-id/getUserById mismatch that
+# made code-to-token exchange fail with invalid_code.
+keycloak_user_provider_version: "v0.1.1"
+
 # Container resource/security limits (see the Run Keycloak task). Generous
 # defaults so logins/threads aren't throttled; raise if the JVM is OOM-killed
 # or logs CPU/thread starvation. galaxy-main4 is shared with the Galaxy worker.
