@@ -159,6 +159,13 @@ $KCADM update "realms/$REALM" \
   -s offlineSessionMaxLifespanEnabled=true \
   -s offlineSessionMaxLifespan=2592000
 
+# Galaxy-branded login + email theme. The galaxy-keycloak-theme jar (theme id
+# "galaxy") is baked into the image via Dockerfile.j2; (re)apply it on every
+# run so it stays set across redeploys.
+$KCADM update "realms/$REALM" \
+  -s loginTheme=galaxy \
+  -s emailTheme=galaxy
+
 # Audit events for this realm (see the master block above for rationale).
 $KCADM update events/config -r "$REALM" \
   -s eventsEnabled=true \

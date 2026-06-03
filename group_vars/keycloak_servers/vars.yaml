@@ -32,6 +32,12 @@ keycloak_hostname: auth.usegalaxy.org
 # deliberately rather than tracking a floating minor tag like "26.0".
 keycloak_image_version: "26.6.2"
 
+# Pinned galaxy-keycloak-theme release. Dockerfile.j2 ADDs this jar into
+# /opt/keycloak/providers/, and init-galaxy-scope.sh sets each realm's
+# loginTheme/emailTheme to "galaxy". Bump deliberately alongside a new theme
+# release (https://github.com/galaxyproject/galaxy-keycloak-theme/releases).
+keycloak_theme_version: "0.1.0"
+
 # Container resource/security limits (see the Run Keycloak task). Generous
 # defaults so logins/threads aren't throttled; raise if the JVM is OOM-killed
 # or logs CPU/thread starvation. galaxy-main4 is shared with the Galaxy worker.

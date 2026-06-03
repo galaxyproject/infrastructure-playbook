@@ -3,4 +3,7 @@ FROM quay.io/keycloak/keycloak:{{ keycloak_image_version }}
 ADD --chmod=644 https://github.com/galaxyproject/keycloak-galaxy-user-provider/releases/download/v0.1.0/galaxy-user-provider.jar \
     /opt/keycloak/providers/galaxy-user-provider.jar
 
+ADD --chmod=644 https://github.com/galaxyproject/galaxy-keycloak-theme/releases/download/v{{ keycloak_theme_version }}/galaxy-keycloak-theme-{{ keycloak_theme_version }}.jar \
+    /opt/keycloak/providers/galaxy-keycloak-theme.jar
+
 COPY --chmod=755 init-galaxy-scope.sh /opt/keycloak/init-galaxy-scope.sh
