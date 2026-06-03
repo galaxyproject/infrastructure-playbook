@@ -92,9 +92,19 @@
           # bootstrap account. It is no longer used to authenticate, and is no
           # longer in the container env, so Keycloak won't re-create it.
           KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
-          GALAXY_DB_URL: "{{ keycloak_galaxy_db_url }}"
-          GALAXY_DB_USER: "{{ keycloak_galaxy_db_username }}"
-          GALAXY_DB_PASSWORD: "{{ keycloak_galaxy_db_password }}"
+          # Per-realm federation DB credentials and per-(realm,client) confidential
+          # client secrets, injected here so they are never rendered into the
+          # baked image. Names match the derivation in init-galaxy-scope.sh.j2:
+          # KC_FED_{USER,PASS}_<REALM> and KC_SECRET_<REALM>_<CLIENTID>
+          # (uppercased, hyphens -> underscores).
+          KC_FED_USER_GALAXY: "{{ keycloak_galaxy_db_username }}"
+          KC_FED_PASS_GALAXY: "{{ keycloak_galaxy_db_password }}"
+          KC_FED_USER_GALAXY_TEST: "{{ vault_keycloak_test_database_username }}"
+          KC_FED_PASS_GALAXY_TEST: "{{ vault_keycloak_test_database_password }}"
+          KC_SECRET_GALAXY_BRC_ANALYTICS: "{{ vault_keycloak_brc_analytics_client_secret }}"
+          KC_SECRET_GALAXY_GALAXY_API: "{{ vault_keycloak_galaxy_api_client_secret }}"
+          KC_SECRET_GALAXY_TEST_DEV_BRC_ANALYTICS: "{{ vault_keycloak_dev_brc_analytics_client_secret }}"
+          KC_SECRET_GALAXY_TEST_GALAXY_API: "{{ vault_keycloak_galaxy_api_test_client_secret }}"
       register: keycloak_init_galaxy_scope
       # The script waits internally for Keycloak to accept admin logins.
       changed_when: "'Created' in keycloak_init_galaxy_scope.stdout"

@@ -1,7 +1,7 @@
 #!/bin/bash
-# Configures the "{{ keycloak_realm }}" realm to (a) expose the Galaxy API
-# bearer-token scopes and (b) federate user logins against Galaxy's
-# galaxy_user table via the galaxy-user-provider User Storage SPI.
+# Configures one or more Keycloak realms (keycloak_realms) to (a) expose the
+# Galaxy API bearer-token scopes and (b) federate user logins against each
+# instance's galaxy_user table via the galaxy-user-provider User Storage SPI.
 #
 # Variant of brc-analytics' backend/keycloak/init-galaxy-scope.sh, adapted
 # for this playbook: parameterised by Ansible, authenticates with the
@@ -15,7 +15,6 @@
 set -euo pipefail
 
 KC_URL="http://localhost:8180"
-REALM="{{ keycloak_realm }}"
 KCADM="/opt/keycloak/bin/kcadm.sh"
 
 # Optional first-run fallback: once the automation admin exists these can be
@@ -27,9 +26,6 @@ BOOTSTRAP_ADMIN_PASS="${KC_BOOTSTRAP_ADMIN_PASSWORD:-}"
 # kcadm). The bootstrap admin is only a first-run fallback.
 ADMIN_USER="${KC_ADMIN_USERNAME:?KC_ADMIN_USERNAME not set}"
 ADMIN_PASS="${KC_ADMIN_PASSWORD:?KC_ADMIN_PASSWORD not set}"
-
-OIDC_SCOPE_PREFIX="{{ keycloak_galaxy_oidc_scope_prefix }}"
-API_AUDIENCE="{{ keycloak_galaxy_api_audience }}"
 
 kc_login() {
   $KCADM config credentials --server "$KC_URL" --realm master \
@@ -115,14 +111,24 @@ if [ "${KC_DISABLE_BOOTSTRAP_ADMIN:-false}" = "true" ]; then
   fi
 fi
 
-# Fail early with a clear message rather than silently creating objects in
-# the wrong place: the realm is expected to be provisioned out-of-band.
-if ! $KCADM get "realms/$REALM" >/dev/null 2>&1; then
-  echo "ERROR: realm '$REALM' does not exist; create it before running this script." >&2
-  exit 1
+{% for realm in keycloak_realms %}
+# ===========================================================================
+# Realm: {{ realm.name }}
+# ===========================================================================
+REALM="{{ realm.name }}"
+OIDC_SCOPE_PREFIX="{{ realm.oidc_scope_prefix }}"
+API_AUDIENCE="{{ realm.api_audience }}"
+
+# Create the realm idempotently. (brc-analytics' testbed imports a full
+# realm-export.json; here each realm is created empty and configured below.)
+if $KCADM get "realms/$REALM" >/dev/null 2>&1; then
+  echo "Realm $REALM already exists."
+else
+  echo "Creating realm $REALM..."
+  $KCADM create realms -s realm="$REALM" -s enabled=true
 fi
 
-# --- galaxy realm security defenses ----------------------------------------
+# --- $REALM realm security defenses ----------------------------------------
 # Users are federated from Galaxy's DB, so disable Keycloak-side self-service:
 # registration, password reset and username editing all belong in Galaxy, and
 # Keycloak cannot (and must not) write back to the federated store. Brute-force
@@ -162,12 +168,12 @@ $KCADM update events/config -r "$REALM" \
   -s adminEventsDetailsEnabled=true
 
 # --- OIDC clients ----------------------------------------------------------
-# Created idempotently from keycloak_galaxy_clients, mirroring the client
+# Created idempotently from realm.clients, mirroring the client
 # definitions brc-analytics ships in realm-export.json. Client creation is
 # create-only (to change most config, delete and recreate, or edit in the
 # console), EXCEPT fullScopeAllowed, which is enforced below on every run so
 # least privilege cannot silently drift back to "full scope".
-{% for c in keycloak_galaxy_clients | default([]) %}
+{% for c in realm.clients | default([]) %}
 CID="{{ c.client_id }}"
 EXISTING_CLIENT=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
   | grep ",${CID}$" | sed 's/,.*//' || true)
@@ -188,7 +194,7 @@ else
     -s frontchannelLogout={{ 'true' if c.frontchannel_logout | default(false) else 'false' }} \
     -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(false) else 'false' }} \
 {% if not c.public | default(false) %}    -s clientAuthenticatorType=client-secret \
-    -s secret="{{ c.secret }}" \
+    -s secret="${KC_SECRET_{{ (realm.name ~ '_' ~ c.client_id) | upper | replace('-', '_') }}:?missing client secret for {{ realm.name }}/{{ c.client_id }}}" \
 {% endif %}    -s 'redirectUris=[{% for u in c.redirect_uris | default([]) %}"{{ u }}"{% if not loop.last %},{% endif %}{% endfor %}]' \
     -s 'webOrigins=[{% for u in c.web_origins | default([]) %}"{{ u }}"{% if not loop.last %},{% endif %}{% endfor %}]' \
 {% if c.pkce is defined %}    -s 'attributes."pkce.code.challenge.method"={{ c.pkce }}' \
@@ -264,8 +270,8 @@ fi
 
 # --- Assign both scopes as defaults to configured clients (optional) -------
 # brc-analytics hard-codes its own client here; in this playbook the target
-# clients are configurable via keycloak_galaxy_api_clients (default: none).
-{% for client in keycloak_galaxy_api_clients %}
+# clients are configurable via realm.api_clients (default: none).
+{% for client in realm.api_clients | default([]) %}
 CLIENT_UUID=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
   | grep ',{{ client }}$' | sed 's/,.*//' || true)
 if [ -n "$CLIENT_UUID" ]; then
@@ -284,31 +290,34 @@ fi
 # Keycloak 26 enables VERIFY_PROFILE by default, which forces users to
 # complete their profile (first/last name) on first login. Federated Galaxy
 # users don't have these fields, so disable it.
-echo "Disabling VERIFY_PROFILE required action..."
+echo "Disabling VERIFY_PROFILE required action in $REALM..."
 $KCADM update "authentication/required-actions/VERIFY_PROFILE" -r "$REALM" -s enabled=false
 
-GALAXY_DB_URL="${GALAXY_DB_URL:?GALAXY_DB_URL not set}"
-GALAXY_DB_USER="${GALAXY_DB_USER:?GALAXY_DB_USER not set}"
-GALAXY_DB_PASSWORD="${GALAXY_DB_PASSWORD:?GALAXY_DB_PASSWORD not set}"
+# jdbcUrl is non-secret (rendered); the DB user/password are injected via env
+# (KC_FED_{USER,PASS}_<REALM>) so they never land in the baked image.
+FED_DB_URL="{{ realm.federation.jdbc_url }}"
+FED_DB_USER="${KC_FED_USER_{{ realm.name | upper | replace('-', '_') }}:?missing federation DB user for {{ realm.name }}}"
+FED_DB_PASSWORD="${KC_FED_PASS_{{ realm.name | upper | replace('-', '_') }}:?missing federation DB password for {{ realm.name }}}"
 
 FED_ID=$($KCADM get components -r "$REALM" --fields id,name --format csv --noquotes 2>/dev/null \
   | grep ',galaxy-users$' | sed 's/,.*//' || true)
 
 if [ -n "$FED_ID" ]; then
-  echo "Galaxy user federation provider already exists (id=$FED_ID)."
+  echo "Galaxy user federation provider already exists in $REALM (id=$FED_ID)."
 else
-  echo "Creating Galaxy user federation provider..."
+  echo "Creating Galaxy user federation provider in $REALM..."
   FED_ID=$($KCADM create components -r "$REALM" \
     -s name=galaxy-users \
     -s providerId=galaxy-user-provider \
     -s providerType=org.keycloak.storage.UserStorageProvider \
-    -s 'config.jdbcUrl=["'"$GALAXY_DB_URL"'"]' \
-    -s 'config.dbUser=["'"$GALAXY_DB_USER"'"]' \
-    -s 'config.dbPassword=["'"$GALAXY_DB_PASSWORD"'"]' \
+    -s 'config.jdbcUrl=["'"$FED_DB_URL"'"]' \
+    -s 'config.dbUser=["'"$FED_DB_USER"'"]' \
+    -s 'config.dbPassword=["'"$FED_DB_PASSWORD"'"]' \
     -s 'config.priority=["0"]' \
     -s 'config.cachePolicy=["NO_CACHE"]' \
     -i)
-  echo "Created Galaxy user federation provider (id=$FED_ID)."
+  echo "Created Galaxy user federation provider in $REALM (id=$FED_ID)."
 fi
+{% endfor %}
 
 echo "Done."
