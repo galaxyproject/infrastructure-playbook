@@ -25,15 +25,20 @@
         - name: Dockerfile
         - name: init-galaxy-scope.sh
           mode: "0755"
+      register: __keycloak_context
 
     - name: Create Keycloak Docker image
       community.docker.docker_image_build:
         name: galaxy-keycloak:latest
         path: /srv/keycloak/context
-        # Default is rebuild=never, which skips the build when the tag already
-        # exists, so Dockerfile/script changes are never picked up. Always
-        # rebuild; Docker's layer cache keeps it cheap when nothing changed.
-        rebuild: always
+        # rebuild=never (the default) skips the build when the tag already
+        # exists, so Dockerfile/script edits are never picked up; rebuild=always
+        # makes this an always-changed task. Instead rebuild only when the build
+        # context actually changed (a keycloak_image_version bump or init-script
+        # edit flips the template task to changed). If the image is ever deleted
+        # by hand while the context is unchanged, the build is skipped and the
+        # Run task fails loudly - re-touch a template or bump the tag to rebuild.
+        rebuild: "{{ __keycloak_context is changed | ternary('always', 'never') }}"
 
     - name: Run Keycloak
       community.docker.docker_container:
