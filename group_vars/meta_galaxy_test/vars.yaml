@@ -18,11 +18,48 @@ hashicorp_vault_secret_values:
 hashicorp_vault_addr: "https://{{ galaxy_instance_hostname }}:8200"
 
 # Variables used by other group vars
-galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
-galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users }}"
+galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf + _keycloak_test_pg_hba }}"
+# Keycloak user federation authenticates test logins against
+# galaxy_test.galaxy_user, so the galaxy-keycloak container (on galaxy-main4)
+# needs a read-only role on this cluster. Append it to the vault-managed
+# objects rather than hand-editing the encrypted lists. The credentials live
+# in vault_keycloak_test_database_{username,password}; that vault var must be
+# readable here AND by the keycloak_servers host that configures the provider.
+galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users + _keycloak_test_db_objects_users }}"
 galaxy_db_postgresql_objects_groups: "{{ vault_galaxy_db_postgresql_objects_groups }}"
 galaxy_db_postgresql_objects_databases: "{{ vault_galaxy_db_postgresql_objects_databases }}"
-galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_privileges }}"
+galaxy_db_postgresql_objects_privileges: "{{ vault_galaxy_db_postgresql_objects_privileges + _keycloak_test_db_objects_privileges }}"
+
+_keycloak_test_db_objects_users:
+  # postgresql_user creates a LOGIN role by default; no role_attr_flags needed.
+  - name: "{{ vault_keycloak_test_database_username }}"
+    password: "{{ vault_keycloak_test_database_password }}"
+
+_keycloak_test_db_objects_privileges:
+  # Least privilege: connect to galaxy_test, use the schema, read galaxy_user only.
+  - database: galaxy_test
+    roles: "{{ vault_keycloak_test_database_username }}"
+    type: database
+    privs: CONNECT
+  - database: galaxy_test
+    roles: "{{ vault_keycloak_test_database_username }}"
+    objs: public
+    type: schema
+    privs: USAGE
+  - database: galaxy_test
+    roles: "{{ vault_keycloak_test_database_username }}"
+    objs: galaxy_user
+    type: table
+    privs: SELECT
+
+# pg_hba rule letting the Keycloak host reach galaxy_test as the federation
+# role. galaxy-main4 egresses via the Main load balancer, so the source Postgres
+# sees is the LB address — resolved the same way the keycloak playbook derives
+# --proxy-trusted-addresses. Appended after the vault rules (which fall through
+# to the implicit deny for this host/user/db today). Use scram-sha-256 to match
+# the cluster's password_encryption; switch to md5 if it still stores md5 hashes.
+_keycloak_test_pg_hba:
+  - "host galaxy_test {{ vault_keycloak_test_database_username }} {{ lookup('dig', groups.galaxy_main_load_balancers[0]) }}/32 scram-sha-256"
 galaxy_user: g2test
 galaxy_instance_codename: test
 galaxy_instance_hostname: test.galaxyproject.org
