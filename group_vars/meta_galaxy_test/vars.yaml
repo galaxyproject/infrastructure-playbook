@@ -52,14 +52,16 @@ _keycloak_test_db_objects_privileges:
     type: table
     privs: SELECT
 
-# pg_hba rule letting the Keycloak host reach galaxy_test as the federation
-# role. galaxy-main4 egresses via the Main load balancer, so the source Postgres
-# sees is the LB address — resolved the same way the keycloak playbook derives
-# --proxy-trusted-addresses. Appended after the vault rules (which fall through
-# to the implicit deny for this host/user/db today). Use scram-sha-256 to match
-# the cluster's password_encryption; switch to md5 if it still stores md5 hashes.
+# pg_hba rule letting the Keycloak host (galaxy-main4) reach galaxy_test as the
+# federation role. The galaxy-keycloak container egresses with main4's own
+# address (NOT the Main LB), so resolve the keycloak_servers host. Verify
+# `dig +short galaxy-main4.tacc.utexas.edu` matches main4's egress IP; if main4
+# is multi-homed and DNS differs, pin the literal /32 here instead. Appended
+# after the vault rules (which fall through to the implicit deny for this
+# host/user/db today). Use scram-sha-256 to match the cluster's
+# password_encryption; switch to md5 if it still stores md5 hashes.
 _keycloak_test_pg_hba:
-  - "host galaxy_test {{ vault_keycloak_test_database_username }} {{ lookup('dig', groups.galaxy_main_load_balancers[0]) }}/32 scram-sha-256"
+  - "host galaxy_test {{ vault_keycloak_test_database_username }} {{ lookup('dig', groups.keycloak_servers[0]) }}/32 scram-sha-256"
 galaxy_user: g2test
 galaxy_instance_codename: test
 galaxy_instance_hostname: test.galaxyproject.org
