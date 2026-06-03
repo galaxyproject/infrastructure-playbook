@@ -3,12 +3,8 @@
 
 all:
 
-  vars:
-    # Pin the Ansible interpreter to the system python. Auto-discovery would
-    # otherwise pick the newer python3.13 installed on AlmaLinux 9 hosts, which
-    # lacks the dnf/version bindings the modules need (3.9 has them).
-    ansible_python_interpreter: /usr/bin/python3
-    #ansible_user: root
+  #vars:
+  #  ansible_user: root
 
   hosts:
     #galaxy-test.tacc.utexas.edu:
