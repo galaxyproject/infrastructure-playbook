@@ -244,10 +244,10 @@ server {
     access_log  /var/log/nginx/auth.access.log;
     error_log   /var/log/nginx/auth.error.log;
 
-{% for cidr in usegalaxy_auth_access_allow | default([]) %}
-    allow {{ cidr }};
-{% endfor %}
-    deny all;
+    # The public realms (galaxy, galaxy-test) are open so users can complete the
+    # OIDC login from anywhere. The admin surface stays IP-restricted: the
+    # /admin/ console + REST API and the master realm (where the admin console
+    # authenticates) each carry their own allowlist below.
 
     location @keycloak {
         proxy_redirect      off;
@@ -273,6 +273,19 @@ server {
     }
 
     location / {
+        try_files false @keycloak;
+    }
+
+    # The master realm is Keycloak's admin realm - the admin console signs in
+    # against it (/realms/master/login-actions/, .../openid-connect/...). Keep
+    # it behind the admin allowlist even though the public realms are open. The
+    # ^~ modifier makes this prefix win over the token/login-actions regex
+    # above, so master-realm auth is never served unrestricted.
+    location ^~ /realms/master/ {
+{% for cidr in usegalaxy_auth_admin_access_allow | default([]) %}
+        allow {{ cidr }};
+{% endfor %}
+        deny all;
         try_files false @keycloak;
     }
 
