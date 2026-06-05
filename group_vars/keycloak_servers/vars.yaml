@@ -30,7 +30,7 @@ keycloak_hostname: auth.usegalaxy.org
 
 # Pinned Keycloak base image tag (templates/keycloak/Dockerfile.j2). Bump
 # deliberately rather than tracking a floating minor tag like "26.0".
-keycloak_image_version: "26.6.2"
+keycloak_image_version: "26.6.3"
 
 # Pinned galaxy-keycloak-theme release. Dockerfile.j2 ADDs this jar into
 # /opt/keycloak/providers/, and init-galaxy-scope.sh sets each realm's
