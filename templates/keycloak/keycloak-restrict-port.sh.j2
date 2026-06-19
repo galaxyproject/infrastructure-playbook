@@ -1,0 +1,28 @@
+#!/bin/sh
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+# Restrict the Keycloak container's published HTTP port to the load
+# balancer(s) only. Docker exposes published ports by NAT and filters them in
+# the DOCKER-USER chain (NOT INPUT), so that is where access must be gated -
+# a plain INPUT/firewalld rule would not apply. Without this, anyone able to
+# route to this host on the port reaches Keycloak over plaintext HTTP,
+# bypassing the nginx allowlist, TLS and the /admin/ restriction.
+#
+# Re-applied on boot / Docker restart by keycloak-restrict-port.service,
+# because Docker recreates DOCKER-USER (default-allow) when the daemon starts.
+# Every step is guarded by `iptables -C` so re-running is idempotent.
+set -eu
+
+PORT=8180
+
+# Catch-all DROP for the published port, inserted ahead of Docker's trailing
+# RETURN. Added first so the per-LB RETURNs below land above it.
+iptables -C DOCKER-USER -p tcp --dport "$PORT" -j DROP 2>/dev/null \
+    || iptables -I DOCKER-USER 1 -p tcp --dport "$PORT" -j DROP
+
+# Allow each load balancer, inserted at the top so it precedes the DROP.
+{% for lb in groups.galaxy_main_load_balancers %}
+iptables -C DOCKER-USER -p tcp --dport "$PORT" -s {{ lookup('dig', lb) }} -j RETURN 2>/dev/null \
+    || iptables -I DOCKER-USER 1 -p tcp --dport "$PORT" -s {{ lookup('dig', lb) }} -j RETURN
+{% endfor %}

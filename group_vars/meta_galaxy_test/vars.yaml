@@ -17,7 +17,8 @@ hashicorp_vault_secret_values:
 
 hashicorp_vault_addr: "https://{{ galaxy_instance_hostname }}:8200"
 
-# Variables used by other group vars
+# Variables used by other group vars. The Keycloak federation DB role + pg_hba
+# rule for galaxy_test live directly in vault.yaml (as for Main).
 galaxy_db_postgresql_pg_hba_conf: "{{ vault_galaxy_db_postgresql_pg_hba_conf }}"
 galaxy_db_postgresql_objects_users: "{{ vault_galaxy_db_postgresql_objects_users }}"
 galaxy_db_postgresql_objects_groups: "{{ vault_galaxy_db_postgresql_objects_groups }}"

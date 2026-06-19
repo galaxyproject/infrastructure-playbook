@@ -23,12 +23,22 @@
         group: root
       loop:
         - name: Dockerfile
-        #- name: init-galaxy-scope.sh
+        - name: init-galaxy-scope.sh
+          mode: "0755"
+      register: __keycloak_context
 
     - name: Create Keycloak Docker image
       community.docker.docker_image_build:
         name: galaxy-keycloak:latest
         path: /srv/keycloak/context
+        # rebuild=never (the default) skips the build when the tag already
+        # exists, so Dockerfile/script edits are never picked up; rebuild=always
+        # makes this an always-changed task. Instead rebuild only when the build
+        # context actually changed (a keycloak_image_version bump or init-script
+        # edit flips the template task to changed). If the image is ever deleted
+        # by hand while the context is unchanged, the build is skipped and the
+        # Run task fails loudly - re-touch a template or bump the tag to rebuild.
+        rebuild: "{{ __keycloak_context is changed | ternary('always', 'never') }}"
 
     - name: Run Keycloak
       community.docker.docker_container:
@@ -42,11 +52,85 @@
           - --proxy-trusted-addresses={{ lookup('dig', groups.galaxy_main_load_balancers[0]) }}
         ports:
           - "8180:8180"
+        restart_policy: unless-stopped
+        # Container hardening: drop all Linux capabilities (a JVM on :8180 needs
+        # none) and block privilege escalation; bound memory/CPU/PIDs so a
+        # runaway can't starve the Galaxy worker sharing this host; and cap the
+        # otherwise-unbounded json-file logs with rotation. (Image runs non-root.)
+        cap_drop:
+          - all
+        security_opts:
+          - "no-new-privileges:true"
+        memory: "{{ keycloak_container_memory }}"
+        cpus: "{{ keycloak_container_cpus }}"
+        pids_limit: "{{ keycloak_container_pids_limit }}"
+        log_driver: json-file
+        log_options:
+          max-size: "{{ keycloak_log_max_size }}"
+          max-file: "{{ keycloak_log_max_file }}"
         env:
-          KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
-          KC_BOOTSTRAP_ADMIN_PASSWORD: "{{ keycloak_bootstrap_admin_password }}"
+          # KC_BOOTSTRAP_ADMIN_* are intentionally NOT set here: while present,
+          # Keycloak re-establishes (re-enables) the bootstrap admin on every
+          # container start, undoing the script's disable. Admin accounts already
+          # exist in the DB, so no bootstrap is needed. (For a fresh/empty DB,
+          # temporarily re-add them for the first run only.)
           KC_HTTP_PORT: "8180"
           KC_DB: postgres
           KC_DB_URL: "{{ keycloak_database_url }}"
           KC_DB_USERNAME: "{{ keycloak_database_username }}"
           KC_DB_PASSWORD: "{{ keycloak_database_password }}"
+
+    - name: Configure Galaxy API scopes and user federation
+      community.docker.docker_container_exec:
+        container: galaxy-keycloak
+        command: /opt/keycloak/init-galaxy-scope.sh
+        env:
+          KC_ADMIN_USERNAME: "{{ keycloak_admin_username }}"
+          KC_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+          KC_DISABLE_BOOTSTRAP_ADMIN: "{{ keycloak_disable_bootstrap_admin | default(false) | string | lower }}"
+          # Username only (no password): lets the disable step identify the
+          # bootstrap account. It is no longer used to authenticate, and is no
+          # longer in the container env, so Keycloak won't re-create it.
+          KC_BOOTSTRAP_ADMIN_USERNAME: "{{ keycloak_bootstrap_admin_username }}"
+          # Per-realm federation DB credentials and per-(realm,client) confidential
+          # client secrets, injected here so they are never rendered into the
+          # baked image. Names match the derivation in init-galaxy-scope.sh.j2:
+          # KC_FED_{USER,PASS}_<REALM> and KC_SECRET_<REALM>_<CLIENTID>
+          # (uppercased, hyphens -> underscores).
+          KC_FED_USER_GALAXY: "{{ keycloak_galaxy_db_username }}"
+          KC_FED_PASS_GALAXY: "{{ keycloak_galaxy_db_password }}"
+          KC_FED_USER_GALAXY_TEST: "{{ vault_keycloak_test_database_username }}"
+          KC_FED_PASS_GALAXY_TEST: "{{ vault_keycloak_test_database_password }}"
+          KC_SECRET_GALAXY_BRC_ANALYTICS: "{{ vault_keycloak_brc_analytics_client_secret }}"
+          KC_SECRET_GALAXY_GALAXY_API: "{{ vault_keycloak_galaxy_api_client_secret }}"
+          KC_SECRET_GALAXY_TEST_DEV_BRC_ANALYTICS: "{{ vault_keycloak_dev_brc_analytics_client_secret }}"
+          KC_SECRET_GALAXY_TEST_GALAXY_API: "{{ vault_keycloak_galaxy_api_test_client_secret }}"
+      register: keycloak_init_galaxy_scope
+      # The script waits internally for Keycloak to accept admin logins.
+      changed_when: "'Created' in keycloak_init_galaxy_scope.stdout"
+
+    # Docker publishes 8180 via NAT, filtered in the DOCKER-USER chain rather
+    # than INPUT. Restrict it to the load balancer(s) so the plaintext port
+    # cannot be reached directly, bypassing the nginx allowlist/TLS/admin ACL.
+    - name: Install Keycloak port-restriction script
+      ansible.builtin.template:
+        src: templates/keycloak/keycloak-restrict-port.sh.j2
+        dest: /usr/local/sbin/keycloak-restrict-port.sh
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Install Keycloak port-restriction service
+      ansible.builtin.template:
+        src: templates/keycloak/keycloak-restrict-port.service.j2
+        dest: /etc/systemd/system/keycloak-restrict-port.service
+        mode: "0644"
+        owner: root
+        group: root
+
+    - name: Enable and apply Keycloak port restriction
+      ansible.builtin.systemd:
+        name: keycloak-restrict-port.service
+        enabled: true
+        state: restarted
+        daemon_reload: true

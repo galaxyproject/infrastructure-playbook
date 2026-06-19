@@ -1,7 +1,9 @@
 ---
 
 pulsar_relay_access_allow: "{{ vault_pulsar_relay_access_allow }}"
-usegalaxy_auth_access_allow: "{{ vault_usegalaxy_auth_access_allow }}"
+# auth.usegalaxy.org's public realms (galaxy, galaxy-test) are intentionally
+# open; only the /admin/ surface and the master realm stay IP-restricted via
+# usegalaxy_auth_admin_access_allow (see templates/nginx/usegalaxy_lb.j2).
 usegalaxy_auth_admin_access_allow: "{{ vault_usegalaxy_auth_admin_access_allow }}"
 
 systemd_journald_persistent: true
