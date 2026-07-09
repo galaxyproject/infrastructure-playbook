@@ -10,8 +10,8 @@ nginx_extra_configs:
   - usegalaxy_staging_proxy.conf
   - conf.d/rate_limit.conf
 
-galaxy_memory_limit: 15
-galaxy_memory_high: 14
+galaxy_memory_limit: 14
+galaxy_memory_high: 13.8
 
 galaxy_main_web_servers_group_gravity_config:
   gunicorn:
