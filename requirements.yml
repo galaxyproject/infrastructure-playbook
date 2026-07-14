@@ -48,6 +48,9 @@ roles:
 collections:
   - name: galaxyproject.general
     version: 1.4.1
+  # Pinned for community.general.zpool (added in 11.0.0), used by galaxyproject.general's paths role
+  - name: community.general
+    version: 11.4.9
   - name: community.grafana
     version: 1.1.0
   - name: community.rabbitmq
