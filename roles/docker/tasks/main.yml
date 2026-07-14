@@ -41,7 +41,7 @@
     file:
       dest: /etc/systemd/system/docker.service.d
       state: directory
-    when: docker_daemon_option_list
+    when: docker_daemon_option_list | length > 0
 
   - name: Set docker daemon startup options
     copy:
@@ -56,7 +56,7 @@
     notify:
       - reload systemd daemon
       - restart docker
-    when: docker_daemon_option_list
+    when: docker_daemon_option_list | length > 0
 
   - name: Start or stop docker as desired
     service:

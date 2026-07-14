@@ -98,7 +98,7 @@
   environment:
     PYTHONPATH: null
     VIRTUAL_ENV: "{{ tool_shed_venv_dir }}"
-  when: tool_shed_additional_venv_packages
+  when: tool_shed_additional_venv_packages | length > 0
   tags: update
 
 - name: Tool Shed v1 Block
