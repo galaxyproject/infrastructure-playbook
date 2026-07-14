@@ -89,7 +89,7 @@
     state: present
     extra_zfs_properties:
       compression: "{{ smartos_hypervisor_zones_compression }}"
-  when: smartos_hypervisor_zones_compression
+  when: smartos_hypervisor_zones_compression is truthy
 
 - name: Disable compression on zones block
   when: not smartos_hypervisor_zones_compression
