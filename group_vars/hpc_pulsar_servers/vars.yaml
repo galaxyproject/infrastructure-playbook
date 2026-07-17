@@ -187,8 +187,7 @@ pulsar_yaml_config:
 
 # don't prepopulate any cvmfs config
 cvmfsexec_source: none
-# avoid aggressive scratch cleaning of the contents of the cvmfsexec archive before the job finishes
-cvmfsexec_url: https://github.com/natefoo/cvmfsexec/archive/refs/heads/untar-no-preserve-times.tar.gz
+cvmfsexec_url: https://github.com/cvmfs/cvmfsexec/archive/refs/tags/v4.52.tar.gz
 
 cvmfsexec_files:
   - src: files/cvmfsexec/galaxyproject.org.pub
