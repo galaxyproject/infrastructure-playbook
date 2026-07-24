@@ -225,15 +225,15 @@ slurm_nodes:
     Weight: 90
     CPUs: 128
     RealMemory: 1004000  # 1007851 reported by slurmd
-  - name: "js2-gpu-medium[0-3]"
+  - name: "js2-gpu-medium[0-15]"
     State: CLOUD
     CPUs: 8
     RealMemory: 29900  # ????? reported by slurmd
-  - name: "js2-gpu-large[0-1]"
+  - name: "js2-gpu-large[0-3]"
     State: CLOUD
     CPUs: 16
     RealMemory: 60100  # ????? reported by slurmd
-  - name: "js2-gpu-xl[0-1]"
+  - name: "js2-gpu-xl[0-3]"
     State: CLOUD
     CPUs: 32
     RealMemory: 125000  # ????? reported by slurmd
@@ -292,21 +292,21 @@ slurm_partitions:
   - name: gpu-medium
     DefaultTime: "24:20:00"
     MaxTime: "7-00:20:00"
-    Nodes: "js2-gpu-medium[0-3]"
+    Nodes: "js2-gpu-medium[0-15]"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: gpu-large
     DefaultTime: "24:20:00"
     MaxTime: "7-00:20:00"
-    Nodes: "js2-gpu-large[0-1]"
+    Nodes: "js2-gpu-large[0-3]"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
   - name: gpu-xl
     DefaultTime: "24:20:00"
     MaxTime: "7-00:20:00"
-    Nodes: "js2-gpu-xl[0-1]"
+    Nodes: "js2-gpu-xl[0-3]"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
