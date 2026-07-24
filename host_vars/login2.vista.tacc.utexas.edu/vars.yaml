@@ -18,6 +18,9 @@ hpc_pulsar_managers:
     staging_directory: "{{ pulsar_staging_dir }}/test"
     # FIXME: is this implemented?
     #relay_topic_prefix: test
+  main_vista:
+    type: queued_drmaa
+    staging_directory: "{{ pulsar_staging_dir }}/main"
 
 pulsar_clean_jobs_percent_full_function: |
   python <<EOF

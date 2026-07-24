@@ -16,6 +16,9 @@ roles:
   - name: galaxyproject.pulsar
     src: https://github.com/galaxyproject/ansible-pulsar
     version: user-systemd-unit
+  - name: galaxyproject.pulsar_relay
+    # Update when a version is released
+    src: https://github.com/galaxyproject/ansible-role-pulsar-relay
   - name: usegalaxy_eu.certbot
     version: 0.1.12
   - name: galaxyproject.slurm

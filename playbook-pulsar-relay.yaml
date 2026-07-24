@@ -1,0 +1,7 @@
+---
+
+- name: Pulsar Relay Servers
+  hosts: pulsar_relay_servers
+  roles:
+    - role: galaxyproject.pulsar_relay
+

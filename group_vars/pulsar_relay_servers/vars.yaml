@@ -1,19 +1,58 @@
 ---
 
-pulsar_relay_servers_group_packages:
-  - python-3.12
+pulsar_relay_jwt_secret_key: "{{ vault_pulsar_relay_jwt_secret_key }}"
+pulsar_relay_bootstrap_admin_username: "{{ vault_pulsar_relay_bootstrap_admin_username }}"
+pulsar_relay_bootstrap_admin_password: "{{ vault_pulsar_relay_bootstrap_admin_password }}"
+pulsar_relay_bootstrap_admin_email: "{{ vault_pulsar_relay_bootstrap_admin_email }}"
+
+pulsar_relay_venv_owner: gxsrc
+pulsar_relay_config_owner: root
+pulsar_relay_user:
+  name: relay
+  comment: "Pulsar Relay"
+  gid: 981
+  uid: 981
+  home: /srv/relay
+  create_home: false
+  shell: /bin/bash
+  system: true
+
+pulsar_relay_create_user: true
+pulsar_relay_create_group: true
+
+pulsar_relay_venv_dir: /srv/relay
+pulsar_relay_venv_dir_create: true
+
+pulsar_relay_environment:
+  - PULSAR_BOOTSTRAP_ADMIN_USERNAME={{ pulsar_relay_bootstrap_admin_username }}
+  - PULSAR_BOOTSTRAP_ADMIN_PASSWORD={{ pulsar_relay_bootstrap_admin_password }}
+  - PULSAR_BOOTSTRAP_ADMIN_EMAIL={{ pulsar_relay_bootstrap_admin_email }}
+
+pulsar_relay_config:
+  app_name: "Pulsar Relay"
+  storage_backend: valkey
+  valkey_host: localhost
+  valkey_port: 6379
+  valkey_password: ignored-because-local-protected-mode
+  valkey_use_tls: false
+  persistent_tier_retention: 86400
+  max_messages_per_topic: 1000000
+  log_level: DEBUG
+  jwt_secret_key: "{{ pulsar_relay_jwt_secret_key }}"
+  allowed_origins:
+    - https://relay.usegalaxy.org
+  trusted_hosts:
+    - relay.usegalaxy.org
+
+pulsar_relay_packages:
+  - python3.13
   - valkey
 
-pulsar_relay_servers_group_directories:
-  - path: /srv/relay
-    mode: "0755"
-    owner: "gxsrc"
-    group: "G-803372"
+pulsar_relay_virtualenv_command: python3.13 -m venv
 
 #redis_databases: 1
 #redis_maxmemory: 536870912
 #redis_appendonly: "yes"
 
 # TODO:
-# - enable/start valkey
-# - create relay user
+# - configure/enable/start valkey

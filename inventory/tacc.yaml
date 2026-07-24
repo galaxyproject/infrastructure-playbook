@@ -160,6 +160,10 @@ all:
       hosts:
         galaxy-main4.tacc.utexas.edu:
 
+    pulsar_relay_servers:
+      hosts:
+        galaxy-main.tacc.utexas.edu:
+
     keycloak_servers:
       hosts:
         galaxy-main4.tacc.utexas.edu:
