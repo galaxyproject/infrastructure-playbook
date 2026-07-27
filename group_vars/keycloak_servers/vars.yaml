@@ -71,8 +71,8 @@ keycloak_disable_bootstrap_admin: true
 # federation DB credentials are NOT rendered here or into the image: they are
 # injected via env at exec time (see the "Configure Galaxy API scopes and user
 # federation" task in playbook-keycloak-servers.yaml). The env var names are
-# derived as KC_SECRET_<REALM>_<CLIENTID> and KC_FED_{USER,PASS}_<REALM>
-# (uppercased, hyphens -> underscores).
+# derived as KC_SECRET_<REALM>_<CLIENTID>, KC_FED_{USER,PASS}_<REALM> and
+# KC_IDP_SECRET_<REALM>_<ALIAS> (uppercased, hyphens -> underscores).
 keycloak_realms:
   - name: galaxy
     oidc_scope_prefix: "https://galaxyproject.org/api"
@@ -81,6 +81,37 @@ keycloak_realms:
       - brc-analytics
     federation:
       jdbc_url: "jdbc:postgresql://galaxy-db.tacc.utexas.edu:5432/galaxy_main"
+    # Social/institutional logins brokered by Keycloak. Each one is wired to the
+    # "galaxy-link-existing" first-broker-login flow (see init-galaxy-scope.sh):
+    # it links the brokered identity to the *federated* Galaxy user and never
+    # creates a Keycloak-local one, so the token's "sub" stays
+    # f:<federation-component-id>:<galaxy_user.id> and Galaxy keeps resolving it
+    # to the same account. A brokered identity with no Galaxy account is
+    # rejected: accounts are still born in Galaxy (which owns username
+    # generation, private roles and activation), so Galaxy's own "google" OIDC
+    # backend must stay enabled - it is the signup on-ramp for this whole path.
+    #
+    # trust_email: true means whoever controls the provider account for address
+    # X gets the Galaxy account with address X. That is only as strong as
+    # Galaxy's own email verification - keep user_activation_on enabled.
+    #
+    # client_id is not secret and is rendered here; the secret is injected via
+    # env as KC_IDP_SECRET_<REALM>_<ALIAS> (see the playbook), sourced from
+    # vault_keycloak_google_client_secret_galaxy. One Google OAuth client per
+    # realm, so rotating test credentials cannot affect production; its
+    # authorized redirect URI must be
+    # https://auth.usegalaxy.org/realms/galaxy/broker/google/endpoint
+    #
+    # Commented out until the Google OAuth client exists and the vault secret is
+    # set: enabling this without them makes the init script fail loudly.
+    # identity_providers:
+    #   - alias: google
+    #     provider_id: google
+    #     display_name: "Google"
+    #     client_id: "TODO-galaxy-realm-google-oauth-client-id"
+    #     default_scope: "openid email profile"
+    #     trust_email: true
+    #     sync_mode: IMPORT
     clients:
       # BFF web-app client; its access tokens get the galaxy-api audience + the
       # "<prefix>:*" Galaxy API scope (see api_clients above).
@@ -120,6 +151,19 @@ keycloak_realms:
       - dev-brc-analytics
     federation:
       jdbc_url: "jdbc:postgresql://galaxy-test.tacc.utexas.edu:5432/galaxy_test"
+    # See the galaxy realm above for what this does and why. Separate Google
+    # OAuth client, secret from vault_keycloak_google_client_secret_galaxy_test,
+    # redirect URI
+    # https://auth.usegalaxy.org/realms/galaxy-test/broker/google/endpoint
+    # Enable this one first - galaxy-test is where the flow gets proven.
+    # identity_providers:
+    #   - alias: google
+    #     provider_id: google
+    #     display_name: "Google"
+    #     client_id: "TODO-galaxy-test-realm-google-oauth-client-id"
+    #     default_scope: "openid email profile"
+    #     trust_email: true
+    #     sync_mode: IMPORT
     clients:
       - client_id: dev-brc-analytics
         name: "BRC Analytics (dev)"
