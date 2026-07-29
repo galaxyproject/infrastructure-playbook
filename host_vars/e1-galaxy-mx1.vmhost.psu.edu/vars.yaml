@@ -1,0 +1,9 @@
+---
+
+# hopefully works with STARTTLS
+telegraf_x509_cert_port: 25
+
+certbot_domains:
+  - e1-galaxy-mx1.galaxyproject.org
+
+certbot_post_renewal: 'true'

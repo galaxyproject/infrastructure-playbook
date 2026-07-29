@@ -84,9 +84,15 @@ all_postfix_config:
   # This config allows you to bypass the content_filter, but it's not needed since amavisd-new is configured to do the bypass
   #content_filter: null
   #smtpd_relay_restrictions: check_recipient_access hash:{{ postfix_config_dir }}/relay_restrictions, permit_mynetworks, permit_sasl_authenticated, defer_unauth_destination
+  smtpd_recipient_restrictions: check_recipient_access hash:/etc/postfix/forward_headers_for, check_recipient_access hash:/etc/postfix/forward_headers_to, permit
   #parent_domain_matches_subdomains: debug_peer_list,fast_flush_domains,mynetworks,permit_mx_backup_networks,qmqpd_authorized_clients,relay_domains
   virtual_alias_domains: "{{ postfix_virtual_domains | join(', ') }}"
   virtual_alias_maps: hash:/etc/postfix/virtual
+  smtpd_tls_security_level: may
+  smtpd_tls_cert_file: /etc/ssl/certs/fullchain.pem
+  smtpd_tls_key_file: /etc/ssl/private/privkey.pem
+  smtpd_tls_received_header: yes
+  smtpd_tls_loglevel: '1'
 
 postfix_master_config:
   # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
@@ -143,3 +149,5 @@ postfix_clamav_config:
 # templates/{{ item }}.j2 in the playbook
 postfix_maps:
   - postfix/virtual
+  - postfix/forward_headers_for
+  - postfix/forward_headers_to

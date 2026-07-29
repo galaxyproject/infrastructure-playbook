@@ -21,6 +21,8 @@
     #  tags: general
     - role: galaxyproject.opendkim
       tags: [postfix, opendkim]
+    - role: usegalaxy_eu.certbot
+      when: "'letsencrypt_dns01_clients' in group_names"
     - role: galaxyproject.postfix
       tags: postfix
   post_tasks:

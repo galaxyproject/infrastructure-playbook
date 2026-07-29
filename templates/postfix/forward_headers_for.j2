@@ -1,0 +1,10 @@
+{% for key in postfix_virtual_aliases | default({}) | sort %}
+{% if '@' in postfix_virtual_aliases[key] %}
+{{ key }}	PREPEND X-Forwarded-For: {{ key }}
+{% endif %}
+{% endfor %}
+{% for key in postfix_aliases | default({}) | sort %}
+{% if '@' in postfix_aliases[key] %}
+{{ key }}@{{ postfix_config.mydomain }}	PREPEND X-Forwarded-For: {{ key }}@{{ postfix_config.mydomain }}
+{% endif %}
+{% endfor %}
