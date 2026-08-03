@@ -37,6 +37,3 @@ galaxy_hub_bucket_hostname: astro-hub.s3-website.us-east-2.amazonaws.com
 #  - 3.136.94.7
 #resolv_domain: galaxyproject.org
 #resolv_search: galaxyproject.org
-
-# template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
-#zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}

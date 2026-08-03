@@ -48,6 +48,9 @@
     # need to do a late copy that sets the inheritance chain keys to `late_templates` and `late_files`
     - role: galaxyproject.general.copy
     - role: galaxyproject.general.cron
+    # TODO: this was only added for nfsd on orval, so beware it could cause other services to start before they are
+    # ready, if so move to a different playbook
+    - role: galaxyproject.general.services
   tags: system
 
 - name: Install telegraf

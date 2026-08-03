@@ -4,7 +4,7 @@ host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
 host_private_key_users: "{{ vault_host_private_key_users }}"
 
 # legacy mounts are used for these two datasets to ensure proper mounting order
-mounts:
+host_mounts:
   - src: data/rochefort/depot
     path: /srv/nginx/depot.galaxyproject.org/root
     fstype: zfs
@@ -12,9 +12,9 @@ mounts:
     backup: yes
     owner: depot
     group: depot
-  - src: data/rochefort/depot/singularity
+  - src: orval.galaxyproject.org:/data/orval/depot/singularity
     path: /srv/nginx/depot.galaxyproject.org/root/singularity
-    fstype: zfs
+    fstype: nfs
     state: mounted
     backup: yes
     owner: singularity
@@ -48,8 +48,8 @@ host_users:
     home: /home/zfsdump-rochefort
     shell: /bin/bash
   - name: singularity
-    uid: 2054
-    gid: 2054
+    uid: 161
+    gid: 161
     group: singularity
     home: /home/singularity
     shell: /bin/bash
@@ -159,10 +159,18 @@ host_templates:
 host_service_configurations:
   - src: files/smf/rsyncd.xml
 
+# FIXME: manually set before starting nfs/mapid:
+# sharectl set -p nfsmapid_domain=galaxyproject.org nfs
 host_services:
   - name: network/rsyncd
     state: started
     enabled: 'yes'
+  - name: svc:/network/rpc/bind
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/mapid
+    state: started
+    enabled: true
 
 zfs_admin_permissions:
   - name: data/rochefort/snpeff-data
@@ -190,24 +198,28 @@ zfs_admin_permissions:
     users: zfsdump-rochefort
     permissions: send,snapshot,hold
 
+# template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
+#zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}
+
+# TODO: move these over to the sanoid-based backups
 # cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
-host_crontabs:
-  - name: "Backup images"
-    id: backup_images
-    user: zfsdump-rochefort
-    hour: 22
-    minute: 0
-    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-    use_cron_file: false
-  - name: "Backup depot"
-    id: backup_depot
-    user: zfsdump-rochefort
-    hour: 22
-    minute: 15
-    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-    use_cron_file: false
-  # depot/singularity is not backed up since it is mirrored to CVMFS and can be regenerated from the docker containers
-  # in the event that even the CVMFS copy cannot be used to restore depot.
+#host_crontabs:
+#  - name: "Backup images"
+#    id: backup_images
+#    user: zfsdump-rochefort
+#    hour: 22
+#    minute: 0
+#    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+#    use_cron_file: false
+#  - name: "Backup depot"
+#    id: backup_depot
+#    user: zfsdump-rochefort
+#    hour: 22
+#    minute: 15
+#    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+#    use_cron_file: false
+#  # depot/singularity is not backed up since it is mirrored to CVMFS and can be regenerated from the docker containers
+#  # in the event that even the CVMFS copy cannot be used to restore depot.
 
 nginx_conf_http:
   server_names_hash_bucket_size: 64

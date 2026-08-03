@@ -1,7 +1,7 @@
 ---
 
 letsencrypt_clients_group_packages:
-  - "{{ (ansible_os_family == 'Debian') | ternary('python3-venv', 'python3') }}"
+  - "{{ (ansible_os_family == 'Solaris') | ternary('python313', (ansible_os_family == 'Debian') | ternary('python3-venv', 'python3')) }}"
 
 # vaulted as an anti-spam measure
 certbot_admin_email: "{{ vault_certbot_admin_email }}"
