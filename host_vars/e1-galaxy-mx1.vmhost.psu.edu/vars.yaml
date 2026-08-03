@@ -1,7 +1,7 @@
 ---
 
-# hopefully works with STARTTLS
-telegraf_x509_cert_port: 25
+# x509_cert doesn't speak STARTTLS
+telegraf_x509_cert_sources: '["/etc/ssl/certs/cert.pem"]'
 
 certbot_domains:
   - e1-galaxy-mx1.galaxyproject.org
