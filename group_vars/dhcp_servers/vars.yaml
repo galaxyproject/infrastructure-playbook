@@ -54,7 +54,7 @@ dhcpd_groups:
         ethernet: 78:2b:cb:1b:1b:b8
         options:
           - 'smartos.console "ttyb"'
-          - 'smartos.version "20231005T000607Z"'
+          - 'smartos.version "20250501T000434Z"'
       - name: westvleteren.p
         ethernet: 00:25:90:95:76:fa
         options:

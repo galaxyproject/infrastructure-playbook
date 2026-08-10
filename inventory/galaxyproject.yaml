@@ -15,7 +15,7 @@ all:
 
     rodenbach.galaxyproject.org:
       ansible_user: root
-      #ansible_python_interpreter: /usr/bin/python3.8
+      ansible_python_interpreter: /usr/bin/python3.8
 
     cvmfs1-iu0.galaxyproject.org:
       ansible_user: rocky
