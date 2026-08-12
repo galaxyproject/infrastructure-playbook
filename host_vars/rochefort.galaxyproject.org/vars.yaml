@@ -1,137 +1,15 @@
 ---
 
 host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
-host_private_key_users: "{{ vault_host_private_key_users }}"
 
-# legacy mounts are used for these two datasets to ensure proper mounting order
-host_mounts:
-  - src: data/rochefort/depot
-    path: /srv/nginx/depot.galaxyproject.org/root
-    fstype: zfs
-    state: mounted
-    backup: yes
-    owner: depot
-    group: depot
-  - src: orval.galaxyproject.org:/data/orval/depot/singularity
-    path: /srv/nginx/depot.galaxyproject.org/root/singularity
-    fstype: nfs
-    state: mounted
-    backup: yes
-    owner: singularity
-    group: singularity
-
-# uids and gids were auto-generated on old rochefort (except nate's) which is the
-# reason for the uid/gid mess
-
-# TODO: unify with galaxyproject_users
-host_users:
-  - name: sites
-    uid: 1000
-    gid: 2049
-    group: sites
-    comment: 'Web sites'
-  - name: bioarchive
-    uid: 2049
-    gid: 2050
-    group: bioarchive
-    comment: 'bioaRchive'
-  - name: depot
-    uid: 2052
-    gid: 2053
-    group: depot
-    comment: 'Galaxy Depot'
-  - name: zfsdump-rochefort
-    uid: 2051
-    gid: 2052
-    group: zfsdump-rochefort
-    comment: 'ZFS send rochefort'
-    home: /home/zfsdump-rochefort
-    shell: /bin/bash
-  - name: singularity
-    uid: 161
-    gid: 161
-    group: singularity
-    home: /home/singularity
-    shell: /bin/bash
-  - name: training
-    uid: 2055
-    gid: 2055
-    group: training
-    home: /home/training
-    shell: /bin/bash
-  - name: starforge
-    uid: 2056
-    gid: 2056
-    group: starforge
-    home: /home/starforge
-    shell: /bin/bash
-
-zfs_filesystems:
-  - name: data/rochefort/snpeff-data
-    mountpoint: /srv/nginx/snpeff-data.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
+host_files:
+  - dest: /etc/idmapd.conf
+    content: |
+      [General]
+      Domain = galaxyproject.org
     owner: root
     group: root
-  - name: data/rochefort/bioarchive
-    mountpoint: /srv/nginx/bioarchive.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: bioarchive
-    group: bioarchive
-  - name: data/rochefort/images
-    mountpoint: /srv/nginx/images.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: sites
-    group: sites
-  - name: data/rochefort/sample-data
-    mountpoint: /srv/nginx/sample-data.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: sites
-    group: sites
-  - name: data/rochefort/wheels
-    mountpoint: /srv/nginx/wheels.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: sites
-    group: sites
-  - name: data/rochefort/screencast
-    mountpoint: /srv/nginx/screencast.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: sites
-    group: sites
-  - name: data/rochefort/depot
-    mountpoint: legacy
-    exec: "off"
-    setuid: "off"
-    owner: depot
-    group: depot
-  - name: data/rochefort/eggs
-    mountpoint: /srv/nginx/eggs.galaxyproject.org/root
-    exec: "off"
-    setuid: "off"
-    owner: sites
-    group: sites
-  - name: data/rochefort/depot/singularity
-    mountpoint: legacy
-    exec: "off"
-    setuid: "off"
-    owner: singularity
-    group: singularity
-
-host_directories:
-  - path: /srv/nginx/depot.galaxyproject.org/root/training
-    owner: training
-    group: training
-  - path: /srv/nginx/depot.galaxyproject.org/root/starforge
-    owner: starforge
-    group: starforge
-  - path: /srv/nginx/depot.galaxyproject.org/root/starforge/travis
-    owner: starforge
-    group: starforge
+    mode: "0644"
 
 host_templates:
   - dest: /etc/rsyncd.conf
@@ -147,79 +25,127 @@ host_templates:
         list: 'yes'
         dont compress: '*.tgz *.zip *.gz *.bz2 *.bam *.2bit *.lzo'
       singularity:
-        path: /srv/nginx/depot.galaxyproject.org/root/singularity
+        path: /srv/nginx/depot.galaxyproject.org/singularity
         comment: BioContainers Singularity Images
         use chroot: 'yes'
         uid: 'nobody'
         gid: 'nogroup'
         read only: 'yes'
         list: 'yes'
-        dont compress: '*.tgz *.zip *.gz *.bz2 *.bam *.2bit *.lzo'
+        dont compress: '*'
 
-host_service_configurations:
-  - src: files/smf/rsyncd.xml
+host_packages:
+  - nfs-common
+  - rsync
 
-# FIXME: manually set before starting nfs/mapid:
-# sharectl set -p nfsmapid_domain=galaxyproject.org nfs
+host_mounts:
+  - src: depot-srv.galaxyproject.org:/srv/nginx/depot.galaxyproject.org/root
+    path: /srv/nginx/depot.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,rw,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: depot
+    group: depot
+  - src: orval.galaxyproject.org:/data/orval/depot/singularity
+    path: /srv/nginx/depot.galaxyproject.org/singularity
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,rw,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: singularity
+    group: singularity
+  - src: depot-srv.galaxyproject.org:/srv/nginx/snpeff-data.galaxyproject.org/root
+    path: /srv/nginx/snpeff-data.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: root
+    group: root
+  - src: depot-srv.galaxyproject.org:/srv/nginx/bioarchive.galaxyproject.org/root
+    path: /srv/nginx/bioarchive.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: bioarchive
+    group: bioarchive
+  - src: depot-srv.galaxyproject.org:/srv/nginx/images.galaxyproject.org/root
+    path: /srv/nginx/images.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: sites
+    group: sites
+  - src: depot-srv.galaxyproject.org:/srv/nginx/sample-data.galaxyproject.org/root
+    path: /srv/nginx/sample-data.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: sites
+    group: sites
+  - src: depot-srv.galaxyproject.org:/srv/nginx/wheels.galaxyproject.org/root
+    path: /srv/nginx/wheels.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: sites
+    group: sites
+  - src: depot-srv.galaxyproject.org:/srv/nginx/screencast.galaxyproject.org/root
+    path: /srv/nginx/screencast.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: sites
+    group: sites
+  - src: depot-srv.galaxyproject.org:/srv/nginx/eggs.galaxyproject.org/root
+    path: /srv/nginx/eggs.galaxyproject.org/root
+    fstype: nfs4
+    opts: x-systemd.automount,x-systemd.idle-timeout=600,_netdev,ro,soft,timeo=300
+    state: mounted
+    backup: yes
+    owner: sites
+    group: sites
+
+host_users:
+  - "{{ galaxyproject_users.depot }}"
+  - "{{ galaxyproject_users.depot_singularity }}"
+  - "{{ galaxyproject_users.depot_sites }}"
+  - "{{ galaxyproject_users.depot_bioarchive }}"
+  - "{{ galaxyproject_users.depot_training }}"
+  - "{{ galaxyproject_users.depot_starforge }}"
+
+host_groups:
+  - "{{ galaxyproject_groups.depot }}"
+  - "{{ galaxyproject_groups.depot_singularity }}"
+  - "{{ galaxyproject_groups.depot_sites }}"
+  - "{{ galaxyproject_groups.depot_bioarchive }}"
+  - "{{ galaxyproject_groups.depot_training }}"
+  - "{{ galaxyproject_groups.depot_starforge }}"
+
 host_services:
-  - name: network/rsyncd
-    state: started
-    enabled: 'yes'
-  - name: svc:/network/rpc/bind
-    state: started
-    enabled: true
-  - name: svc:/network/nfs/mapid
+  - name: rsync
     state: started
     enabled: true
 
-zfs_admin_permissions:
-  - name: data/rochefort/snpeff-data
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/bioarchive
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/images
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/sample-data
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/eggs
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/wheels
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/screencast
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-  - name: data/rochefort/depot
-    users: zfsdump-rochefort
-    permissions: send,snapshot,hold
-
-# template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
-#zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}
-
-# TODO: move these over to the sanoid-based backups
-# cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
-#host_crontabs:
-#  - name: "Backup images"
-#    id: backup_images
-#    user: zfsdump-rochefort
-#    hour: 22
-#    minute: 0
-#    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#    use_cron_file: false
-#  - name: "Backup depot"
-#    id: backup_depot
-#    user: zfsdump-rochefort
-#    hour: 22
-#    minute: 15
-#    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
-#    use_cron_file: false
-#  # depot/singularity is not backed up since it is mirrored to CVMFS and can be regenerated from the docker containers
-#  # in the event that even the CVMFS copy cannot be used to restore depot.
+host_kernel_params:
+  - name: net.ipv4.tcp_congestion_control
+    value: bbr
+  - name: net.core.default_qdisc
+    value: fq
+  - name: net.core.rmem_max
+    value: 134217728
+  - name: net.core.wmem_max
+    value: 134217728
+  - name: net.ipv4.tcp_rmem
+    value: 4096 87380 67108864
+  - name: net.ipv4.tcp_wmem
+    value: 4096 65536 67108864
 
 nginx_conf_http:
   server_names_hash_bucket_size: 64
@@ -242,14 +168,6 @@ nginx_ssl_servers:
   - depot
   - eggs-ssl
 
-# needs cffi, which needs gcc, which isn't installed
-#certbot_virtualenv_package_name: py37-virtualenv
-certbot_install_method: package
-certbot_package: py311-certbot
-certbot_script: /opt/local/bin/certbot
-certbot_letsencrypt_dir: /opt/local/etc/letsencrypt
-certbot_post_renewal: |
-  svcadm restart nginx || true
 certbot_redirect_domains:
   - "{{ inventory_hostname }}"
   - snpeff-data.galaxyproject.org
@@ -259,6 +177,7 @@ certbot_redirect_domains:
   - sample-data.galaxyproject.org
   - bioarchive.galaxyproject.org
   - depot.galaxyproject.org
+
 certbot_domains:
   - "{{ inventory_hostname }}"
   - snpeff-data.galaxyproject.org

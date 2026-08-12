@@ -32,6 +32,8 @@ all:
     orval.galaxyproject.org: {ansible_user: root}
     orval.p.galaxyproject.org: {ansible_user: root}
     rochefort.galaxyproject.org: {ansible_user: root}
+    rochefort.p.galaxyproject.org: {ansible_user: root}
+    depot-srv.galaxyproject.org: {ansible_user: root}
     westvleteren.galaxyproject.org: {ansible_user: root}
     westvleteren.p.galaxyproject.org: {ansible_user: root}
     leeroy.galaxyproject.org: {ansible_user: root}
@@ -83,6 +85,7 @@ all:
         thumper.galaxyproject.org:
         orval.galaxyproject.org:
         rochefort.galaxyproject.org:
+        depot-srv.galaxyproject.org:
         westvleteren.galaxyproject.org:
         e1-galaxy-mx1.vmhost.psu.edu:
         e1-galaxy-lists.vmhost.psu.edu:
@@ -118,6 +121,7 @@ all:
         radegast.galaxyproject.org:
         sentry.galaxyproject.org:
         dbdev.galaxyproject.org:
+        rochefort.galaxyproject.org:
       children:
         jenkins_servers:
         jenkins_agents:
@@ -216,8 +220,8 @@ all:
     ssh_clients:
       vars:
         ansible_group_priority: 5
-      hosts:
-        rochefort.galaxyproject.org:
+      #hosts:
+      #  rochefort.galaxyproject.org:
       children:
         # for postfix maps distribution to mxs
         list_servers:
@@ -248,7 +252,7 @@ all:
       hosts:
         thumper.galaxyproject.org:
         orval.galaxyproject.org:
-        rochefort.galaxyproject.org:
+        depot-srv.galaxyproject.org:
         westvleteren.galaxyproject.org:
 
     # Sets some default variables for nginx package/config

@@ -1,0 +1,162 @@
+---
+
+# access via rochefort
+#host_authorized_key_users: "{{ vault_host_authorized_key_users }}"
+# TODO: zfsbackup
+#host_private_key_users: "{{ vault_host_private_key_users }}"
+
+host_users:
+  - "{{ galaxyproject_users.depot }}"
+  - "{{ galaxyproject_users.depot_singularity }}"
+  - "{{ galaxyproject_users.depot_sites }}"
+  - "{{ galaxyproject_users.depot_bioarchive }}"
+  - "{{ galaxyproject_users.depot_training }}"
+  - "{{ galaxyproject_users.depot_starforge }}"
+
+host_groups:
+  - "{{ galaxyproject_groups.depot }}"
+  - "{{ galaxyproject_groups.depot_singularity }}"
+  - "{{ galaxyproject_groups.depot_sites }}"
+  - "{{ galaxyproject_groups.depot_bioarchive }}"
+  - "{{ galaxyproject_groups.depot_training }}"
+  - "{{ galaxyproject_groups.depot_starforge }}"
+
+zfs_filesystems:
+  - name: data/rochefort/snpeff-data
+    mountpoint: /srv/nginx/snpeff-data.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: root
+    group: root
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/bioarchive
+    mountpoint: /srv/nginx/bioarchive.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: bioarchive
+    group: bioarchive
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/images
+    mountpoint: /srv/nginx/images.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/sample-data
+    mountpoint: /srv/nginx/sample-data.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/wheels
+    mountpoint: /srv/nginx/wheels.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/screencast
+    mountpoint: /srv/nginx/screencast.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
+    sharenfs: ro=@128.118.250.0/27
+  - name: data/rochefort/depot
+    mountpoint: /srv/nginx/depot.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: depot
+    group: depot
+    sharenfs: ro=@128.118.250.0/27,rw=@128.118.250.14
+  - name: data/rochefort/eggs
+    mountpoint: /srv/nginx/eggs.galaxyproject.org/root
+    exec: "off"
+    setuid: "off"
+    owner: sites
+    group: sites
+    sharenfs: ro=@128.118.250.0/27
+
+host_directories:
+  - path: /srv/nginx/depot.galaxyproject.org/root/training
+    owner: training
+    group: training
+  - path: /srv/nginx/depot.galaxyproject.org/root/starforge
+    owner: starforge
+    group: starforge
+  - path: /srv/nginx/depot.galaxyproject.org/root/singularity
+    owner: singularity
+    group: singularity
+
+# FIXME: manually set before starting nfs/mapid:
+# sharectl set -p nfsmapid_domain=galaxyproject.org nfs
+host_services:
+  - name: svc:/network/rpc/bind
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/nlockmgr
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/status
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/server
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/server
+    state: started
+    enabled: true
+  - name: svc:/network/nfs/mapid
+    state: started
+    enabled: true
+
+zfs_admin_permissions:
+  - name: data/rochefort/snpeff-data
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/bioarchive
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/images
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/sample-data
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/eggs
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/wheels
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/screencast
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+  - name: data/rochefort/depot
+    users: zfsdump-rochefort
+    permissions: send,snapshot,hold
+
+# template for zfs backup cron jobs: prepend with "dataset='<dataset>' && backupserver='<server>'"
+#zfs_backup_job_template: last_snap_file=".last_snap_`echo $dataset | tr / ,`" && [ -f ~/${last_snap_file} ] && last_snapdate=`cat ~/${last_snap_file}` || true && snapdate=`date -u +\%Y\%m\%dT\%H\%M\%SZ` && zfs snapshot ${dataset}@${snapdate} && [ -z "${last_snapdate}" ] && zfs send ${dataset}@${snapdate} | ssh -T ${backupserver} || zfs send -i ${last_snapdate} ${dataset}@${snapdate} | ssh -T ${backupserver} && echo $snapdate >~/${last_snap_file}
+
+# TODO: move these over to the sanoid-based backups
+# cron_file currently broken on Solaris (the module assumes a username is required as the first argument after the time spec)
+#host_crontabs:
+#  - name: "Backup images"
+#    id: backup_images
+#    user: zfsdump-rochefort
+#    hour: 22
+#    minute: 0
+#    job: dataset='data/rochefort/images' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+#    use_cron_file: false
+#  - name: "Backup depot"
+#    id: backup_depot
+#    user: zfsdump-rochefort
+#    hour: 22
+#    minute: 15
+#    job: dataset='data/rochefort/depot' && backupserver='westvleteren.galaxyproject.org' && {{ zfs_backup_job_template }}
+#    use_cron_file: false
+#  # depot/singularity is not backed up since it is mirrored to CVMFS and can be regenerated from the docker containers
+#  # in the event that even the CVMFS copy cannot be used to restore depot.

@@ -17,6 +17,11 @@ server {
         autoindex   on;
     }
 
+    location /singularity/ {
+        alias       /srv/nginx/depot.galaxyproject.org/singularity/;
+        autoindex   on;
+    }
+
     location /patch {
         autoindex   off;
         try_files   $uri =403;

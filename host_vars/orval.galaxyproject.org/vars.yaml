@@ -21,7 +21,7 @@ zfs_filesystems:
     group: backup-mts
   - name: data/orval/depot
   - name: data/orval/depot/singularity
-    sharenfs: rw=@128.118.250.14
+    sharenfs: rw=@128.118.250.0/27
 
 # FIXME: the wal_archive dir should be created by the backup script but there's a bug when it's remote and it's created
 # as a file, fix upstream

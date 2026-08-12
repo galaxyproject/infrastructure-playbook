@@ -42,6 +42,7 @@
     - role: galaxyproject.general.locale
     - role: galaxyproject.general.login_defs
     - role: galaxyproject.general.packages
+    - role: galaxyproject.general.kernel_params
     - role: galaxyproject.general.users
     - role: galaxyproject.general.paths
     # NOTE: if this ends up being problematic, you could pass a `copy_inheritance_chain` var in other playbooks that

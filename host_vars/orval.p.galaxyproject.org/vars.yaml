@@ -48,7 +48,7 @@ smartos_vms:
     nics:
       - nic_tag: external
         ip: "{{ lookup('dig', 'cvmfs1-psu0.galaxyproject.org') }}"
-        netmask: 255.255.224.0
+        netmask: 255.255.255.224
         gateway: 128.118.250.1
         vlan_id: 306
         model: virtio
@@ -109,6 +109,7 @@ smartos_vms:
       #  size: 33554432
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+
   - name: orval
     brand: joyent
     image_uuid: 2f1dc911-6401-4fa4-8e9d-67ea2e39c271
@@ -127,6 +128,7 @@ smartos_vms:
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
       user-script: "/usr/sbin/mdata-get root_authorized_keys > ~root/.ssh/authorized_keys ; /usr/sbin/mdata-get root_authorized_keys > ~admin/.ssh/authorized_keys"
+
   - name: dbdev
     brand: bhyve
     ram: 8192
@@ -135,7 +137,7 @@ smartos_vms:
     nics:
       - nic_tag: external
         ip: "{{ lookup('dig', 'dbdev.galaxyproject.org') }}"
-        netmask: 255.255.224.0
+        netmask: 255.255.255.224
         gateway: 128.118.250.1
         vlan_id: 306
         model: virtio
@@ -152,5 +154,26 @@ smartos_vms:
         zpool: data
         block_size: 8192
         size: 4194304
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+
+  # rochefort hardware does not support bhyve, Linux is needed for BBR
+  - name: rochefort
+    brand: bhyve
+    ram: 4096
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'rochefort.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+        boot: true
+        model: virtio
+        size: 24576
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
