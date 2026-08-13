@@ -7,7 +7,8 @@ all:
     cvmfs-stratum0.galaxyproject.eu:
       ansible_user: centos
       ansible_become: true
-      ansible_python_interpreter: /usr/bin/python3.12
+      ansible_host: traefik.galaxyproject.eu
+      ansible_port: 9087
 
     litellm.galaxyproject.org:
       ansible_user: rocky

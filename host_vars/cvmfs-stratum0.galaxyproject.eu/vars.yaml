@@ -11,19 +11,27 @@ mounts:
 host_users:
   - name: singularity
     comment: "Singularity Images"
+    uid: 119
+    group: singularity
     home: /home/singularity
     shell: /bin/bash
     system: yes
 
+host_groups:
+  - name: singularity
+    gid: 119
+    system: yes
+
 host_directories:
   - path: /srv
+  - path: /data/cvmfs-spool
   - path: /home/singularity/bin
     owner: singularity
     group: singularity
     mode: "0755"
 
 host_links:
-  - src: /vols/vdb
+  - src: /data/cvmfs-spool
     path: /var/spool/cvmfs
 
 host_files:
@@ -33,16 +41,16 @@ host_files:
     owner: singularity
     group: singularity
 
-host_crontabs:
-  - id: singularity_updaterepo
-    use_cron_file: false
-    user: singularity
-    hour: '*'
-    minute: '0'
-    day: '*'
-    month: '*'
-    weekday: '*'
-    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
+#host_crontabs:
+#  - id: singularity_updaterepo
+#    use_cron_file: false
+#    user: singularity
+#    hour: '*'
+#    minute: '0'
+#    day: '*'
+#    month: '*'
+#    weekday: '*'
+#    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
 
 
 galaxy_cvmfs_repos_enabled: false
