@@ -10,7 +10,7 @@ server {
     server_name {% for domain in certbot_domains %} {{ domain }}{% endfor %};
 
     # Enable HSTS (age is 180 days)
-    #add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
+    add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
     access_log  /var/log/nginx/{{ tool_shed_instance_hostname }}.access.log;
     error_log   /var/log/nginx/{{ tool_shed_instance_hostname }}.error.log;

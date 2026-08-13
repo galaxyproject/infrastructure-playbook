@@ -18,6 +18,9 @@ server {
     access_log  syslog:server=unix:/dev/log,facility=local6;
     error_log   syslog:server=unix:/dev/log,facility=local6;
 
+    # Enable HSTS (age is 180 days)
+    add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
+
     location / {
         proxy_pass   http://grafana_app;
         proxy_set_header   Host             $http_host;
@@ -33,6 +36,9 @@ server {
 
     access_log  syslog:server=unix:/dev/log,facility=local6;
     error_log   syslog:server=unix:/dev/log,facility=local6;
+
+    # Enable HSTS (age is 180 days)
+    add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
     location / {
         proxy_pass   http://influxdb_app;
@@ -50,6 +56,9 @@ server {
     #error_log   syslog:server=unix:/dev/log,facility=local6;
     access_log  /var/log/nginx/stats.galaxyproject.org-8086_access.log;
     error_log   /var/log/nginx/stats.galaxyproject.org-8086_error.log;
+
+    # Enable HSTS (age is 180 days)
+    add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
 
     location / {
         proxy_pass   http://influxdb_app;
