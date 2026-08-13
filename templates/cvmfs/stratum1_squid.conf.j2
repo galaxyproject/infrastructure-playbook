@@ -1,0 +1,24 @@
+##
+## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+##
+
+# tenable doesn't like these to respond
+acl BadMethods method TRACE TRACK
+http_access deny BadMethods
+
+http_port 80 accel
+http_port 3128 accel
+http_access allow all
+cache_peer 127.0.0.1 parent {{ cvmfs_stratum1_apache_port }} 0 no-query originserver
+
+{% if cvmfs_stratum1_cache_dir is defined %}
+cache_dir ufs {{ cvmfs_stratum1_cache_dir.dir }} {{ cvmfs_stratum1_cache_dir.size }} 16 256
+{% endif %}
+#maximum_object_size 1024 MB
+
+cache_mem {{ cvmfs_stratum1_cache_mem }} MB
+# CERN config examples use 128 KB for both local proxies and stratum 1, but
+# data objects are larger than this
+maximum_object_size_in_memory 4 MB
+
+visible_hostname {{ inventory_hostname }}

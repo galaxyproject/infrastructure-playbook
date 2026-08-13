@@ -73,6 +73,8 @@ cvmfs_geo_license_key: "{{ vault_cvmfs_geo_license_key }}"
 cvmfs_geo_account_id: "{{ vault_cvmfs_geo_account_id }}"
 cvmfs_stratum1_cache_mem: "{{ (ansible_memtotal_mb * 0.6) | int }}"
 
+cvmfs_squid_conf_src: templates/cvmfs/stratum1_squid.conf.j2
+
 cvmfs_manage_units_users: true
 cvmfs_manage_units:
   - squid.service
