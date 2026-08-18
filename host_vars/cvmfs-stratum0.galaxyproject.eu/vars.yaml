@@ -41,16 +41,16 @@ host_files:
     owner: singularity
     group: singularity
 
-#host_crontabs:
-#  - id: singularity_updaterepo
-#    use_cron_file: false
-#    user: singularity
-#    hour: '*'
-#    minute: '0'
-#    day: '*'
-#    month: '*'
-#    weekday: '*'
-#    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
+host_crontabs:
+  - id: singularity_updaterepo
+    use_cron_file: false
+    user: singularity
+    hour: '*'
+    minute: '0'
+    day: '*'
+    month: '*'
+    weekday: '*'
+    job: $HOME/bin/updaterepo.sh -r 2>&1 >> $HOME/updaterepo.log
 
 
 galaxy_cvmfs_repos_enabled: false
