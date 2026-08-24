@@ -105,6 +105,13 @@
           KC_SECRET_GALAXY_GALAXY_API: "{{ vault_keycloak_galaxy_api_client_secret }}"
           KC_SECRET_GALAXY_TEST_DEV_BRC_ANALYTICS: "{{ vault_keycloak_dev_brc_analytics_client_secret }}"
           KC_SECRET_GALAXY_TEST_GALAXY_API: "{{ vault_keycloak_galaxy_api_test_client_secret }}"
+          # Brokered identity provider secrets (keycloak_realms[*].identity_providers).
+          # Defaulted to empty so the playbook still runs before the Google OAuth
+          # clients exist; the init script only reads these when the matching realm
+          # actually declares the provider, and fails loudly if it is declared with
+          # no secret set.
+          KC_IDP_SECRET_GALAXY_GOOGLE: "{{ vault_keycloak_google_client_secret_galaxy | default('') }}"
+          KC_IDP_SECRET_GALAXY_TEST_GOOGLE: "{{ vault_keycloak_google_client_secret_galaxy_test | default('') }}"
       register: keycloak_init_galaxy_scope
       # The script waits internally for Keycloak to accept admin logins.
       changed_when: "'Created' in keycloak_init_galaxy_scope.stdout"

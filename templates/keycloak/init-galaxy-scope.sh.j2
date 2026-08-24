@@ -325,6 +325,92 @@ else
     -i)
   echo "Created Galaxy user federation provider in $REALM (id=$FED_ID)."
 fi
+
+{% if realm.identity_providers | default([]) %}
+# --- Link-only first broker login flow -------------------------------------
+# Brokered logins (Google et al.) must resolve to the *federated* Galaxy user,
+# never to a new Keycloak-local one. Galaxy maps a bearer token to a user by
+# matching user_authnz_token.uid against the token's "sub", which for federated
+# users is f:<federation-component-id>:<galaxy_user.id>. A locally-created
+# Keycloak user would mint a second sub for the same human and leave two users
+# in the realm sharing one email, at which point login-by-email is ambiguous.
+#
+# So the IdPs below do not use Keycloak's built-in "first broker login" flow,
+# whose "Create User If Unique" step creates exactly that local user. They use
+# this two-step flow instead: detect the existing (federated) user, then link
+# the brokered identity to it silently. The link itself lives in Keycloak's own
+# DB, so the federation provider stays read-only. A brokered identity with no
+# matching Galaxy account is rejected - signing up stays in Galaxy, which owns
+# username generation, private roles and account activation.
+BROKER_FLOW="galaxy-link-existing"
+if $KCADM get authentication/flows -r "$REALM" --fields alias --format csv --noquotes 2>/dev/null \
+  | grep -q "^${BROKER_FLOW}$"; then
+  echo "Broker login flow $BROKER_FLOW already exists in $REALM."
+else
+  echo "Creating broker login flow $BROKER_FLOW in $REALM..."
+  $KCADM create authentication/flows -r "$REALM" \
+    -s alias="$BROKER_FLOW" \
+    -s providerId=basic-flow \
+    -s topLevel=true \
+    -s builtIn=false \
+    -s description="Link a brokered identity to its existing federated Galaxy user; never create a local user."
+  # Executions run in the order they are added.
+  for AUTHENTICATOR in idp-detect-existing-broker-user idp-auto-link; do
+    $KCADM create "authentication/flows/$BROKER_FLOW/executions/execution" -r "$REALM" \
+      -s provider="$AUTHENTICATOR"
+  done
+  # New executions are added DISABLED; the requirement has to be set in a
+  # separate call against the collection endpoint (a partial representation of
+  # id + requirement is all that endpoint reads). Both steps are mandatory: a
+  # DISABLED detect step would fall through to a flow that creates local users.
+  $KCADM get "authentication/flows/$BROKER_FLOW/executions" -r "$REALM" \
+    --fields id --format csv --noquotes 2>/dev/null \
+    | while read -r EXEC_ID; do
+        [ -n "$EXEC_ID" ] || continue
+        $KCADM update "authentication/flows/$BROKER_FLOW/executions" -r "$REALM" \
+          -b "{\"id\":\"$EXEC_ID\",\"requirement\":\"REQUIRED\"}"
+      done
+  echo "Created broker login flow $BROKER_FLOW."
+fi
+
+# --- Identity providers ----------------------------------------------------
+# Create-only, like the OIDC clients above: to change most settings, edit in the
+# console or delete the provider so the next run recreates it. Rotating the IdP
+# client secret therefore means deleting the provider (or editing it in the
+# console) - re-running with a new vault value alone will not update it.
+{% for idp in realm.identity_providers %}
+IDP_ALIAS="{{ idp.alias }}"
+IDP_SECRET="${KC_IDP_SECRET_{{ (realm.name ~ '_' ~ idp.alias) | upper | replace('-', '_') }}:?missing IdP client secret for {{ realm.name }}/{{ idp.alias }}}"
+if $KCADM get "identity-provider/instances/$IDP_ALIAS" -r "$REALM" >/dev/null 2>&1; then
+  echo "Identity provider $IDP_ALIAS already exists in $REALM, skipping creation."
+else
+  echo "Creating identity provider $IDP_ALIAS in $REALM..."
+  $KCADM create identity-provider/instances -r "$REALM" \
+    -s alias="$IDP_ALIAS" \
+    -s providerId={{ idp.provider_id }} \
+    -s enabled=true \
+{% if idp.display_name is defined %}    -s displayName="{{ idp.display_name }}" \
+{% endif %}    -s storeToken=false \
+    -s addReadTokenRoleOnCreate=false \
+    -s linkOnly=false \
+    -s 'config.clientId={{ idp.client_id }}' \
+    -s "config.clientSecret=$IDP_SECRET" \
+    -s 'config.defaultScope={{ idp.default_scope | default("openid email profile") }}' \
+    -s 'config.syncMode={{ idp.sync_mode | default("IMPORT") }}'
+  echo "Created identity provider $IDP_ALIAS in $REALM."
+fi
+
+# Re-assert the security-relevant fields on every run (as with fullScopeAllowed
+# above) so they cannot silently drift in the admin console. Without the
+# link-only flow a brokered login falls back to Keycloak's built-in flow and
+# starts creating local users; trustEmail is what lets the verified provider
+# email be used as the linking key without a second email round-trip.
+$KCADM update "identity-provider/instances/$IDP_ALIAS" -r "$REALM" \
+  -s enabled=true \
+  -s trustEmail={{ 'true' if idp.trust_email | default(true) else 'false' }} \
+  -s firstBrokerLoginFlowAlias="$BROKER_FLOW"
+{% endfor %}
+{% endif %}
 {% endfor %}
 
 echo "Done."
