@@ -1,0 +1,21 @@
+---
+
+- name: Limit retained kernels in dnf.conf
+  community.general.ini_file:
+    path: /etc/dnf/dnf.conf
+    section: main
+    option: installonly_limit
+    value: "{{ bootstrap_keep_kernels }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Upgrade all packages (dnf)
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+
+- name: Import reboot for kernel update tasks
+  ansible.builtin.import_tasks:
+    file: _inc_reboot_for_kernel.yaml

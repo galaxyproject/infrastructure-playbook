@@ -1,5 +1,4 @@
 ---
-# TODO: now that this is sorta the "initialize everything" playbook it should probably be renamed
 
 - name: Bootstrap for Ansible
   hosts: all
@@ -36,39 +35,3 @@
       when:
         - etc_hosts_stat.stat.exists
         - etc_hosts_stat.stat.size == 0
-  roles:
-    - role: galaxyproject.general.virtual
-      when: "'virtual_hosts' in group_names"
-    - role: galaxyproject.general.locale
-    - role: galaxyproject.general.login_defs
-    - role: galaxyproject.general.packages
-    - role: galaxyproject.general.kernel_params
-    - role: galaxyproject.general.users
-    - role: galaxyproject.general.paths
-    # NOTE: if this ends up being problematic, you could pass a `copy_inheritance_chain` var in other playbooks that
-    # need to do a late copy that sets the inheritance chain keys to `late_templates` and `late_files`
-    - role: galaxyproject.general.copy
-    - role: galaxyproject.general.cron
-    # TODO: this was only added for nfsd on orval, so beware it could cause other services to start before they are
-    # ready, if so move to a different playbook
-    - role: galaxyproject.general.services
-  tags: system
-
-- name: Install telegraf
-  hosts: telegraf_agents
-  pre_tasks:
-    # FIXME: see FIXME comment in group_vars/telegraf_agents/vars.yaml
-    - name: Remove conflicting telegraf sources.list
-      ansible.builtin.file:
-        path: /etc/apt/sources.list.d/telegraf.list
-        state: absent
-      when: ansible_os_family == "Debian" and telegraf_agent_package_method == "manual"
-  roles:
-    - role: dj-wasabi.telegraf
-  tags: telegraf
-
-- name: Install postfix
-  hosts: postfix_clients
-  roles:
-    - role: galaxyproject.postfix
-  tags: postfix

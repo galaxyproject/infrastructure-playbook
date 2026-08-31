@@ -1,8 +1,21 @@
 ---
 
 - name: Gather facts if needed
-  setup:
+  ansible.builtin.setup:
   when: bootstrap_tasks is not defined
+
+# This is done first since bootstrapping likely includes a reboot and this sets a hostname. Copied from
+# galaxyproject.general.virtual
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+    use: "{{ hostname_strategy | default(omit) }}"
+  when:
+    - bootstrap_tasks is not defined
+    # On SmartOS, Bhyve guests have ansible_virtualization_type == "NA". And rodenbach (metal) somehow is "kvm". So BIOS
+    # vendor seems like a more reliable test.
+    - ansible_bios_vendor in ("BHYVE", "Amazon EC2") or 'virtual_hosts' in group_names
+    - hostname_strategy is not defined or (hostname_strategy is defined and hostname_strategy != "file")
 
 - name: Include bootstrap tasks
   ansible.builtin.include_tasks:

@@ -1,0 +1,27 @@
+---
+
+- name: Set the number of kernels apt retains
+  ansible.builtin.copy:
+    content: |
+      ##
+      ## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+      ##
+      APT::NeverAutoRemove::KernelCount "{{ bootstrap_keep_kernels }}";
+    dest: /etc/apt/apt.conf.d/99-ansible-keep-kernels
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: true
+
+- name: Import reboot for kernel update tasks
+  ansible.builtin.import_tasks:
+    file: _inc_reboot_for_kernel.yaml
+
+- name: Remove surplus kernels and orphans
+  ansible.builtin.apt:
+    autoremove: true
+    purge: true

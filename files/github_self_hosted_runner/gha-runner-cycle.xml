@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+  Cycle GitHub Actions runner VMs. Installed at /opt/custom/smf/gha-runner-cycle.xml, which SmartOS imports on boot,
+  so this survives platform upgrades that wipe the global zone's ramdisk root.
+-->
+<service_bundle type="manifest" name="gha-runner-cycle">
+  <service name="site/gha-runner-cycle" type="service" version="1">
+
+    <!-- Enabled in the manifest, not the repository: the global zone's SMF repository is rebuilt from these
+         manifests at every boot, so an svcadm enable would not survive one. -->
+    <create_default_instance enabled="true"/>
+    <single_instance/>
+
+    <!-- vmadm and the GitHub API both need a fully populated system. -->
+    <dependency name="multi-user-server" grouping="require_all" restart_on="none" type="service">
+      <service_fmri value="svc:/milestone/multi-user-server:default"/>
+    </dependency>
+
+    <exec_method type="method" name="start"
+        exec="/opt/custom/sbin/gha-runner-cycle-loop.sh &amp;"
+        timeout_seconds="60">
+      <method_context>
+        <method_credential user="root" group="root"/>
+      </method_context>
+    </exec_method>
+
+    <!-- The loop traps TERM and the cycle script releases its lock on the way out. -->
+    <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+
+    <property_group name="startd" type="framework">
+      <propval name="duration" type="astring" value="contract"/>
+      <propval name="ignore_error" type="astring" value="core,signal"/>
+    </property_group>
+
+    <property_group name="application" type="application">
+      <propval name="interval" type="astring" value="120"/>
+    </property_group>
+
+    <stability value="Unstable"/>
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C">GitHub Actions runner VM cycler</loctext>
+      </common_name>
+    </template>
+
+  </service>
+</service_bundle>

@@ -1,0 +1,111 @@
+---
+
+# FIXME: SmartOS auto-formats this ext4 and mounts it, so the task for this fails. Rather than enable the force option
+# here and potentially overwrite data on this volume in some future run of this playbook I just ran
+# `umount /data && mkfs.xfs -f /dev/vdb` by hand.
+#filesystems:
+#  - dev: /dev/vdb
+#    fstype: xfs
+#
+#mounts:
+#  - name: /data
+#    src: /dev/vdb
+#    fstype: auto
+#    mode: "0755"
+#
+#docker_daemon_option_list:
+#  - -H fd://
+#  - --containerd=/run/containerd/containerd.sock
+#  - --data-root=/data/docker
+#
+#docker_containerd_config:
+#  # this is just restoring the default config shipped with the package
+#  disabled_plugins:
+#    - cri
+#  # this overrides /var/lib/containerd
+#  root: /data/containerd
+
+galaxy_cvmfs_repos_enabled: true
+
+github_self_hosted_runners_group_apt_keys:
+  - url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+
+github_self_hosted_runners_group_apt_repositories:
+  - repo: "deb [signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+
+github_self_hosted_runners_group_systemd_overrides:
+  - name: docker
+    override:
+      - "ExecStart="
+      - "ExecStart=/usr/bin/dockerd {{ docker_daemon_option_list | join(' ') }}"
+
+github_self_hosted_runners_group_packages:
+  - gpg
+  - xfsprogs
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+  - git
+  - build-essential
+  - curl
+  - python3-venv
+  - python3-dev
+  # for usegalaxy-tools, idc
+  - fuse-overlayfs
+  - sudo
+  - tree
+  - rsync
+
+github_self_hosted_runners_group_users:
+  - name: build
+    comment: "Github Builder"
+    home: /data/build
+    # Moved to a post-task for order of operations purposes
+    #groups: docker
+    system: true
+
+github_self_hosted_runner_dir: /data/build/actions-runner
+
+github_self_hosted_runners_group_directories:
+  #- path: /data/docker
+  #  owner: root
+  #  group: root
+  #  mode: '0710'
+  #- path: /data/containerd
+  #  owner: root
+  #  group: root
+  #  mode: '0700'
+  - path: /data/actions-runner-hooks
+    owner: root
+    group: root
+    mode: '0755'
+  - path: /data/actions-runner
+    owner: build
+    group: build
+    mode: '0755'
+  - path: /data/actions-runner/cvmfs-cache
+    owner: build
+    group: build
+    mode: '0755'
+  - path: "{{ github_self_hosted_runner_dir }}"
+    owner: build
+    group: build
+    mode: '0755'
+
+github_self_hosted_runners_group_files:
+  - src: files/jenkins/tmpfiles.d-clean-tmp.conf
+    dest: /etc/tmpfiles.d/clean-tmp.conf
+    owner: root
+    group: root
+    mode: '0444'
+
+#github_self_hosted_runners_group_templates:
+#  # FIXME: would fail on first install
+#  - src: templates/jenkins/containerd-config.toml.j2
+#    dest: /etc/containerd/config.toml
+#    owner: root
+#    group: root
+#    mode: '0600'

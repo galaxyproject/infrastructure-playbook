@@ -1,0 +1,91 @@
+---
+
+- name: Github Self Hosted Runners
+  hosts: github_self_hosted_runners
+  roles:
+    - role: galaxyproject.cvmfs
+  post_tasks:
+
+    - name: Add build user to docker group
+      user:
+        name: build
+        groups: docker
+        system: true
+
+    - name: Allow other access to FUSE mounts
+      lineinfile:
+        path: /etc/fuse.conf
+        regexp: '^#?user_allow_other$'
+        line: user_allow_other
+
+    - name: Resolve the latest actions/runner release
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/actions/runner/releases/latest
+        headers:
+          Accept: application/vnd.github+json
+          X-GitHub-Api-Version: "2022-11-28"
+      register: __gha_runner_release
+      delegate_to: localhost
+      run_once: true
+
+    - name: Select the linux-x64 asset
+      ansible.builtin.set_fact:
+        gha_runner_asset: >-
+          {{ __gha_runner_release.json.assets
+             | selectattr('name', 'match', '^actions-runner-linux-x64-[0-9.]+\.tar\.gz$')
+             | first }}
+
+    - name: Fetch the runner tarball
+      ansible.builtin.get_url:
+        url: "{{ gha_runner_asset.browser_download_url }}"
+        checksum: "{{ gha_runner_asset.digest }}"
+        dest: /tmp/actions-runner.tar.gz
+        mode: "0644"
+
+    - name: Unpack the runner
+      ansible.builtin.unarchive:
+        src: /tmp/actions-runner.tar.gz
+        remote_src: true
+        dest: "{{ github_self_hosted_runner_dir }}"
+        owner: build
+        group: build
+
+    # As of time of writing everything that's required is already installed
+    #- name: Install the runner's .NET prerequisites
+    #  ansible.builtin.command: "{{ github_self_hosted_runner_dir }}/bin/installdependencies.sh"
+    #  args:
+    #    chdir: "{{ github_self_hosted_runner_dir }}"
+
+    - name: Remove the runner tarball
+      ansible.builtin.file:
+        path: /tmp/actions-runner.tar.gz
+        state: absent
+
+    - name: Install action runner hook
+      ansible.builtin.copy:
+        src: files/github_self_hosted_runner/usegalaxy-tools-job-started.sh
+        dest: /data/actions-runner-hooks/usegalaxy-tools-job-started.sh
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install runner boot script
+      ansible.builtin.copy:
+        src: files/github_self_hosted_runner/gha-runner-boot.sh
+        dest: /usr/local/sbin/gha-runner-boot.sh
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install runner boot service unit
+      ansible.builtin.copy:
+        src: files/github_self_hosted_runner/gha-runner.service
+        dest: /etc/systemd/system/gha-runner.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable runner service
+      ansible.builtin.service:
+        name: gha-runner.service
+        enabled: true

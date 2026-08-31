@@ -1,0 +1,20 @@
+# Config for gha-runner-cycle.sh, installed at /opt/custom/etc/gha-runner-cycle.conf
+
+GITHUB_ORG=galaxyproject
+
+# Fine-grained PAT or GitHub App installation token with organization "Self-hosted runners: read and write".
+# Mode 0600, owned by root. A classic PAT would need admin:org, which is far more than this needs.
+GITHUB_TOKEN_FILE=/opt/custom/etc/gha-runner-cycle.token
+
+# One entry per runner VM: <vm>:<runner_group_id>:<labels>:<name_prefix>[:<snapshot>]
+#
+# <vm> is the VM's alias, which survives a rebuild; a UUID is also accepted. The alias must resolve to exactly one
+# VM -- zero or several is an error, not a guess. Per-VM state is filed under this name, so keep it to [A-Za-z0-9._-].
+#
+# Snapshot defaults to "golden". Get group ids from:
+#   GET /orgs/galaxyproject/actions/runner-groups
+RUNNERS="
+{% for config in github_self_hosted_runner_configs %}
+{{ config }}
+{% endfor %}
+"

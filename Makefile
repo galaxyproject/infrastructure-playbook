@@ -38,4 +38,7 @@ js2-openstack-init:
 	# sets up router, subnets, security groups, etc.
 	ansible-playbook -i inventory/jetstream2.yaml playbook-openstack.yaml --limit=jetstream2_openstack_initializer
 
+obrien-test-image:
+	bash ./scripts/gha-runner-image.sh obrien-test
+
 .PHONY: tts tts-update tts-config mts mts-update mts-config js2-openstack-init

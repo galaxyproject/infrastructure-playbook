@@ -1,0 +1,37 @@
+---
+
+- name: List the installed kernel images
+  ansible.builtin.find:
+    paths: /boot
+    patterns: vmlinuz-*
+    file_type: any
+  register: __bootstrap_installed_kernels
+
+- name: Find kernels newer than the running one
+  ansible.builtin.set_fact:
+    __bootstrap_newer_kernels: >-
+      {{ __bootstrap_installed_kernels.files | map(attribute='path') | map('basename')
+         | map('regex_replace', '^vmlinuz-', '')
+         | select('version', ansible_facts.kernel, '>', version_type='loose') | list }}
+
+- name: Kernel reboot block
+  when: bootstrap_force_reboot | bool or __bootstrap_newer_kernels | length > 0
+  block:
+
+    - name: Report pre-reboot running kernel
+      ansible.builtin.debug:
+        var: ansible_facts.kernel
+
+    - name: Reboot into the new kernel
+      ansible.builtin.reboot:
+        msg: "Ansible: rebooting for kernel {{ __bootstrap_newer_kernels | join(', ') }} (running {{ ansible_facts.kernel }})"
+        reboot_timeout: 900
+      register: __bootstrap_reboot
+
+- name: Re-gather facts after the reboot
+  ansible.builtin.setup:
+  when: __bootstrap_reboot is changed
+
+- name: Report final running kernel
+  ansible.builtin.debug:
+    var: ansible_facts.kernel

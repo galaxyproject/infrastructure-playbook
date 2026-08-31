@@ -1,0 +1,21 @@
+[Unit]
+Description=GitHub Actions ephemeral runner (one job, then poweroff)
+Documentation=https://github.com/galaxyproject/usegalaxy-tools/blob/master/docs/self-hosted-runner.md
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/gha-runner-boot.sh
+# The journal is volatile and the disk is rolled back, so the console is the only place a human can watch a
+# boot go wrong in real time.
+StandardOutput=journal+console
+StandardError=journal+console
+# No restart: a failed start powers off, and the hypervisor's backoff decides whether to try again.
+Restart=no
+TimeoutStartSec=0
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
