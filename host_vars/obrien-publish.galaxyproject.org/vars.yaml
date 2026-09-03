@@ -1,0 +1,9 @@
+---
+
+host_files:
+  - content: |
+      {{ ssh_host_keys['cvmfs0-psu1.galaxyproject.org'] }}
+    dest: /etc/ssh/ssh_known_hosts
+    owner: root
+    group: root
+    mode: "0644"

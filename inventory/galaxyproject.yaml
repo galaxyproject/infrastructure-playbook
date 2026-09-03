@@ -213,8 +213,8 @@ all:
     ssh_clients:
       vars:
         ansible_group_priority: 5
-      #hosts:
-      #  rochefort.galaxyproject.org:
+      hosts:
+        obrien-publish.galaxyproject.org:
       children:
         # for postfix maps distribution to mxs
         list_servers:
