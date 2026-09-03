@@ -41,4 +41,7 @@ js2-openstack-init:
 obrien-test-image:
 	bash ./scripts/gha-runner-image.sh obrien-test
 
+obrien-publish-image:
+	bash ./scripts/gha-runner-image.sh obrien-publish
+
 .PHONY: tts tts-update tts-config mts mts-update mts-config js2-openstack-init

@@ -102,6 +102,25 @@ smartos_vms:
         size: 32768
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+  - name: obrien-publish
+    brand: bhyve
+    ram: 4096
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'obrien-publish.galaxyproject.org') }}"
+        netmask: 255.255.255.0
+        gateway: 172.18.2.1
+        vlan_id: 406
+        model: virtio
+    disks:
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+        boot: true
+        model: virtio
+        size: 32768
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
 
 # If we did this on multiple hosts we could make a group for runner hypervisors
 host_directories:
@@ -149,4 +168,4 @@ host_templates:
 
 github_self_hosted_runner_configs:
   - obrien-test:3:cvmfs:cvmfs-test
-  #- obrien-publish:4:cvmfs:cvmfs-publish
+  - obrien-publish:4:cvmfs:cvmfs-publish

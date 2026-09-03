@@ -58,6 +58,7 @@ github_self_hosted_runners_group_packages:
   - sudo
   - tree
   - rsync
+  - psmisc
 
 github_self_hosted_runners_group_users:
   - name: build
@@ -87,6 +88,10 @@ github_self_hosted_runners_group_directories:
     group: build
     mode: '0755'
   - path: /data/actions-runner/cvmfs-cache
+    owner: build
+    group: build
+    mode: '0755'
+  - path: /data/actions-runner/scratch
     owner: build
     group: build
     mode: '0755'

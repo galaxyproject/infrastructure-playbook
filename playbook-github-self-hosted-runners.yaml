@@ -7,13 +7,14 @@
   post_tasks:
 
     - name: Add build user to docker group
-      user:
+      ansible.builtin.user:
         name: build
         groups: docker
         system: true
+        append: true
 
     - name: Allow other access to FUSE mounts
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/fuse.conf
         regexp: '^#?user_allow_other$'
         line: user_allow_other
