@@ -1,5 +1,7 @@
 ---
 
+gha_runner_cycle_token: "{{ vault_gha_runner_cycle_token }}"
+
 smartos_images:
   # debian-10 20200508 linux zvol
   - uuid: 9bcfe5cc-007d-4f23-bc8a-7e7b4d0c537e
@@ -158,6 +160,12 @@ host_files:
     owner: root
     group: root
     mode: "0644"
+  - content: |
+      {{ gha_runner_cycle_token }}
+    dest: /opt/custom/etc/gha-runner-cycle.token
+    owner: root
+    group: root
+    mode: "0600"
 
 host_templates:
   - src: templates/github_self_hosted_runner/gha-runner-cycle.conf.j2
