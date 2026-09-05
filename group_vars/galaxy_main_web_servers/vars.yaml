@@ -69,3 +69,16 @@ galaxy_main_web_servers_group_telegraf_plugins_extra:
       - timeout = "10s"
       - data_format = "influx"
       - interval = "1m"
+  # Per-PID memory for the two gunicorn web services so worker RSS/CoW growth is
+  # captured historically (the 2026-06-30 memory surge could not be reconstructed
+  # because only host-level mem was collected here). One block per bind port.
+  procstat_gunicorn_0:
+    plugin: procstat
+    config:
+      - pattern = "fast_factory.*0.0.0.0:8080"
+      - 'user = "{{ galaxy_user }}"'
+  procstat_gunicorn_1:
+    plugin: procstat
+    config:
+      - pattern = "fast_factory.*0.0.0.0:8081"
+      - 'user = "{{ galaxy_user }}"'
