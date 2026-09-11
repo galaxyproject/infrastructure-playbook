@@ -4,8 +4,12 @@ smartos_images:
   # debian-13 20260414 linux zvol 2026-04-14
   - uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
     state: present
+  # almalinux-9 20260430 linux zvol 2026-04-30
+  - uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
+    state: present
 
 smartos_vms:
+
   - name: radegast
     brand: bhyve
     ram: 12288
@@ -31,5 +35,49 @@ smartos_vms:
       - boot: false
         model: virtio
         size: 131072
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+
+  - name: duvel
+    brand: bhyve
+    ram: 4096
+    vcpus: 2
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: 128.118.250.8
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: d8a690d8-03cc-4f0d-ad2c-17ad2b6c1d4c
+        boot: true
+        model: virtio
+        size: 24576
+    customer_metadata:
+      root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
+
+  - name: stats
+    brand: bhyve
+    ram: 24576
+    vcpus: 4
+    resolvers: "{{ smartos_resolvers }}"
+    nics:
+      - nic_tag: external
+        ip: "{{ lookup('dig', 'stats.galaxyproject.org') }}"
+        netmask: 255.255.255.224
+        gateway: 128.118.250.1
+        vlan_id: 306
+        model: virtio
+    disks:
+      - image_uuid: aa2f07ed-90ca-4cc1-b851-31fd9172757e
+        boot: true
+        model: virtio
+        size: 24576
+      # /var/lib/influxdb
+      - boot: false
+        model: virtio
+        size: 262144
     customer_metadata:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
