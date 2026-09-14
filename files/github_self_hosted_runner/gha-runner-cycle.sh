@@ -80,15 +80,18 @@ resolve_uuid() {
     esac
 }
 
+# Prints the HTTP status on the first line and the response body on the rest, and returns non-zero only when the
+# request could not be made at all. Callers that act on the result must tell those apart: GitHub being unreachable
+# says nothing about the runner it was asked about. The status cannot be returned through a variable, since callers
+# read the body through a command substitution and its subshell would discard the assignment.
 github_api_get() {
-    local path="$1" response http_code
-    response="$(curl -sS -w '\n%{http_code}' \
+    local path="$1" response
+    response="$(curl -sS --connect-timeout 10 --max-time 30 --retry 2 -w '\n%{http_code}' \
         -H 'Accept: application/vnd.github+json' \
         -H "Authorization: Bearer $(cat "$GITHUB_TOKEN_FILE")" \
         -H 'X-GitHub-Api-Version: 2022-11-28' \
         "https://api.github.com${path}")" || return 1
-    http_code="$(printf '%s\n' "$response" | tail -1)"
-    [ "$http_code" = 200 ] || return 1
+    printf '%s\n' "$response" | tail -1
     printf '%s\n' "$response" | sed '$d'
 }
 
@@ -96,7 +99,7 @@ github_api_get() {
 # deregisters itself.
 github_api_delete() {
     local path="$1" http_code
-    http_code="$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE \
+    http_code="$(curl -sS --connect-timeout 10 --max-time 30 --retry 2 -o /dev/null -w '%{http_code}' -X DELETE \
         -H 'Accept: application/vnd.github+json' \
         -H "Authorization: Bearer $(cat "$GITHUB_TOKEN_FILE")" \
         -H 'X-GitHub-Api-Version: 2022-11-28' \
@@ -112,13 +115,25 @@ github_api_delete() {
 # while its VM is up, is wedged and will quietly swallow jobs until GitHub cancels them 24 hours later.
 check_running_vm() {
     local key="$1" uuid="$2"
-    local runner_id now runner status busy since
+    local runner_id now response http_code runner status busy since
 
     runner_id="$(cat "${STATE_DIR}/${key}.runner_id" 2>/dev/null || true)"
     [ -n "$runner_id" ] || { log "${uuid} has no recorded runner id, skipping health check"; return 0; }
 
     now="$(date +%s)"
-    runner="$(github_api_get "/orgs/${GITHUB_ORG}/actions/runners/${runner_id}" || true)"
+    response="$(github_api_get "/orgs/${GITHUB_ORG}/actions/runners/${runner_id}")" || response=''
+    http_code="$(printf '%s\n' "$response" | head -1)"
+    runner="$(printf '%s\n' "$response" | sed '1d')"
+    # A 404 is an answer: the ephemeral runner deregistered itself, which is the normal gap between a finished job
+    # and the guest completing its poweroff, and the grace period below covers it. Anything else non-200 means the
+    # question went unanswered, and scoring that as "not online" force-stops every healthy VM for the length of an
+    # API or DNS outage.
+    case "$http_code" in
+        200|404) ;;
+        '') err "could not reach GitHub to check runner ${runner_id}, skipping health check for ${uuid}"; return 0 ;;
+        *) err "GitHub returned HTTP ${http_code} for runner ${runner_id}, skipping health check for ${uuid}"
+           return 0 ;;
+    esac
     status="$(printf '%s' "$runner" | json status 2>/dev/null || true)"
     busy="$(printf '%s' "$runner" | json busy 2>/dev/null || true)"
 
@@ -149,6 +164,9 @@ check_running_vm() {
     fi
     if [ $((now - since)) -gt "$MAX_JOB_SECONDS" ]; then
         err "${uuid} has been busy with one job for over ${MAX_JOB_SECONDS}s, past every workflow timeout, forcing it down"
+        # The boot worked -- the runner came online and took a job. Force-stopping skips the guest's poweroff path,
+        # so no exit code reaches metadata; mark it so cycle_vm does not read that silence as a failed boot.
+        date +%s > "${STATE_DIR}/${key}.reaped"
         vmadm stop "$uuid" -F || err "could not stop ${uuid}"
     fi
 }
@@ -178,7 +196,7 @@ generate_jitconfig() {
     body="$(printf '{"name":"%s","runner_group_id":%s,"labels":[%s],"work_folder":"_work"}' \
         "$name" "$group_id" "$labels_json")"
 
-    response="$(curl -sS -w '\n%{http_code}' -X POST \
+    response="$(curl -sS --connect-timeout 10 --max-time 30 -w '\n%{http_code}' -X POST \
         -H 'Accept: application/vnd.github+json' \
         -H "Authorization: Bearer $(cat "$GITHUB_TOKEN_FILE")" \
         -H 'X-GitHub-Api-Version: 2022-11-28' \
@@ -216,7 +234,11 @@ cycle_vm() {
     metadata="$(vmadm get "$uuid" 2>/dev/null || true)"
     exit_code="$(printf '%s' "$metadata" | json customer_metadata.runner-exit-code)"
     error="$(printf '%s' "$metadata" | json customer_metadata.runner-error)"
-    if [ "$(boot_epoch "$key")" -gt 0 ]; then
+    if [ -f "${STATE_DIR}/${key}.reaped" ]; then
+        log "${key} was reaped mid-job by this script, so its missing exit code says nothing about its boot"
+        set_failed_boots "$key" 0
+        rm -f "${STATE_DIR}/${key}.reaped"
+    elif [ "$(boot_epoch "$key")" -gt 0 ]; then
         if [ -z "$exit_code" ]; then
             count=$((count + 1))
             set_failed_boots "$key" "$count"
@@ -264,7 +286,7 @@ cycle_vm() {
 
     vmadm start "$uuid" || { err "could not start ${uuid}"; return 1; }
     date +%s > "${STATE_DIR}/${key}.boot_epoch"
-    rm -f "${STATE_DIR}/${key}.busy_since" "${STATE_DIR}/${key}.unusable_since"
+    rm -f "${STATE_DIR}/${key}.busy_since" "${STATE_DIR}/${key}.unusable_since" "${STATE_DIR}/${key}.reaped"
     log "${uuid} started with a fresh ephemeral runner in group ${group_id}"
 }
 
@@ -291,7 +313,7 @@ for entry in $RUNNERS; do
         fi
         rm -f "${STATE_DIR}/${key}.failed_boots" "${STATE_DIR}/${key}.boot_epoch" \
               "${STATE_DIR}/${key}.busy_since" "${STATE_DIR}/${key}.unusable_since" \
-              "${STATE_DIR}/${key}.runner_id"
+              "${STATE_DIR}/${key}.reaped" "${STATE_DIR}/${key}.runner_id"
     fi
     printf '%s' "$uuid" > "${STATE_DIR}/${key}.uuid"
 
