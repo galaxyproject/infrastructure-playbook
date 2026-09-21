@@ -6,3 +6,4 @@ ssh_host_keys:
   thumper.galaxyproject.org: thumper.galaxyproject.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO12pjb3M7VyFVAZuIinev1TWWERunqILNsxbczELQQh
   orval.galaxyproject.org: orval.galaxyproject.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAkpUCs6Z/urs1agezYQmqb/JzJFGNweeSE68nycoXcA
   cvmfs0-psu1.galaxyproject.org: cvmfs0-psu1.galaxyproject.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMbyaFoJaEeJdPhh20QxnjZP3l8W3csGOLzCURJoPzGV
+  cvmfs0-psu0.galaxyproject.org: cvmfs0-psu0.galaxyproject.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEVl5ZVVCfZK8uPZ63vngZhvhqS7Y2eb/7KOl3NeBDbG
