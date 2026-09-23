@@ -34,10 +34,11 @@ map $http_user_agent $crawler_key {
     "~*{{ nginx_crawler_user_agents }}" "crawler";
 }
 
-# Exempt UCSC from rate limits
+# Exempt UCSC and TACC from rate limits
 geo $geo_exempt_key {
     default 0;
     128.114.119.0/24 1;
+    129.114.0.0/16 1;
 }
 
 # Combine $zone_key and $geo_exempt_key
