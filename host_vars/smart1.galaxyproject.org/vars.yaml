@@ -87,8 +87,8 @@ smartos_vms:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: obrien-test
     brand: bhyve
-    ram: 4096
-    vcpus: 2
+    ram: 8192
+    vcpus: 4
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
@@ -106,8 +106,8 @@ smartos_vms:
       root_authorized_keys: "{{ ssh_public_keys.nate_coraor }}"
   - name: obrien-publish
     brand: bhyve
-    ram: 4096
-    vcpus: 2
+    ram: 8192
+    vcpus: 4
     resolvers: "{{ smartos_resolvers }}"
     nics:
       - nic_tag: external
