@@ -13,6 +13,9 @@ server {
     access_log  /var/log/nginx/jenkins.galaxyproject.org_access.log;
     error_log   /var/log/nginx/jenkins.galaxyproject.org_error.log;
 
+    # Enable HSTS (age is 180 days)
+    add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
+
     location / {
         proxy_pass          http://jenkins_app;
         proxy_buffering     off;
