@@ -3,6 +3,9 @@
 - name: Galaxy Nodes
   hosts: galaxy_nodes
   pre_tasks:
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
     # Not sure why this is set but it breaks LDAP
     - name: Ensure invalid ldap_tls_cacertdir is not set in /etc/sssd/sssd.conf
       ansible.builtin.lineinfile:
