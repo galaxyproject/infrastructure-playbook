@@ -11,6 +11,14 @@
         state: absent
       notify:
         - Restart sssd
+    # /etc/resolv.conf is created by cloud-jnit but is not updated when the DNS servers are changed in openstack.
+    # 99-cloud-init.conf contains only `dns = none` so removing it allows NM to update DNS servers.
+    - name: Remove /etc/NetworkManager/conf.d/99-cloud-init.conf
+      ansible.builtin.file:
+        path: /etc/NetworkManager/conf.d/99-cloud-init.conf
+        state: absent
+      notify:
+        - Restart NetworkManager
     - name: Flush handlers
       meta: flush_handlers
   roles:
@@ -33,4 +41,8 @@
     - name: Restart sssd
       ansible.builtin.systemd:
         name: sssd
+        state: restarted
+    - name: Restart NetworkManager
+      ansible.builtin.systemd:
+        name: NetworkManager
         state: restarted
