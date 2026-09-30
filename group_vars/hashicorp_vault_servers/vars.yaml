@@ -7,7 +7,7 @@ certbot_share_key_users:
 hashicorp_vault_policies:
   - name: galaxy-user-prefs
     value: |
-      path "*" {
+      path "secret/data/galaxy/*" {
         capabilities = ["create", "read", "update", "patch", "delete", "list"]
       }
 
@@ -17,6 +17,9 @@ hashicorp_vault_auth_methods:
       - name: galaxyprefs
         password: "{{ hashicorp_vault_user_password }}"
         policies: galaxy-user-prefs
+        settings:
+          token_ttl: 10800  # 3 hours
+          token_max_ttl: 7776000  # 90 days
 
 hashicorp_vault_secrets:
   # technically Galaxy writes using a v2 write method, but the store was created v1 and this does work, it just stores

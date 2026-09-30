@@ -140,6 +140,25 @@
           loop: "{{ hashicorp_vault_auth_methods.userpass.users }}"
           when: "item.name not in __hashicorp_vault_userpass_users"
 
+        - name: Get userpass user settings
+          ansible.builtin.command: "vault read -format=yaml auth/userpass/users/{{ item.name }}"
+          changed_when: false
+          register: __hashicorp_vault_userpass_user_settings
+          loop: "{{ hashicorp_vault_auth_methods.userpass.users | selectattr('settings', 'defined') }}"
+          loop_control:
+            label: "{{ item.name }}"
+
+        - name: Set userpass user settings
+          ansible.builtin.command: "vault write auth/userpass/users/{{ item.item.name }} -"
+          args:
+            stdin: "{{ item.item.settings | to_json }}"
+          vars:
+            __current: "{{ (item.stdout | from_yaml).data }}"
+          when: "(__current | combine(item.item.settings)) != __current"
+          loop: "{{ __hashicorp_vault_userpass_user_settings.results }}"
+          loop_control:
+            label: "{{ item.item.name }}"
+
 - name: Secrets block
   when: hashicorp_vault_secrets is defined
   become: true
