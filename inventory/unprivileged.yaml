@@ -27,6 +27,7 @@ all:
     #   https://www.psc.edu/about-using-ssh/
     vm030.bridges2.psc.edu:
       ansible_user: xcgalaxy
+      ansible_python_interpreter: /usr/bin/python3.8
 
   children:
 
