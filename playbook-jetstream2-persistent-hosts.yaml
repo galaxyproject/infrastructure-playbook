@@ -21,13 +21,6 @@
         state: absent
   tags: [initial, system]
 
-# Only the proxy for now, the controller's and pulsar servers' group_directories were never applied by this playbook
-- name: Filesystems and mounts for CVMFS local proxies
-  hosts: cvmfs_local_proxies
-  roles:
-    - role: galaxyproject.general.paths
-  tags: [initial, system, paths]
-
 - name: CVMFS tasks
   hosts: jetstream2_persistent_hosts
   roles:
