@@ -40,7 +40,8 @@ host_mounts:
     # is mounted on a new instance
     owner: "23"
     group: "23"
-    mode: "0750"
+    # nginx's cache dir is on this volume too
+    mode: "0755"
 
 cvmfs_localproxy_workers: 4
 cvmfs_localproxy_cache_mem: 8192
@@ -54,3 +55,9 @@ cvmfs_localproxy_cache_dir:
   count: 4
   size: 450000
   slot_size: 32768
+
+# nginx runs alongside squid on another port, with a small cache on the squid volume, until clients are moved to it
+cvmfs_nginx_proxy_port: 3129
+cvmfs_nginx_proxy_cache_dir: /var/spool/squid/nginx
+cvmfs_nginx_proxy_cache_max_size: 150g
+cvmfs_nginx_proxy_cache_min_free: 50g

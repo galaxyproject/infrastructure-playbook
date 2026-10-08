@@ -18,3 +18,20 @@ cvmfs_local_proxies_group_systemd_overrides:
 # with 4 (MB) but that still seems way too small for a good hit ratio for stuff in the data repo.
 cvmfs_localproxy_maximum_object_size_in_memory: 64
 cvmfs_squid_conf_src: templates/cvmfs/localproxy_squid.conf.j2
+
+# nginx caching forward proxy, see templates/nginx/cvmfs_proxy.j2
+nginx_servers:
+  - cvmfs_proxy
+nginx_enable_default_server: false
+nginx_conf_worker_connections: 4096
+
+cvmfs_nginx_proxy_port: 3128
+# Stratum 1 hosts that clients may fetch from through the proxy
+cvmfs_nginx_proxy_upstreams: >-
+  {{ galaxy_cvmfs_server_urls | map(attribute='urls') | flatten | map('urlsplit', 'hostname') | unique }}
+cvmfs_nginx_proxy_cache_dir: /var/lib/nginx/cvmfs
+# Each 1 MB of keys zone holds about 8000 cache entries
+cvmfs_nginx_proxy_keys_zone_size: 256m
+cvmfs_nginx_proxy_cache_max_size: 10g
+cvmfs_nginx_proxy_cache_min_free: 5g
+cvmfs_nginx_proxy_cache_inactive: 30d

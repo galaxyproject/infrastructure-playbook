@@ -1,0 +1,94 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# Caching forward proxy for CVMFS clients (CVMFS_HTTP_PROXY). Clients send absolute-URI requests
+# (GET http://<stratum 1>/cvmfs/...), nginx sets $host from the request line, and only the stratum 1 hosts listed in
+# cvmfs_nginx_proxy_upstreams are proxied.
+#
+# Caching follows the stratum 1's Expires/Cache-Control headers (3 days for data objects, 61 seconds for manifests), and
+# expired objects are revalidated with conditional requests.
+#
+# The cache manager process keeps the cache under max_size (and min_free on the filesystem) by evicting least recently
+# used objects. Objects not requested for `inactive` are removed regardless of freshness.
+
+proxy_cache_path {{ cvmfs_nginx_proxy_cache_dir }}
+    levels=2:2
+    keys_zone=cvmfs:{{ cvmfs_nginx_proxy_keys_zone_size }}
+    max_size={{ cvmfs_nginx_proxy_cache_max_size }}
+    min_free={{ cvmfs_nginx_proxy_cache_min_free }}
+    inactive={{ cvmfs_nginx_proxy_cache_inactive }}
+    use_temp_path=off;
+
+log_format cvmfs_proxy '$remote_addr [$time_local] "$request" $status $body_bytes_sent '
+                       '$upstream_cache_status $request_time $upstream_response_time';
+
+# Upstream groups are resolved when the config is loaded, using the system resolver (and /etc/hosts), so the js2local
+# names work without an nginx `resolver`.
+{% for host in cvmfs_nginx_proxy_upstreams %}
+upstream cvmfs_upstream_{{ host | regex_replace('[^A-Za-z0-9]', '_') }} {
+    server {{ host }}:80;
+    keepalive 16;
+}
+{% endfor %}
+
+map $host $cvmfs_upstream {
+    default "";
+{% for host in cvmfs_nginx_proxy_upstreams %}
+    {{ host }} cvmfs_upstream_{{ host | regex_replace('[^A-Za-z0-9]', '_') }};
+{% endfor %}
+}
+
+# The CVMFS client retries a failed download with "Pragma: no-cache" / "Cache-Control: no-cache", which must fetch a
+# fresh copy from the stratum 1 (and replace the cached one) for the client to recover from a bad cached object.
+map "$http_pragma $http_cache_control" $cvmfs_nocache {
+    default 0;
+    ~*no-cache 1;
+}
+
+# nginx has no maximum cacheable object size, so don't store responses of 1 GB (10 digits) or more
+map $upstream_http_content_length $cvmfs_too_large {
+    default 0;
+    "~^[0-9]{10,}$" 1;
+}
+
+server {
+    listen {{ cvmfs_nginx_proxy_port }} default_server;
+    server_name _;
+
+    access_log /var/log/nginx/cvmfs_proxy_access.log cvmfs_proxy;
+    error_log /var/log/nginx/cvmfs_proxy_error.log;
+
+    if ($cvmfs_upstream = "") {
+        return 403;
+    }
+
+    location / {
+        proxy_pass http://$cvmfs_upstream;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Connection "";
+
+        proxy_cache cvmfs;
+        proxy_cache_key $host$request_uri;
+        proxy_cache_revalidate on;
+        proxy_cache_bypass $cvmfs_nocache;
+        proxy_no_cache $cvmfs_too_large;
+
+        # Concurrent misses for the same object wait for the first request to fill the cache, across all workers. After
+        # the timeout, waiting requests go to the upstream themselves and their responses are not cached.
+        proxy_cache_lock on;
+        proxy_cache_lock_timeout 30s;
+        proxy_cache_lock_age 30s;
+
+        # Finish filling the cache when a client goes away mid-download, the other clients waiting on the lock want it
+        proxy_ignore_client_abort on;
+
+        # Keep a slow read from the cache volume from blocking a worker's event loop
+        aio threads;
+
+        add_header X-Cache-Status $upstream_cache_status;
+    }
+}
+
+# vim: set filetype=nginx
