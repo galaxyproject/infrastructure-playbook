@@ -3,7 +3,7 @@
 os_image: Featured-RockyLinux9
 # m3.small (2 vCPU) was CPU-bound: one squid process at ~95% of a core capped the whole cluster at ~200 MB/s and every
 # request (hit or miss) took ~0.6-1 s for a 3 MB chunk.
-os_flavor: m3.quad
+os_flavor: m3.medium
 os_key_name: nate-treehouse
 os_auto_ip: false
 os_boot_from_volume: true
