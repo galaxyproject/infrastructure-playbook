@@ -4,6 +4,9 @@ cvmfs_local_proxies_group_systemd_overrides:
   - name: nginx
     override:
       Restart: on-failure
+    # This is applied by the cvmfs play, before the nginx play has installed nginx, and Restart= only needs a daemon
+    # reload anyway
+    restart_on_change: false
 
 # nginx caching forward proxy, see templates/nginx/cvmfs_proxy.j2
 nginx_servers:
