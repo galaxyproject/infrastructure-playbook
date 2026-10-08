@@ -7,6 +7,9 @@ all:
     jetstream2.galaxyproject.org:
       ansible_python_interpreter: /usr/bin/python3.9
 
+    cvmfsproxy.js2local:
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q rocky@jetstream2.galaxyproject.org"'
+
   children:
 
     openstack_instances:
