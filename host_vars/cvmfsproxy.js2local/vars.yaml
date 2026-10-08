@@ -17,7 +17,7 @@ openstack_wait_timeout: 300
 # Cache volume: ~1.2 TB of unique data.galaxyproject.org objects are fetched per day (18 TB total), so the cache should
 # hold at least that. The volume name is matched by the openstack role, changing it would create a new volume.
 os_volumes:
-  - name: "{{ inventory_hostname_short }}-squid"
+  - name: "{{ inventory_hostname_short }}-cache"
     size: 2048
     fstype: xfs
 
