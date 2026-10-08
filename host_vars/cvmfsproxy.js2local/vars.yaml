@@ -3,7 +3,7 @@
 os_image: Featured-RockyLinux9
 # m3.small (2 vCPU) was CPU-bound: one squid process at ~95% of a core capped the whole cluster at ~200 MB/s and every
 # request (hit or miss) took ~0.6-1 s for a 3 MB chunk.
-os_flavor: m3.large
+os_flavor: m3.quad
 os_key_name: nate-treehouse
 os_auto_ip: false
 os_boot_from_volume: true
@@ -42,8 +42,8 @@ host_mounts:
     group: "23"
     mode: "0750"
 
-cvmfs_localproxy_workers: 6
-cvmfs_localproxy_cache_mem: 16384
+cvmfs_localproxy_workers: 4
+cvmfs_localproxy_cache_mem: 8192
 cvmfs_localproxy_maximum_object_size: 1024
 cvmfs_localproxy_cache_dir:
   # rock is the only SMP-aware cache_dir type, ufs/aufs must not be used with workers > 1
