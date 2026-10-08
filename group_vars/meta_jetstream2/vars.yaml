@@ -85,10 +85,12 @@ all_users:
     home: /home/idc
     shell: /bin/sh
 
-# Prefer the JS2 stratum 1 via the local network
+# Prefer the JS2 stratum 1 via the local network. GeoAPI must stay off: the stratum 1 cannot geolocate the private
+# js2local name, so a successful geo sort (via the public name) moves cvmfs1-iu0.js2local to the end of the list and all
+# traffic hairpins through the router to the public floating IP.
 galaxy_cvmfs_server_urls:
   - domain: galaxyproject.org
-    use_geoapi: true
+    use_geoapi: false
     urls:
       - "http://cvmfs1-iu0.js2local/cvmfs/@fqrn@"
       - "http://cvmfs1-iu0.galaxyproject.org/cvmfs/@fqrn@"
