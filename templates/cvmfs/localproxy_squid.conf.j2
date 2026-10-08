@@ -1,0 +1,38 @@
+##
+## This file is managed by Ansible.  ALL CHANGES WILL BE OVERWRITTEN.
+##
+
+http_port 3128 accel
+http_access allow all
+
+always_direct allow all
+
+# A single squid process can only use one core. With workers > 1 the memory cache is shared and only rock cache_dirs
+# are SMP-aware.
+workers {{ cvmfs_localproxy_workers | default(1) }}
+
+# This is for the disk cache, it is set before cache_dir so that it applies to it
+{% if cvmfs_localproxy_maximum_object_size is defined %}
+maximum_object_size {{ cvmfs_localproxy_maximum_object_size }} MB
+{% else %}
+#maximum_object_size 1024 MB
+{% endif %}
+
+{% if cvmfs_localproxy_cache_dir is defined %}
+{% if cvmfs_localproxy_cache_dir.type | default('ufs') == 'rock' %}
+{% set _count = cvmfs_localproxy_cache_dir.count | default(1) %}
+# Each rock cache_dir gets its own disker process, which does blocking I/O. With count > 1, size is per dir.
+{% for i in range(_count) %}
+cache_dir rock {{ cvmfs_localproxy_cache_dir.dir }}{{ i if _count > 1 else '' }} {{ cvmfs_localproxy_cache_dir.size }} slot-size={{ cvmfs_localproxy_cache_dir.slot_size | default(16384) }}
+{% endfor %}
+{% else %}
+cache_dir {{ cvmfs_localproxy_cache_dir.type | default('ufs') }} {{ cvmfs_localproxy_cache_dir.dir }} {{ cvmfs_localproxy_cache_dir.size }} 16 256
+{% endif %}
+{% endif %}
+
+cache_mem {{ cvmfs_localproxy_cache_mem }} MB
+
+minimum_expiry_time 0
+maximum_object_size_in_memory {{ cvmfs_localproxy_maximum_object_size_in_memory }} MB
+
+# visible_hostname {{ inventory_hostname }}

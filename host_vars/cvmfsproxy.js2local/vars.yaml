@@ -1,7 +1,9 @@
 ---
 
 os_image: Featured-RockyLinux9
-os_flavor: m3.small
+# m3.small (2 vCPU) was CPU-bound: one squid process at ~95% of a core capped the whole cluster at ~200 MB/s and every
+# request (hit or miss) took ~0.6-1 s for a 3 MB chunk.
+os_flavor: m3.quad
 os_key_name: nate-treehouse
 os_auto_ip: false
 os_boot_from_volume: true
@@ -12,7 +14,43 @@ os_security_groups:
   - usegalaxy-control
 openstack_wait_timeout: 300
 
-cvmfs_localproxy_cache_mem: 2048
+# Cache volume: ~1.2 TB of unique data.galaxyproject.org objects are fetched per day (18 TB total), so the cache should
+# hold at least that.
+os_volumes:
+  - name: "{{ inventory_hostname_short }}-squid"
+    size: 2048
+    fstype: xfs
+
+# The boot volume is sda, so the cache volume should be sdb when it is first formatted, check with lsblk after attaching
+# it. It is mounted by label so that a different device name at boot doesn't matter.
+filesystems:
+  - dev: /dev/sdb
+    fstype: xfs
+    opts: -L squid-cache
+
+# this is parallel with os_volumes and filesystems
+host_mounts:
+  - path: /var/spool/squid
+    src: LABEL=squid-cache
+    fstype: "{{ os_volumes[0].fstype }}"
+    # Don't hang the boot if the volume is missing, but don't start squid without it either (it would create the rock
+    # dbs on the root volume)
+    opts: defaults,nofail,x-systemd.before=squid.service,x-systemd.required-by=squid.service
+    # squid's fixed uid/gid (from the package's sysusers.d), numeric because the squid user does not exist yet when this
+    # is mounted on a new instance
+    owner: "23"
+    group: "23"
+    mode: "0750"
+
+cvmfs_localproxy_workers: 4
+cvmfs_localproxy_cache_mem: 8192
+cvmfs_localproxy_maximum_object_size: 1024
 cvmfs_localproxy_cache_dir:
-  dir: /var/spool/squid
-  size: 32768
+  # rock is the only SMP-aware cache_dir type, ufs/aufs must not be used with workers > 1
+  type: rock
+  # Each rock dir has a single disker process doing blocking I/O and a limit of ~16.7M objects, so split the cache into
+  # several dirs (rock0, rock1, ...), size is per dir
+  dir: /var/spool/squid/rock
+  count: 4
+  size: 450000
+  slot_size: 32768
