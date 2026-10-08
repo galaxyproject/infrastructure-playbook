@@ -42,7 +42,6 @@ host_mounts:
     group: root
     mode: "0755"
 
-cvmfs_nginx_proxy_port: 3129
 cvmfs_nginx_proxy_cache_dir: /var/cache/cvmfs-proxy/cache
 cvmfs_nginx_proxy_cache_max_size: 1900g
 cvmfs_nginx_proxy_cache_min_free: 50g
