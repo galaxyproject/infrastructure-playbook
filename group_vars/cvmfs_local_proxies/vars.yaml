@@ -18,6 +18,9 @@ cvmfs_nginx_proxy_port: 3128
 # Stratum 1 hosts that clients may fetch from through the proxy
 cvmfs_nginx_proxy_upstreams: >-
   {{ galaxy_cvmfs_server_urls | map(attribute='urls') | flatten | map('urlsplit', 'hostname') | unique }}
+# Stratum 1 host (as in cvmfs_nginx_proxy_upstreams) -> host:port that nginx connects to for it, default <host>:80.
+# The Host header sent upstream is still the name the client asked for.
+cvmfs_nginx_proxy_upstream_servers: {}
 cvmfs_nginx_proxy_cache_dir: /var/lib/nginx/cvmfs
 # Each 1 MB of keys zone holds about 8000 cache entries
 cvmfs_nginx_proxy_keys_zone_size: 256m

@@ -45,3 +45,14 @@ host_mounts:
 cvmfs_nginx_proxy_cache_dir: /var/cache/cvmfs-proxy/cache
 cvmfs_nginx_proxy_cache_max_size: 1900g
 cvmfs_nginx_proxy_cache_min_free: 50g
+
+# Fetch from Apache on cvmfs1-iu0 directly, for both of its names:
+# - Port 80 there is a single-worker squid in front of Apache on 8008. It runs at ~76-95% of a core, serves only ~1% of
+#   bytes from its cache, and adds ~100-400 ms per 3 MB chunk under load (3-15 ms from Apache directly).
+# - Clients mostly ask for cvmfs1-iu0.galaxyproject.org, which would connect to the stratum 1's public floating IP,
+#   hairpinning through the Neutron router and SNAT. The js2local name keeps the traffic on the private network.
+# Port 8008 is not opened by the cvmfs security group (only 22, 80 and 3128 are), reaching it relies on the `default`
+# security group that both hosts are in, which is not managed here.
+cvmfs_nginx_proxy_upstream_servers:
+  cvmfs1-iu0.galaxyproject.org: cvmfs1-iu0.js2local:8008
+  cvmfs1-iu0.js2local: cvmfs1-iu0.js2local:8008

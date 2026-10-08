@@ -24,10 +24,11 @@ log_format cvmfs_proxy '$remote_addr [$time_local] "$request" $status $body_byte
                        '$upstream_cache_status $request_time $upstream_response_time';
 
 # Upstream groups are resolved when the config is loaded, using the system resolver (and /etc/hosts), so the js2local
-# names work without an nginx `resolver`.
+# names work without an nginx `resolver`. Each stratum 1 is fetched from <host>:80 unless
+# cvmfs_nginx_proxy_upstream_servers says otherwise.
 {% for host in cvmfs_nginx_proxy_upstreams %}
 upstream cvmfs_upstream_{{ host | regex_replace('[^A-Za-z0-9]', '_') }} {
-    server {{ host }}:80;
+    server {{ cvmfs_nginx_proxy_upstream_servers[host] | default(host ~ ':80') }};
     keepalive 16;
 }
 {% endfor %}
