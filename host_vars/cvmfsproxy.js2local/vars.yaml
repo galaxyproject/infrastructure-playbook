@@ -3,7 +3,7 @@
 os_image: Featured-RockyLinux9
 # m3.small (2 vCPU) was CPU-bound: one squid process at ~95% of a core capped the whole cluster at ~200 MB/s and every
 # request (hit or miss) took ~0.6-1 s for a 3 MB chunk.
-os_flavor: m3.quad
+os_flavor: m3.medium
 os_key_name: nate-treehouse
 os_auto_ip: false
 os_boot_from_volume: true
@@ -15,9 +15,9 @@ os_security_groups:
 openstack_wait_timeout: 300
 
 # Cache volume: ~1.2 TB of unique data.galaxyproject.org objects are fetched per day (18 TB total), so the cache should
-# hold at least that.
+# hold at least that. The volume name is matched by the openstack role, changing it would create a new volume.
 os_volumes:
-  - name: "{{ inventory_hostname_short }}-squid"
+  - name: "{{ inventory_hostname_short }}-cache"
     size: 2048
     fstype: xfs
 
@@ -26,31 +26,33 @@ os_volumes:
 filesystems:
   - dev: /dev/sdb
     fstype: xfs
-    opts: -L squid-cache
+    opts: -L cvmfs-cache
 
 # this is parallel with os_volumes and filesystems
 host_mounts:
-  - path: /var/spool/squid
-    src: LABEL=squid-cache
+  - path: /var/cache/cvmfs-proxy
+    src: LABEL=cvmfs-cache
     fstype: "{{ os_volumes[0].fstype }}"
-    # Don't hang the boot if the volume is missing, but don't start squid without it either (it would create the rock
-    # dbs on the root volume)
-    opts: defaults,nofail,x-systemd.before=squid.service,x-systemd.required-by=squid.service
-    # squid's fixed uid/gid (from the package's sysusers.d), numeric because the squid user does not exist yet when this
-    # is mounted on a new instance
-    owner: "23"
-    group: "23"
-    mode: "0750"
+    # Don't hang the boot if the volume is missing, but don't start nginx without it either (it would fill the root
+    # volume)
+    opts: defaults,nofail,x-systemd.before=nginx.service,x-systemd.required-by=nginx.service
+    # nginx creates (and owns) its cache dir under the mount point, the nginx user does not exist yet when this is
+    # mounted on a new instance
+    owner: root
+    group: root
+    mode: "0755"
 
-cvmfs_localproxy_workers: 4
-cvmfs_localproxy_cache_mem: 8192
-cvmfs_localproxy_maximum_object_size: 1024
-cvmfs_localproxy_cache_dir:
-  # rock is the only SMP-aware cache_dir type, ufs/aufs must not be used with workers > 1
-  type: rock
-  # Each rock dir has a single disker process doing blocking I/O and a limit of ~16.7M objects, so split the cache into
-  # several dirs (rock0, rock1, ...), size is per dir
-  dir: /var/spool/squid/rock
-  count: 4
-  size: 450000
-  slot_size: 32768
+cvmfs_nginx_proxy_cache_dir: /var/cache/cvmfs-proxy/cache
+cvmfs_nginx_proxy_cache_max_size: 1900g
+cvmfs_nginx_proxy_cache_min_free: 50g
+
+# Fetch from Apache on cvmfs1-iu0 directly, for both of its names:
+# - Port 80 there is a single-worker squid in front of Apache on 8008. It runs at ~76-95% of a core, serves only ~1% of
+#   bytes from its cache, and adds ~100-400 ms per 3 MB chunk under load (3-15 ms from Apache directly).
+# - Clients mostly ask for cvmfs1-iu0.galaxyproject.org, which would connect to the stratum 1's public floating IP,
+#   hairpinning through the Neutron router and SNAT. The js2local name keeps the traffic on the private network.
+# Port 8008 is not opened by the cvmfs security group (only 22, 80 and 3128 are), reaching it relies on the `default`
+# security group that both hosts are in, which is not managed here.
+cvmfs_nginx_proxy_upstream_servers:
+  cvmfs1-iu0.galaxyproject.org: cvmfs1-iu0.js2local:8008
+  cvmfs1-iu0.js2local: cvmfs1-iu0.js2local:8008

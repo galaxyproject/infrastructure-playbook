@@ -28,6 +28,12 @@
     - role: galaxyproject.general.systemd
   tags: cvmfs
 
+- name: CVMFS local proxy nginx
+  hosts: cvmfs_local_proxies
+  roles:
+    - role: galaxyproject.nginx
+  tags: nginx
+
 # This has to be last for slurm elastic (everything must be configured/done when slurmd starts)
 - name: Tasks for slurm hosts
   hosts: jetstream2_persistent_hosts
