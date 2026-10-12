@@ -120,7 +120,7 @@ server {
     # Rate limit all API endpoints (except those exempted via map: tusd, job_files)
     location /api/ {
         limit_req zone=crawler burst=10 nodelay;
-        limit_req zone=strict burst=40 nodelay;
+        limit_req zone=strict burst=50 nodelay;
         limit_req_status 429;
         try_files false @galaxy;
     }
@@ -231,6 +231,7 @@ server {
         upload_pass_form_field "";
         upload_set_form_field "__${upload_field_name}_path" "$upload_tmp_path";
         upload_pass_args on;
+        client_max_body_size    500g;
         upload_pass /_upload_job_files_done;
     }
 
