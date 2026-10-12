@@ -2,9 +2,23 @@
 
 - name: Galaxy VMs
   hosts: galaxy_vms
+  pre_tasks:
+    - name: Remove /etc/NetworkManager/conf.d/99-cloud-init.conf
+      ansible.builtin.file:
+        path: /etc/NetworkManager/conf.d/99-cloud-init.conf
+        state: absent
+      notify:
+        - Restart NetworkManager
+    - name: Flush handlers
+      meta: flush_handlers
   roles:
     - role: galaxyproject.cvmfs
     - role: galaxyproject.slurm
       tags: slurm
     #- role: galaxyproject.general.copy
     #- role: galaxyproject.general.cron
+  handlers:
+    - name: Restart NetworkManager
+      ansible.builtin.systemd:
+        name: NetworkManager
+        state: restarted
