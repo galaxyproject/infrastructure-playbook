@@ -133,20 +133,6 @@ host_services:
     state: started
     enabled: true
 
-host_kernel_params:
-  - name: net.ipv4.tcp_congestion_control
-    value: bbr
-  - name: net.core.default_qdisc
-    value: fq
-  - name: net.core.rmem_max
-    value: 134217728
-  - name: net.core.wmem_max
-    value: 134217728
-  - name: net.ipv4.tcp_rmem
-    value: 4096 87380 67108864
-  - name: net.ipv4.tcp_wmem
-    value: 4096 65536 67108864
-
 nginx_conf_http:
   server_names_hash_bucket_size: 64
 

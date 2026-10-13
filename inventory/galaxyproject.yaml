@@ -248,6 +248,16 @@ all:
         depot-srv.galaxyproject.org:
         westvleteren.galaxyproject.org:
 
+    # Sets TCP congestion algorithm to BBR and additional TCP tunables
+    tcp_bbr_hosts:
+      vars:
+        ansible_group_priority: 5
+      hosts:
+        rochefort.galaxyproject.org:
+        cvmfs0-psu0.galaxyproject.org:
+        cvmfs0-psu1.galaxyproject.org:
+        cvmfs1-psu0.galaxyproject.org:
+
     # Sets some default variables for nginx package/config
     web_servers:
       vars:
