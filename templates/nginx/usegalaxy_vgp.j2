@@ -116,6 +116,12 @@ server {
         proxy_set_header Upgrade            $http_upgrade;
         proxy_set_header Connection         "upgrade";
         client_max_body_size        0;
+
+        # Should match tusd -network-timeout
+        client_body_timeout         300s;
+        proxy_send_timeout          300s;
+        proxy_read_timeout          300s;
+
         proxy_pass http://127.0.0.1:1081/files;
     }
 
