@@ -232,6 +232,9 @@ server {
         upload_set_form_field "__${upload_field_name}_path" "$upload_tmp_path";
         upload_pass_args on;
         client_max_body_size    500g;
+        # Over HTTP/2 the upload module reads the body unbuffered, and nginx caps the stream window at
+        # max(client_body_buffer_size, http2_body_preread_size), 64k by default, which is ~1.5 MB/s from Jetstream 2
+        client_body_buffer_size 8m;
         upload_pass /_upload_job_files_done;
     }
 
