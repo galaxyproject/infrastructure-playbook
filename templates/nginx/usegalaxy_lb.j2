@@ -160,6 +160,9 @@ server {
     }
 
     location /_job_files {
+        # With proxy_request_buffering off nginx reads the body unbuffered, and over HTTP/2 caps the stream window at
+        # max(client_body_buffer_size, http2_body_preread_size), 64k by default, which is ~1.5 MB/s from Jetstream 2
+        client_body_buffer_size 8m;
         proxy_pass         http://galaxy_staging_upload;
         proxy_redirect     off;
         proxy_set_header   Host              $host;
