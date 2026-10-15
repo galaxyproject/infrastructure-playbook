@@ -136,6 +136,9 @@
     location /api/upload/resumable_upload {
         # Disable request and response buffering
         proxy_request_buffering     off;
+        # Over HTTP/2 an unbuffered request body gets a stream window of max(client_body_buffer_size,
+        # http2_body_preread_size), 64k by default, which caps a tus PATCH at 64k per round trip (~0.5 MB/s at 130 ms)
+        client_body_buffer_size     8m;
         proxy_buffering             off;
         proxy_http_version          1.1;
 
