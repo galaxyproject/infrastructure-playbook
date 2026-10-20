@@ -152,6 +152,8 @@ keycloak_realms:
     api_audience: galaxy-api
     api_clients:
       - dev-brc-analytics
+      - orbit
+      - orbit-dev
     federation:
       jdbc_url: "jdbc:postgresql://galaxy-test.tacc.utexas.edu:5432/galaxy_test"
     # See the galaxy realm above for what this does and why. Separate Google
@@ -182,6 +184,40 @@ keycloak_realms:
           - "https://dev.brc-analytics.org"
         post_logout_redirect_uris:
           - "https://dev.brc-analytics.org/*"
+      # Hosted Orbit (galaxyproject/loom#590). Like brc-analytics, the orbit
+      # server does the login and keeps the tokens; the browser only gets a
+      # session cookie. Its access tokens get the galaxy-api audience + the
+      # "<prefix>:*" scope (see api_clients above), which
+      # test.galaxyproject.org accepts as a bearer credential.
+      - client_id: orbit
+        name: "Orbit"
+        public: false
+        standard_flow: true
+        service_accounts: false
+        frontchannel_logout: true
+        pkce: S256
+        redirect_uris:
+          - "https://orbit.galaxyproject.org/auth/callback"
+        web_origins:
+          - "https://orbit.galaxyproject.org"
+        post_logout_redirect_uris:
+          - "https://orbit.galaxyproject.org/*"
+      # Local development of the same service. Public with PKCE so dev machines
+      # never hold a client secret; localhost-only redirects, test realm only.
+      - client_id: orbit-dev
+        name: "Orbit (local dev)"
+        public: true
+        standard_flow: true
+        service_accounts: false
+        pkce: S256
+        redirect_uris:
+          - "http://localhost:7878/auth/callback"
+          - "http://127.0.0.1:7878/auth/callback"
+        web_origins:
+          - "http://localhost:7878"
+          - "http://127.0.0.1:7878"
+        post_logout_redirect_uris:
+          - "http://localhost:7878/*"
       - client_id: galaxy-api
         name: "Galaxy API (test)"
         public: false

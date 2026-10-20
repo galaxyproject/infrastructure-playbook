@@ -105,6 +105,7 @@
           KC_SECRET_GALAXY_GALAXY_API: "{{ vault_keycloak_galaxy_api_client_secret }}"
           KC_SECRET_GALAXY_TEST_DEV_BRC_ANALYTICS: "{{ vault_keycloak_dev_brc_analytics_client_secret }}"
           KC_SECRET_GALAXY_TEST_GALAXY_API: "{{ vault_keycloak_galaxy_api_test_client_secret }}"
+          KC_SECRET_GALAXY_TEST_ORBIT: "{{ vault_keycloak_orbit_test_client_secret }}"
           # Brokered identity provider secrets (keycloak_realms[*].identity_providers).
           # Defaulted to empty so the playbook still runs before the Google OAuth
           # clients exist; the init script only reads these when the matching realm
