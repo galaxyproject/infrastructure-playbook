@@ -76,7 +76,8 @@ galaxy_test_servers_group_gravity_config:
     timeout: 600
     restart_timeout: 900
     preload: true
-    extra_args: --max-requests 500000 --max-requests-jitter 40000
+    # A recycled worker cancels its in-flight requests after graceful_timeout (30s), cutting long archive downloads
+    extra_args: --max-requests 5000000 --max-requests-jitter 500000
     environment:
       LD_LIBRARY_PATH: "/cvmfs/{{ galaxy_cvmfs_repo }}/deps/_conda/envs/_galaxy_weasyprint_deps_/lib"
       HDF5_USE_FILE_LOCKING: "FALSE"
