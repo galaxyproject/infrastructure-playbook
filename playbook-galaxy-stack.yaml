@@ -78,6 +78,11 @@
       ansible.builtin.systemd_service:
         name: setroubleshootd.service
         masked: true
+    # Slurp nameservers from /etc/resolv.conf for nginx proxy resolvers directive
+    - name: Read resolv.conf from target
+      ansible.builtin.slurp:
+        src: /etc/resolv.conf
+      register: __resolv_conf_slurp
   roles:
     - role: galaxyproject.nginx
   post_tasks:

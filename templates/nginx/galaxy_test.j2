@@ -1,6 +1,17 @@
 ##
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
+{# Parse nameservers from /etc/resolv.conf, requires pre-task to set __resolv_conf_slurp #}
+{% macro resolv_conf_resolvers(resolv_content) -%}
+{%- set ns = namespace() -%}
+{%- for line in resolv_content.splitlines() -%}
+{%-   set parts = line.split() -%}
+{%-   if parts | length >= 2 and parts[0] == 'nameserver' and ':' not in parts[1] -%}
+{%-     set ns.servers = (ns.servers | default([])) + [parts[1]] -%}
+{%-   endif -%}
+{%- endfor -%}
+{{ ns.servers | mandatory('No IPv4 nameserver entries found in target /etc/resolv.conf') | unique | join(' ') }}
+{%- endmacro %}
 
 # To display the status page for all requests, use this
 #server {
@@ -278,6 +289,13 @@ server {
         root {{ nginx_srv }}/{{ galaxy_instance_hostname }};
     }
 
+    # GTN proxy for the GTN in Galaxy webhook
+    location /training-material/ {
+        resolver {{ resolv_conf_resolvers(__resolv_conf_slurp.content | b64decode) }} ipv6=off;
+        set $gtn_upstream training.galaxyproject.org;
+        proxy_ssl_server_name on;
+        proxy_pass https://$gtn_upstream;
+    }
 }
 
 # Galaxy Interactive Tools (GxITs)
