@@ -5,5 +5,10 @@
   roles:
     - role: galaxyproject.general.firewall
       tags: general
+    # TODO: With nginx 1.27.3+ you can set `server ... resolve;` in upstreams, otherwise you have to use a variable in
+    # `proxy_pass` and that incurs other annoyances (such as nginx disabling automatic prefix replacement), so just deal
+    # with the annoying failure to connect to IPv6 addresses for now until nginx is newer
+    #- role: slurp_resolvers
+    #  tags: nginx
     - role: galaxyproject.nginx
       tags: nginx

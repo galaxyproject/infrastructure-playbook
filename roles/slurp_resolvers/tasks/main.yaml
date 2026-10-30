@@ -1,0 +1,19 @@
+---
+
+- name: Read resolv.conf from target
+  ansible.builtin.slurp:
+    src: /etc/resolv.conf
+  register: __resolv_conf_slurp
+
+- name: Parse IPv4 nameservers from resolv.conf
+  ansible.builtin.set_fact:
+    resolv_conf_nameservers: >-
+      {{ (__resolv_conf_slurp.content | b64decode)
+         | regex_findall('^[ \t]*nameserver[ \t]+([0-9.]+)(?=[ \t]|$)', multiline=True)
+         | unique }}
+
+- name: Ensure at least one IPv4 nameserver was found
+  ansible.builtin.assert:
+    that: resolv_conf_nameservers | length > 0
+    fail_msg: "No IPv4 nameserver entries found in /etc/resolv.conf"
+    quiet: true
