@@ -93,6 +93,8 @@ all_postfix_config:
   smtpd_tls_key_file: /etc/ssl/private/privkey.pem
   smtpd_tls_received_header: yes
   smtpd_tls_loglevel: '1'
+  smtpd_tls_exclude_ciphers: 'aNULL'
+  smtpd_tls_protocols: '>=TLSv1.2'
 
 postfix_master_config:
   # Override: since we are not using the blanket content_filter, need to disable relay_restrictions when reinjecting or
