@@ -81,6 +81,7 @@
     dest: "{{ slurm_scale_root }}/sbin/slurm_suspend"
     owner: "{{ slurm_scale_user }}"
     mode: 0755
+  notify: reconfigure slurmctld
 
 - name: Link slurm suspend/resume script
   ansible.builtin.file:
@@ -88,6 +89,7 @@
     src: "{{ slurm_scale_root }}/sbin/slurm_suspend"
     state: hard
     force: yes    # supposed to be fixed in 2.4 but it's not?
+  notify: reconfigure slurmctld
 
 - name: Install private data
   ansible.builtin.copy:

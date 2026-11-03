@@ -18,6 +18,7 @@ roles/galaxyproject.postfix
 roles/galaxyproject.postgresql
 roles/galaxyproject.postgresql_objects
 roles/galaxyproject.pulsar
+roles/galaxyproject.pulsar_relay
 roles/galaxyproject.rabbitmq
 roles/galaxyproject.slurm
 roles/galaxyproject.telegraf_cvmfs

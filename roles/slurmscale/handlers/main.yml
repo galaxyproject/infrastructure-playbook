@@ -1,0 +1,7 @@
+---
+
+# slurmctld disables power saving at startup if the programs do not exist yet
+- name: reconfigure slurmctld
+  ansible.builtin.service:
+    name: slurmctld
+    state: reloaded

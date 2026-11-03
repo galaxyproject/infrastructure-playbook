@@ -2,8 +2,7 @@
 
 slurm_ssh_key: "{{ openstack_privatekeys.slurm }}"
 
-#os_image: Featured-RockyLinux9
-os_image: usegalaxy-controller-rocky9-ephemeral-to-vbi
+os_image: Featured-RockyLinux9
 os_flavor: m3.quad
 os_boot_from_volume: true
 os_volume_size: 60
@@ -23,6 +22,16 @@ jetstream2_controllers_group_files:
     mode: "0755"
     owner: root
     group: root
+
+jetstream2_controllers_group_templates:
+  - src: templates/telegraf/slurm_slurp.sh.j2
+    dest: /usr/local/bin/slurm_slurp.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+# copied after the slurm role in playbook-jetstream2-persistent-hosts.yaml, the slurm package creates /etc/slurm
+slurm_script_files:
   - src: files/slurm/prolog.bash
     dest: /etc/slurm/prolog.bash
     mode: "0755"
@@ -34,23 +43,12 @@ jetstream2_controllers_group_files:
     owner: root
     group: root
 
-jetstream2_controllers_group_templates:
-  - src: templates/telegraf/slurm_slurp.sh.j2
-    dest: /usr/local/bin/slurm_slurp.sh
-    owner: root
-    group: root
-    mode: '0755'
+slurm_script_templates:
   - src: templates/slurm/prolog.sh.j2
     dest: /etc/slurm/prolog.sh
     mode: "0755"
     owner: root
     group: root
-
-jetstream2_controllers_group_directories:
-  - path: /jetstream2/scratch/slurm
-    owner: root
-    group: root
-    mode: "0755"
 
 telegraf_agent_hostname: "{{ inventory_hostname }}"
 # not sure why but it's establishing connections very slowly
@@ -89,6 +87,8 @@ slurm_scale_vars:
   - ceph_mounts
   - galaxy_cvmfs_server_urls
   - cvmfs_http_proxies
+  - cvmfs_config_package
+  - cvmfs_config_package_disable_gpg_check
   - docker_gid
 slurm_scale_images:
   - usegalaxy-node

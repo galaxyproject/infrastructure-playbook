@@ -1,5 +1,8 @@
 ---
 
+# this was used to convert from an image-booted volume
+os_image: usegalaxy-controller-rocky9-ephemeral-to-vbi
+
 host_packages:
   # for brc
   - parallel

@@ -6,7 +6,11 @@ jetstream2_pulsar_servers_group_authorized_key_users:
   - name: g2main
     authorized: "{{ galaxy_team_users }}"
 
+# installed after Slurm in playbook-jetstream2-persistent-hosts.yaml
+slurm_drmaa_rpm_url: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
+
 jetstream2_pulsar_servers_group_packages:
+  - python3.14
   - vim
   - git
   - tmpwatch
@@ -17,9 +21,6 @@ jetstream2_pulsar_servers_group_packages:
   - libcurl-devel
   - nss-devel
   - openssl-devel
-  #- slurm-drmaa
-  # this probably won't work until after Slurm is installed
-  - https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4-22.05.el9.x86_64.rpm
 
 jetstream2_pulsar_servers_group_files:
   - src: files/admin/pulsar-staging-fds

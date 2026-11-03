@@ -51,6 +51,40 @@ os_nics:
 
 galaxy_cvmfs_repos_enabled: yes
 
+# Preinstalled in the Featured image
+jetstream2_packages_absent:
+  - firewalld
+  - Lmod
+  - environment-modules
+  - PackageKit-command-not-found
+  - cifs-utils
+  # pulled in by the cvmfs package before cvmfs_config_package was set, conflicts with cvmfs-config-none
+  - cvmfs-config-default
+  - turbovnc
+  - tigervnc-license
+  - tigervnc-server-minimal
+  - tigervnc-server
+  - tigervnc-selinux
+  - gdm
+  - gnome-shell
+  - nvidia-linux-grid-*
+  - nvidia-container-toolkit
+  - nvidia-container-toolkit-base
+  - libnvidia-container-tools
+  - libnvidia-container1
+  - docker-ce
+  - docker-ce-cli
+  - docker-ce-rootless-extras
+  - docker-buildx-plugin
+  - docker-compose-plugin
+  - containerd.io
+jetstream2_yum_repo_files_absent:
+  - cuda.repo
+  - nvidia-container-toolkit.repo
+  - nvidia-jetstream2.repo
+  - docker-ce.repo
+  - TurboVNC.repo
+
 # Docker is preinstalled in the feature image and the gid can change between builds, but with slurm must be the same
 # between controller and exec hosts (since a user's groups are inherited from the controller, not the exec host)
 docker_gid: 909
@@ -100,6 +134,11 @@ galaxy_cvmfs_server_urls:
 cvmfs_http_proxies:
   - "http://cvmfsproxy.js2local:3128"
   - "DIRECT"
+
+# Satisfies the cvmfs package's cvmfs-config dependency instead of cvmfs-config-default, whose CERN config repository is
+# unreachable from UDT nodes. Not in the CVMFS yum repo, and installed before that repo's key is imported.
+cvmfs_config_package: https://ecsft.cern.ch/dist/cvmfs/cvmfs-config/cvmfs-config-none-1.0-3.noarch.rpm
+cvmfs_config_package_disable_gpg_check: true
 
 slurm_user:
   uid: 40302

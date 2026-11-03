@@ -15,10 +15,27 @@
     - name: Disable SELinux
       ansible.posix.selinux:
         state: disabled
-    - name: Ensure firewalld is not installed
+    - name: Remove packages
       ansible.builtin.dnf:
-        name: firewalld
+        name: "{{ jetstream2_packages_absent }}"
         state: absent
+    - name: Remove yum repo files
+      ansible.builtin.file:
+        path: "/etc/yum.repos.d/{{ item }}"
+        state: absent
+      loop: "{{ jetstream2_yum_repo_files_absent }}"
+    - name: Remove /software mount
+      ansible.posix.mount:
+        path: /software
+        state: absent
+    - name: Remove profile scripts
+      ansible.builtin.file:
+        path: "/etc/profile.d/{{ item }}"
+        state: absent
+      loop:
+        - z99-lmod-default-modules.sh
+        # calls out to the Jetstream2 status page on every login
+        - 99-js2status.sh
   tags: [initial, system]
 
 - name: CVMFS tasks
@@ -46,6 +63,27 @@
         owner: slurm
         group: slurm
         mode: 0755
+    - name: Copy Slurm scripts
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+      loop: "{{ slurm_script_files | default([]) }}"
+    - name: Template Slurm scripts
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "{{ item.mode }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+      loop: "{{ slurm_script_templates | default([]) }}"
+    - name: Install slurm-drmaa
+      ansible.builtin.dnf:
+        name: "{{ slurm_drmaa_rpm_url }}"
+        disable_gpg_check: true
+      when: inventory_hostname in groups.jetstream2_pulsar_servers
   tags: slurm
 
 - name: Slurmscale
