@@ -25,3 +25,7 @@ host_crontabs:
     minute: "30"
     hour: "2"
     job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/persisted_data/amqp_ack-jetstream2/consume"
+
+# TODO: for https://github.com/galaxyproject/pulsar/pull/549, remove after > 0.15.16 is released
+pulsar_package_name: "git+https://github.com/galaxyproject/pulsar.git@827ece21b4756b6d41aeb46db5c0a6a29516bc8a#egg=pulsar-app"
+pulsar_package_version: "{{ omit }}"
