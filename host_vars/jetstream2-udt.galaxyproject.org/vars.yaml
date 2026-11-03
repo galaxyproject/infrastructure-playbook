@@ -1,0 +1,157 @@
+---
+
+# Separate Slurm cluster with its own munge key and OpenStack credential, so a compromised UDT node reaches nothing
+# that the main cluster or head node holds
+controller_name: jetstream2-udt
+slurm_cluster_name: js2-udt
+slurm_munge_key: files/slurm/munge-udt.key
+clouds_yaml: "{{ vault_clouds_yaml_udt }}"
+
+os_flavor: m3.small
+os_key_name: nate-treehouse
+os_nics:
+  - net-name: usegalaxy-udt
+os_security_groups:
+  - default
+  - usegalaxy-udt-control
+
+ceph_mounts: "{{ ceph_udt_mounts }}"
+
+host_groups:
+  - name: udtjobs
+    gid: 837
+
+host_users:
+  - name: udtjobs
+    group: udtjobs
+    comment: 'Galaxy UDT Pulsar'
+    uid: 837
+    home: /home/udtjobs
+    shell: /bin/bash
+
+slurm_prolog_cvmfs_repos:
+  - singularity.galaxyproject.org
+
+slurm_prolog_dirs:
+  - /jetstream2/udt-scratch
+
+slurm_prolog_users:
+  - udtjobs
+
+slurm_nodes:
+  - name: "js2-udt-small[0-7]"
+    State: CLOUD
+    Weight: 20
+    CPUs: 2
+    RealMemory: 5600  # 5654 reported by slurmd
+  - name: "js2-udt-quad[0-7]"
+    State: CLOUD
+    Weight: 30
+    CPUs: 4
+    RealMemory: 14800  # same as js2-quad
+  - name: "js2-udt-medium[0-7]"
+    State: CLOUD
+    Weight: 40
+    CPUs: 8
+    RealMemory: 29900  # same as js2-medium
+
+slurm_partitions:
+  # One job per node, node destroyed as soon as it goes idle
+  - name: udt
+    Default: YES
+    Nodes: "js2-udt-small[0-7],js2-udt-quad[0-7],js2-udt-medium[0-7]"
+    DefaultTime: "06:00:00"
+    MaxTime: "7-00:20:00"
+    MaxNodes: 1
+    State: UP
+    OverSubscribe: EXCLUSIVE
+    SuspendTime: 60
+
+slurm_scale_virtualenv_command: /usr/bin/python3.14 -m venv
+slurm_scale_images:
+  - usegalaxy-udt-node
+
+jetstream2_controllers_group_telegraf_plugins_extra:
+  slurm_slurp:
+    plugin: "exec"
+    config:
+      - commands = ["/usr/local/bin/slurm_slurp.sh"]
+      - timeout = "120s"
+      - data_format = "influx"
+      - interval = "1m"
+  http_response:
+    config:
+      - urls = ["http://cvmfs1-iu0.js2local/cvmfs/info/v1/meta.json"]
+      - http_proxy = "http://cvmfsproxy.js2local:3128"
+      - response_status_code = 200
+
+jetstream2_pulsar_servers_group_authorized_key_users:
+  - name: udtjobs
+    authorized: "{{ galaxy_team_users }}"
+
+jetstream2_pulsar_servers_group_directories:
+  - path: /srv/pulsar/udt
+    owner: udtjobs
+    group: udtjobs
+  - path: /srv/pulsar/udt/log
+    owner: udtjobs
+    group: udtjobs
+
+host_crontabs:
+  - id: pulsar_clean_jobs
+    name: Clean Pulsar UDT Jobs
+    user: root
+    minute: 00
+    job: /usr/local/bin/pulsar-clean-jobs /jetstream2/udt-scratch/test/jobs /jetstream2/udt-scratch/main/jobs >> /srv/pulsar/udt/log/cleanup-jobs.log 2>&1
+
+# One Pulsar for Test and Main, one manager each, over the relay
+pulsar_root: /srv/pulsar/udt
+pulsar_user: udtjobs
+pulsar_separate_privileges: true
+pulsar_privsep_user: root
+pulsar_virtualenv_command: python3.14 -m venv
+pulsar_pycurl_ssl_library: openssl
+pulsar_drmaa_library_path: /usr/lib64/libdrmaa.so
+galaxy_server_dir: /cvmfs/main.galaxyproject.org/galaxy
+
+pulsar_systemd: true
+pulsar_systemd_runner: webless
+pulsar_systemd_service_name: pulsar-udt
+pulsar_systemd_service_options:
+  LimitNOFILE: "4096:524288"
+
+pulsar_message_queue_url: https://relay.usegalaxy.org
+pulsar_message_queue_username: pulsar-udt
+pulsar_message_queue_password: "{{ vault_pulsar_message_queue_password_udt }}"
+pulsar_staging_dir: /jetstream2/udt-scratch
+
+pulsar_yaml_config:
+  staging_directory: "{{ pulsar_staging_dir }}/_default_"
+  persistence_directory: "{{ pulsar_persistence_dir }}"
+  tool_dependency_dir: /cvmfs/main.galaxyproject.org/deps
+  message_queue_url: "{{ pulsar_message_queue_url }}"
+  message_queue_username: "{{ pulsar_message_queue_username }}"
+  message_queue_password: "{{ pulsar_message_queue_password }}"
+  sentry_dsn: "{{ pulsar_sentry_dsn }}"
+  maximum_stream_size: 1048576  # 1 MB
+  preprocess_action_max_retries: 10
+  preprocess_action_interval_start: 2
+  preprocess_action_interval_step: 2
+  preprocess_action_interval_max: 60
+  postprocess_action_max_retries: 10
+  postprocess_action_interval_start: 2
+  postprocess_action_interval_step: 2
+  postprocess_action_interval_max: 60
+  min_polling_interval: 15
+  galaxy_home: "{{ galaxy_server_dir }}"
+  galaxy_datatypes_config_file: "{{ galaxy_server_dir }}/config/datatypes_conf.xml.sample"
+  dependency_resolution:
+    resolvers:
+      - type: galaxy_packages
+  managers:
+    test_jetstream2_udt:
+      type: queued_drmaa
+      staging_directory: "{{ pulsar_staging_dir }}/test/jobs"
+    main_jetstream2_udt:
+      type: queued_drmaa
+      staging_directory: "{{ pulsar_staging_dir }}/main/jobs"

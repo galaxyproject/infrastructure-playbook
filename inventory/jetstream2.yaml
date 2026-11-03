@@ -42,6 +42,7 @@ all:
       hosts:
         jetstream2.galaxyproject.org:
         jetstream2-vgp.galaxyproject.org:
+        jetstream2-udt.galaxyproject.org:
         cvmfsproxy.js2local:
       vars:
         ansible_user: rocky
@@ -51,15 +52,22 @@ all:
     jetstream2_controllers:
       hosts:
         jetstream2.galaxyproject.org:
+        jetstream2-udt.galaxyproject.org:
 
     jetstream2_pulsar_servers:
       hosts:
         jetstream2.galaxyproject.org:
         jetstream2-vgp.galaxyproject.org:
+        jetstream2-udt.galaxyproject.org:
 
     slurm_controllers:
       hosts:
         jetstream2.galaxyproject.org:
+        jetstream2-udt.galaxyproject.org:
+
+    pulsar_servers:
+      hosts:
+        jetstream2-udt.galaxyproject.org:
 
     cvmfs_local_proxies:
       hosts:

@@ -85,6 +85,7 @@ slurm_scale_virtualenv_command: /usr/bin/python3.11 -m venv
 slurm_scale_vars:
   - slurm_scale_tailscale_authkey
   - ceph_mounts
+  - ceph_udt_mounts
   - galaxy_cvmfs_server_urls
   - cvmfs_http_proxies
   - cvmfs_config_package

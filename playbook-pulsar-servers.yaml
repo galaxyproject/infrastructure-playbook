@@ -6,6 +6,7 @@
     - role: galaxyproject.general.paths
     - role: galaxyproject.general.copy
     - role: galaxyproject.miniconda
+      when: miniconda_prefix is defined
     - role: galaxyproject.pulsar
       tags: pulsar
     - role: galaxyproject.cvmfsexec

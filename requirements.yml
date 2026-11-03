@@ -50,7 +50,7 @@ roles:
 
 collections:
   - name: galaxyproject.general
-    version: 1.4.2
+    version: 1.4.3
   # Pinned for community.general.to_toml (added in 12.3.0), used by the containerd config template
   - name: community.general
     version: 12.3.0

@@ -4,6 +4,7 @@ vault_pass: "{{ vault_vault_pass }}"
 all_authorized_key_users: "{{ vault_all_authorized_key_users }}"
 openstack_privatekeys: "{{ vault_openstack_privatekeys }}"
 ceph_galaxy_scratch_key: "{{ vault_ceph_galaxy_scratch_key }}"
+ceph_galaxy_udt_scratch_key: "{{ vault_ceph_galaxy_udt_scratch_key }}"
 slurm_scale_tailscale_authkey: "{{ vault_slurm_scale_tailscale_authkey }}"
 
 clouds_yaml: "{{ vault_clouds_yaml }}"
@@ -28,15 +29,24 @@ os_admin_users: "{{ galaxy_admin_users }}"
 #      - galaxyproject.org
 #    domain: galaxyproject.org
 
+# kernel client keeps wrecking MDS's and FUSE client seems to still be decently performant so, gonna run that for now
 ceph_mounts:
   - name: galaxy-scratch
     path: /jetstream2/scratch
     key: "{{ ceph_galaxy_scratch_key }}"
     src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/778b0312-d418-4290-a0b0-57b41bc72baf/92efe188-bf18-43d5-a07a-836b2fb5afe3
     opts: noatime,_netdev
-    # kernel client keeps wrecking MDS's and FUSE client seems to still be decently performant so, gonna run that for now
     fstype: fuse.ceph
-    #fstype: ceph
+
+# Mounted only by the UDT head node and UDT nodes (see host_vars)
+ceph_udt_mounts:
+  - name: galaxy-udt-scratch
+    path: /jetstream2/udt-scratch
+    key: "{{ ceph_galaxy_udt_scratch_key }}"
+    src: 149.165.158.38:6789,149.165.158.22:6789,149.165.158.54:6789,149.165.158.70:6789,149.165.158.86:6789:/volumes/_nogroup/f62b3712-40d4-46e7-971c-1ef4ab86098b/3ef2f5cc-c885-4afd-88a2-fa78cd14e54d
+    opts: noatime,nosuid,nodev,_netdev
+    fstype: fuse.ceph
+
 
 os_cloud_id: "{{ cloud_id }}"
 os_clouds_yaml: "{{ clouds_yaml }}"

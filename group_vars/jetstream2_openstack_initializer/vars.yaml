@@ -2,18 +2,26 @@
 
 os_public_network: public
 
-os_network:
+os_networks:
+  - name: "usegalaxy"
+    subnet:
+      name: "usegalaxy"
+      cidr: 10.0.0.0/22
+  # UDT head node and nodes; cvmfsproxy and cvmfs1-iu0 have a second port here (created by hand with --dns-name) so
+  # their js2local names resolve on it
+  - name: "usegalaxy-udt"
+    subnet:
+      name: "usegalaxy-udt"
+      cidr: 10.0.4.0/22
+
+os_router:
   name: "usegalaxy"
-  subnet:
-    name: "usegalaxy"
-    cidr: 10.0.0.0/22
-  router:
-    name: "usegalaxy"
-    network: "{{ os_public_network }}"
-    interfaces:
-      # the openstack router module will attempt to detach any unlisted subnets, so this needs to be exhaustive even if we don't configure all of these subnets here
-      - "usegalaxy"
-      - "development"
+  network: "{{ os_public_network }}"
+  interfaces:
+    # the openstack router module will attempt to detach any unlisted subnets, so this needs to be exhaustive even if we don't configure all of these subnets here
+    - "usegalaxy"
+    - "development"
+    - "usegalaxy-udt"
 
 # FUTURE WARNING: I had originally shared these with a test project using the CLI. When I then used this to share them
 # for production via the role, it updated the existing policies to the new project, which should not be correct. So if
@@ -43,6 +51,87 @@ os_security_group_rules:
         protocol: any
         ether_type: IPv6
         remote_group: usegalaxy-node
+  - name: usegalaxy-udt-control
+    rules:
+      - protocol: tcp
+        remote_ip_prefix: 0.0.0.0/0
+        port_range_min: 22
+        port_range_max: 22
+      - protocol: tcp
+        remote_group: usegalaxy-udt-node
+        port_range_min: 6817
+        port_range_max: 6817
+  # UDT nodes: only what is listed here. Ingress from the UDT head node for slurmd and ansible; egress only to Ceph,
+  # the local CVMFS proxy/stratum 1, DNS, the metadata service, and slurmctld. Job network access is otherwise denied.
+  #
+  # NOTE: cvmfsproxy and cvmfs1-iu0 had ports manually added on this network with:
+  #   openstack port create --network usegalaxy-udt --dns-name cvmfsproxy --security-group cvmfs cvmfsproxy-udt
+  #   openstack server add port cvmfsproxy cvmfsproxy-udt
+  #   openstack port create --network usegalaxy-udt --dns-name cvmfs1-iu0 --security-group cvmfs cvmfs1-iu0-udt
+  #   openstack server add port cvmfs1-iu0 cvmfs1-iu0-udt
+  - name: usegalaxy-udt-node
+    default_egress: false
+    rules:
+      - direction: ingress
+        protocol: tcp
+        remote_group: usegalaxy-udt-control
+        port_range_min: 22
+        port_range_max: 22
+      - direction: ingress
+        protocol: tcp
+        remote_group: usegalaxy-udt-control
+        port_range_min: 6818
+        port_range_max: 6818
+      - direction: egress
+        protocol: tcp
+        remote_group: usegalaxy-udt-control
+        port_range_min: 6817
+        port_range_max: 6817
+      # Ceph mon
+      - direction: egress
+        protocol: tcp
+        remote_ip_prefix: 149.165.158.0/24
+        port_range_min: 6789
+        port_range_max: 6789
+      - direction: egress
+        protocol: tcp
+        remote_ip_prefix: 149.165.158.0/24
+        port_range_min: 3300
+        port_range_max: 3300
+      # Ceph OSD/MDS
+      - direction: egress
+        protocol: tcp
+        remote_ip_prefix: 149.165.158.0/24
+        port_range_min: 6800
+        port_range_max: 7300
+      # cvmfsproxy.js2local
+      - direction: egress
+        protocol: tcp
+        remote_group: cvmfs
+        port_range_min: 3128
+        port_range_max: 3128
+      # cvmfs1-iu0.js2local
+      - direction: egress
+        protocol: tcp
+        remote_group: cvmfs
+        port_range_min: 80
+        port_range_max: 80
+      - direction: egress
+        protocol: udp
+        remote_ip_prefix: 10.0.4.0/22
+        port_range_min: 53
+        port_range_max: 53
+      - direction: egress
+        protocol: tcp
+        remote_ip_prefix: 10.0.4.0/22
+        port_range_min: 53
+        port_range_max: 53
+      # cloud-init
+      - direction: egress
+        protocol: tcp
+        remote_ip_prefix: 169.254.169.254/32
+        port_range_min: 80
+        port_range_max: 80
   - name: usegalaxy-control
     rules:
       - protocol: tcp
@@ -61,10 +150,18 @@ os_security_group_rules:
         remote_ip_prefix: 129.114.60.0/24
         port_range_min: 1
         port_range_max: 65535
-      - protocol: udp
-        remote_ip_prefix: 129.114.60.0/24
-        port_range_min: 1
-        port_range_max: 65535
+      - protocol: tcp
+        remote_ip_prefix: 149.165.0.0/16
+        port_range_min: 8080
+        port_range_max: 8080
+      - protocol: tcp
+        remote_ip_prefix: 128.118.250.0/26
+        port_range_min: 8080
+        port_range_max: 8080
+      - protocol: tcp
+        remote_ip_prefix: 128.118.250.0/26
+        port_range_min: 8000
+        port_range_max: 8000
   - name: cvmfs
     rules:
       - protocol: tcp
