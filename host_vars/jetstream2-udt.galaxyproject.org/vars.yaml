@@ -157,7 +157,13 @@ pulsar_yaml_config:
       type: queued_drmaa
       staging_directory: "{{ pulsar_staging_dir }}/test/jobs"
       tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
+      galaxy_home: /cvmfs/test.galaxyproject.org/galaxy
+      galaxy_virtual_env: /cvmfs/test.galaxyproject.org/venv
+      galaxy_datatypes_config_file: /cvmfs/test.galaxyproject.org/galaxy/config/datatypes_conf.xml.sample
     main_jetstream2_udt:
       type: queued_drmaa
       staging_directory: "{{ pulsar_staging_dir }}/main/jobs"
       tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
+      galaxy_home: /cvmfs/main.galaxyproject.org/galaxy
+      galaxy_virtual_env: /cvmfs/main.galaxyproject.org/venv
+      galaxy_datatypes_config_file: /cvmfs/main.galaxyproject.org/galaxy/config/datatypes_conf.xml.sample
