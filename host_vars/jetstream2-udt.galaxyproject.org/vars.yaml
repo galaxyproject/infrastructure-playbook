@@ -156,6 +156,8 @@ pulsar_yaml_config:
     test_jetstream2_udt:
       type: queued_drmaa
       staging_directory: "{{ pulsar_staging_dir }}/test/jobs"
+      tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
     main_jetstream2_udt:
       type: queued_drmaa
       staging_directory: "{{ pulsar_staging_dir }}/main/jobs"
+      tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
