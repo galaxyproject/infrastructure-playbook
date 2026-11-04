@@ -74,6 +74,8 @@ all:
         cvmfsproxy.js2local:
 
     cvmfs_clients:
+      hosts:
+        jetstream2-vgp.galaxyproject.org:
       children:
         jetstream2_controllers:
 
