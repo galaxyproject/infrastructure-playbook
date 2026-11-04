@@ -1,5 +1,18 @@
 ---
 
+- name: Ensure Network/DNS is up before /srv/cvmfs mounts on Freiburg Stratum 0
+  hosts: cvmfs-stratum0.galaxyproject.eu
+  tasks:
+    - name: Read current gateway-ping-timeout for enp1s0
+      ansible.builtin.command: nmcli -g connection.gateway-ping-timeout connection show enp1s0
+      register: __nm_gw_ping
+      changed_when: false
+
+    - name: Make NM wait for the gateway to answer before declaring enp1s0 up
+      ansible.builtin.command: nmcli connection modify enp1s0 connection.gateway-ping-timeout 30
+      when: __nm_gw_ping.stdout | trim != "30"
+  tags: system
+
 - name: CVMFS Servers
   hosts: cvmfs_stratum0_servers:cvmfs_stratum1_servers
   roles:
