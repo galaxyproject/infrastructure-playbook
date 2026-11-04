@@ -192,7 +192,7 @@ slurm_config:
 
   Prolog: /etc/slurm/prolog.*
   Epilog: /etc/slurm/epilog.sh
-  PrologEpilogTimeout: 90
+  PrologEpilogTimeout: 180
 
   SelectType: select/cons_res
   SelectTypeParameters: CR_CPU_Memory
@@ -261,7 +261,7 @@ slurm_nodes:
     Weight: 60
     CPUs: 32
     RealMemory: 125000  # 125798 reported by slurmd
-  - name: "js2-2xl[0-7]"
+  - name: "js2-2xl[0-11]"
     State: CLOUD
     Weight: 70
     CPUs: 64
@@ -280,7 +280,7 @@ slurm_nodes:
     State: CLOUD
     CPUs: 8
     RealMemory: 29900  # ????? reported by slurmd
-  - name: "js2-gpu-large[0-3]"
+  - name: "js2-gpu-large[0-7]"
     State: CLOUD
     CPUs: 16
     RealMemory: 60100  # ????? reported by slurmd
@@ -315,7 +315,7 @@ slurm_partitions:
     MaxNodes: 1
     State: UP
   - name: priority
-    Nodes: "js2-medium[0-23],js2-large[0-23],js2-xl[0-23],js2-2xl[0-7],js2-mem-large[0-15],js2-mem-xl[0-15]"
+    Nodes: "js2-medium[0-23],js2-large[0-23],js2-xl[0-23],js2-2xl[0-11],js2-mem-large[0-15],js2-mem-xl[0-15]"
     DefaultTime: "06:00:00"
     MaxTime: "30-00:20:00"
     MaxNodes: 1
@@ -350,7 +350,7 @@ slurm_partitions:
   - name: gpu-large
     DefaultTime: "24:20:00"
     MaxTime: "7-00:20:00"
-    Nodes: "js2-gpu-large[0-3]"
+    Nodes: "js2-gpu-large[0-7]"
     MaxNodes: 1
     State: UP
     OverSubscribe: EXCLUSIVE
