@@ -22,6 +22,7 @@
     location /_x_accel_redirect {
         internal;
         alias /;
+        send_timeout 600;
     }
 
     location /_job_files {
