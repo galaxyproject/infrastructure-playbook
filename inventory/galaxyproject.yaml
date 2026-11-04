@@ -30,6 +30,7 @@ all:
     eddie.galaxyproject.org: {ansible_user: root}
     radegast.galaxyproject.org: {ansible_user: root}
     thumper.galaxyproject.org: {ansible_user: root}
+    thumper.p.galaxyproject.org: {ansible_user: root}
     orval.galaxyproject.org: {ansible_user: root}
     orval.p.galaxyproject.org: {ansible_user: root}
     rochefort.galaxyproject.org: {ansible_user: root}
