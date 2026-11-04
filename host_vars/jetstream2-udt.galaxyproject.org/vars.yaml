@@ -1,9 +1,5 @@
 ---
 
-# TODO: need this until 0.15.17 or 0.16.1
-pulsar_package_version: "{{ omit }}"
-pulsar_package_name: "git+https://github.com/galaxyproject/pulsar.git@163ecbb6b9d739182cd292b698d8420914bee464#egg=pulsar-app"
-
 # Separate Slurm cluster with its own munge key and OpenStack credential, so a compromised UDT node reaches nothing
 # that the main cluster or head node holds
 controller_name: jetstream2-udt

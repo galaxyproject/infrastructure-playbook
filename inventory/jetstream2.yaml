@@ -7,6 +7,13 @@ all:
     jetstream2.galaxyproject.org:
       ansible_python_interpreter: /usr/bin/python3.9
 
+    jetstream2-pulsar-test:
+      ansible_host: jetstream2.galaxyproject.org
+      ansible_python_interpreter: /usr/bin/python3.9
+    jetstream2-pulsar-main:
+      ansible_host: jetstream2.galaxyproject.org
+      ansible_python_interpreter: /usr/bin/python3.9
+
     cvmfsproxy.js2local:
       ansible_ssh_common_args: '-o ProxyCommand="ssh -W %h:%p -q rocky@jetstream2.galaxyproject.org"'
 
@@ -65,9 +72,21 @@ all:
         jetstream2.galaxyproject.org:
         jetstream2-udt.galaxyproject.org:
 
+    # one inventory host per Pulsar, since the role runs once per host
+    jetstream2_pulsar_instances:
+      hosts:
+        jetstream2-pulsar-test:
+        jetstream2-pulsar-main:
+        jetstream2-vgp.galaxyproject.org:
+      vars:
+        ansible_user: rocky
+        ansible_become: true
+
     pulsar_servers:
       hosts:
         jetstream2-udt.galaxyproject.org:
+      children:
+        jetstream2_pulsar_instances:
 
     cvmfs_local_proxies:
       hosts:

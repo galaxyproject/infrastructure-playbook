@@ -1,0 +1,6 @@
+---
+
+galaxy_instance_codename: main
+
+jetstream2_pulsar_managers:
+  jetstream2: "{{ jetstream2_pulsar_manager_defaults }}"

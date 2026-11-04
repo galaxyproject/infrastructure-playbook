@@ -23,13 +23,13 @@ host_crontabs:
     user: g2test
     minute: "0"
     hour: "2"
-    job: "/usr/bin/tmpwatch 7d /srv/pulsar/test/var/persisted_data/amqp_ack-jetstream2/consume"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/test/var/amqp_ack-jetstream2/consume"
   - id: clean_amqp_consume
     name: Clean Main AMQP consume dir
     user: g2main
     minute: "30"
     hour: "2"
-    job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/persisted_data/amqp_ack-jetstream2/consume"
+    job: "/usr/bin/tmpwatch 7d /srv/pulsar/main/var/amqp_ack-jetstream2/consume"
   - id: pulsar_staging_fds
     name: Collecting Pulsar staging file descriptor counts
     user: rocky

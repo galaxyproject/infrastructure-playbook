@@ -1,0 +1,10 @@
+---
+
+galaxy_instance_codename: test
+
+pulsar_amqp_credentials_test: "{{ vault_pulsar_amqp_credentials_test }}"
+pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials_test }}@mq.galaxyproject.org:5671//test_pulsar?ssl=1"
+pulsar_sentry_dsn: null
+
+jetstream2_pulsar_managers:
+  jetstream2: "{{ jetstream2_pulsar_manager_defaults }}"

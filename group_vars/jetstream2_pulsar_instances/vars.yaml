@@ -1,0 +1,59 @@
+---
+
+# set in host_vars:
+# - galaxy_instance_codename
+# - jetstream2_pulsar_managers
+
+pulsar_root: "/srv/pulsar/{{ galaxy_instance_codename }}"
+pulsar_user: "g2{{ galaxy_instance_codename }}"
+pulsar_separate_privileges: true
+pulsar_privsep_user: root
+pulsar_virtualenv_command: python3.14 -m venv
+pulsar_pycurl_ssl_library: openssl
+pulsar_drmaa_library_path: /usr/lib64/libdrmaa.so
+
+galaxy_server_dir: "/cvmfs/{{ galaxy_instance_codename }}.galaxyproject.org/galaxy"
+
+pulsar_staging_dir: "/jetstream2/scratch/{{ galaxy_instance_codename }}/jobs"
+
+pulsar_systemd: true
+pulsar_systemd_runner: webless
+pulsar_systemd_service_name: "pulsar-{{ galaxy_instance_codename }}"
+pulsar_systemd_service_options:
+  LimitNOFILE: "4096:524288"
+pulsar_systemd_environment:
+  - "GALAXY_VIRTUAL_ENV=/cvmfs/{{ galaxy_instance_codename }}.galaxyproject.org/venv"
+
+# Pulsar does not propagate these from the top level of the config to managers
+jetstream2_pulsar_manager_defaults:
+  type: queued_drmaa
+  preprocess_action_max_retries: 10
+  preprocess_action_interval_start: 2
+  preprocess_action_interval_step: 2
+  preprocess_action_interval_max: 60
+  postprocess_action_max_retries: 10
+  postprocess_action_interval_start: 2
+  postprocess_action_interval_step: 2
+  postprocess_action_interval_max: 60
+  min_polling_interval: 15
+  galaxy_home: "{{ galaxy_server_dir }}"
+  galaxy_datatypes_config_file: "{{ galaxy_server_dir }}/config/datatypes_conf.xml.sample"
+
+pulsar_yaml_config:
+  staging_directory: "{{ pulsar_staging_dir }}"
+  persistence_directory: "{{ pulsar_persistence_dir }}"
+  tool_dependency_dir: "/cvmfs/{{ galaxy_instance_codename }}.galaxyproject.org/deps"
+  message_queue_url: "{{ pulsar_message_queue_url }}"
+  sentry_dsn: "{{ pulsar_sentry_dsn }}"
+  maximum_stream_size: 1048576  # 1 MB
+  amqp_acknowledge: true
+  amqp_ack_republish_time: 180
+  amqp_publish_retry: true
+  amqp_publish_retry_max_retries: 5
+  amqp_publish_retry_interval_start: 10
+  amqp_publish_retry_interval_step: 10
+  amqp_publish_retry_interval_max: 60
+  dependency_resolution:
+    resolvers:
+      - type: galaxy_packages
+  managers: "{{ jetstream2_pulsar_managers }}"
