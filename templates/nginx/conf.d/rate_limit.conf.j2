@@ -11,6 +11,7 @@
 map $request_uri $path_exempt {
     ~^/api/upload/resumable_upload "exempt";
     ~^/api/job_files "exempt";
+    ~^/static/plugins "exempt";
     default "not_exempt";
 }
 
