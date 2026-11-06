@@ -212,3 +212,13 @@ cvmfsexec_local_options:
     value: "yes"
   - key: CVMFS_HTTP_PROXY
     value: "DIRECT"
+
+pulsar_cvmfsexec_config:
+  mode: "{{ pulsar_cvmfsexec_mode | default('namespace') }}"
+  path: "{{ pulsar_cvmfsexec_path | default('$HOME/bin/cvmfsexec') }}"
+  repositories:
+    - data.galaxyproject.org
+    - brc.galaxyproject.org
+    - vgp.galaxyproject.org
+    - idc.galaxyproject.org
+    - singularity.galaxyproject.org

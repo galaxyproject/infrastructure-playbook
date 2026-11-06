@@ -7,13 +7,17 @@ hpc_home_root: "/home/x-xcgalaxy"
 hpc_project_root: "/anvil/projects/x-mcb140147"
 hpc_scratch_root: "/anvil/scratch/x-xcgalaxy"
 
+pulsar_cvmfsexec_path: "/home/x-xcgalaxy/bin/cvmfsexec"
+
 hpc_pulsar_managers:
   test_anvil:
     type: queued_drmaa
     staging_directory: "{{ pulsar_staging_dir }}/test"
+    cvmfsexec: "{{ pulsar_cvmfsexec_config }}"
   anvil:
     type: queued_drmaa
     staging_directory: "{{ pulsar_staging_dir }}/main"
+    cvmfsexec: "{{ pulsar_cvmfsexec_config }}"
     preprocess_action_max_retries: 10
     preprocess_action_interval_start: 2
     preprocess_action_interval_step: 2
