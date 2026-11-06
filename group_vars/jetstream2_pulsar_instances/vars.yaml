@@ -41,8 +41,8 @@ jetstream2_pulsar_manager_defaults:
   min_polling_interval: 15
   galaxy_home: "{{ galaxy_server_dir }}"
   galaxy_datatypes_config_file: "{{ galaxy_server_dir }}/config/datatypes_conf.xml.sample"
-  preprocess_max_concurrent: 16
-  postprocess_max_concurrent: 16
+  preprocess_max_concurrent: 12
+  postprocess_max_concurrent: 12
 
 pulsar_yaml_config:
   staging_directory: "{{ pulsar_staging_dir }}"
