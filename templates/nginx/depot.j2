@@ -22,6 +22,15 @@ server {
         autoindex   on;
     }
 
+    # IWC test data mirror (galaxyproject/iwc scripts/sync_test_data.py), files are
+    # addressed by content hash and never change; planemo --test_data_mirror looks them up.
+    # Files are sharded as <algo>/<first 2 hex chars>/<hash>. Only the files match, directory
+    # listings and manifest.json fall through to / (autoindex, uncached).
+    location ~ "^/iwc-test-data/(md5|sha1|sha256|sha512)/[0-9a-f]{2}/[0-9a-f]+$" {
+        expires         max;
+        default_type    application/octet-stream;
+    }
+
     location /patch {
         autoindex   off;
         try_files   $uri =403;
