@@ -43,8 +43,8 @@ host_mounts:
     mode: "0755"
 
 cvmfs_nginx_proxy_cache_dir: /var/cache/cvmfs-proxy/cache
-cvmfs_nginx_proxy_cache_max_size: 1900g
-cvmfs_nginx_proxy_cache_min_free: 50g
+cvmfs_nginx_proxy_cache_max_size: 1800g
+cvmfs_nginx_proxy_cache_min_free: 100g
 
 # Fetch from Apache on cvmfs1-iu0 directly, for both of its names:
 # - Port 80 there is a single-worker squid in front of Apache on 8008. It runs at ~76-95% of a core, serves only ~1% of
