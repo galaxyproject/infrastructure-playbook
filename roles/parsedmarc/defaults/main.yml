@@ -1,0 +1,13 @@
+---
+
+parsedmarc_version: 11.3.0
+parsedmarc_user: parsedmarc
+parsedmarc_home: /var/lib/parsedmarc
+parsedmarc_maildir: "{{ parsedmarc_home }}/Maildir"
+parsedmarc_venv_dir: /opt/parsedmarc
+parsedmarc_config_file: /etc/parsedmarc.ini
+
+parsedmarc_postgresql_port: 5432
+parsedmarc_postgresql_database: dmarc
+parsedmarc_postgresql_user: parsedmarc
+parsedmarc_postgresql_sslmode: require

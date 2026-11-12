@@ -60,6 +60,16 @@
   notify:
     - restart grafana
 
+- name: Provision Grafana datasources
+  ansible.builtin.template:
+    src: grafana-datasources.yaml.j2
+    dest: "{{ stats_grafana_conf_dir }}/provisioning/datasources/ansible.yaml"
+    group: "{{ stats_grafana_group | default(omit) }}"
+    mode: "0640"
+  when: stats_grafana_datasources is defined
+  notify:
+    - restart grafana
+
 # Force a restart in case connection params have changed
 - name: Flush handlers
   meta: flush_handlers

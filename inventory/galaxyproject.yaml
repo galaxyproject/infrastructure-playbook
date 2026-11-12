@@ -413,8 +413,13 @@ all:
       vars:
         ansible_group_priority: 5
       hosts:
-        cvmfs0-psu0.galaxyproject.org:
+        # TODO: was actually deployed via the brc playbook/inventory, but that can probably be scrapped
+        #cvmfs0-psu0.galaxyproject.org:
         cvmfs0-psu1.galaxyproject.org:
+        newtrail.galaxyproject.org:
+        artifact.galaxyproject.org:
+        e1-galaxy-mx1.vmhost.psu.edu:
+        stats.galaxyproject.org:
 
     sentry_servers:
       vars:

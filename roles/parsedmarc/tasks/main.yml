@@ -1,0 +1,73 @@
+---
+
+- name: Install Python venv package
+  ansible.builtin.package:
+    name: python3-venv
+  when: ansible_os_family == "Debian"
+
+- name: Create parsedmarc group
+  ansible.builtin.group:
+    name: "{{ parsedmarc_user }}"
+    system: true
+
+- name: Create parsedmarc user
+  ansible.builtin.user:
+    name: "{{ parsedmarc_user }}"
+    group: "{{ parsedmarc_user }}"
+    system: true
+    home: "{{ parsedmarc_home }}"
+    shell: /usr/sbin/nologin
+    create_home: false
+
+- name: Create parsedmarc Maildir
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ parsedmarc_user }}"
+    group: "{{ parsedmarc_user }}"
+    mode: "0700"
+  loop:
+    - "{{ parsedmarc_home }}"
+    - "{{ parsedmarc_maildir }}"
+    - "{{ parsedmarc_maildir }}/cur"
+    - "{{ parsedmarc_maildir }}/new"
+    - "{{ parsedmarc_maildir }}/tmp"
+
+- name: Deliver parsedmarc user mail to Maildir
+  ansible.builtin.copy:
+    content: "{{ parsedmarc_maildir }}/\n"
+    dest: "{{ parsedmarc_home }}/.forward"
+    owner: "{{ parsedmarc_user }}"
+    group: "{{ parsedmarc_user }}"
+    mode: "0644"
+
+- name: Install parsedmarc
+  ansible.builtin.pip:
+    name: "parsedmarc[postgresql]=={{ parsedmarc_version }}"
+    virtualenv: "{{ parsedmarc_venv_dir }}"
+    virtualenv_command: python3 -m venv
+  notify: restart parsedmarc
+
+- name: Install parsedmarc config
+  ansible.builtin.template:
+    src: parsedmarc.ini.j2
+    dest: "{{ parsedmarc_config_file }}"
+    owner: root
+    group: "{{ parsedmarc_user }}"
+    mode: "0640"
+  notify: restart parsedmarc
+
+- name: Install parsedmarc systemd unit
+  ansible.builtin.template:
+    src: parsedmarc.service.j2
+    dest: /etc/systemd/system/parsedmarc.service
+    mode: "0644"
+  register: __parsedmarc_unit
+  notify: restart parsedmarc
+
+- name: Enable and start parsedmarc
+  ansible.builtin.systemd:
+    name: parsedmarc
+    state: started
+    enabled: true
+    daemon_reload: "{{ __parsedmarc_unit is changed }}"

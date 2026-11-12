@@ -1,0 +1,6 @@
+---
+
+- name: restart parsedmarc
+  ansible.builtin.systemd:
+    name: parsedmarc
+    state: restarted

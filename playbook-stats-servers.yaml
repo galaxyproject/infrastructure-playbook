@@ -1,5 +1,12 @@
 ---
 
+- name: Tailnet
+  hosts: stats_servers
+  roles:
+    - role: artis3n.tailscale.machine
+      when: "'galaxy_tailnet_hosts' in group_names"
+  tags: tailscale
+
 - name: Stats Servers
   hosts: stats_servers
   gather_facts: false
@@ -32,11 +39,29 @@
       tags: telegraf
     - role: dj-wasabi.telegraf
       tags: telegraf
+    - role: galaxyproject.postgresql
+      tags: postgres
+    - role: galaxyproject.postgresql_objects
+      become: true
+      become_user: postgres
+      tags: postgres
     # FIXME: currently you run this once on startup using 2.5, then rerun again w/ stats_influxdb_auth_enabled set to fix
     # the config
     - role: usegalaxy_org.stats
     - role: galaxyproject.nginx
       tags: nginx
+  post_tasks:
+    - name: Grant Grafana read access to parsedmarc tables
+      community.postgresql.postgresql_privs:
+        db: dmarc
+        type: default_privs
+        target_roles: parsedmarc
+        objs: TABLES
+        privs: SELECT
+        roles: grafana_dmarc
+      become: true
+      become_user: postgres
+      tags: postgres
   tags:
     - stats
 

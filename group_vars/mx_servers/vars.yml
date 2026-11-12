@@ -14,6 +14,24 @@ mx_servers_group_packages:
   - tmpreaper
   - inetutils-telnet
 
+mx_servers_group_crontabs:
+  - id: parsedmarc_prune_archive
+    name: Prune parsedmarc Maildir archive
+    user: parsedmarc
+    hour: 4
+    minute: 30
+    job: "find /var/lib/parsedmarc/Maildir/.Archive -type f -mtime +90 -delete"
+
+tailscale_args: "--accept-dns=false"
+
+#
+# parsedmarc
+#
+
+parsedmarc_postgresql_host: 100.91.83.37
+parsedmarc_postgresql_sslmode: disable
+parsedmarc_postgresql_password: "{{ vault_parsedmarc_postgresql_password }}"
+
 #
 # galaxyproject.opendkim
 #

@@ -1,0 +1,22 @@
+[general]
+save_aggregate = True
+save_failure = True
+save_smtp_tls = True
+strip_attachment_payloads = True
+parse_timeout = 300
+verbose = True
+
+[mailbox]
+watch = True
+archive_folder = Archive
+
+[maildir]
+maildir_path = {{ parsedmarc_maildir }}
+
+[postgresql]
+host = {{ parsedmarc_postgresql_host }}
+port = {{ parsedmarc_postgresql_port }}
+database = {{ parsedmarc_postgresql_database }}
+user = {{ parsedmarc_postgresql_user }}
+password = {{ parsedmarc_postgresql_password }}
+sslmode = {{ parsedmarc_postgresql_sslmode }}

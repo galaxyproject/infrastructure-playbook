@@ -1,0 +1,19 @@
+[Unit]
+Description=parsedmarc DMARC report processor
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+User={{ parsedmarc_user }}
+Group={{ parsedmarc_user }}
+ExecStart={{ parsedmarc_venv_dir }}/bin/parsedmarc -c {{ parsedmarc_config_file }}
+Restart=always
+RestartSec=60
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ parsedmarc_home }}
+
+[Install]
+WantedBy=multi-user.target

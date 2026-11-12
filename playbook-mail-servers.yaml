@@ -1,5 +1,12 @@
 ---
 
+- name: Tailnet
+  hosts: mx_servers
+  roles:
+    - role: artis3n.tailscale.machine
+      when: "'galaxy_tailnet_hosts' in group_names"
+  tags: tailscale
+
 - name: Mail (MX) Servers
   hosts: mx_servers
   handlers:
@@ -25,6 +32,8 @@
       when: "'letsencrypt_dns01_clients' in group_names"
     - role: galaxyproject.postfix
       tags: postfix
+    - role: parsedmarc
+      tags: parsedmarc
   post_tasks:
     - name: Add postfix user to opendkim group
       user:

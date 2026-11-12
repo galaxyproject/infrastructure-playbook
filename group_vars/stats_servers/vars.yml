@@ -92,6 +92,19 @@ stats_grafana_conf_auth_github: true
 stats_grafana_conf_auth_github_allowed_organizations:
   - galaxyproject
 
+stats_grafana_datasources:
+  - name: parsedmarc
+    uid: parsedmarc
+    type: grafana-postgresql-datasource
+    url: 127.0.0.1:5432
+    user: grafana_dmarc
+    jsonData:
+      database: dmarc
+      sslmode: disable
+      postgresVersion: 1800
+    secureJsonData:
+      password: "{{ vault_grafana_dmarc_postgresql_password }}"
+
 #stats_conf_email_host: 'localhost:25'
 stats_conf_email_host: 'smtp.psu.edu:25'
 stats_conf_email_from: 'stats@stats.galaxyproject.org'
@@ -154,3 +167,31 @@ telegraf_cvmfs_check_servers:
     - host: cvmfs0-psu0.galaxyproject.org
       repos:
         - vgp.galaxyproject.org
+
+#
+# galaxyproject.postgresql
+#
+
+postgresql_version: 18
+postgresql_conf:
+  listen_addresses: "'*'"
+postgresql_pg_hba_conf:
+  - host dmarc parsedmarc 100.64.0.0/10 scram-sha-256
+
+#
+# galaxyproject.postgresql_objects
+#
+
+postgresql_objects_users:
+  - name: parsedmarc
+    password: "{{ vault_parsedmarc_postgresql_password }}"
+  - name: grafana_dmarc
+    password: "{{ vault_grafana_dmarc_postgresql_password }}"
+postgresql_objects_databases:
+  - name: dmarc
+    owner: parsedmarc
+postgresql_objects_privileges:
+  - database: dmarc
+    roles: grafana_dmarc
+    type: database
+    privs: CONNECT
