@@ -37,8 +37,6 @@ roles:
     src: https://github.com/dj-wasabi/ansible-telegraf
   - name: galaxyproject.gxadmin
     version: 0.0.13
-  - name: artis3n.tailscale
-    version: v3.2.3
   - name: geerlingguy.redis
     version: 1.8.0
   - name: galaxyproject.rabbitmq
@@ -60,3 +58,5 @@ collections:
     version: 1.0.1
   - name: community.docker
     version: 5.2.0
+  - name: artis3n.tailscale
+    version: 1.2.1

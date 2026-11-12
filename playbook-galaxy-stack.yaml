@@ -295,5 +295,5 @@
 - name: Galaxy Tailnet
   hosts: galaxy_tailnet_hosts
   roles:
-    - role: artis3n.tailscale
+    - role: artis3n.tailscale.machine
   tags: tailscale

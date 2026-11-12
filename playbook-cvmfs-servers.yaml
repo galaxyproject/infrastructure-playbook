@@ -44,6 +44,6 @@
 - name: Tailnet
   hosts: cvmfs_stratum0_servers:cvmfs_stratum1_servers
   roles:
-    - role: artis3n.tailscale
+    - role: artis3n.tailscale.machine
       when: "'galaxy_tailnet_hosts' in group_names"
   tags: tailscale
