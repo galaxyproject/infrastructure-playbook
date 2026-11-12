@@ -83,6 +83,7 @@
         # error here since auth would be required but no users would exist.
         login_username: "{{ stats_influxdb_users[0].user_name }}"
         login_password: "{{ stats_influxdb_users[0].user_password }}"
+        grants: "{{ item.grants | default(omit) }}"
       loop: "{{ stats_influxdb_users | default([]) }}"
       loop_control:
         label: "{{ item.user_name }}"
