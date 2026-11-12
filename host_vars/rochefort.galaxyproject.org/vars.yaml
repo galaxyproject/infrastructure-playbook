@@ -119,6 +119,7 @@ host_users:
   - "{{ galaxyproject_users.depot_bioarchive }}"
   - "{{ galaxyproject_users.depot_training }}"
   - "{{ galaxyproject_users.depot_starforge }}"
+  - "{{ galaxyproject_users.depot_iwc }}"
 
 host_groups:
   - "{{ galaxyproject_groups.depot }}"
@@ -127,6 +128,7 @@ host_groups:
   - "{{ galaxyproject_groups.depot_bioarchive }}"
   - "{{ galaxyproject_groups.depot_training }}"
   - "{{ galaxyproject_groups.depot_starforge }}"
+  - "{{ galaxyproject_groups.depot_iwc }}"
 
 host_services:
   - name: rsync
