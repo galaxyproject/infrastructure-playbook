@@ -91,7 +91,6 @@ pulsar_drmaa_library_path: "{{ _rockfish_instance_root }}/slurm-drmaa/lib/libdrm
 pulsar_job_metrics_plugins:
   - type: core
   - type: cpuinfo
-    verbose: true
   - type: meminfo
   - type: uname
   - type: cgroup

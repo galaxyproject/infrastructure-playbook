@@ -18,7 +18,6 @@ pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url
 pulsar_job_metrics_plugins:
   - type: core
   - type: cpuinfo
-    verbose: true
   - type: meminfo
   - type: uname
   - type: cgroup
