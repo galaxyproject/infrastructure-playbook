@@ -34,7 +34,7 @@ galaxy_instance_hostname: usegalaxy.org
 galaxy_cvmfs_repo: main.galaxyproject.org
 
 ## Used by: cleanup jobs, gravity_config, nginx templates; these need to be changed in unision with usegalaxy-playbook
-galaxy_cleanup_hour: 4
+galaxy_cleanup_hour: 19
 galaxy_log_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/log"
 galaxy_job_working_directory: "/corral4/{{ galaxy_instance_codename }}/jobs"
 galaxy_new_file_path: "/corral4/{{ galaxy_instance_codename }}/scratch3"

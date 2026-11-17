@@ -31,7 +31,7 @@ galaxy_cvmfs_repo: test.galaxyproject.org
 galaxy_db_host: /var/run/postgresql
 
 ## Used by: cleanup jobs, gravity_config, nginx templates; these need to be changed in unision with usegalaxy-playbook
-galaxy_cleanup_hour: 0
+galaxy_cleanup_hour: 18
 galaxy_log_dir: "/srv/galaxy/{{ galaxy_instance_codename }}/log"
 galaxy_job_working_directory: "/corral4/{{ galaxy_instance_codename }}/jobs"
 galaxy_new_file_path: "/corral4/{{ galaxy_instance_codename }}/scratch"
