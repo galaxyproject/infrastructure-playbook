@@ -154,6 +154,7 @@ keycloak_realms:
       - dev-brc-analytics
       - orbit
       - orbit-dev
+      - galaxy-mcp
     federation:
       jdbc_url: "jdbc:postgresql://galaxy-test.tacc.utexas.edu:5432/galaxy_test"
     # See the galaxy realm above for what this does and why. Separate Google
@@ -218,6 +219,19 @@ keycloak_realms:
           - "http://127.0.0.1:7878"
         post_logout_redirect_uris:
           - "http://localhost:7878/*"
+      # Hosted Galaxy MCP service (mcp.galaxyproject.org), which connects AI
+      # apps such as Claude and ChatGPT to Galaxy. Like orbit, the service does
+      # the login and keeps the tokens; the AI app never sees them.
+      - client_id: galaxy-mcp
+        name: "Galaxy MCP"
+        public: false
+        standard_flow: true
+        service_accounts: false
+        pkce: S256
+        redirect_uris:
+          - "https://mcp.galaxyproject.org/keycloak/callback"
+        web_origins:
+          - "https://mcp.galaxyproject.org"
       - client_id: galaxy-api
         name: "Galaxy API (test)"
         public: false
