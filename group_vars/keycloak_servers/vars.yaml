@@ -155,7 +155,6 @@ keycloak_realms:
       - orbit
       - orbit-dev
       - galaxy-mcp
-      - galaxy-mcp-dev
     federation:
       jdbc_url: "jdbc:postgresql://galaxy-test.tacc.utexas.edu:5432/galaxy_test"
     # See the galaxy realm above for what this does and why. Separate Google
@@ -233,21 +232,6 @@ keycloak_realms:
           - "https://mcp.galaxyproject.org/interaction/keycloak/callback"
         web_origins:
           - "https://mcp.galaxyproject.org"
-      # Local development of the same service, like orbit-dev: public with
-      # PKCE so dev machines never hold a client secret; localhost-only
-      # redirects, test realm only.
-      - client_id: galaxy-mcp-dev
-        name: "Galaxy MCP (local dev)"
-        public: true
-        standard_flow: true
-        service_accounts: false
-        pkce: S256
-        redirect_uris:
-          - "http://localhost:8081/interaction/keycloak/callback"
-          - "http://127.0.0.1:8081/interaction/keycloak/callback"
-        web_origins:
-          - "http://localhost:8081"
-          - "http://127.0.0.1:8081"
       - client_id: galaxy-api
         name: "Galaxy API (test)"
         public: false
