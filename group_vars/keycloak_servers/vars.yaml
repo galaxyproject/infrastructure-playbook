@@ -229,7 +229,7 @@ keycloak_realms:
         service_accounts: false
         pkce: S256
         redirect_uris:
-          - "https://mcp.galaxyproject.org/keycloak/callback"
+          - "https://mcp.galaxyproject.org/interaction/keycloak/callback"
         web_origins:
           - "https://mcp.galaxyproject.org"
       - client_id: galaxy-api
