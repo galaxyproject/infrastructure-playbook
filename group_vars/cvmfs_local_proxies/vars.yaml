@@ -9,6 +9,7 @@ cvmfs_local_proxies_group_systemd_overrides:
     restart_on_change: false
 
 # nginx caching forward proxy, see templates/nginx/cvmfs_proxy.j2
+nginx_source: nginx.org
 nginx_servers:
   - cvmfs_proxy
 nginx_enable_default_server: false
