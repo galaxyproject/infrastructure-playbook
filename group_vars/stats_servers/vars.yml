@@ -4,6 +4,7 @@ certbot_domains:
  - "{{ inventory_hostname }}"
  - influx.galaxyproject.org
 
+nginx_source: nginx.org
 nginx_default_redirect_uri: https://stats.galaxyproject.org/
 nginx_servers:
   - certbot_redirects

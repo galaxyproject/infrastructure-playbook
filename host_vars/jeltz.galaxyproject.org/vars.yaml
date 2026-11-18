@@ -85,6 +85,7 @@ host_templates:
 #    immediate: yes
 
 # datacache.galaxyproject.org
+nginx_source: nginx.org
 nginx_enable_default_server: false
 nginx_configs:
   - datacache
