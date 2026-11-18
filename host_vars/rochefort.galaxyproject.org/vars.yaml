@@ -175,3 +175,5 @@ certbot_domains:
   - depot.galaxyproject.org
   - eggs.galaxyproject.org
   - eggs.g2.bx.psu.edu
+
+zesty_repos_timer_enabled: true
