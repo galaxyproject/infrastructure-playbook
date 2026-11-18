@@ -42,11 +42,6 @@ galaxy_servers_group_directories:
     owner: "{{ galaxy_user }}"
     group: "{{ galaxy_group }}"
     mode: "0755"
-  # the nginx-core package owns /var/lib/nginx and will change ownership on update
-  - path: "{{ _nginx_tmp_dir }}"
-    owner: "{{ galaxy_user }}"
-    group: "{{ galaxy_group }}"
-    mode: "0750"
 
 galaxy_servers_group_templates:
   - src: templates/galaxy/helper.py.j2
@@ -169,7 +164,9 @@ _override_telegraf_agent_output:
       - '[outputs.influxdb.tagpass]'
       - '  influxdb_database = ["{{ galaxy_instance_codename }}_requests"]'
 
-nginx_upload_module_url: https://github.com/natefoo/nginx-upload-module-build/raw/refs/heads/main/nginx_v1.20.1.el9/build-module-artifacts/nginx-module-upload-1.20.1+1.0-1.el9.ngx.x86_64.rpm
+nginx_source: nginx.org
+nginx_extra_packages:
+  - nginx-module-upload
 nginx_load_modules:
   - order: 50
     path: ngx_http_upload_module.so

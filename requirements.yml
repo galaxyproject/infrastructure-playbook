@@ -2,7 +2,9 @@
 
 roles:
   - name: galaxyproject.nginx
-    version: 1.0.2
+    # Update when a version is released
+    src: https://github.com/galaxyproject/ansible-nginx
+    version: nginx-org-repo
   - name: galaxyproject.mailman3
     version: 1.0.5
   - name: galaxyproject.opendkim

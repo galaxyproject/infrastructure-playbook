@@ -15,7 +15,7 @@ certbot_domains:
   - vgp.usegalaxy.org
   - '*.ep.interactivetool.vgp.usegalaxy.org'
 
-nginx_upload_module_url: false
+nginx_extra_packages: []
 nginx_load_modules: []
 
 tusd_version: v2.10.1
