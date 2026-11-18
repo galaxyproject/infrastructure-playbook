@@ -2,7 +2,7 @@
 
 zesty_repos_path: /opt/zesty-repos
 zesty_repos_repo: https://github.com/natefoo/zesty-repos
-zesty_repos_version: 5f42cf1d8fd60fae2f8b964a8c5b402bdd595195
+zesty_repos_version: 0efd966e522863716b0c3dda66ab16f08797e3bf
 
 zesty_repos_yum_root: /srv/nginx/depot.galaxyproject.org/root/yum
 zesty_repos_image: docker.io/rockylinux/rockylinux:9
