@@ -1,0 +1,14 @@
+---
+
+zesty_repos_path: /opt/zesty-repos
+zesty_repos_repo: https://github.com/natefoo/zesty-repos
+zesty_repos_version: 5f42cf1d8fd60fae2f8b964a8c5b402bdd595195
+
+zesty_repos_yum_root: /srv/nginx/depot.galaxyproject.org/root/yum
+zesty_repos_image: docker.io/rockylinux/rockylinux:9
+zesty_repos_scripts:
+  - nginx-module-upload.sh
+  - slurm.sh
+  - slurm-drmaa.sh
+zesty_repos_on_calendar: daily
+zesty_repos_timer_enabled: false

@@ -1,0 +1,13 @@
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+
+[Unit]
+Description=Build RPMs and update depot yum repos
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor={{ zesty_repos_yum_root }}
+
+[Service]
+Type=oneshot
+{% for script in zesty_repos_scripts %}
+ExecStart=/usr/bin/podman run --rm --pull=newer -v {{ zesty_repos_yum_root }}:/yum -v {{ zesty_repos_path }}:/zesty-repos:ro {{ zesty_repos_image }} /zesty-repos/{{ script }}
+{% endfor %}

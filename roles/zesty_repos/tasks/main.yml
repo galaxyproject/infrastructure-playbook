@@ -1,0 +1,32 @@
+---
+
+- name: Install zesty-repos dependencies
+  ansible.builtin.package:
+    name:
+      - git
+      - podman
+    state: present
+
+- name: Install zesty-repos
+  ansible.builtin.git:
+    dest: "{{ zesty_repos_path }}"
+    repo: "{{ zesty_repos_repo }}"
+    version: "{{ zesty_repos_version }}"
+  diff: false
+
+- name: Install zesty-repos systemd units
+  ansible.builtin.template:
+    src: "zesty-repos.{{ item }}.j2"
+    dest: "/etc/systemd/system/zesty-repos.{{ item }}"
+    mode: "0644"
+  loop:
+    - service
+    - timer
+  register: __zesty_repos_units
+
+- name: Manage zesty-repos timer
+  ansible.builtin.systemd_service:
+    name: zesty-repos.timer
+    state: "{{ zesty_repos_timer_enabled | ternary('started', 'stopped') }}"
+    enabled: "{{ zesty_repos_timer_enabled }}"
+    daemon_reload: "{{ __zesty_repos_units is changed }}"
