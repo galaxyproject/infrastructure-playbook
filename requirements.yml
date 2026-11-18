@@ -17,7 +17,7 @@ roles:
     version: 1.2.0
   - name: galaxyproject.pulsar
     src: https://github.com/galaxyproject/ansible-pulsar
-    version: user-systemd-unit
+    version: clean-venv
   - name: galaxyproject.pulsar_relay
     # Update when a version is released
     src: https://github.com/galaxyproject/ansible-role-pulsar-relay
