@@ -10,6 +10,7 @@ WARN_HOURS=$((3 * 24))
 LIMIT_HOURS=$((7 * 24))
 DRY_RUN=false
 DIR=
+FAILED=false
 # flock on a local file: released by the kernel even if this script is killed
 LOCK="${TMPDIR:-/tmp}/pulsar-clean-jobs-$(id -un).lock"
 
@@ -161,7 +162,11 @@ function clean_dir() {
     local id="$1"
     local dir="${DIR}/${id}"
     log "${id}: Removing: $dir"
-    $DRY_RUN || rm -rf "$dir"
+    $DRY_RUN && return 0
+    if ! rm -rf -- "$dir"; then
+        log_error "${id}: Removal failed: $dir"
+        FAILED=true
+    fi
 }
 
 
@@ -175,12 +180,10 @@ function check_active_slurm() {
             $DRY_RUN || touch "${DIR}/${id}"
             ;;
         1)
-            if $remove; then
-                clean_dir "$id" || log_error "Removal failed: ${id}"
-            fi
+            ! $remove || clean_dir "$id"
             ;;
         *)
-            # can't tell, keep the dir
+            FAILED=true
             ;;
     esac
 }
@@ -215,9 +218,14 @@ function clean() {
                 log "${id}: Ignoring active"
             fi
         else
-            clean_dir "$id" || log_error "Removal failed: ${id}"
+            clean_dir "$id"
         fi
     done < <(find "$DIR" -mindepth 1 -maxdepth 1 -ignore_readdir_race ! -newermt "@${min_mtime}" -printf '%T@ %f\n' | sort -n)
+    # exit status of the find | sort in the process substitution
+    if ! wait $!; then
+        log_error "Failed to list $DIR"
+        FAILED=true
+    fi
 }
 
 
@@ -226,6 +234,7 @@ function main() {
         [ -d "$DIR" ] || error "Invalid directory: $DIR"
         clean
     done
+    ! $FAILED || error "Cleanup finished with errors, see above"
 }
 
 
