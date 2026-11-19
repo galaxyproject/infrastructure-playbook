@@ -2,22 +2,21 @@
 # set -eo pipefail not used here because removals in scratch dirs while running cause find to exit nonzero
 set -u
 
-MUTEX="$HOME/.galaxy-clean.lock"
-MUTEX_ACQUIRED=false
+LOG="{{ galaxy_log_dir }}/cleanup_daily-$(date +%Y-%m-%d).log"
+# flock on a local file: released by the kernel even if this script is killed
+LOCK="${TMPDIR:-/tmp}/galaxy-clean-$(id -un).lock"
 
-function trap_handler() {
-    $MUTEX_ACQUIRED && rmdir "$MUTEX"
-    return 0
-}
-trap "trap_handler" EXIT
+exec 9>"$LOCK"
+if ! flock -n 9; then
+    echo "$(date): Galaxy cleanup on $(hostname -s) is still running from a previous run (lock: $LOCK), skipping" \
+        | tee -a "$LOG" >&2
+    exit 1
+fi
 
-if mkdir "$MUTEX"; then
-    MUTEX_ACQUIRED=true
 {
     set -x;
 {% for job in galaxy_cleanup_jobs %}
     {{ job }};
 {% endfor %}
     { set +x; } 2>/dev/null;
-} > {{ galaxy_log_dir }}/cleanup_daily-$(date +%Y-%m-%d).log 2>&1
-fi
+} >> "$LOG" 2>&1

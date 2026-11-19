@@ -10,8 +10,8 @@ WARN_HOURS=$((3 * 24))
 LIMIT_HOURS=$((7 * 24))
 DRY_RUN=false
 DIR=
-MUTEX="$HOME/pulsar-clean-jobs.lock"
-MUTEX_ACQUIRED=false
+# flock on a local file: released by the kernel even if this script is killed
+LOCK="${TMPDIR:-/tmp}/pulsar-clean-jobs-$(id -un).lock"
 
 function usage() {
     echo "usage: $0 [-hn] DIR..."
@@ -42,16 +42,6 @@ done
 shift $((OPTIND-1))
 
 [ -n "${1:-}" ] || { usage; exit 2; }
-
-
-function trap_handler() {
-    if $MUTEX_ACQUIRED; then
-        rmdir "$MUTEX"
-        log "Released mutex: $MUTEX"
-    fi
-    return 0
-}
-trap "trap_handler" EXIT
 
 
 function isintorempty() {
@@ -230,8 +220,10 @@ function main() {
 }
 
 
-if mkdir "$MUTEX"; then
-    log "Acquired mutex: $MUTEX"
-    MUTEX_ACQUIRED=true
-    main "$@"
+exec 9>"$LOCK"
+if ! flock -n 9; then
+    log_warning "Another run is in progress (lock: $LOCK), exiting"
+    exit 0
 fi
+log "Acquired lock: $LOCK"
+main "$@"
