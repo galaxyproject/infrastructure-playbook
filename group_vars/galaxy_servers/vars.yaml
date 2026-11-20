@@ -211,6 +211,9 @@ galaxy_venv_dir: "/cvmfs/{{ galaxy_cvmfs_repo }}/venv"
 galaxy_cleanup_jobs:
   # job working dir
   - "/bin/find {{ galaxy_job_working_directory }}/*/* -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_jobs.log && find {{ galaxy_job_working_directory }}/* -mindepth 0 -maxdepth 1 -type d -empty -exec rmdir {} +"
+  # embedded Pulsar job directories of Test's cyclone_pulsar destination (usegalaxy-playbook). Galaxy removes them when a
+  # job succeeds; this catches failed ones. Nothing to do on servers without the directory.
+  - "[ ! -d /corral4/{{ galaxy_instance_codename }}/pulsar_jobs ] || /bin/find /corral4/{{ galaxy_instance_codename }}/pulsar_jobs -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_pulsar_jobs.log"
   # scratch
   - "/bin/find {{ galaxy_new_file_path }} -mindepth 1 -maxdepth 1 -mtime +5 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_scratch.log"
   # tus upload store
