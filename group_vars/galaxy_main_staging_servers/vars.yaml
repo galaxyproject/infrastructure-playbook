@@ -2,6 +2,7 @@
 
 # staging servers are backup web servers
 nginx_ssl_servers:
+  - reject_unknown_hosts
   - usegalaxy_staging
   - usegalaxy
 

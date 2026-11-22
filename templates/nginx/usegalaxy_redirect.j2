@@ -4,7 +4,7 @@
 
 # For non-frontend Main servers, simply redirect to Main
 server {
-    listen       *:443 ssl default_server;
+    listen       *:443 ssl;
     server_name  usegalaxy.org *.usegalaxy.org;
 
     location /_hostname {

@@ -97,8 +97,7 @@ upstream galaxy {
 log_format timing '[timing] $remote_addr - $request_time $upstream_response_time $request';
 
 server {
-    listen       *:443 ssl http2 default_server;
-    #listen       *:443 ssl default_server;
+    listen       *:443 ssl http2;
     server_name  test.galaxyproject.org;
 
     # Enable HSTS (age is 180 days)
