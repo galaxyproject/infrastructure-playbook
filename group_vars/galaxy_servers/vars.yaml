@@ -211,9 +211,19 @@ galaxy_venv_dir: "/cvmfs/{{ galaxy_cvmfs_repo }}/venv"
 galaxy_cleanup_jobs:
   # job working dir
   - "/bin/find {{ galaxy_job_working_directory }}/*/* -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_jobs.log && find {{ galaxy_job_working_directory }}/* -mindepth 0 -maxdepth 1 -type d -empty -exec rmdir {} +"
-  # embedded Pulsar job directories of Test's cyclone_pulsar destination (usegalaxy-playbook). Galaxy removes them when a
-  # job succeeds; this catches failed ones. Nothing to do on servers without the directory.
-  - "[ ! -d /corral4/{{ galaxy_instance_codename }}/pulsar_jobs ] || /bin/find /corral4/{{ galaxy_instance_codename }}/pulsar_jobs -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_pulsar_jobs.log"
+  # Embedded Pulsar job directories of the cyclone_pulsar runner (usegalaxy-playbook: _cyclone_container, Test and
+  # Main). Galaxy removes a job's directory when it succeeds and cleanup_job allows it; this catches the rest. A running
+  # job doesn't touch its top-level directory, and Main allows 144 h of walltime plus queue time, so directories of jobs
+  # that Pulsar still lists in its active-job indexes (<persistence dir>[/<handler>]/<manager>-*-jobs/<job id>, see
+  # pulsar_cyclone_app.yml) are kept whatever their age. Nothing is removed if no index directory is found. Nothing to
+  # do on servers without pulsar_jobs.
+  - >-
+    [ ! -d /corral4/{{ galaxy_instance_codename }}/pulsar_jobs ] || ( set -o pipefail;
+    roots=$(for d in /corral4/{{ galaxy_instance_codename }}/pulsar_cyclone_persisted_data /srv/galaxy/{{ galaxy_instance_codename }}/var/pulsar_cyclone_persisted_data; do [ -d "$d" ] && echo "$d"; done);
+    [ -n "$roots" ] && active=$(/bin/find $roots -mindepth 2 -maxdepth 3 -type f -path '*-jobs/*' | sed 's|.*/||') &&
+    /bin/find /corral4/{{ galaxy_instance_codename }}/pulsar_jobs -mindepth 1 -maxdepth 1 -type d -mtime +7 -print0 |
+    while IFS= read -r -d '' dir; do printf '%s\n' "$active" | grep -qxF "${dir##*/}" || rm -rvf "$dir"; done
+    ) | tee -a {{ galaxy_log_dir }}/cleanup_pulsar_jobs.log
   # scratch
   - "/bin/find {{ galaxy_new_file_path }} -mindepth 1 -maxdepth 1 -mtime +5 ! -name '.nfs*' -exec rm -rvf {} + | tee -a {{ galaxy_log_dir }}/cleanup_scratch.log"
   # tus upload store
