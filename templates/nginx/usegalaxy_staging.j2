@@ -14,6 +14,12 @@ server {
     access_log  /var/log/nginx/staging-lb.access.log;
     error_log   /var/log/nginx/staging-lb.error.log;
 
+    # This server forwards the client's Host and X-Forwarded-* headers as received, so only the load balancer may use it
+{% for name in groups['galaxy_main_load_balancers'] %}
+    allow {{ lookup('dig', name) }};
+{% endfor %}
+    deny all;
+
     set $gx_host                $http_host;
     set $gx_x_real_ip           $http_x_real_ip;
     set $gx_x_forwarded_for     $http_x_forwarded_for;
