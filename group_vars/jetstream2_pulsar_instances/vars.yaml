@@ -26,7 +26,8 @@ pulsar_systemd_environment:
 
 # Pulsar does not propagate these from the top level of the config to managers
 jetstream2_pulsar_manager_defaults:
-  type: queued_drmaa
+  # queued_slurm asks Slurm why a job failed (memory, walltime, ...) so Galaxy can resubmit on it
+  type: queued_slurm
   preprocess_action_max_retries: 10
   preprocess_action_interval_start: 2
   preprocess_action_interval_step: 2
