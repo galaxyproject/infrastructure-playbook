@@ -12,6 +12,7 @@ host_users:
   - "{{ galaxyproject_users.depot_bioarchive }}"
   - "{{ galaxyproject_users.depot_training }}"
   - "{{ galaxyproject_users.depot_starforge }}"
+  - "{{ galaxyproject_users.depot_iwc }}"
 
 host_groups:
   - "{{ galaxyproject_groups.depot }}"
@@ -20,6 +21,7 @@ host_groups:
   - "{{ galaxyproject_groups.depot_bioarchive }}"
   - "{{ galaxyproject_groups.depot_training }}"
   - "{{ galaxyproject_groups.depot_starforge }}"
+  - "{{ galaxyproject_groups.depot_iwc }}"
 
 zfs_filesystems:
   - name: data/rochefort/snpeff-data
@@ -89,6 +91,10 @@ host_directories:
   - path: /srv/nginx/depot.galaxyproject.org/root/singularity
     owner: singularity
     group: singularity
+  # IWC workflow test data mirror, uploaded by galaxyproject/iwc's sync_test_data.yml GitHub workflow
+  - path: /srv/nginx/depot.galaxyproject.org/root/iwc-test-data
+    owner: iwc
+    group: iwc
 
 # FIXME: manually set before starting nfs/mapid:
 # sharectl set -p nfsmapid_domain=galaxyproject.org nfs
