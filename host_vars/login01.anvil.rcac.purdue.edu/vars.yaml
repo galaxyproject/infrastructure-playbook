@@ -11,13 +11,13 @@ pulsar_cvmfsexec_path: "/home/x-xcgalaxy/bin/cvmfsexec"
 
 hpc_pulsar_managers:
   test_anvil:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/test"
     cvmfsexec: "{{ pulsar_cvmfsexec_config }}"
     preprocess_max_concurrent: 4
     postprocess_max_concurrent: 4
   anvil:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/main"
     cvmfsexec: "{{ pulsar_cvmfsexec_config }}"
     preprocess_action_max_retries: 10
