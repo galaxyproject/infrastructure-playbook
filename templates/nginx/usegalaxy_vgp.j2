@@ -17,6 +17,10 @@ server {
     access_log  /var/log/nginx/main_vgp.access.log;
     error_log   /var/log/nginx/main_vgp.error.log;
 
+{% for cidr in nginx_access_deny | default([]) %}
+    deny {{ cidr }};
+{% endfor %}
+
     # TODO: this should not be necessary due to the unlimited body size on the tus routes, but this mirrors the old
     # config before stack was moved to infrastructure-playbook, so requires some testing.
     client_max_body_size 500g;

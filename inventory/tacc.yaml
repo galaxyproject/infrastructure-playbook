@@ -56,6 +56,8 @@ all:
 
     # Includes load balancers
     galaxy_web_servers:
+      hosts:
+        galaxy-vgp.tacc.utexas.edu:
       children:
         galaxy_test_servers:
         galaxy_main_web_servers:
