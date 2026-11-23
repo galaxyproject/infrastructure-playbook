@@ -1,0 +1,14 @@
+##
+## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
+##
+
+# Requests for a host no server block names end here instead of reaching Galaxy with an arbitrary $host. This is an SSL
+# server so that it is installed and config tested together with the vhosts that no longer claim default_server.
+server {
+    listen              *:443 ssl default_server;
+    server_name         _;
+    ssl_reject_handshake on;
+    return              444;
+}
+
+# vim: set filetype=nginx

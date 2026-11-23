@@ -18,13 +18,16 @@ server {
 upstream galaxy {
     least_conn;
     # Don't double proxy through nginx or failover doesn't work properly
+    # Idempotent requests that fail are retried on the next server, so isolated failures are invisible to clients. With
+    # the default max_fails=1 a handful of them marks every server down for fail_timeout and all requests get 502 "no
+    # live upstreams".
 {% for name in groups['galaxy_main_web_servers'] %}
-    server {{ lookup('dig', name) }}:8080;
-    server {{ lookup('dig', name) }}:8081;
+    server {{ lookup('dig', name) }}:8080 max_fails=10 fail_timeout=10s;
+    server {{ lookup('dig', name) }}:8081 max_fails=10 fail_timeout=10s;
 {% endfor %}
 {% for name in groups['galaxy_main_staging_servers'] %}
-    server {{ lookup('dig', name) }}:8080 backup;
-    server {{ lookup('dig', name) }}:8081 backup;
+    server {{ lookup('dig', name) }}:8080 max_fails=10 fail_timeout=10s backup;
+    server {{ lookup('dig', name) }}:8081 max_fails=10 fail_timeout=10s backup;
 {% endfor %}
 }
 
@@ -78,7 +81,7 @@ log_format timing '[timing] $remote_addr - $request_time $upstream_response_time
 
 # Main server
 server {
-    listen       *:443 ssl http2 default_server;
+    listen       *:443 ssl http2;
     server_name  usegalaxy.org *.usegalaxy.org;
 
     access_log  /var/log/nginx/main.access.log;
@@ -109,6 +112,8 @@ server {
         proxy_pass            https://galaxy-main1.usegalaxy.org;
         proxy_redirect        off;
         proxy_ssl_protocols   TLSv1.3;
+        # reject_unknown_hosts refuses handshakes without SNI
+        proxy_ssl_server_name on;
         proxy_set_header      Host                 $host;
         proxy_set_header      X-Real-IP            $remote_addr;
         proxy_set_header      X-Forwarded-For      $remote_addr;
@@ -148,6 +153,8 @@ server {
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $remote_addr;
         proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   X-Forwarded-Host  $host;
+        proxy_set_header   X-URL-Scheme      "";
     }
 
     location ~ ^/api/jobs/[^/]+/files {
@@ -157,6 +164,8 @@ server {
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $remote_addr;
         proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   X-Forwarded-Host  $host;
+        proxy_set_header   X-URL-Scheme      "";
     }
 
     location /_job_files {
@@ -169,6 +178,8 @@ server {
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $remote_addr;
         proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_set_header   X-Forwarded-Host  $host;
+        proxy_set_header   X-URL-Scheme      "";
     }
 
     # since this is internal it should be unnecessary
