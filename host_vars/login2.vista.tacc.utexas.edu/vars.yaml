@@ -14,12 +14,12 @@ pulsar_message_queue_username: pulsar
 
 hpc_pulsar_managers:
   test_vista:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/test"
     # FIXME: is this implemented?
     #relay_topic_prefix: test
   main_vista:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/main"
 
 pulsar_clean_jobs_percent_full_function: |

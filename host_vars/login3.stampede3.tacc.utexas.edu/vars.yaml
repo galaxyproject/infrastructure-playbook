@@ -9,10 +9,10 @@ hpc_scratch_root: "/scratch/03166/xcgalaxy"
 
 hpc_pulsar_managers:
   test_stampede3:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/test"
   stampede3:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/main"
     preprocess_action_max_retries: 10
     preprocess_action_interval_start: 2
@@ -24,7 +24,7 @@ hpc_pulsar_managers:
     postprocess_action_interval_max: 60
     min_polling_interval: 15
   vgp_stampede3:
-    type: queued_drmaa
+    type: queued_slurm
     staging_directory: "{{ pulsar_staging_dir }}/vgp"
     preprocess_action_max_retries: 10
     preprocess_action_interval_start: 2
