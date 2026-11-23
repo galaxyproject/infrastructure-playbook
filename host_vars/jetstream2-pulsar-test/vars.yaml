@@ -7,4 +7,5 @@ pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials_test }}@mq.galaxypr
 pulsar_sentry_dsn: null
 
 jetstream2_pulsar_managers:
-  jetstream2: "{{ jetstream2_pulsar_manager_defaults }}"
+  # queued_slurm asks Slurm why a job failed (memory, walltime, ...) so Galaxy can resubmit on it
+  jetstream2: "{{ jetstream2_pulsar_manager_defaults | combine({'type': 'queued_slurm'}) }}"
