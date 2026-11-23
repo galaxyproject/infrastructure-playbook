@@ -12,9 +12,6 @@ pulsar_virtualenv_command: python3.14 -m venv
 pulsar_pycurl_ssl_library: openssl
 pulsar_drmaa_library_path: /usr/lib64/libdrmaa.so
 
-pulsar_package_version: "{{ omit }}"
-pulsar_package_name: "git+https://github.com/natefoo/pulsar.git@usegalaxy_0.16-preprocess-max-concurrent#egg=pulsar-app"
-
 galaxy_server_dir: "/cvmfs/{{ galaxy_instance_codename }}.galaxyproject.org/galaxy"
 
 pulsar_staging_dir: "/jetstream2/scratch/{{ galaxy_instance_codename }}/jobs"
