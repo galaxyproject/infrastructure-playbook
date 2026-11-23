@@ -6,12 +6,11 @@ pulsar_message_queue_password: "{{ vault_pulsar_message_queue_password }}"
 
 pulsar_message_queue_url: "amqp://{{ pulsar_amqp_credentials }}@mq.galaxyproject.org:5671//main_pulsar?ssl=1"
 
-#pulsar_package_version: "0.15.16"
+pulsar_package_version: "0.16.3"
 
 # To set to a specific fork, branch, or commit you can use (also useful in host_vars for a single Pulsar):
-pulsar_package_version: "{{ omit }}"
-# TODO: until 0.16.1 is released
-pulsar_package_name: "git+https://github.com/galaxyproject/pulsar.git@da77a0adc343ba77f2e1af3081b9be71b550c952#egg=pulsar-app"
+#pulsar_package_version: "{{ omit }}"
+#pulsar_package_name: "git+https://github.com/galaxyproject/pulsar.git@<commit>#egg=pulsar-app"
 
 pip_extra_args: "--index-url https://wheels.galaxyproject.org/ --extra-index-url https://pypi.org/simple"
 
