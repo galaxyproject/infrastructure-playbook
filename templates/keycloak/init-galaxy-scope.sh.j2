@@ -178,8 +178,7 @@ $KCADM update events/config -r "$REALM" \
 # Created idempotently from realm.clients, mirroring the client
 # definitions brc-analytics ships in realm-export.json. Client creation is
 # create-only (to change most config, delete and recreate, or edit in the
-# console), EXCEPT fullScopeAllowed, which is enforced below on every run so
-# least privilege cannot silently drift back to "full scope".
+# console). Token scope and the Galaxy signup link are reconciled below.
 {% for c in realm.clients | default([]) %}
 CID="{{ c.client_id }}"
 EXISTING_CLIENT=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
@@ -209,14 +208,15 @@ else
 {% endif %}    -i
 fi
 
-# Enforce least-privilege token scope even on pre-existing clients (the create
-# above is skipped for them); updates only fullScopeAllowed via kcadm's merge,
-# leaving the rest of the client config untouched.
+# Update token scope and the signup link on existing clients as well.
+# kcadm merges these settings into the rest of the client configuration.
 CUUID=$($KCADM get clients -r "$REALM" --fields id,clientId --format csv --noquotes 2>/dev/null \
   | grep ",${CID}$" | sed 's/,.*//' | head -n1 || true)
 if [ -n "$CUUID" ]; then
+{% set signup_url = c.galaxy_signup_url ~ '?' ~ ({'redirect': 'true', 'next': c.galaxy_signup_next} | urlencode) if c.galaxy_signup_url is defined else '' %}
   $KCADM update "clients/$CUUID" -r "$REALM" \
-    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(false) else 'false' }}
+    -s fullScopeAllowed={{ 'true' if c.full_scope_allowed | default(false) else 'false' }} \
+    -s {{ ('attributes.galaxySignupUrl=' ~ signup_url) | quote }}
 fi
 {% endfor %}
 
