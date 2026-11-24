@@ -177,7 +177,7 @@ keycloak_realms:
         # The theme offers Galaxy signup when Google sign-in finds no account.
         # Galaxy Test must allow the BRC host as a post-login redirect target.
         galaxy_signup_url: "https://test.galaxyproject.org/authnz/google/login"
-        galaxy_signup_next: "https://dev.brc-analytics.org/api/v1/auth/login"
+        galaxy_signup_next: "https://dev.brc-analytics.org/api/v1/auth/login?provider=google"
         public: false
         standard_flow: true
         service_accounts: false
