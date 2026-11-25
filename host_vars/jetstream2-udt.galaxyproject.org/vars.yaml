@@ -125,15 +125,9 @@ pulsar_message_queue_username: pulsar-udt
 pulsar_message_queue_password: "{{ vault_pulsar_message_queue_password_udt }}"
 pulsar_staging_dir: /jetstream2/udt-scratch
 
-pulsar_yaml_config:
-  staging_directory: "{{ pulsar_staging_dir }}/_default_"
-  persistence_directory: "{{ pulsar_persistence_dir }}"
-  tool_dependency_dir: /cvmfs/main.galaxyproject.org/deps
-  message_queue_url: "{{ pulsar_message_queue_url }}"
-  message_queue_username: "{{ pulsar_message_queue_username }}"
-  message_queue_password: "{{ pulsar_message_queue_password }}"
-  sentry_dsn: "{{ pulsar_sentry_dsn }}"
-  maximum_stream_size: 1048576  # 1 MB
+# Pulsar reads staging retries and the polling interval per manager only, and ignores them at the top level of
+# app.yml. Without them a single 502 from Galaxy's job files API fails the job.
+udt_pulsar_manager_options: &udt_pulsar_manager_options
   preprocess_action_max_retries: 10
   preprocess_action_interval_start: 2
   preprocess_action_interval_step: 2
@@ -143,6 +137,16 @@ pulsar_yaml_config:
   postprocess_action_interval_step: 2
   postprocess_action_interval_max: 60
   min_polling_interval: 15
+
+pulsar_yaml_config:
+  staging_directory: "{{ pulsar_staging_dir }}/_default_"
+  persistence_directory: "{{ pulsar_persistence_dir }}"
+  tool_dependency_dir: /cvmfs/main.galaxyproject.org/deps
+  message_queue_url: "{{ pulsar_message_queue_url }}"
+  message_queue_username: "{{ pulsar_message_queue_username }}"
+  message_queue_password: "{{ pulsar_message_queue_password }}"
+  sentry_dsn: "{{ pulsar_sentry_dsn }}"
+  maximum_stream_size: 1048576  # 1 MB
   galaxy_home: "{{ galaxy_server_dir }}"
   galaxy_datatypes_config_file: "{{ galaxy_server_dir }}/config/datatypes_conf.xml.sample"
   dependency_resolution:
@@ -150,6 +154,7 @@ pulsar_yaml_config:
       - type: galaxy_packages
   managers:
     test_jetstream2_udt:
+      <<: *udt_pulsar_manager_options
       type: queued_slurm
       staging_directory: "{{ pulsar_staging_dir }}/test/jobs"
       tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
@@ -157,6 +162,7 @@ pulsar_yaml_config:
       galaxy_virtual_env: /cvmfs/test.galaxyproject.org/venv
       galaxy_datatypes_config_file: /cvmfs/test.galaxyproject.org/galaxy/config/datatypes_conf.xml.sample
     main_jetstream2_udt:
+      <<: *udt_pulsar_manager_options
       type: queued_slurm
       staging_directory: "{{ pulsar_staging_dir }}/main/jobs"
       tmp_dir: /tmp/slurm_job_$SLURM_JOB_ID
