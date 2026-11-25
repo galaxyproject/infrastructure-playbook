@@ -2,10 +2,15 @@
 ## This file is maintained by Ansible - CHANGES WILL BE OVERWRITTEN
 ##
 
+# nginx >= 1.29.7 keeps idle HTTP/1.1 connections to upstreams for 60 s by default. gunicorn closes them after its 2 s
+# --keep-alive, and requests nginx sends on a connection gunicorn is closing fail ("upstream prematurely closed"), with
+# a 502 for POSTs. keepalive 0 restores nginx 1.20's behaviour of one connection per request.
 upstream galaxy_staging {
     least_conn;
-    server 127.0.0.1:8080;
-    server 127.0.0.1:8081;
+    keepalive 0;
+    # isolated failures must not mark both gunicorns down for fail_timeout ("no live upstreams")
+    server 127.0.0.1:8080 max_fails=10 fail_timeout=10s;
+    server 127.0.0.1:8081 max_fails=10 fail_timeout=10s;
 }
 
 server {
